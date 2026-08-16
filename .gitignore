@@ -1,0 +1,48 @@
+# Local environments and secrets
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+
+# Python caches and test/tool output
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Packaging output
+*.egg-info/
+build/
+dist/
+
+# Model weights and exported runtimes
+*.ckpt
+*.onnx
+*.pb
+*.pth
+*.pt
+*.safetensors
+*.task
+*.tflite
+models/*
+!models/README.md
+
+# Generated or private media/evaluation output
+artifacts/
+generated/
+outputs/
+evaluation/results/
+datasets/
+
+# Editors and operating-system metadata
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

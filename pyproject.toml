@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools==83.0.0", "wheel==0.47.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chromalens-ai"
+version = "0.1.0"
+description = "Local, explainable color-vision assistance for clothing"
+readme = "README.md"
+requires-python = ">=3.10,<3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+dependencies = [
+    "numpy==1.26.4",
+    "opencv-contrib-python==4.10.0.84",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.5",
+]
+
+[project.scripts]
+chromalens = "chromalens.app:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
