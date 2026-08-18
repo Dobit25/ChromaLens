@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-18 22:07 +07:00
+Last updated: 2026-08-18 22:12 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -31,7 +31,7 @@ This table is intentionally empty until an agent starts the plan.
 | Task ID | Task name | Status | Owner/agent | Started | Last updated | Evidence/entry |
 | --- | --- | --- | --- | --- | --- | --- |
 | T00 | Repository bootstrap and contracts | `DONE` | Codex | 2026-08-16 17:58 +07:00 | 2026-08-16 18:06 +07:00 | T00 start and completion entries below |
-| T00-GATE | Collaboration dependency-lock/CI gate | `IN_PROGRESS` | Codex | 2026-08-18 21:47 +07:00 | 2026-08-18 22:07 +07:00 | T00-GATE entries and cloud-CI correction below |
+| T00-GATE | Collaboration dependency-lock/CI gate | `DONE` | Codex | 2026-08-18 21:47 +07:00 | 2026-08-18 22:12 +07:00 | T00-GATE entries and successful cloud-CI evidence below |
 
 ## 3. Active blockers
 
@@ -488,6 +488,41 @@ Replace `actions/setup-python` with the Node.js 24 `conda-incubator/setup-minico
 - Failed cloud-CI commit: `76c42a96ae24e3f2bab7276bf94c36cab645eae9`
 - Failed run: `https://github.com/Dobit25/ChromaLens/actions/runs/32152286399`
 - `collab-baseline-v1` remains an immutable audit tag for the failed first attempt; it will not be moved or deleted.
+
+---
+
+### `2026-08-18 22:12 +07:00` — `T00-GATE` `Cloud CI correction complete`
+
+**Status:** `DONE`
+**Owner/agent:** Codex
+**Plan reference:** T00-GATE verification correction; no change to T01–T11
+
+#### Outcome and evidence
+
+- Corrective commit `be3f9b86bcb84a212baf513cac9ca321423d3f2b` replaced runner-managed Python with the committed exact Conda environment.
+- GitHub Actions run `32152728588` completed with conclusion `success` against that exact commit.
+- Job `Locked Python 3.10 base` passed every step: checkout; exact Conda setup; Conda-lock validation; Python/pip bootstrap validation; hashed lock-tool install; deterministic pip-lock regeneration; hashed base/dev install; editable install; `pip check`; hardware-independent CLI help; `pytest`; artifact policy; and action cleanup.
+- Immutable action pins were verified from official repositories: `actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803` (`v6`) and `conda-incubator/setup-miniconda@8ee1f361103df19b6f8c8655fd3967a8ecb162d5` (`v4`). Both actions use Node.js 24.
+- T01 remains unstarted. No dependency, model, dataset, product behavior, plan, or MVP-scope change was introduced by the correction.
+
+#### Commands and remote checks
+
+```text
+git ls-remote https://github.com/actions/checkout.git refs/tags/v6
+git ls-remote https://github.com/conda-incubator/setup-miniconda.git refs/tags/v4
+GET https://api.github.com/repos/Dobit25/ChromaLens/actions/runs/32152728588
+GET https://api.github.com/repos/Dobit25/ChromaLens/actions/runs/32152728588/jobs
+```
+
+#### Final baseline policy
+
+- `collab-baseline-v1` intentionally remains attached to failed run `32152286399` as an audit record; rewriting or deleting the published tag was avoided.
+- The verified final gate commit receives a new annotated tag, `collab-baseline-v2`, after this completion entry is committed and its own CI run passes.
+- Required GitHub branch-protection check name: `Locked Python 3.10 base`.
+
+#### Next action
+
+T01 — Camera, video source, and base renderer. Do not start until owner handoff/approval.
 
 ---
 
