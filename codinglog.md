@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-16 18:06 +07:00  
+Last updated: 2026-08-18 22:01 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -31,6 +31,7 @@ This table is intentionally empty until an agent starts the plan.
 | Task ID | Task name | Status | Owner/agent | Started | Last updated | Evidence/entry |
 | --- | --- | --- | --- | --- | --- | --- |
 | T00 | Repository bootstrap and contracts | `DONE` | Codex | 2026-08-16 17:58 +07:00 | 2026-08-16 18:06 +07:00 | T00 start and completion entries below |
+| T00-GATE | Collaboration dependency-lock/CI gate | `DONE` | Codex | 2026-08-18 21:47 +07:00 | 2026-08-18 22:01 +07:00 | T00-GATE start and completion entries below |
 
 ## 3. Active blockers
 
@@ -49,8 +50,8 @@ Use this section only for implementation decisions that affect later tasks. Deta
 
 ### `2026-08-16 17:58 +07:00` — `T00` `Repository bootstrap and contracts`
 
-**Status:** `IN_PROGRESS`  
-**Owner/agent:** Codex  
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Codex
 **Plan reference:** `plan.md#t00--repository-bootstrap-and-contracts`  
 **Requirements/rubric affected:** Repository bootstrap; NFR-01, NFR-06, NFR-07, NFR-08; Metric 03 tech-stack evidence
 
@@ -255,6 +256,214 @@ T01 — Camera, video source, and base renderer. Do not start until owner handof
 - Branch: `mvp`
 - T00 commit: created after this completion entry with message `chore: bootstrap ChromaLens MVP repository`
 - Known-good planning baseline: `9bfb759d4c60900d205c40da6ecdbef9ce46adeb` (no tag)
+
+---
+
+### `2026-08-18 21:47 +07:00` — `T00-GATE` `Collaboration dependency-lock/CI gate`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Codex
+**Plan reference:** Owner-approved collaboration hardening after T00; no change to T01–T11 scope or dependencies
+**Requirements/rubric affected:** T00 reproducibility; NFR-01, NFR-06, NFR-07, NFR-08; Metric 03 tech-stack evidence
+
+#### Objective
+
+Create a single reproducible Windows/Python 3.10 collaboration baseline with a fully resolved hashed base/dev dependency lock and CI that installs from the lock, validates package dependencies, runs CLI help, and runs the hardware-independent test suite.
+
+#### Starting state
+
+- Branch `mvp` is clean and synchronized with `origin/mvp` at `1200e67e88f5c2b8add07f39d62f7f9084c5acc1`.
+- T00 is `DONE`; T01 has not started.
+- Direct base/dev dependencies and build tools are pinned in `pyproject.toml`, but Python patch, pip bootstrap, transitive packages, hashes, clean-install CI, and dependency-update policy are not yet locked.
+- Approved execution environment remains conda environment `lens`, Python 3.10.20. No model, dataset, MediaPipe, SCHP, DaltonLens, ONNX, or OpenVINO work is in scope.
+
+#### Work performed
+
+- Verified the local/remote baseline and empty tag list.
+- Verified Python 3.10.20 and pip 26.1.2 in `lens`.
+- Queried the package index from the absolute `lens` Python executable and selected `pip-tools==7.6.1` as the lock generator candidate.
+
+#### Files changed
+
+| File | Change | Why |
+| --- | --- | --- |
+| `codinglog.md` | Modified | Record the collaboration gate as `IN_PROGRESS` before implementation. |
+
+#### Commands run
+
+```text
+git status --short --branch
+git rev-parse HEAD
+git rev-parse origin/mvp
+git tag --list
+conda run -n lens python --version
+conda run -n lens python -m pip --version
+conda list -n lens python pip setuptools wheel
+conda run -n lens python -m pip index versions pip-tools
+D:\Coding\Anaconda\envs\lens\python.exe -m pip index versions pip-tools
+```
+
+#### Tests and observed results
+
+| Test/check | Result | Evidence/output location |
+| --- | --- | --- |
+| Git baseline | PASS (exit 0): local and remote `mvp` both at `1200e67e...`; no tags exist | Terminal output |
+| Python/pip inspection | PASS (exit 0): Python 3.10.20 and pip 26.1.2 | Terminal output |
+| `conda list` package-filter attempt | FAIL: current Conda CLI does not accept multiple positional package names | Terminal output |
+| Concurrent `conda run` index query | FAIL: concurrent Conda activation helpers contended for the same temporary file | Terminal output |
+| Direct `lens` Python index query | PASS (exit 0): `pip-tools` 7.6.1 available | Terminal output |
+| Project tests | NOT RUN — gate files and lock are not created yet | N/A |
+
+#### Measurements
+
+Not applicable. This gate does not make runtime-performance claims.
+
+#### Definition-of-Done check
+
+- [ ] Exact Conda/Python/pip bootstrap is committed.
+- [ ] All base/dev dependencies and transitive packages are locked with hashes.
+- [ ] CI installs from the lock and passes dependency, CLI, and pytest checks.
+- [ ] Collaboration install/update policy is documented.
+- [ ] Gate evidence is recorded, committed, pushed, and tagged without starting T01.
+
+#### Deviations and decisions
+
+- **Decision ID:** Pending completion entry.
+- **Deviation from plan:** Owner-approved repository hardening between T00 and T01; no product task or MVP scope changes.
+- **Reason:** Four coding-agent workstreams require a shared deterministic environment and CI merge gate.
+- **Trade-off/impact:** T01 starts after this short gate; no model stack is selected prematurely.
+- **Owner approval required:** no; the owner explicitly requested this gate.
+
+#### Problems, limitations, or blockers
+
+- Concurrent `conda run` calls are unreliable on this Windows installation because they can contend for Conda's temporary activation file. Subsequent environment commands will use `D:\Coding\Anaconda\envs\lens\python.exe` directly and serially.
+
+#### Next action
+
+Add the exact environment manifest, pinned lock-generator extra, hashed base/dev lock, collaboration instructions, and CI workflow.
+
+#### Version control
+
+- Branch: `mvp`
+- Commit hash: `not committed`
+- Known-good baseline: `1200e67e88f5c2b8add07f39d62f7f9084c5acc1`
+
+---
+
+### `2026-08-18 22:01 +07:00` — `T00-GATE` `Collaboration dependency-lock/CI gate`
+
+**Status:** `DONE`
+**Owner/agent:** Codex
+**Plan reference:** Owner-approved collaboration hardening after T00; no change to T01–T11 scope or dependencies
+**Requirements/rubric affected:** T00 reproducibility; NFR-01, NFR-06, NFR-07, NFR-08; Metric 03 tech-stack evidence
+
+#### Objective
+
+Provide one deterministic Windows/Python 3.10 dependency baseline and a hardware-independent CI merge check before four feature branches begin work.
+
+#### Work performed
+
+- Added a human-readable Conda manifest and an explicit `win-64` Conda lock containing all 19 bootstrap artifacts, exact builds, trusted artifact URLs, and MD5 checksums.
+- Added separate SHA-256 pip locks for runtime/development dependencies and the pinned lock-generation toolchain.
+- Pinned direct runtime, test, build, and lock-tool versions in `pyproject.toml`; no T01 or model dependency was selected.
+- Added a Windows GitHub Actions workflow pinned to immutable action commit SHAs. It validates the Conda lock, regenerates and diffs the pip locks, installs with `--require-hashes`, checks dependencies, runs hardware-independent CLI help and tests, and rejects tracked environments, caches, model weights, and files larger than 5 MiB.
+- Documented exact contributor bootstrap, verification, lock ownership, and dependency-change commands. The existing `.gitignore` already covered the prohibited artifact classes and required no change.
+
+#### Files changed
+
+| File | Change | Why |
+| --- | --- | --- |
+| `.github/workflows/ci.yml` | Created | Enforce the locked Windows/Python 3.10 verification workflow. |
+| `environment.yml` | Created | Declare the supported Conda bootstrap versions and builds. |
+| `requirements/conda-win-64.lock` | Created | Pin every Conda bootstrap artifact and checksum. |
+| `requirements/py310-win64.lock` | Created | Pin and hash all runtime/development Python dependencies. |
+| `requirements/lock-tools-py310-win64.lock` | Created | Pin and hash the reproducible lock-generation toolchain. |
+| `requirements/README.md` | Created | Define lock roles and ownership. |
+| `pyproject.toml` | Modified | Pin build/test tools and add the lock-tool extra. |
+| `README.md` | Modified | Document exact collaboration install, verification, and update policy. |
+| `codinglog.md` | Modified | Record gate state, decisions, failures, and evidence. |
+
+#### Commands run
+
+```text
+git status --short --branch
+git rev-parse HEAD
+git rev-parse origin/mvp
+git tag --list
+conda run -n lens python --version
+conda run -n lens python -m pip --version
+conda list --explicit --md5 --name lens
+D:\Coding\Anaconda\envs\lens\python.exe -m pip index versions pip-tools
+D:\Coding\Anaconda\envs\lens\python.exe -m pip install --editable ".[lock]"
+D:\Coding\Anaconda\envs\lens\python.exe -m piptools compile pyproject.toml --extra dev --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/py310-win64.lock
+D:\Coding\Anaconda\envs\lens\python.exe -m piptools compile pyproject.toml --extra lock --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/lock-tools-py310-win64.lock
+D:\Coding\Anaconda\envs\lens\python.exe -m pip install --disable-pip-version-check --require-hashes --requirement requirements/lock-tools-py310-win64.lock
+D:\Coding\Anaconda\envs\lens\python.exe -m pip install --disable-pip-version-check --require-hashes --requirement requirements/py310-win64.lock
+D:\Coding\Anaconda\envs\lens\python.exe -m pip install --disable-pip-version-check --no-build-isolation --no-deps --editable ".[dev]"
+D:\Coding\Anaconda\envs\lens\python.exe -m pip check
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --help
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q
+git ls-remote https://github.com/actions/checkout.git refs/tags/v4
+git ls-remote https://github.com/actions/setup-python.git refs/tags/v5
+git diff --check
+```
+
+#### Tests and observed results
+
+| Test/check | Result | Evidence/output location |
+| --- | --- | --- |
+| Conda explicit-lock comparison | PASS (exit 0): committed lock exactly matches all 19 artifacts in `lens` | Terminal output |
+| Conda lock source/checksum policy | PASS (exit 0): only `repo.anaconda.com/pkgs/main` `win-64`/`noarch` artifacts with MD5 checksums | Terminal output |
+| Hashed lock-tool install | PASS (exit 0): every requirement satisfied under `--require-hashes` | Terminal output |
+| Hashed base/dev install | PASS (exit 0): every requirement satisfied under `--require-hashes` | Terminal output |
+| Editable project install | PASS (exit 0): `chromalens-ai==0.1.0` rebuilt and installed with resolver/build isolation disabled | Terminal output |
+| Lock regeneration | PASS (exit 0): base SHA-256 `7C7394ED...96CAF`; tool SHA-256 `63DBE596...26493`; both unchanged | Terminal output |
+| `python -m pip check` | PASS (exit 0): `No broken requirements found.` | Terminal output |
+| `python -m chromalens --help` | PASS (exit 0): help rendered without camera/model/hardware | Terminal output |
+| `python -m pytest -q` | PASS (exit 0): `5 passed in 0.28s` | Terminal output |
+| Pending/tracked artifact policy | PASS (exit 0): 26 candidates, 0 forbidden paths, 0 files above 5 MiB | Terminal output |
+| Immutable GitHub Action references | PASS (exit 0): official `v4`/`v5` tag SHAs resolved and committed by SHA | Terminal output |
+
+#### Installed dependency versions
+
+`build==1.5.0`, `click==8.4.2`, `colorama==0.4.6`, `exceptiongroup==1.3.1`, `iniconfig==2.3.0`, `numpy==1.26.4`, `opencv-contrib-python==4.10.0.84`, `packaging==26.3`, `pip==26.1.2`, `pip-tools==7.6.1`, `pluggy==1.6.0`, `pyproject-hooks==1.2.0`, `pytest==8.3.5`, `setuptools==83.0.0`, `tomli==2.4.1`, `typing-extensions==4.16.0`, and `wheel==0.47.0`.
+
+#### Definition-of-Done check
+
+- [x] Exact Conda/Python/pip bootstrap is represented by a reviewed manifest and explicit hashed artifact lock.
+- [x] All current base/dev dependencies and transitives are version-pinned with hashes.
+- [x] CI installs from committed locks and defines dependency, CLI, pytest, lock-freshness, and artifact-policy checks.
+- [x] Collaboration install/update policy and integration-owner responsibility are documented.
+- [x] Local CI-equivalent checks pass in `lens`; T01 and all model/data work remain untouched.
+- [x] Gate is prepared as one atomic commit on `mvp`, followed by the `collab-baseline-v1` tag and push; immutable hashes are reported after creation because a commit cannot contain its own hash.
+
+#### Deviations and decisions
+
+- **Decision ID:** `DEC-T00-GATE-001`
+- **Decision:** Support one collaboration platform for this gate: Conda `win-64`, Python 3.10.20, exact Conda artifacts, and hashed pip resolution. Use `environment.yml` as dependency intent and the explicit/pip locks as executable sources of exact versions.
+- **Deviation from plan:** Owner-approved hardening gate inserted between completed T00 and unstarted T01; no product scope, task dependency, or acceptance criterion changed.
+- **Trade-off/impact:** Reproducibility is exact on the approved Windows platform. Linux/macOS require a separately reviewed lock and CI job before being supported.
+- **Owner approval required:** no; the owner explicitly requested this gate.
+
+#### Problems, limitations, or blockers
+
+- The first lock-tool resolution exposed that `--allow-unsafe` would otherwise select newer pip/setuptools/wheel versions. These were pinned to the approved `lens` bootstrap versions and both locks were regenerated deterministically.
+- A first lock-source audit regex matched explanatory header text; it was narrowed to executable requirement/directive positions and rerun successfully.
+- `conda list -n lens python pip setuptools wheel` failed because this Conda CLI accepts only one positional package regex. Exact versions/builds were instead verified with `conda list --explicit --md5 --name lens`.
+- Concurrent `conda run` calls contended for a temporary activation file. All mutating and final checks were run serially with the absolute `lens` Python executable.
+- One PowerShell verification attempt quoted the Python executable without the `&` call operator and failed at parse time before executing pip; the corrected command sequence then passed completely.
+- CI is committed as a status check, but repository branch-protection rules are an external GitHub setting and are not changed by this repository commit. The required check name is `Locked Python 3.10 base`.
+
+#### Next action
+
+T01 — Camera, video source, and base renderer. Do not start until owner handoff/approval.
+
+#### Version control
+
+- Branch: `mvp`
+- Atomic commit message: `chore: lock collaboration environment and add CI`
+- Baseline tag: `collab-baseline-v1`
+- Known-good pre-gate baseline: `1200e67e88f5c2b8add07f39d62f7f9084c5acc1`
 
 ---
 
