@@ -1,8 +1,9 @@
 # ChromaLens AI
 
 ChromaLens AI is a local, explainable color-vision assistance prototype for
-clothing. The current repository state is T00: package bootstrap and stable
-cross-module contracts. Camera and video execution begin in T01.
+clothing. The current repository state includes the T01 webcam/local-video
+preview and base renderer. Garment segmentation begins in T02; lighting
+correction begins in T03.
 
 The MVP is assistive software, not a medical diagnosis tool. The user selects
 their CVD profile and severity.
@@ -74,7 +75,48 @@ OpenVINO versions. Those dependencies are added to explicit optional groups
 and the integration lock only when their owning task reaches its dependency
 gate.
 
-## T00 verification
+## Camera and local-video preview
+
+Run the webcam preview using the default camera index:
+
+```powershell
+conda run --name lens python -m chromalens --webcam
+```
+
+Request a capture resolution or choose another camera when required:
+
+```powershell
+conda run --name lens python -m chromalens --webcam --camera-index 1 --width 1280 --height 720
+```
+
+Run a local video without opening a camera:
+
+```powershell
+conda run --name lens python -m chromalens --video C:\path\to\sample.mp4
+```
+
+Press `q`, Escape, or close the window to exit. Automated/headless checks can
+avoid GUI and bound execution explicitly:
+
+```powershell
+conda run --name lens python -m chromalens --video C:\path\to\sample.mp4 --no-display
+conda run --name lens python -m chromalens --webcam --no-display --max-frames 120
+conda run --name lens python -m chromalens --webcam --duration-seconds 120
+```
+
+The overlay reports source name, observed resolution, frame ID, processed FPS,
+and basic pipeline latency. At T01, pipeline latency is measured from the
+monotonic timestamp assigned immediately after OpenCV returns a frame to the
+start of rendering; it is not yet a sensor-to-photon benchmark.
+
+The capture loop reads, renders, displays, and discards one frame at a time.
+There is no application queue or frame history in T01. A webcam disconnect is
+reported as an error, while local-video end-of-file is a successful exit. No
+frame is saved or uploaded. OpenCV is asked for a one-frame webcam buffer, but
+backend support for that hint varies; T08 will introduce latest-frame behavior
+if inference becomes slower than capture.
+
+## Verification
 
 These commands require no webcam, network access at runtime, model weights, or
 special inference hardware:
@@ -90,9 +132,25 @@ The console entry point is equivalent:
 conda run --name lens chromalens --help
 ```
 
+The T01 suite generates short MJPG/AVI files under pytest's temporary directory
+and deletes them with the test workspace. It does not commit or download sample
+media and verifies that video mode never opens a webcam.
+
+## T02/T03 handoff contracts
+
+- `chromalens.camera.FrameSource` is the common webcam/video interface.
+- Each successful read produces a `FramePacket` with a sequential frame ID,
+  monotonic timestamp, and unchanged original BGR frame.
+- Finite video EOF returns `None`; live-source read failures raise a specific,
+  actionable exception.
+- `chromalens.renderer.render_preview` draws only onto a copied frame.
+- T02 can consume `FramePacket.original_bgr` for segmentation; T03 can produce
+  corrected output without changing the source frame.
+
 ## Current limitations
 
-- Webcam and local-video modes are intentionally deferred to T01.
+- T01 contains capture and diagnostics only; it makes no segmentation, color,
+  CVD-risk, recoloring, or performance-target claim.
 - MediaPipe and SCHP classes are T00 contract placeholders. Calling inference
   raises a backend-specific exception; no placeholder returns a fabricated
   mask.

@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-18 22:12 +07:00
+Last updated: 2026-08-18 23:13 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -32,6 +32,7 @@ This table is intentionally empty until an agent starts the plan.
 | --- | --- | --- | --- | --- | --- | --- |
 | T00 | Repository bootstrap and contracts | `DONE` | Codex | 2026-08-16 17:58 +07:00 | 2026-08-16 18:06 +07:00 | T00 start and completion entries below |
 | T00-GATE | Collaboration dependency-lock/CI gate | `DONE` | Codex | 2026-08-18 21:47 +07:00 | 2026-08-18 22:12 +07:00 | T00-GATE entries and successful cloud-CI evidence below |
+| T01 | Camera, video source, and base renderer | `DONE` | Codex | 2026-08-18 23:00 +07:00 | 2026-08-18 23:13 +07:00 | T01 start and completion entries below |
 
 ## 3. Active blockers
 
@@ -45,6 +46,7 @@ Use this section only for implementation decisions that affect later tasks. Deta
 | Decision ID | Date | Decision | Affected tasks/modules | Entry link |
 | --- | --- | --- | --- | --- |
 | DEC-001 | 2026-08-16 | Use Python 3.10 only and pin the minimal T00 base/dev dependencies in `pyproject.toml`; keep inference stacks optional for later tasks. | T00 and future environment changes | T00 completion entry |
+| DEC-002 | 2026-08-18 | Use one common sequential `FrameSource` contract and a synchronous read-render-discard loop for T01; finite EOF is normal while live read failure is explicit. | T01, T02, T03, T08 | T01 completion entry |
 
 ## 5. Chronological entries
 
@@ -523,6 +525,181 @@ GET https://api.github.com/repos/Dobit25/ChromaLens/actions/runs/32152728588/job
 #### Next action
 
 T01 — Camera, video source, and base renderer. Do not start until owner handoff/approval.
+
+---
+
+### `2026-08-18 23:00 +07:00` — `T01` `Camera, video source, and base renderer`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Codex
+**Plan reference:** `plan.md#t01--camera-video-source-and-base-renderer`
+**Requirements/rubric affected:** FR-01, FR-11; NFR-01, NFR-02, NFR-04, NFR-07; Metric 02 working-prototype readiness
+
+#### Objective
+
+Implement the smallest shared webcam/local-video input and copied-frame renderer that attaches frame identity/timing, shows source/resolution/basic FPS and latency, exits cleanly, reports actionable source errors, and cannot accumulate stale frames.
+
+#### Starting state
+
+- Branch `mvp` is clean and synchronized with `origin/mvp` at verified tag `collab-baseline-v2`, commit `e0ab09fc51ed139b9a3002fda25679f9a2761095`.
+- Dependencies T00 and T00-GATE are `DONE`; T02 and T03 are unstarted.
+- Approved environment `lens` runs Python 3.10.20; `pip check` passes and the existing suite reports `5 passed`.
+- OpenCV 4.10.0 WIN32 UI is available. Webcam index 0 opened through MSMF and returned one 640×480 BGR frame; the probe released the device and saved no frame.
+- No new Python dependency is expected. Automated tests must synthesize temporary video and must not require a camera, network, model, or committed binary media.
+
+#### Planned implementation
+
+- Add `camera.py` with a common source interface, webcam/video factories, fail-fast source errors, frame IDs, monotonic capture timestamps, explicit EOF, and idempotent release.
+- Add `renderer.py` that draws basic diagnostics onto a copy and never mutates `FramePacket.original_bgr`.
+- Extend the CLI with mutually exclusive webcam/video execution, display/headless controls, bounded execution for automation, and clean `q`/Escape/window-close behavior.
+- Use one synchronous read-render-display loop with no queue or frame retention. Add hardware-independent tests and documented commands, then verify a two-minute real webcam preview.
+
+#### Baseline commands and observed results
+
+| Command/check | Result |
+| --- | --- |
+| `git status --short --branch` | PASS: clean `mvp`, synchronized with `origin/mvp` |
+| `D:\Coding\Anaconda\envs\lens\python.exe --version` | PASS: Python 3.10.20 |
+| `D:\Coding\Anaconda\envs\lens\python.exe -m pip check` | PASS: no broken requirements |
+| `D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q` | PASS: 5 passed in 0.20 s |
+| OpenCV build inspection | PASS: `GUI: WIN32UI` |
+| One-frame webcam probe | PASS: opened/read 640×480 BGR through MSMF; released without saving |
+
+#### Definition-of-Done check
+
+- [ ] Webcam preview runs for two minutes and exits cleanly.
+- [ ] Sample video mode runs without a camera.
+- [ ] Failure to open the source produces an actionable error.
+- [ ] Memory/queue does not grow because old frames are retained.
+- [ ] Automated tests remain independent of webcam, network, and models.
+
+#### Problems, limitations, or blockers
+
+- No blocker at task start. The current machine remains a development machine, not declared demo hardware.
+
+#### Next action
+
+Implement the T01 camera/video interface, renderer, CLI execution loop, tests, and documentation without starting T02 or T03.
+
+---
+
+### `2026-08-18 23:13 +07:00` — `T01` `Camera, video source, and base renderer complete`
+
+**Status:** `DONE`
+**Owner/agent:** Codex
+**Plan reference:** `plan.md#t01--camera-video-source-and-base-renderer`
+**Requirements/rubric affected:** FR-01, FR-11; NFR-01, NFR-02, NFR-04, NFR-07; Metric 02 working-prototype readiness
+
+#### Outcome
+
+- Added a typed `FrameSource` interface and OpenCV implementation for webcam and local-video input.
+- Each read returns the T00 `FramePacket` contract with sequential frame ID, `monotonic_ns()` timestamp, and original uint8 BGR frame. Finite EOF returns `None`; live/open/state failures use specific actionable exceptions.
+- Added a configurable base renderer with EMA processed FPS, basic packet-to-render latency, source/resolution/frame diagnostics, and a high-contrast panel drawn only on a copied frame.
+- Extended the default-safe CLI with explicit `--webcam`/`--video`, camera index/resolution, GUI/headless operation, duration/frame limits, `q`/Escape/window-close handling, successful video EOF, and guaranteed source release.
+- Kept T01 synchronous: read one frame, render it, display/discard it, then read the next. No application queue, prefetch thread, frame list, or history exists.
+- Added hardware-independent tests using temporary MJPG/AVI media. They prove video mode does not open a webcam, verify EOF/timestamps/copy semantics/actionable errors, prove exact read-render ordering, and simulate clean `q` exit.
+- Updated README commands, measurement definition, privacy behavior, limitations, and T02/T03 handoff contracts. No dependency or lock file changed.
+
+#### Files changed
+
+| File | Change | Why |
+| --- | --- | --- |
+| `src/chromalens/camera.py` | Created | Common webcam/video source contract and fail-fast OpenCV implementation. |
+| `src/chromalens/renderer.py` | Created | Copied-frame diagnostic renderer and lightweight telemetry. |
+| `src/chromalens/app.py` | Modified | Explicit source CLI and bounded preview lifecycle. |
+| `tests/test_t01_camera_renderer.py` | Created | Hardware-independent T01 unit/integration coverage. |
+| `tests/test_t00_smoke.py` | Modified | Update help assertion for implemented T01 behavior. |
+| `README.md` | Modified | Document execution, privacy, queue policy, limitations, and handoff. |
+| `codinglog.md` | Modified | Record T01 start, evidence, failure/repair, decision, and completion. |
+
+#### Commands run
+
+```text
+D:\Coding\Anaconda\envs\lens\python.exe --version
+D:\Coding\Anaconda\envs\lens\python.exe -m pip check
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q
+D:\Coding\Anaconda\envs\lens\python.exe -m compileall -q src tests
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --help
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --video Z:\definitely-missing\sample.mp4 --no-display
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --video artifacts\t01-manual-sample.avi
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --webcam --duration-seconds 5
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --webcam --duration-seconds 120
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --webcam --no-display --max-frames 300
+git diff --check
+```
+
+Manual video and overlay artifacts were generated only from synthetic NumPy arrays under ignored `artifacts/`, inspected, and deleted. No camera frame or generated media remains.
+
+#### Tests and observed results
+
+| Test/check | Result | Evidence/output location |
+| --- | --- | --- |
+| Baseline suite | PASS: 5 passed in 0.20 s | Terminal output |
+| First T01 suite | FAIL: 1 failed, 10 passed; forcing timestamps one nanosecond apart exceeded effective Windows clock resolution | Terminal output |
+| Timestamp repair | Removed fabricated `previous + 1 ns`; packets use the monotonic clock directly and tests require non-decreasing timestamps | Source/test diff |
+| Final suite | PASS: 12 passed in 0.46 s | Terminal output |
+| Syntax/dependencies | PASS: `compileall` exit 0; `pip check` reports no broken requirements | Terminal output |
+| CLI help/default | PASS: exit 0; no camera/backend opens without explicit source selection | Terminal output/tests |
+| Missing video | PASS: exit 2 with path, existence/permission, and `--video` guidance | Terminal output/tests |
+| Camera-open failure simulation | PASS: handle released; error mentions permission/index/other applications | Automated test |
+| Camera-free video | PASS: four-frame temporary video reaches EOF; webcam factory never called | Automated test |
+| GUI synthetic video | PASS: 60 frames, 640×360, 3.06 s, clean EOF, exit 0 | Terminal output |
+| Renderer visual check | PASS: readable synthetic overlay contains source, resolution, frame, FPS, latency, and exit hint | Visual inspection; artifact deleted |
+| Short webcam preview | PASS: 143 frames, 640×480, 5.34 s, duration exit, code 0 | Terminal output |
+| Two-minute webcam preview | PASS: visible window ran to 120 s app limit and exited 0; monitor wall time 125.4 s including startup/polling | Process monitor output |
+| Headless webcam bound | PASS: 300 frames, 640×480, 10.59 s, frame-limit exit, code 0 | Terminal output |
+| No-prefetch contract | PASS: exact `read, render` alternation and source close; no queue exists | Automated test |
+
+#### Measurements
+
+Development-machine observations only; this machine is not declared official demo hardware.
+
+| Metric | Measured value | Conditions |
+| --- | ---: | --- |
+| Webcam resolution | 640×480 BGR | Index 0, OpenCV MSMF |
+| Short visible throughput | 26.8 frames/s | 143 frames / 5.34 s, capture + T01 overlay |
+| Headless throughput | 28.3 frames/s | 300 frames / 10.59 s, capture + renderer |
+| Two-minute Working Set | 96.15 → 103.02 MiB | Samples every 5 s from 15–120 s; min 96.15, peak/end 103.02 MiB |
+| Working Set delta | +6.87 MiB | Small allocator/backend drift, not frame-proportional retention; one frame is about 0.88 MiB |
+
+The Working Set change is recorded rather than claimed as zero. Retaining every frame would grow in proportion to thousands of approximately 0.88 MiB frames; the process stayed near 96–103 MiB and implementation/tests show no queue/history. Longer real-pipeline measurement remains T08/T09.
+
+#### Definition-of-Done check
+
+- [x] Webcam preview runs for two minutes and exits cleanly: visible 120 s duration run, exit 0.
+- [x] Sample video mode runs without a camera: automated factory assertion and real synthetic GUI run reach clean EOF.
+- [x] Failure to open the source produces an actionable error: missing video and unavailable-webcam simulation covered.
+- [x] Memory/queue does not grow because old frames are retained: synchronous read-render-discard design, ordering test, and bounded two-minute evidence.
+- [x] Source name, resolution, frame ID, basic FPS, and basic pipeline latency are visible on a copied frame.
+- [x] Tests are independent of webcam, network, models, and committed binary media.
+
+#### Deviations and decisions
+
+- **Decision ID:** `DEC-002`
+- **Decision:** Keep T01 synchronous with no application queue. Return `None` only for finite EOF and raise explicit live-source failures.
+- **Deviation from plan:** None; the plan permits a simple loop that cannot accumulate an unbounded queue.
+- **Trade-off/impact:** Minimal and deterministic for T02/T03. If inference later becomes slower than capture, T08 must introduce bounded latest-frame orchestration without changing `FrameSource` or `FramePacket`.
+- **Owner approval required:** no
+
+#### Problems, limitations, or blockers
+
+- Windows may produce equal consecutive `monotonic_ns()` values. Timestamps are non-decreasing but not guaranteed unique; frame ID is the uniqueness key.
+- `CAP_PROP_BUFFERSIZE=1` is a backend hint and MSMF may ignore it. T01 has no application queue; T08 owns capture-thread/latest-frame behavior if needed.
+- A local-video read failure after successful open is treated as EOF because OpenCV does not reliably distinguish EOF from mid-stream decode failure across codecs.
+- Working Set ended 6.87 MiB above its 15-second sample. It is not proportional to frame count, but must be remeasured with real T08 inference.
+- Two combined PowerShell media lifecycle commands were rejected by execution policy before running; generation, verification, preview, inspection, and deletion were rerun as separate scoped commands.
+
+#### Next action
+
+T02 — Garment segmentation vertical slice and T03 — White balance and lighting quality may now start in parallel from the verified T01 handoff commit.
+
+#### Version control
+
+- Branch: `mvp`
+- Planned commit message: `feat: add camera and video preview`
+- Planned handoff tag: `t01-handoff-v1`
+- Known-good pre-T01 baseline: `collab-baseline-v2` / `e0ab09fc51ed139b9a3002fda25679f9a2761095`
 
 ---
 

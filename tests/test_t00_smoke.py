@@ -30,7 +30,7 @@ def test_module_help_exits_successfully_without_hardware() -> None:
 
     assert result.returncode == 0, result.stderr
     normalized_output = " ".join(result.stdout.split())
-    assert "Camera and video execution are introduced in T01" in normalized_output
+    assert "T01 previews a webcam or local video" in normalized_output
 
 
 def test_base_opencv_contrib_dependency_is_available() -> None:
