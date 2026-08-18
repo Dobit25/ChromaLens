@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-18 22:01 +07:00
+Last updated: 2026-08-18 22:07 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -31,7 +31,7 @@ This table is intentionally empty until an agent starts the plan.
 | Task ID | Task name | Status | Owner/agent | Started | Last updated | Evidence/entry |
 | --- | --- | --- | --- | --- | --- | --- |
 | T00 | Repository bootstrap and contracts | `DONE` | Codex | 2026-08-16 17:58 +07:00 | 2026-08-16 18:06 +07:00 | T00 start and completion entries below |
-| T00-GATE | Collaboration dependency-lock/CI gate | `DONE` | Codex | 2026-08-18 21:47 +07:00 | 2026-08-18 22:01 +07:00 | T00-GATE start and completion entries below |
+| T00-GATE | Collaboration dependency-lock/CI gate | `IN_PROGRESS` | Codex | 2026-08-18 21:47 +07:00 | 2026-08-18 22:07 +07:00 | T00-GATE entries and cloud-CI correction below |
 
 ## 3. Active blockers
 
@@ -464,6 +464,30 @@ T01 — Camera, video source, and base renderer. Do not start until owner handof
 - Atomic commit message: `chore: lock collaboration environment and add CI`
 - Baseline tag: `collab-baseline-v1`
 - Known-good pre-gate baseline: `1200e67e88f5c2b8add07f39d62f7f9084c5acc1`
+
+---
+
+### `2026-08-18 22:07 +07:00` — `T00-GATE` `Cloud CI corrective pass`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Codex
+**Plan reference:** T00-GATE verification correction; no change to T01–T11
+
+#### Observed failure and cause
+
+- GitHub Actions run `32152286399` executed commit `76c42a96ae24e3f2bab7276bf94c36cab645eae9` and failed in `Set up exact Python`; all later steps were skipped.
+- The public check annotation reports that `3.10.20 x64` is not available for the newly selected `Windows 2025` runner image. The official `actions/python-versions` manifest has no Windows artifact for Python 3.10.20.
+- The same run warns that the pinned checkout/setup-python actions use deprecated Node.js 20.
+
+#### Smallest corrective action
+
+Replace `actions/setup-python` with the Node.js 24 `conda-incubator/setup-miniconda` action and create CI's `lens` directly from the committed explicit Conda lock. Update checkout to its Node.js 24 release. Pin both actions to verified immutable tag SHAs, then rerun the existing lock, install, CLI, pytest, and artifact gates without changing dependencies or product scope.
+
+#### Version control
+
+- Failed cloud-CI commit: `76c42a96ae24e3f2bab7276bf94c36cab645eae9`
+- Failed run: `https://github.com/Dobit25/ChromaLens/actions/runs/32152286399`
+- `collab-baseline-v1` remains an immutable audit tag for the failed first attempt; it will not be moved or deleted.
 
 ---
 
