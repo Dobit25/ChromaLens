@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-20 00:35 +07:00
+Last updated: 2026-08-20 00:55 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -34,6 +34,7 @@ This table is intentionally empty until an agent starts the plan.
 | T00-GATE | Collaboration dependency-lock/CI gate | `DONE` | Codex | 2026-08-18 21:47 +07:00 | 2026-08-18 22:12 +07:00 | T00-GATE entries and successful cloud-CI evidence below |
 | T01 | Camera, video source, and base renderer | `DONE` | Codex | 2026-08-18 23:00 +07:00 | 2026-08-18 23:13 +07:00 | T01 start and completion entries below |
 | T02 | Garment segmentation vertical slice | `DONE` | Codex (integration audit) | 2026-08-19 15:06 +07:00 | 2026-08-20 00:35 +07:00 | Corrective implementation and successful PR CI entries below |
+| T03 | White balance and lighting quality | `DONE` | Codex | 2026-08-20 00:47 +07:00 | 2026-08-20 00:55 +07:00 | T03 start and completion entries below |
 
 ## 3. Active blockers
 
@@ -50,6 +51,7 @@ Use this section only for implementation decisions that affect later tasks. Deta
 | DEC-002 | 2026-08-18 | Use one common sequential `FrameSource` contract and a synchronous read-render-discard loop for T01; finite EOF is normal while live read failure is explicit. | T01, T02, T03, T08 | T01 completion entry |
 | DEC-003 | 2026-08-20 | Keep the locked MediaPipe person-derived torso mask as T02 P0 and name it honestly; it is not semantic garment parsing or calibrated confidence. | T02, T04, T06, T08, T09 | T02 corrective validation entry |
 | DEC-004 | 2026-08-20 | Apply the T02 four-hour gate: remove the unverified SCHP copy/runtime and defer any locked SCHP attempt to T10 after T08/T09. | T02, T08, T09, T10 | T02 corrective validation entry |
+| DEC-005 | 2026-08-20 | Keep one Gray-world balancer per ordered stream; use an optional mask only for gain estimation, apply EMA-smoothed gains globally, and report insufficient valid pixels as a visible poor-quality fallback. | T03, T04, T08, T09 | T03 completion entry |
 
 ## 5. Chronological entries
 
@@ -1226,6 +1228,199 @@ preceding entry.
 - Pull request: `#1`, base `mvp`
 - Exact next action: merge PR #1 into `mvp`, then integrate/complete T03 before
   starting T04, because T04 depends on both T02 and T03.
+
+---
+
+### `2026-08-20 00:47 +07:00` — `T03` `White balance and lighting quality`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Codex
+**Plan reference:** `plan.md#t03--white-balance-and-lighting-quality`
+**Requirements/rubric affected:** FR-04, NFR-01, Metric 03 explainable local pipeline
+
+#### Objective
+
+Implement configurable Gray-world correction, temporal EMA smoothing, and
+separate explainable lighting-quality diagnostics while preserving every
+`FramePacket.original_bgr` pixel.
+
+#### Starting state
+
+- Branch: `mvp`, directly authorized by the repository owner; no task branch
+  will be created or modified.
+- Baseline commit: `ea2b999ca99e70cff62ac41a82aba0cb76dab31f`, synchronized
+  with `origin/mvp` and clean before this log entry.
+- Required dependency T01 is `DONE`; the optional-mask producer T02 is also
+  `DONE` and merged.
+- Approved environment: conda environment `lens`, Python `3.10.20`; `pip
+  check` reports no broken requirements.
+- Baseline automated suite: `45 passed in 1.54s`.
+
+#### Smallest implementation that satisfies the Definition of Done
+
+- Add one stateful white-balance module using existing NumPy/OpenCV
+  dependencies and the existing `FramePacket`/`LightingQuality` contracts.
+- Keep valid brightness/saturation ranges, EMA coefficient, gain bounds, and
+  quality thresholds in a validated configuration dataclass.
+- Return raw gains and diagnostic values for evidence; write only derived
+  `corrected_rgb` and `lighting_quality` fields to a packet, never its source.
+- Add deterministic synthetic unit tests for neutrality improvement,
+  dark/clipped quality severity, temporal smoothing/flicker reduction,
+  optional-mask alignment, and source immutability.
+- Document the T03 behavior and heuristic limitations. No CLI integration or
+  T04 color extraction will be added.
+
+#### Commands and checks run before implementation
+
+```text
+git status --short --branch
+git rev-parse HEAD
+git rev-parse origin/mvp
+conda run -n lens python --version
+conda run -n lens python -m pip --version
+conda run -n lens python -m pip check
+conda run -n lens python -m pytest -q
+```
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Branch/baseline | PASS, exit 0 | `mvp...origin/mvp`; local and remote SHA both `ea2b999c...` |
+| Approved interpreter | PASS, exit 0 | Python 3.10.20; pip 26.1.2 inside `D:\Coding\Anaconda\envs\lens` |
+| Dependency consistency | PASS, exit 0 | `No broken requirements found` |
+| Baseline suite | PASS, exit 0 | `45 passed in 1.54s` |
+
+#### Definition-of-Done status at start
+
+- [ ] Synthetic channel cast moves closer to neutral gray.
+- [ ] Clipping/darkness severity changes lighting-quality output as expected.
+- [ ] Consecutive gain estimates are smoothed without obvious synthetic-video
+  frame flicker.
+- [ ] The original frame remains unchanged.
+
+#### Deviations, limitations, and blockers
+
+- Deviation from plan: none.
+- New dependency: none expected.
+- Active blocker: none.
+
+---
+
+### `2026-08-20 00:53 +07:00` — `T03` `White balance and lighting quality complete`
+
+**Status:** `DONE`
+**Owner/agent:** Codex
+**Plan reference:** `plan.md#t03--white-balance-and-lighting-quality`
+
+#### Outcome
+
+T03 now provides an offline, stateful `GrayWorldWhiteBalancer` with a
+validated configuration, explicit BGR-input/RGB-output boundary, bounded raw
+gains, per-stream EMA gains, optional estimation mask, fail-safe low-valid-
+pixel behavior, and separate raw lighting diagnostics. Processing populates
+only `FramePacket.corrected_rgb` and `FramePacket.lighting_quality`; the source
+frame, ID, and monotonic timestamp remain unchanged.
+
+#### Files changed
+
+| File | Change and reason |
+| --- | --- |
+| `src/chromalens/white_balance.py` | Added T03 configuration, result contract, Gray-world/EMA processor, diagnostics, quality mapping, validation, reset, and packet integration. |
+| `tests/unit/test_t03_white_balance.py` | Added 16 deterministic tests for all T03 calculations, contracts, fallback, mask, and immutability behavior. |
+| `tests/integration/test_t03_white_balance_video.py` | Added a real T01 local-video smoke test over a generated 13-frame MJPG sequence. |
+| `scripts/t03_lighting_evidence.py` | Added reproducible ignored PNG/JSON evidence generation. |
+| `README.md` | Documented API, channel order, per-stream state, evidence commands, thresholds, fallback, and Gray-world limitations. |
+| `codinglog.md` | Recorded T03 start, evidence, decision, and completion status. |
+
+#### Implementation and decisions
+
+- Valid gain-estimation pixels are constrained by configured HSV brightness
+  and saturation thresholds. An optional aligned boolean mask limits that
+  estimation set only; full-frame correction and lighting diagnostics remain
+  global.
+- Raw Gray-world BGR gains equalize valid-pixel channel means, are bounded to
+  `[0.5, 2.0]`, and are EMA-smoothed with configurable alpha `0.25` after the
+  first frame. `reset()` prevents state leakage between unrelated streams.
+- Dark and highlight-clipped fractions, maximum absolute log2 gain, and
+  maximum log2 gain change are retained as raw diagnostics. Configured
+  thresholds map them to `good`, `medium`, or `poor`.
+- If fewer than the configured valid fraction exist, the processor retains
+  the previous gain or uses identity on the first frame, sets
+  `used_fallback=True`, and reports `poor`. This avoids pretending that an
+  invalid Gray-world estimate succeeded.
+- **DEC-005:** T04/T08 must use one balancer per ordered source stream and the
+  corrected RGB output for downstream color work, while retaining
+  `original_bgr` for rendering/evidence.
+
+#### Commands run and observed results
+
+```text
+conda run -n lens python -m pytest -q tests\unit\test_t03_white_balance.py
+conda run -n lens python scripts\t03_lighting_evidence.py
+conda run -n lens python -m pytest -q tests\integration\test_t03_white_balance_video.py
+conda run -n lens python -m pip check
+conda run -n lens python -m chromalens --help
+conda run -n lens python -m pytest -q
+conda run -n lens python -m compileall -q src scripts tests
+git diff --exit-code -- pyproject.toml environment.yml requirements
+git diff --check
+git check-ignore -v artifacts/t03-lighting/evidence.json artifacts/t03-lighting/neutrality_comparison.png
+git ls-files artifacts .env '*.onnx' '*.pth' '*.pt' '*.mp4' '*.avi'
+```
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| T03 deterministic unit suite | PASS, exit 0 | Final run: `16 passed in 0.19s` |
+| Real T01 short-video integration | PASS, exit 0 | Final run: `1 passed in 0.16s`; 13 decoded MJPG frames |
+| Full repository suite | PASS, exit 0 | Final run: `62 passed in 1.53s` |
+| CLI remains hardware independent | PASS, exit 0 | Help printed; no camera, model, or special device opened |
+| Dependency consistency | PASS, exit 0 | `No broken requirements found` |
+| Dependency/lock stability | PASS, exit 0 | No diff in `pyproject.toml`, `environment.yml`, or `requirements/` |
+| Compile, whitespace, and size checks | PASS, exit 0 | All Python compiled; `git diff --check` clean; no tracked file exceeds 5 MiB |
+| Artifact policy | PASS, exit 0 | T03 PNG/JSON matched `artifacts/` ignore; no queried generated/model/media binary is tracked |
+| Visual evidence review | PASS | `artifacts/t03-lighting/neutrality_comparison.png` opened and visually inspected locally |
+
+#### Measured deterministic evidence
+
+These are controlled synthetic checks, not demo-hardware performance or
+physical color-accuracy claims.
+
+| Measurement | Observed value |
+| --- | ---: |
+| RGB channel-mean spread before correction | 39.25 |
+| RGB channel-mean spread after correction | 0.25 |
+| Short-sequence frame count | 13 |
+| Maximum raw consecutive gain jump | 0.106500 log2 |
+| Maximum EMA-smoothed gain jump | 0.019420 log2 |
+| Neutral/dark/clipped quality sequence | `good`; 25% dark `medium`; 70% dark `poor`; 10% clipped `medium`; 40% clipped `poor` |
+
+#### Definition of Done
+
+- [x] A deterministic synthetic red-channel cast moves substantially closer
+  to neutral gray: channel-mean spread decreases from 39.25 to 0.25.
+- [x] Controlled darkness and clipping severity changes the lighting label
+  from `good` through `medium` to `poor`, with raw fractions asserted.
+- [x] Consecutive estimates are EMA-smoothed in both array-sequence unit tests
+  and a 13-frame MJPG file processed through the real T01 video source; the
+  integration test bounds the maximum step and verifies lower output jumps.
+- [x] Unit and video-integration tests compare every original source array
+  before/after processing and confirm it remains byte-identical.
+
+#### Deviations and known limitations
+
+- Deviation from `plan.md`: none. No dependency, model, dataset, CLI feature,
+  or T04 work was added.
+- Gray-world assumes the selected region is neutral on average. It cannot
+  recover physical ground-truth color under arbitrary or mixed illumination.
+- Thresholds and quality labels are explainable heuristics, not calibrated
+  probabilities. They require T09 evaluation and possible tuning on declared
+  demo footage/hardware.
+- T03 does not yet run in the default preview loop; T08 owns pipeline
+  composition. T04 can consume the module directly now.
+
+#### Exact next task
+
+`T04 — Dominant color extraction and 11-name mapping`, whose dependencies T02
+and T03 are now both `DONE`.
 
 ---
 

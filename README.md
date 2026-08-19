@@ -1,9 +1,9 @@
 # ChromaLens AI
 
 ChromaLens AI is a local, explainable color-vision assistance prototype for
-clothing. **T01** (webcam/video preview) and the locked **T02** MediaPipe torso-
-mask baseline are complete. Lighting correction begins in T03; color extraction
-in T04.
+clothing. **T01** (webcam/video preview), the locked **T02** MediaPipe torso-
+mask baseline, and **T03** lighting correction are complete. Color extraction
+begins in T04.
 
 The MVP is assistive software, not a medical diagnosis tool. The user selects
 their CVD profile and severity.
@@ -121,6 +121,50 @@ The command writes five reviewable overlays plus `evidence.json` under the
 ignored `artifacts/t02-segmentation/` directory. Fixture provenance, rights,
 and checksums are recorded in `tests/samples/t02/README.md`.
 
+## White balance and lighting quality (T03)
+
+`GrayWorldWhiteBalancer` accepts an OpenCV `uint8 H × W × 3` BGR frame and
+returns a new RGB frame. It estimates bounded Gray-world gains from pixels in
+the configured brightness/saturation range, then applies per-stream EMA to
+the gains. An optional aligned boolean mask may restrict only the estimation
+region; correction and whole-frame lighting diagnostics remain global.
+
+```python
+from chromalens.white_balance import GrayWorldWhiteBalancer
+
+white_balancer = GrayWorldWhiteBalancer()
+result = white_balancer.process(packet, estimation_mask=garment_mask)
+
+# packet.original_bgr is unchanged
+corrected_rgb = packet.corrected_rgb
+quality = packet.lighting_quality
+```
+
+Use one balancer instance per ordered camera/video stream and call `reset()`
+before reusing it for an unrelated stream. `WhiteBalanceResult` exposes raw
+and EMA-smoothed BGR gains, the valid-pixel fraction, and fallback use. If too
+few eligible pixels exist, correction uses the previous gain (or identity for
+the first frame) and reports `poor`; it never reports a fabricated successful
+estimate.
+
+The `good`/`medium`/`poor` label is a configurable heuristic over dark-pixel
+fraction, highlight-clipped fraction, gain extremity, and temporal gain
+variation. Raw values remain available in `LightingQuality`; the label is not
+a calibrated probability or color-confidence score. Gray-world reduces a
+global channel cast under its neutral-scene assumption, but does not recover
+physical ground-truth garment color under arbitrary or mixed illumination.
+
+Reproduce the deterministic T03 evidence without a camera, network, model, or
+special hardware:
+
+```powershell
+conda run --name lens python scripts/t03_lighting_evidence.py
+conda run --name lens python -m pytest -q tests/unit/test_t03_white_balance.py
+```
+
+The evidence command writes a before/after comparison and raw JSON metrics to
+the ignored `artifacts/t03-lighting/` directory.
+
 ## Camera and local-video preview
 
 Run the webcam preview using the default camera index:
@@ -204,8 +248,12 @@ media and verifies that video mode never opens a webcam.
 - Face detection and the upper-body cutoff (`upper_body_ratio=0.80`) are
   heuristics and can clip clothing or retain non-clothing pixels, especially
   with occlusion, multiple people, unusual poses, or an undetected face.
-- T02 contains segmentation only; color extraction, CVD-risk, recoloring, and
-  performance-target claims belong to later tasks.
+- T03 uses the Gray-world neutral-scene assumption and heuristic lighting
+  thresholds. Mixed illuminants, strongly single-colored scenes, or very few
+  eligible pixels can limit correction; `used_fallback` and `valid_fraction`
+  expose the latter case.
+- T02/T03 contain segmentation and lighting correction only; color extraction,
+  CVD-risk, recoloring, and performance-target claims belong to later tasks.
 - Model weights, datasets, generated artifacts, and private footage are not
   included. See `models/README.md` for download policy.
 
