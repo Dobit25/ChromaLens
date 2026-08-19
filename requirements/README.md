@@ -4,9 +4,11 @@
 and MD5 checksums. `py310-win64.lock` is generated from the base dependencies
 and `dev` extra in `pyproject.toml`. `lock-tools-py310-win64.lock` is generated
 from the base and `lock` extra so CI can verify lock freshness using a hashed
-lock generator.
+lock generator. `segment-mediapipe-py310-win64.lock` contains the base, `dev`,
+and `segment-mediapipe` closures, including every transitive MediaPipe/JAX
+artifact hash.
 
-All three target the declared Windows/Python 3.10 collaboration platform and
+All four target the declared Windows/Python 3.10 collaboration platform and
 are never edited casually. The integration owner regenerates them with the
 exact commands documented in the repository root `README.md` whenever an
 approved direct or bootstrap dependency changes.

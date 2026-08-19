@@ -1,9 +1,9 @@
 # ChromaLens AI
 
 ChromaLens AI is a local, explainable color-vision assistance prototype for
-clothing. The current repository state includes the T01 webcam/local-video
-preview and base renderer. Garment segmentation begins in T02; lighting
-correction begins in T03.
+clothing. **T01** (webcam/video preview) and the locked **T02** MediaPipe torso-
+mask baseline are complete. Lighting correction begins in T03; color extraction
+in T04.
 
 The MVP is assistive software, not a medical diagnosis tool. The user selects
 their CVD profile and severity.
@@ -63,17 +63,63 @@ direct dependency change:
 conda run --name lens python -m pip install --editable ".[lock]"
 conda run --name lens pip-compile pyproject.toml --extra dev --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/py310-win64.lock
 conda run --name lens pip-compile pyproject.toml --extra lock --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/lock-tools-py310-win64.lock
+conda run --name lens pip-compile pyproject.toml --extra dev --extra segment-mediapipe --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/segment-mediapipe-py310-win64.lock
 conda list --explicit --md5 --name lens
 ```
 
 Review the final command's output and save it as
 `requirements/conda-win-64.lock`; never overwrite the committed lock without
 reviewing every artifact URL, build, and checksum. Then repeat the locked
-install and all verification commands. Task branches
-must not independently choose MediaPipe, DaltonLens, PyTorch, SCHP, ONNX, or
-OpenVINO versions. Those dependencies are added to explicit optional groups
-and the integration lock only when their owning task reaches its dependency
-gate.
+install and all verification commands. Task branches must not independently choose MediaPipe, DaltonLens, PyTorch,
+SCHP, ONNX, or OpenVINO versions. Those dependencies are added to explicit
+optional groups and the integration lock only when their owning task reaches
+its dependency gate.
+
+## Garment segmentation (T02)
+
+Install the complete, hashed MediaPipe dependency closure before running
+segmentation. Do not resolve the optional group directly:
+
+```powershell
+conda run --name lens python -m pip install --require-hashes --requirement requirements/segment-mediapipe-py310-win64.lock
+conda run --name lens python -m pip install --no-build-isolation --no-deps --editable ".[dev,segment-mediapipe]"
+```
+
+This installs `mediapipe==0.10.21` and every transitive dependency at the
+committed hashes. Model assets are bundled inside the MediaPipe wheel; no
+manual download is required. See `models/README.md` for source, license
+(Apache-2.0), and the deferred SCHP-ATR decision.
+
+```python
+from chromalens.segmentation import MediaPipeSegmenter
+
+with MediaPipeSegmenter() as seg:
+    regions = seg.segment(packet)   # returns tuple[GarmentRegion, ...]
+```
+
+Each `GarmentRegion` carries a boolean `H × W` mask, `class_name`, and
+`mask_confidence`. Here confidence is the mean MediaPipe person-foreground
+score inside the retained mask; it is a heuristic, not a calibrated garment
+probability. The debug overlay draws mask fills and a text panel
+onto a copy of the source frame:
+
+```python
+from chromalens.segmentation import draw_mask_overlay
+
+debug_frame = draw_mask_overlay(
+    packet.original_bgr, regions, backend_info=seg.device_info
+)
+```
+
+Reproduce the five-scene, real-runtime evidence without a camera or network:
+
+```powershell
+conda run --name lens python scripts/t02_segmentation_evidence.py
+```
+
+The command writes five reviewable overlays plus `evidence.json` under the
+ignored `artifacts/t02-segmentation/` directory. Fixture provenance, rights,
+and checksums are recorded in `tests/samples/t02/README.md`.
 
 ## Camera and local-video preview
 
@@ -149,13 +195,19 @@ media and verifies that video mode never opens a webcam.
 
 ## Current limitations
 
-- T01 contains capture and diagnostics only; it makes no segmentation, color,
-  CVD-risk, recoloring, or performance-target claim.
-- MediaPipe and SCHP classes are T00 contract placeholders. Calling inference
-  raises a backend-specific exception; no placeholder returns a fabricated
-  mask.
+- MediaPipe Selfie Segmentation predicts prominent humans, not semantic
+  garment classes. T02 combines it with face exclusion and vertical cleanup to
+  approximate a torso/upper-clothes mask. Hands, carried objects, or background
+  attached to the person silhouette can remain.
+- SCHP-ATR was not validated within the T02 time box and is explicitly
+  `DEFERRED` to T10; its dependencies and weights are not installed.
+- Face detection and the upper-body cutoff (`upper_body_ratio=0.80`) are
+  heuristics and can clip clothing or retain non-clothing pixels, especially
+  with occlusion, multiple people, unusual poses, or an undetected face.
+- T02 contains segmentation only; color extraction, CVD-risk, recoloring, and
+  performance-target claims belong to later tasks.
 - Model weights, datasets, generated artifacts, and private footage are not
-  included.
+  included. See `models/README.md` for download policy.
 
 ## License
 

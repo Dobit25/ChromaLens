@@ -19,6 +19,34 @@ class Segmenter(ABC):
     def backend_name(self) -> str:
         """Return a stable user-visible backend identifier."""
 
+    @property
+    @abstractmethod
+    def device_info(self) -> str:
+        """Return a human-readable backend + device string for UI and logs.
+
+        Examples:
+            ``"mediapipe-selfie-torso/cpu"``
+            ``"schp-atr/cuda:0"``
+        """
+
     @abstractmethod
     def segment(self, packet: FramePacket) -> tuple[GarmentRegion, ...]:
-        """Return garment masks aligned with ``packet.original_bgr``."""
+        """Return garment masks aligned with ``packet.original_bgr``.
+
+        Args:
+            packet: Source frame packet; ``original_bgr`` must not be mutated.
+
+        Returns:
+            Zero or more :class:`~chromalens.contracts.GarmentRegion` objects,
+            each with a boolean mask of the same spatial dimensions as the
+            source frame.
+        """
+
+    def close(self) -> None:
+        """Release backend resources. Safe to call multiple times."""
+
+    def __enter__(self) -> "Segmenter":
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        self.close()
