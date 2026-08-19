@@ -43,14 +43,21 @@ def test_config_rejects_out_of_range_severity() -> None:
 
 
 def test_placeholder_backend_fails_fast_without_fabricating_output() -> None:
+    # T02: MediaPipeSegmenter is now a real backend, not a T00 placeholder.
+    # When mediapipe is not installed it must raise MediaPipeBackendUnavailableError
+    # with an actionable install hint — never return a fabricated mask.
     packet = FramePacket(
         frame_id=0,
         timestamp_ns=0,
         original_bgr=np.zeros((2, 2, 3), dtype=np.uint8),
     )
 
-    with pytest.raises(MediaPipeBackendUnavailableError, match="not implemented in T00"):
+    with pytest.raises(
+        MediaPipeBackendUnavailableError,
+        match="segment-mediapipe",  # actionable install hint must be present
+    ):
         MediaPipeSegmenter().segment(packet)
+
 
 
 def test_default_cli_does_not_call_placeholder_backends() -> None:
