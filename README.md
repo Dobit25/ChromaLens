@@ -1,9 +1,9 @@
 # ChromaLens AI
 
 ChromaLens AI is a local, explainable color-vision assistance prototype for
-clothing. **T01** (webcam/video preview) and **T02** (garment segmentation,
-MediaPipe baseline) are complete. Lighting correction begins in T03;
-color extraction in T04.
+clothing. **T01** (webcam/video preview) and the locked **T02** MediaPipe torso-
+mask baseline are complete. Lighting correction begins in T03; color extraction
+in T04.
 
 The MVP is assistive software, not a medical diagnosis tool. The user selects
 their CVD profile and severity.
@@ -63,6 +63,7 @@ direct dependency change:
 conda run --name lens python -m pip install --editable ".[lock]"
 conda run --name lens pip-compile pyproject.toml --extra dev --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/py310-win64.lock
 conda run --name lens pip-compile pyproject.toml --extra lock --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/lock-tools-py310-win64.lock
+conda run --name lens pip-compile pyproject.toml --extra dev --extra segment-mediapipe --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/segment-mediapipe-py310-win64.lock
 conda list --explicit --md5 --name lens
 ```
 
@@ -76,16 +77,18 @@ its dependency gate.
 
 ## Garment segmentation (T02)
 
-The MediaPipe baseline is implemented. Install the optional group before
-running segmentation:
+Install the complete, hashed MediaPipe dependency closure before running
+segmentation. Do not resolve the optional group directly:
 
 ```powershell
-conda run --name lens python -m pip install ".[segment-mediapipe]"
+conda run --name lens python -m pip install --require-hashes --requirement requirements/segment-mediapipe-py310-win64.lock
+conda run --name lens python -m pip install --no-build-isolation --no-deps --editable ".[dev,segment-mediapipe]"
 ```
 
-This installs `mediapipe==0.10.21`. Model weights are bundled inside the
-MediaPipe wheel — no manual download required. See `models/README.md` for
-source, license (Apache-2.0), and SCHP-ATR (P1) download steps.
+This installs `mediapipe==0.10.21` and every transitive dependency at the
+committed hashes. Model assets are bundled inside the MediaPipe wheel; no
+manual download is required. See `models/README.md` for source, license
+(Apache-2.0), and the deferred SCHP-ATR decision.
 
 ```python
 from chromalens.segmentation import MediaPipeSegmenter
@@ -95,7 +98,9 @@ with MediaPipeSegmenter() as seg:
 ```
 
 Each `GarmentRegion` carries a boolean `H × W` mask, `class_name`, and
-`mask_confidence`. The debug overlay draws mask fills and a text panel
+`mask_confidence`. Here confidence is the mean MediaPipe person-foreground
+score inside the retained mask; it is a heuristic, not a calibrated garment
+probability. The debug overlay draws mask fills and a text panel
 onto a copy of the source frame:
 
 ```python
@@ -105,6 +110,16 @@ debug_frame = draw_mask_overlay(
     packet.original_bgr, regions, backend_info=seg.device_info
 )
 ```
+
+Reproduce the five-scene, real-runtime evidence without a camera or network:
+
+```powershell
+conda run --name lens python scripts/t02_segmentation_evidence.py
+```
+
+The command writes five reviewable overlays plus `evidence.json` under the
+ignored `artifacts/t02-segmentation/` directory. Fixture provenance, rights,
+and checksums are recorded in `tests/samples/t02/README.md`.
 
 ## Camera and local-video preview
 
@@ -180,11 +195,15 @@ media and verifies that video mode never opens a webcam.
 
 ## Current limitations
 
-- T02 provides an upper-clothes mask only via MediaPipe SelfieSegmentation.
-  SCHP-ATR (per-class: pants, skirt, dress) is the P1 backend, pending model
-  download approval from the integration owner.
-- The upper-body height filter (`upper_body_ratio=0.75`) is a heuristic and
-  may clip tall subjects standing very close to the camera.
+- MediaPipe Selfie Segmentation predicts prominent humans, not semantic
+  garment classes. T02 combines it with face exclusion and vertical cleanup to
+  approximate a torso/upper-clothes mask. Hands, carried objects, or background
+  attached to the person silhouette can remain.
+- SCHP-ATR was not validated within the T02 time box and is explicitly
+  `DEFERRED` to T10; its dependencies and weights are not installed.
+- Face detection and the upper-body cutoff (`upper_body_ratio=0.80`) are
+  heuristics and can clip clothing or retain non-clothing pixels, especially
+  with occlusion, multiple people, unusual poses, or an undetected face.
 - T02 contains segmentation only; color extraction, CVD-risk, recoloring, and
   performance-target claims belong to later tasks.
 - Model weights, datasets, generated artifacts, and private footage are not

@@ -48,7 +48,7 @@ def draw_mask_overlay(
             aligned with ``bgr_frame``.
         alpha: Opacity of the colour overlay (0 = transparent, 1 = opaque).
         backend_info: Short string displayed in the top-left panel
-            (e.g. ``"mediapipe/cpu"``).
+            (e.g. ``"mediapipe-selfie-torso/cpu"``).
         font_scale: OpenCV font scale for overlay text.
         font_thickness: OpenCV font thickness for overlay text.
 

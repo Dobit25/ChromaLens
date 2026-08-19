@@ -307,7 +307,31 @@ class TestMediaPipeSegmenterConfig:
     def test_default_config_values_are_within_valid_ranges(self) -> None:
         config = MediaPipeSegmenterConfig()
         assert config.model_selection in (0, 1)
+        assert config.face_model_selection in (0, 1)
+        assert 0.0 <= config.face_min_detection_confidence <= 1.0
         assert 0.0 < config.confidence_threshold < 1.0
+        assert 0.0 <= config.head_skip_ratio < config.upper_body_ratio
         assert 0.0 < config.upper_body_ratio <= 1.0
         assert 0.0 < config.min_area_ratio < 1.0
         assert config.morph_kernel_size >= 1
+        assert config.morph_kernel_size % 2 == 1
+
+    @pytest.mark.parametrize(
+        ("kwargs", "message"),
+        [
+            ({"model_selection": 2}, "model_selection"),
+            ({"face_min_detection_confidence": 1.1}, "within"),
+            (
+                {"head_skip_ratio": 0.8, "upper_body_ratio": 0.8},
+                "below",
+            ),
+            ({"morph_kernel_size": 4}, "odd"),
+        ],
+    )
+    def test_invalid_config_is_rejected(
+        self,
+        kwargs: dict[str, int | float],
+        message: str,
+    ) -> None:
+        with pytest.raises(ValueError, match=message):
+            MediaPipeSegmenterConfig(**kwargs)  # type: ignore[arg-type]

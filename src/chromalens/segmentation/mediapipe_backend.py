@@ -1,7 +1,10 @@
-"""MediaPipe Selfie Segmentation backend for garment masking.
+"""MediaPipe person segmentation adapted into a torso-mask baseline.
 
-This backend uses MediaPipe's SelfieSegmentation (model_selection=1, full-body)
-to produce an upper-clothes binary mask aligned with the source frame.
+MediaPipe Selfie Segmentation produces a person/background confidence map, not
+semantic garment classes. ChromaLens combines that map with MediaPipe face
+detection and explicit vertical bounds to obtain a documented, heuristic torso
+mask for the T02 P0 vertical slice. It must not be described as calibrated
+garment parsing; SCHP or another human parser remains a later comparison gate.
 
 Dependency group: segment-mediapipe
 Install:  pip install "chromalens-ai[segment-mediapipe]"
@@ -48,12 +51,17 @@ class MediaPipeSegmenterConfig:
     Document changes to these values in codinglog.md.
 
     Attributes:
-        model_selection: 0 = general (faster), 1 = landscape/full-body (better).
+        model_selection: Selfie Segmentation model. ``0`` is the general
+            model; ``1`` is the landscape model.
+        face_model_selection: Face Detection model. ``0`` targets faces within
+            2 metres; ``1`` is the full-range model.
+        face_min_detection_confidence: MediaPipe face detector threshold.
+        face_margin_ratio: Extra fraction of detected face height excluded
+            below the face box to avoid retaining the chin/neck.
         confidence_threshold: Minimum per-pixel probability to classify as
             foreground. Default 0.5 is the recommended starting point.
-        head_skip_ratio: Fraction of frame height (from top) to exclude.
-            Removes face/head region which SelfieSegmentation includes in the
-            silhouette but is not a garment. Default 0.20 skips top 20%.
+        head_skip_ratio: Fallback fraction of frame height excluded when face
+            detection does not return a usable box.
         upper_body_ratio: Fraction of frame height (from top) that defines the
             lower boundary of the valid garment region. Limits false positives
             from floor/background.
@@ -63,11 +71,35 @@ class MediaPipeSegmenterConfig:
     """
 
     model_selection: int = 1
+    face_model_selection: int = 1
+    face_min_detection_confidence: float = 0.40
+    face_margin_ratio: float = 0.10
     confidence_threshold: float = 0.5
-    head_skip_ratio: float = 0.22        # skip top 22% -- excludes face/head
-    upper_body_ratio: float = 0.80       # keep up to 80% height -- torso region
+    head_skip_ratio: float = 0.22
+    upper_body_ratio: float = 0.80
     min_area_ratio: float = 0.005
     morph_kernel_size: int = 5
+
+    def __post_init__(self) -> None:
+        if self.model_selection not in (0, 1):
+            raise ValueError("model_selection must be 0 or 1")
+        if self.face_model_selection not in (0, 1):
+            raise ValueError("face_model_selection must be 0 or 1")
+        for name in (
+            "face_min_detection_confidence",
+            "face_margin_ratio",
+            "confidence_threshold",
+            "head_skip_ratio",
+            "upper_body_ratio",
+            "min_area_ratio",
+        ):
+            value = getattr(self, name)
+            if not 0.0 <= value <= 1.0:
+                raise ValueError(f"{name} must be within [0, 1]")
+        if self.head_skip_ratio >= self.upper_body_ratio:
+            raise ValueError("head_skip_ratio must be below upper_body_ratio")
+        if self.morph_kernel_size < 1 or self.morph_kernel_size % 2 == 0:
+            raise ValueError("morph_kernel_size must be a positive odd integer")
 
 
 # ---------------------------------------------------------------------------
@@ -105,14 +137,14 @@ def apply_mask_cleanup(
     upper_body_ratio: float = 0.80,
     min_area_ratio: float = 0.005,
     morph_kernel_size: int = 5,
+    head_cutoff_row: int | None = None,
 ) -> BinaryMask:
     """Threshold, filter, and clean a MediaPipe confidence map.
 
     Steps:
         1. Threshold at ``threshold`` -> raw boolean mask.
-        2. Apply head exclusion: zero out the top ``head_skip_ratio`` rows
-           to remove face/hair which SelfieSegmentation includes in the
-           person silhouette but are not garments.
+        2. Apply head exclusion using ``head_cutoff_row`` when face detection
+           succeeded, otherwise use ``head_skip_ratio`` as a fallback.
         3. Apply lower body cutoff: zero out rows below ``upper_body_ratio``
            to remove legs/floor false positives.
         4. Morphological open then close to remove noise and fill small holes.
@@ -129,6 +161,8 @@ def apply_mask_cleanup(
             lower boundary of the garment region.
         min_area_ratio: Minimum component size as a fraction of frame area.
         morph_kernel_size: Square structuring element size in pixels.
+        head_cutoff_row: Optional absolute row immediately below a detected
+            face. When supplied, this overrides ``head_skip_ratio``.
 
     Returns:
         Boolean ``H x W`` mask aligned with the source frame.
@@ -143,13 +177,30 @@ def apply_mask_cleanup(
         )
 
     h, w = confidence_map.shape
+    if not 0.0 <= threshold <= 1.0:
+        raise ValueError("threshold must be within [0, 1]")
+    if not 0.0 <= head_skip_ratio <= upper_body_ratio <= 1.0:
+        raise ValueError(
+            "head_skip_ratio and upper_body_ratio must satisfy "
+            "0 <= head_skip_ratio <= upper_body_ratio <= 1"
+        )
+    if not 0.0 <= min_area_ratio <= 1.0:
+        raise ValueError("min_area_ratio must be within [0, 1]")
+    if morph_kernel_size < 1 or morph_kernel_size % 2 == 0:
+        raise ValueError("morph_kernel_size must be a positive odd integer")
+    if head_cutoff_row is not None and not 0 <= head_cutoff_row <= h:
+        raise ValueError(f"head_cutoff_row must be within [0, {h}]")
     total_pixels = h * w
 
     # Step 1 -- threshold
     raw_mask = confidence_map >= threshold
 
     # Step 2 -- head/face exclusion (top region)
-    head_cutoff = int(h * head_skip_ratio)
+    head_cutoff = (
+        head_cutoff_row
+        if head_cutoff_row is not None
+        else int(h * head_skip_ratio)
+    )
     raw_mask[:head_cutoff, :] = False
 
     # Step 3 -- lower body cutoff
@@ -224,10 +275,11 @@ def compute_mask_confidence(
 # ---------------------------------------------------------------------------
 
 class MediaPipeSegmenter(Segmenter):
-    """Garment segmenter backed by MediaPipe SelfieSegmentation.
+    """Torso-mask baseline backed by MediaPipe Selfie Segmentation.
 
-    This backend produces a single ``"upper-clothes"`` region per frame.
-    It is the P0 baseline for T02; SCHP-ATR (T02 P1) adds per-class labels.
+    This backend produces one person-derived ``"upper-clothes"`` region per
+    frame. It is not semantic clothing parsing and cannot distinguish a shirt
+    from skin or a foreground object included in the person silhouette.
 
     Example::
 
@@ -246,13 +298,29 @@ class MediaPipeSegmenter(Segmenter):
             config: Backend configuration. Uses defaults if not provided.
 
         Raises:
-            MediaPipeBackendUnavailableError: If mediapipe cannot be imported.
+            MediaPipeBackendUnavailableError: If MediaPipe cannot be imported
+                or either required solution cannot be initialised.
         """
         self._config = config or MediaPipeSegmenterConfig()
         mp = _import_mediapipe()
-        self._selfie = mp.solutions.selfie_segmentation.SelfieSegmentation(
-            model_selection=self._config.model_selection
-        )
+        self._selfie = None
+        try:
+            self._selfie = mp.solutions.selfie_segmentation.SelfieSegmentation(
+                model_selection=self._config.model_selection
+            )
+            self._face = mp.solutions.face_detection.FaceDetection(
+                model_selection=self._config.face_model_selection,
+                min_detection_confidence=(
+                    self._config.face_min_detection_confidence
+                ),
+            )
+        except Exception as exc:
+            if self._selfie is not None:
+                self._selfie.close()
+            raise MediaPipeBackendUnavailableError(
+                "MediaPipe segmentation models could not be initialised. "
+                "Verify the locked segment-mediapipe environment and retry."
+            ) from exc
         self._closed = False
         _logger.info(
             "MediaPipeSegmenter initialised (model_selection=%d)",
@@ -263,11 +331,11 @@ class MediaPipeSegmenter(Segmenter):
 
     @property
     def backend_name(self) -> str:
-        return "mediapipe"
+        return "mediapipe-selfie-torso"
 
     @property
     def device_info(self) -> str:
-        return "mediapipe/cpu"
+        return "mediapipe-selfie-torso/cpu"
 
     def segment(self, packet: FramePacket) -> tuple[GarmentRegion, ...]:
         """Segment a single frame and return upper-clothes region.
@@ -302,8 +370,24 @@ class MediaPipeSegmenter(Segmenter):
             )
             return ()
 
-        # segmentation_mask is float32 H×W in [0, 1]
-        confidence_map: NDArray[np.float32] = result.segmentation_mask
+        # MediaPipe normally returns an aligned float32 H x W map. Normalize
+        # explicitly so the public Segmenter contract remains true if a
+        # runtime revision returns a different dtype or resolution.
+        confidence_map = np.asarray(result.segmentation_mask, dtype=np.float32)
+        frame_height, frame_width = packet.original_bgr.shape[:2]
+        if confidence_map.shape != (frame_height, frame_width):
+            confidence_map = cv2.resize(
+                confidence_map,
+                (frame_width, frame_height),
+                interpolation=cv2.INTER_LINEAR,
+            ).astype(np.float32, copy=False)
+
+        face_result = self._face.process(frame_rgb)
+        head_cutoff_row = _face_exclusion_row(
+            face_result.detections,
+            frame_height=frame_height,
+            margin_ratio=self._config.face_margin_ratio,
+        )
 
         mask = apply_mask_cleanup(
             confidence_map,
@@ -312,6 +396,7 @@ class MediaPipeSegmenter(Segmenter):
             upper_body_ratio=self._config.upper_body_ratio,
             min_area_ratio=self._config.min_area_ratio,
             morph_kernel_size=self._config.morph_kernel_size,
+            head_cutoff_row=head_cutoff_row,
         )
 
         if not mask.any():
@@ -330,6 +415,32 @@ class MediaPipeSegmenter(Segmenter):
     def close(self) -> None:
         """Release MediaPipe resources. Safe to call multiple times."""
         if not self._closed:
-            self._selfie.close()
-            self._closed = True
+            try:
+                self._face.close()
+            finally:
+                self._selfie.close()
+                self._closed = True
             _logger.debug("MediaPipeSegmenter closed")
+
+
+def _face_exclusion_row(
+    detections: object,
+    *,
+    frame_height: int,
+    margin_ratio: float,
+) -> int | None:
+    """Return a conservative global row below all detected face boxes."""
+    if not detections:
+        return None
+
+    cutoffs: list[int] = []
+    for detection in detections:  # type: ignore[union-attr]
+        box = detection.location_data.relative_bounding_box
+        if box.height <= 0:
+            continue
+        relative_bottom = box.ymin + box.height * (1.0 + margin_ratio)
+        cutoffs.append(round(relative_bottom * frame_height))
+
+    if not cutoffs:
+        return None
+    return max(0, min(frame_height, max(cutoffs)))

@@ -10,8 +10,8 @@ Each backend documents its source, license, and setup steps below.
 
 | Field | Value |
 |---|---|
-| Backend | `mediapipe` (`MediaPipeSegmenter`) |
-| Model | SelfieSegmentation `model_selection=1` (landscape / full-body) |
+| Backend | `mediapipe-selfie-torso` (`MediaPipeSegmenter`) |
+| Models | Selfie Segmentation `model_selection=1` (landscape) and Face Detection `model_selection=1` (full range) |
 | Source | Bundled with the `mediapipe` Python package |
 | License | Apache-2.0 — https://github.com/google/mediapipe/blob/master/LICENSE |
 | Download | **Automatic** — no manual step required |
@@ -19,14 +19,17 @@ Each backend documents its source, license, and setup steps below.
 
 ### Setup
 
-```bash
-pip install "chromalens-ai[segment-mediapipe]"
-# mediapipe==0.10.21 — last version supporting Python 3.10 on Windows
+```powershell
+conda run --name lens python -m pip install --require-hashes --requirement requirements/segment-mediapipe-py310-win64.lock
+conda run --name lens python -m pip install --no-build-isolation --no-deps --editable ".[dev,segment-mediapipe]"
 ```
 
 ### Notes
 
-- The model weights are embedded inside the `mediapipe` wheel.
+- The model assets are embedded inside the locked `mediapipe==0.10.21` wheel.
+- Selfie Segmentation predicts a prominent-person mask. Face exclusion and
+  vertical cleanup are ChromaLens heuristics; this is not semantic garment
+  parsing and `mask_confidence` is not a calibrated garment probability.
 - No checkpoint file is written to this directory.
 - Attribution: MediaPipe Authors, Google LLC (Apache-2.0).
 
@@ -41,21 +44,22 @@ pip install "chromalens-ai[segment-mediapipe]"
 | Source | https://github.com/GoGoDuck912/Self-Correction-Human-Parsing |
 | License | MIT — see upstream repository |
 | Reported accuracy | mIoU ≈ 82.29% on ATR test set (author benchmark, not validated here) |
-| Expected path | `models/schp_atr.pth` |
-| File size | ~195 MB |
-| Status | **NOT DOWNLOADED** — placeholder only until T02 SCHP gate |
+| Expected path | To be assigned only if T10 approves the backend |
+| File size | Not verified locally |
+| Status | **DEFERRED TO T10** by the T02 four-hour decision gate; no runtime or weights installed |
 
-### Download steps (when approved by integration owner)
+### T10 re-evaluation procedure (only when approved by integration owner)
 
-```bash
-# 1. Confirm with Tung (integration owner) before downloading.
-# 2. Download the ATR pretrained checkpoint from the upstream release page:
-#    https://github.com/GoGoDuck912/Self-Correction-Human-Parsing/releases
-# 3. Place the file at:
-#    models/schp_atr.pth
-# 4. Verify SHA-256 checksum (record here after download):
-#    sha256sum models/schp_atr.pth
-```
+1. Confirm that T08 and the T09 protocol are complete and obtain integration-
+   owner approval before downloading or adding PyTorch.
+2. Use the ATR checkpoint linked from the
+   [official upstream README](https://github.com/GoGoDuck912/Self-Correction-Human-Parsing#simple-out-of-box-extractor).
+   Upstream distributes it through Google Drive, not GitHub Releases.
+3. Review and lock a Python 3.10/Windows-compatible PyTorch closure separately.
+4. Record the downloaded checkpoint's exact filename, byte size, and SHA-256
+   before placing it at an approved ignored path.
+5. Validate preprocessing, output geometry, class mapping, and masks against
+   the frozen T09 samples before implementing a selectable backend.
 
 ### ATR class index
 

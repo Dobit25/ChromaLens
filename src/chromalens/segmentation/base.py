@@ -17,7 +17,7 @@ class Segmenter(ABC):
     @property
     @abstractmethod
     def backend_name(self) -> str:
-        """Return a stable user-visible backend identifier (e.g. 'mediapipe')."""
+        """Return a stable user-visible backend identifier."""
 
     @property
     @abstractmethod
@@ -25,7 +25,7 @@ class Segmenter(ABC):
         """Return a human-readable backend + device string for UI and logs.
 
         Examples:
-            ``"mediapipe/cpu"``
+            ``"mediapipe-selfie-torso/cpu"``
             ``"schp-atr/cuda:0"``
         """
 

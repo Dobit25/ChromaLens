@@ -1,207 +1,133 @@
-"""Integration tests for T02 — require MediaPipe to be installed.
+"""Real-runtime T02 integration tests using five licensed person scenes.
 
-All tests are skipped automatically if mediapipe is not available,
-so they are safe to run in the base CI environment.
-
-Install before running:
-    pip install "chromalens-ai[segment-mediapipe]"
+The committed fixtures make this suite independent of cameras, network access,
+and separately downloaded model weights. The module skips only in the base
+dependency job; the locked MediaPipe CI job imports MediaPipe first and must
+execute every test here.
 """
 
 from __future__ import annotations
 
 import time
+from pathlib import Path
 
+import cv2
 import numpy as np
 import pytest
 
 from chromalens.contracts import FramePacket
 
-# ---------------------------------------------------------------------------
-# Skip guard — skip entire module if mediapipe is not installed
-# ---------------------------------------------------------------------------
-
-mediapipe = pytest.importorskip(
+pytest.importorskip(
     "mediapipe",
-    reason="mediapipe not installed; run: pip install 'chromalens-ai[segment-mediapipe]'",
+    reason=(
+        "mediapipe not installed; install the committed "
+        "segment-mediapipe lock"
+    ),
 )
 
+from chromalens.segmentation.debug import draw_mask_overlay  # noqa: E402
 from chromalens.segmentation.mediapipe_backend import (  # noqa: E402
     MediaPipeSegmenter,
-    MediaPipeSegmenterConfig,
 )
-from chromalens.segmentation.debug import draw_mask_overlay  # noqa: E402
+
+SAMPLE_DIR = Path(__file__).parents[1] / "samples" / "t02"
+SAMPLE_NAMES = (
+    "astronaut.png",
+    "cc0_woman.jpg",
+    "loc_lincoln.jpg",
+    "loc_man.jpg",
+    "nasa_shepard.jpg",
+)
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-def _make_packet(h: int = 480, w: int = 640, seed: int = 0) -> FramePacket:
-    """Return a synthetic BGR FramePacket for integration testing."""
-    rng = np.random.default_rng(seed=seed)
-    frame = rng.integers(0, 256, (h, w, 3), dtype=np.uint8)
+def _load_packet(sample_name: str, frame_id: int) -> FramePacket:
+    frame = cv2.imread(str(SAMPLE_DIR / sample_name), cv2.IMREAD_COLOR)
+    assert frame is not None, f"Could not read committed fixture: {sample_name}"
     return FramePacket(
-        frame_id=seed,
+        frame_id=frame_id,
         timestamp_ns=time.monotonic_ns(),
         original_bgr=frame,
     )
 
 
-def _make_blank_packet(h: int = 480, w: int = 640) -> FramePacket:
-    """Return a pure-white frame (worst case for segmentation)."""
-    frame = np.full((h, w, 3), 255, dtype=np.uint8)
-    return FramePacket(
-        frame_id=999,
+@pytest.fixture(scope="module")
+def segmenter() -> MediaPipeSegmenter:
+    with MediaPipeSegmenter() as backend:
+        yield backend
+
+
+@pytest.mark.parametrize("sample_name", SAMPLE_NAMES)
+def test_real_backend_produces_visible_aligned_mask_on_five_scenes(
+    segmenter: MediaPipeSegmenter,
+    sample_name: str,
+    request: pytest.FixtureRequest,
+    tmp_path: Path,
+) -> None:
+    """Exercise actual inference, mask cleanup, and rendering per fixture."""
+    frame_id = SAMPLE_NAMES.index(sample_name)
+    packet = _load_packet(sample_name, frame_id)
+    original_copy = packet.original_bgr.copy()
+
+    regions = segmenter.segment(packet)
+
+    assert len(regions) == 1, f"{sample_name}: expected one torso region"
+    region = regions[0]
+    assert region.class_name == "upper-clothes"
+    assert region.mask.shape == packet.original_bgr.shape[:2]
+    assert region.mask.dtype == np.bool_
+    coverage = float(region.mask.mean())
+    assert 0.005 < coverage < 0.70, (
+        f"{sample_name}: implausible foreground coverage {coverage:.4f}"
+    )
+    assert region.mask_confidence is not None
+    assert 0.0 <= region.mask_confidence <= 1.0
+
+    overlay = draw_mask_overlay(
+        packet.original_bgr,
+        regions,
+        backend_info=segmenter.device_info,
+    )
+    assert overlay.shape == packet.original_bgr.shape
+    assert overlay.dtype == np.uint8
+    assert np.any(overlay[region.mask] != packet.original_bgr[region.mask])
+    np.testing.assert_array_equal(packet.original_bgr, original_copy)
+
+    # Retained only in pytest's temporary workspace. The evidence script is
+    # the explicit path for producing reviewable artifacts outside tests.
+    assert cv2.imwrite(str(tmp_path / f"overlay-{request.node.callspec.id}.jpg"), overlay)
+
+
+def test_backend_and_device_are_exposed(
+    segmenter: MediaPipeSegmenter,
+) -> None:
+    assert segmenter.backend_name == "mediapipe-selfie-torso"
+    assert segmenter.device_info == "mediapipe-selfie-torso/cpu"
+
+
+def test_blank_frame_does_not_fabricate_large_garment_mask(
+    segmenter: MediaPipeSegmenter,
+) -> None:
+    packet = FramePacket(
+        frame_id=99,
         timestamp_ns=time.monotonic_ns(),
-        original_bgr=frame,
+        original_bgr=np.full((480, 640, 3), 255, dtype=np.uint8),
     )
 
+    regions = segmenter.segment(packet)
+    coverage = sum(float(region.mask.mean()) for region in regions)
 
-# ---------------------------------------------------------------------------
-# Integration tests
-# ---------------------------------------------------------------------------
+    assert coverage < 0.30
 
-class TestMediaPipeSegmenterIntegration:
-    """End-to-end tests using the real MediaPipe runtime."""
 
-    def test_segment_returns_tuple(self) -> None:
-        # Arrange
-        config = MediaPipeSegmenterConfig()
-        packet = _make_packet()
+def test_close_is_idempotent_and_segment_after_close_fails() -> None:
+    backend = MediaPipeSegmenter()
+    backend.close()
+    backend.close()
+    packet = FramePacket(
+        frame_id=100,
+        timestamp_ns=time.monotonic_ns(),
+        original_bgr=np.zeros((32, 32, 3), dtype=np.uint8),
+    )
 
-        # Act
-        with MediaPipeSegmenter(config) as seg:
-            result = seg.segment(packet)
-
-        # Assert
-        assert isinstance(result, tuple)
-
-    def test_mask_shape_matches_input_frame(self) -> None:
-        # Arrange
-        h, w = 480, 640
-        packet = _make_packet(h, w)
-
-        # Act
-        with MediaPipeSegmenter() as seg:
-            regions = seg.segment(packet)
-
-        # Assert — if any region is returned, its mask must align with the frame
-        for region in regions:
-            assert region.mask.shape == (h, w), (
-                f"Mask shape {region.mask.shape} does not match frame ({h}, {w})"
-            )
-
-    def test_mask_dtype_is_boolean(self) -> None:
-        # Arrange
-        packet = _make_packet()
-
-        # Act
-        with MediaPipeSegmenter() as seg:
-            regions = seg.segment(packet)
-
-        # Assert
-        for region in regions:
-            assert region.mask.dtype == np.bool_, (
-                f"Expected bool mask, got {region.mask.dtype}"
-            )
-
-    def test_backend_name_is_exposed(self) -> None:
-        # Arrange / Act
-        with MediaPipeSegmenter() as seg:
-            name = seg.backend_name
-
-        # Assert
-        assert name == "mediapipe"
-
-    def test_device_info_is_non_empty_string(self) -> None:
-        # Arrange / Act
-        with MediaPipeSegmenter() as seg:
-            info = seg.device_info
-
-        # Assert
-        assert isinstance(info, str)
-        assert len(info) > 0
-
-    def test_confidence_is_within_valid_range_when_present(self) -> None:
-        # Arrange
-        packet = _make_packet(seed=1)
-
-        # Act
-        with MediaPipeSegmenter() as seg:
-            regions = seg.segment(packet)
-
-        # Assert
-        for region in regions:
-            if region.mask_confidence is not None:
-                assert 0.0 <= region.mask_confidence <= 1.0, (
-                    f"mask_confidence={region.mask_confidence} out of [0, 1]"
-                )
-
-    def test_original_frame_not_mutated_by_segment(self) -> None:
-        # Arrange
-        packet = _make_packet()
-        original_copy = packet.original_bgr.copy()
-
-        # Act
-        with MediaPipeSegmenter() as seg:
-            seg.segment(packet)
-
-        # Assert
-        np.testing.assert_array_equal(
-            packet.original_bgr,
-            original_copy,
-            err_msg="segment() must not mutate original_bgr",
-        )
-
-    def test_blank_white_frame_produces_no_or_minimal_mask(self) -> None:
-        # Arrange — pure white, no person
-        packet = _make_blank_packet()
-
-        # Act
-        with MediaPipeSegmenter() as seg:
-            regions = seg.segment(packet)
-
-        # Assert — blank frame should produce no regions or very sparse mask
-        total_pixels = packet.original_bgr.shape[0] * packet.original_bgr.shape[1]
-        total_masked = sum(int(r.mask.sum()) for r in regions)
-        ratio = total_masked / total_pixels
-        assert ratio < 0.30, (
-            f"Blank white frame produced a large mask ({ratio:.1%}); "
-            "expected < 30% coverage"
-        )
-
-    def test_five_synthetic_scenes_all_produce_overlay(self) -> None:
-        # Arrange — 5 different random frames
-        packets = [_make_packet(seed=i) for i in range(5)]
-
-        # Act
-        with MediaPipeSegmenter() as seg:
-            for i, packet in enumerate(packets):
-                regions = seg.segment(packet)
-                overlay = draw_mask_overlay(
-                    packet.original_bgr,
-                    regions,
-                    backend_info=seg.device_info,
-                )
-                # Assert per scene — overlay must have same shape as source
-                assert overlay.shape == packet.original_bgr.shape, (
-                    f"Scene {i}: overlay shape mismatch"
-                )
-                assert overlay.dtype == np.uint8
-
-    def test_context_manager_releases_resources(self) -> None:
-        # Arrange / Act — use as context manager and verify no error on exit
-        with MediaPipeSegmenter() as seg:
-            assert seg.backend_name == "mediapipe"
-        # Act again after close — must not raise on second close
-        seg.close()
-
-    def test_segment_after_close_raises_runtime_error(self) -> None:
-        # Arrange
-        seg = MediaPipeSegmenter()
-        seg.close()
-        packet = _make_packet()
-
-        # Act / Assert
-        with pytest.raises(RuntimeError, match="close"):
-            seg.segment(packet)
+    with pytest.raises(RuntimeError, match="close"):
+        backend.segment(packet)

@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-18 23:13 +07:00
+Last updated: 2026-08-20 00:29 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -33,7 +33,7 @@ This table is intentionally empty until an agent starts the plan.
 | T00 | Repository bootstrap and contracts | `DONE` | Codex | 2026-08-16 17:58 +07:00 | 2026-08-16 18:06 +07:00 | T00 start and completion entries below |
 | T00-GATE | Collaboration dependency-lock/CI gate | `DONE` | Codex | 2026-08-18 21:47 +07:00 | 2026-08-18 22:12 +07:00 | T00-GATE entries and successful cloud-CI evidence below |
 | T01 | Camera, video source, and base renderer | `DONE` | Codex | 2026-08-18 23:00 +07:00 | 2026-08-18 23:13 +07:00 | T01 start and completion entries below |
-| T02 | Garment segmentation vertical slice | `DONE` | Đông | 2026-08-19 15:06 +07:00 | 2026-08-19 15:15 +07:00 | T02 start and completion entries below |
+| T02 | Garment segmentation vertical slice | `IN_PROGRESS` | Codex (integration audit) | 2026-08-19 15:06 +07:00 | 2026-08-20 00:29 +07:00 | Corrective integration and pre-PR validation entries below |
 
 ## 3. Active blockers
 
@@ -48,6 +48,8 @@ Use this section only for implementation decisions that affect later tasks. Deta
 | --- | --- | --- | --- | --- |
 | DEC-001 | 2026-08-16 | Use Python 3.10 only and pin the minimal T00 base/dev dependencies in `pyproject.toml`; keep inference stacks optional for later tasks. | T00 and future environment changes | T00 completion entry |
 | DEC-002 | 2026-08-18 | Use one common sequential `FrameSource` contract and a synchronous read-render-discard loop for T01; finite EOF is normal while live read failure is explicit. | T01, T02, T03, T08 | T01 completion entry |
+| DEC-003 | 2026-08-20 | Keep the locked MediaPipe person-derived torso mask as T02 P0 and name it honestly; it is not semantic garment parsing or calibrated confidence. | T02, T04, T06, T08, T09 | T02 corrective validation entry |
+| DEC-004 | 2026-08-20 | Apply the T02 four-hour gate: remove the unverified SCHP copy/runtime and defer any locked SCHP attempt to T10 after T08/T09. | T02, T08, T09, T10 | T02 corrective validation entry |
 
 ## 5. Chronological entries
 
@@ -980,6 +982,194 @@ Implement the P1 requirement: SCHP-ATR backend for true garment parsing (ignorin
 #### Next action
 
 Proceed to T03 (White balance and lighting quality).
+
+---
+
+### `2026-08-20 00:05 +07:00` — `T02` `Production integration correction`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Codex (integration audit)
+**Plan reference:** `plan.md#t02--garment-segmentation-vertical-slice`
+
+#### Objective
+
+Bring the existing T02 branch back to its reproducible P0 MediaPipe scope: lock
+the complete optional dependency graph, require a real backend in CI, replace
+vacuous scene checks with licensed-sample evidence, and defer unverified
+SCHP-ATR work to T10 as permitted by the T02 decision gate.
+
+#### Starting state and audit correction
+
+- Branch `feat/dong-segmentation` is a clean descendant of
+  `t01-handoff-v1` at `c5762ddf77a8f93b2fbcf6e60440f1ccdec01aab`.
+- Base-only validation reports `33 passed, 1 skipped`; all 11 MediaPipe
+  integration tests skip because the locked `lens` environment does not
+  contain MediaPipe. The earlier `44/44` statement is therefore not accepted
+  as current reproducible evidence.
+- The five-scene integration test uses random noise and checks only overlay
+  shape; it does not prove that the backend returns a garment/person mask.
+- `torch` and `torchvision` are unpinned and absent from the collaboration
+  locks. The SCHP path has no automated checkpoint inference test, loads with
+  `strict=False`, assigns fabricated confidence `1.0`, and differs from the
+  upstream ATR geometry restoration path.
+- The existing CI runs only base/dev dependencies, so it can pass while all
+  optional-backend tests are skipped.
+
+#### Planned smallest correction
+
+- Preserve MediaPipe as the T02 P0 backend and label its torso crop accurately
+  as a heuristic derived from a person mask.
+- Defer SCHP-ATR implementation, weights, PyTorch dependencies, and optimization
+  to T10; retain only a fail-fast optional-backend contract.
+- Commit a complete hashed Python 3.10/Windows MediaPipe lock and a CI job that
+  installs it and fails if the real integration suite skips.
+- Add licensed deterministic person-scene fixtures/evidence, validate mask
+  shape/type/non-empty output and copied-frame overlay, then record exact
+  commands and results.
+
+#### Tests and observed results
+
+| Check | Result |
+| --- | --- |
+| Branch ancestry/cleanliness | PASS: branch descends from `105b5ac`; working tree was clean before this entry |
+| Base T02 suite before correction | PASS with incomplete coverage: `33 passed, 1 skipped in 2.99 s` |
+| Approved environment | PASS: `lens`, Python 3.10.20; MediaPipe/Torch/Torchvision not installed at audit start |
+| Corrected backend/CI/evidence suite | NOT RUN — implementation starts after this status entry |
+
+#### Next action
+
+Apply the T02 decision gate, generate the MediaPipe lock, add non-skipping
+real-backend evidence, and rerun all gates before changing T02 back to `DONE`.
+
+---
+
+### `2026-08-20 00:29 +07:00` — `T02` `Corrective implementation ready for PR CI`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Codex (integration audit)
+**Plan reference:** `plan.md#t02--garment-segmentation-vertical-slice`
+
+#### Objective
+
+Finish the smallest reproducible T02 P0 implementation and collect local
+evidence before opening the pull request. T02 remains `IN_PROGRESS` until the
+new locked real-backend GitHub Actions job passes on the final PR commit.
+
+#### Work performed
+
+- Kept `mediapipe==0.10.21` as the only executable T02 backend and generated
+  `requirements/segment-mediapipe-py310-win64.lock` with hashes for the entire
+  Python 3.10/Windows base, development, MediaPipe, JAX, and native-wheel
+  closure. The existing base and lock-tool locks reproduce unchanged.
+- Added a separate CI job, `Locked MediaPipe 0.10.21 backend`, that installs
+  only the hashed closure, verifies the exact MediaPipe/OpenCV runtime, and
+  runs both the real integration module and the complete suite. The base CI job
+  now also regenerates and diffs the MediaPipe lock.
+- Corrected the backend description: MediaPipe Selfie Segmentation is a
+  prominent-person model, not a garment parser. The backend now exposes
+  `mediapipe-selfie-torso/cpu`, uses full-range MediaPipe face detection plus a
+  margin to exclude detected faces, retains a documented vertical fallback,
+  validates all configuration bounds, normalizes mask dtype/size, and never
+  mutates the source frame.
+- Added five offline person fixtures with source, rights, and SHA-256 records.
+  Replaced random-noise/vacuous integration checks with real inference checks
+  for non-empty boolean aligned masks, plausible coverage, confidence bounds,
+  changed overlay pixels, and source-frame invariance.
+- Added `scripts/t02_segmentation_evidence.py`; it fails if any real scene has
+  no mask and generates ignored review overlays plus machine-readable JSON.
+- Removed the copied, unpinned, and unverified SCHP implementation and its
+  duplicate webcam application. `SCHPSegmenter` remains a typed fail-fast
+  placeholder with no default execution path. SCHP is `DEFERRED` to T10 under
+  the plan decision gate; no weights, dataset, PyTorch, or Torchvision were
+  installed or downloaded.
+- Corrected SCHP documentation: the official ATR weight link is in the
+  upstream README and points to Google Drive, not GitHub Releases. T10 must
+  establish compatibility, checksum, geometry, and fixed-sample evidence
+  before it can become a selectable backend.
+
+#### Dependency evidence
+
+- Approved environment: `lens`; Python `3.10.20`; pip `26.1.2`.
+- Direct runtime pins: NumPy `1.26.4`, OpenCV contrib `4.10.0.84`, MediaPipe
+  `0.10.21`; dev pin: pytest `8.3.5`.
+- The full MediaPipe lock contains 34 packages plus pinned build tools and all
+  artifact hashes. `python -m pip check` reports no broken requirements.
+
+#### Commands run and observed results
+
+```text
+$env:CUSTOM_COMPILE_COMMAND = 'conda run --name lens pip-compile pyproject.toml --extra dev --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/py310-win64.lock'
+D:\Coding\Anaconda\envs\lens\python.exe -m piptools compile --quiet pyproject.toml --extra dev --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/py310-win64.lock
+$env:CUSTOM_COMPILE_COMMAND = 'conda run --name lens pip-compile pyproject.toml --extra lock --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/lock-tools-py310-win64.lock'
+D:\Coding\Anaconda\envs\lens\python.exe -m piptools compile --quiet pyproject.toml --extra lock --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/lock-tools-py310-win64.lock
+$env:CUSTOM_COMPILE_COMMAND = 'conda run --name lens pip-compile pyproject.toml --extra dev --extra segment-mediapipe --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/segment-mediapipe-py310-win64.lock'
+D:\Coding\Anaconda\envs\lens\python.exe -m piptools compile --quiet pyproject.toml --extra dev --extra segment-mediapipe --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/segment-mediapipe-py310-win64.lock
+git diff --exit-code -- requirements/py310-win64.lock requirements/lock-tools-py310-win64.lock requirements/segment-mediapipe-py310-win64.lock
+D:\Coding\Anaconda\envs\lens\python.exe -m pip install --disable-pip-version-check --require-hashes --requirement requirements/segment-mediapipe-py310-win64.lock
+D:\Coding\Anaconda\envs\lens\python.exe -m pip check
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --help
+D:\Coding\Anaconda\envs\lens\python.exe scripts\t02_segmentation_evidence.py
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q tests\integration\test_t02_segmentation_integration.py
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q
+git diff --check
+```
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| All three pip locks regenerate exactly | PASS, exit 0 | No lock diff after regeneration |
+| Hashed MediaPipe install | PASS, exit 0 | 34-package resolved closure installed only in `lens` |
+| Dependency consistency | PASS, exit 0 | `No broken requirements found` |
+| Hardware-independent CLI help | PASS, exit 0 | Usage printed without camera/model invocation |
+| Real-backend integration | PASS, exit 0 | `8 passed in 1.03s` |
+| Complete suite with MediaPipe installed | PASS, exit 0 | `45 passed in 1.43s`; repeated after final source cleanup: `45 passed in 1.52s` |
+| Generated five-scene evidence | PASS, exit 0 | `artifacts/t02-segmentation/` (ignored local artifacts) |
+| Tracked artifact policy | PASS, exit 0 | No environment/cache/weight; no tracked file over 5 MiB |
+| Git whitespace check | PASS, exit 0 | `git diff --check` produced no error |
+| Final PR cloud CI | NOT RUN — PR not yet opened | Required before `DONE`/merge |
+
+#### Measured real-backend fixture results
+
+These are deterministic smoke/adequacy observations on this development
+machine, not segmentation-accuracy or demo-hardware performance claims.
+
+| Fixture | Mask coverage | Mean retained foreground score | Aligned bool mask/overlay |
+| --- | ---: | ---: | --- |
+| `astronaut.png` | 0.281490 | 0.973566 | PASS |
+| `cc0_woman.jpg` | 0.040646 | 0.693574 | PASS |
+| `loc_lincoln.jpg` | 0.077339 | 0.968651 | PASS |
+| `loc_man.jpg` | 0.081223 | 0.941176 | PASS |
+| `nasa_shepard.jpg` | 0.048819 | 0.992859 | PASS |
+
+#### Definition-of-Done status
+
+- [x] A real AI backend returns non-empty boolean `H x W` masks aligned to all
+  five fixed source frames.
+- [x] Debug view overlays were generated and visually reviewed on five scenes.
+- [x] Backend and CPU device are exposed in overlay, public properties, JSON,
+  integration assertions, and log output.
+- [x] MediaPipe missing/install failure and deferred SCHP paths use specific,
+  actionable exceptions; neither placeholder is on the default CLI path.
+- [x] MediaPipe source/license/setup, fixture sources/rights/hashes, and SCHP
+  source/license/deferred setup gate are documented.
+- [ ] Final pull-request CI passes on the final commit; required before T02 is
+  changed to `DONE` and merged into `mvp`.
+
+#### Known limitations
+
+- The P0 mask is a person-derived torso heuristic, not semantic garment
+  parsing. It can include hands/objects or retain face/pants when face detection
+  fails, and it can clip garments under occlusion, multiple people, unusual
+  poses, or framing outside MediaPipe's intended prominent-person use case.
+- Mean MediaPipe foreground score is exposed as heuristic `mask_confidence`;
+  it is not a calibrated garment probability.
+- No webcam, sample video, latency, FPS, or accuracy claim was made in this
+  correction. T09 owns the declared evaluation protocol and demo-machine
+  measurements.
+
+#### Next action
+
+Commit and push the correction, open the T02 pull request, require both locked
+CI jobs, and append the cloud-CI result before merging T02 into `mvp`.
 
 ---
 
