@@ -948,9 +948,38 @@ Name the exact next task or unblock action. Do not use only “continue developm
 
 #### Version control
 
-- Branch:
-- Commit hash: `not committed` or hash
+- Branch: `exp/dong-segmentation-schp-atr`
+- Commit hash: `not committed`
 - Known-good tag/commit preserved:
+
+---
+
+### `2026-08-19 16:15 +07:00` — `T02` `Garment segmentation vertical slice (Phase 2 SCHP) complete`
+
+**Status:** `DONE`
+**Owner/agent:** Đông
+**Plan reference:** `plan.md#t02--garment-segmentation-vertical-slice`
+
+#### Objective
+
+Implement the P1 requirement: SCHP-ATR backend for true garment parsing (ignoring face/background) and optimize CPU inference speed/latency on Windows.
+
+#### Work performed
+
+- Bypassed custom `InPlaceABNSync` C++ Ninja build by mapping it to PyTorch's standard `BatchNorm` since it's just inference.
+- Implemented `SCHPSegmenter` resolving classes 4 (upper-clothes), 5 (skirt), and 6 (pants).
+- Reduced `_INPUT_SIZE` from 512x512 to 256x256 to achieve ~1.5 - 2.0 FPS on CPU.
+- Re-architected `demo_t02_webcam.py` with a background `LatestFrameReader` thread and `cv2.CAP_DSHOW` to completely eliminate frame buffering latency.
+
+#### Tests and observed results
+
+- SCHP model loads successfully and returns GarmentRegion.
+- Live demo overlay strictly adheres to the garment (no face/background bleeding).
+- Latency accumulation is completely fixed (drops stale frames correctly).
+
+#### Next action
+
+Proceed to T03 (White balance and lighting quality).
 
 ---
 

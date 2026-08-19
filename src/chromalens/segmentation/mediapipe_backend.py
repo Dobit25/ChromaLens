@@ -51,8 +51,12 @@ class MediaPipeSegmenterConfig:
         model_selection: 0 = general (faster), 1 = landscape/full-body (better).
         confidence_threshold: Minimum per-pixel probability to classify as
             foreground. Default 0.5 is the recommended starting point.
+        head_skip_ratio: Fraction of frame height (from top) to exclude.
+            Removes face/head region which SelfieSegmentation includes in the
+            silhouette but is not a garment. Default 0.20 skips top 20%.
         upper_body_ratio: Fraction of frame height (from top) that defines the
-            valid garment region. Limits false positives from floor/background.
+            lower boundary of the valid garment region. Limits false positives
+            from floor/background.
         min_area_ratio: Components smaller than this fraction of total frame
             pixels are discarded as segmentation noise.
         morph_kernel_size: Square kernel size for morphological open/close.
@@ -60,7 +64,8 @@ class MediaPipeSegmenterConfig:
 
     model_selection: int = 1
     confidence_threshold: float = 0.5
-    upper_body_ratio: float = 0.75
+    head_skip_ratio: float = 0.22        # skip top 22% -- excludes face/head
+    upper_body_ratio: float = 0.80       # keep up to 80% height -- torso region
     min_area_ratio: float = 0.005
     morph_kernel_size: int = 5
 
@@ -96,30 +101,37 @@ def apply_mask_cleanup(
     confidence_map: NDArray[np.float32],
     *,
     threshold: float = 0.5,
-    upper_body_ratio: float = 0.75,
+    head_skip_ratio: float = 0.22,
+    upper_body_ratio: float = 0.80,
     min_area_ratio: float = 0.005,
     morph_kernel_size: int = 5,
 ) -> BinaryMask:
     """Threshold, filter, and clean a MediaPipe confidence map.
 
     Steps:
-        1. Threshold at ``threshold`` → raw boolean mask.
-        2. Apply upper-body height filter (keep only top ``upper_body_ratio``
-           fraction of the frame) to remove false positives from floors/walls.
-        3. Morphological open then close to remove noise and fill small holes.
-        4. Retain only the largest connected component; discard it entirely
+        1. Threshold at ``threshold`` -> raw boolean mask.
+        2. Apply head exclusion: zero out the top ``head_skip_ratio`` rows
+           to remove face/hair which SelfieSegmentation includes in the
+           person silhouette but are not garments.
+        3. Apply lower body cutoff: zero out rows below ``upper_body_ratio``
+           to remove legs/floor false positives.
+        4. Morphological open then close to remove noise and fill small holes.
+        5. Retain only the largest connected component; discard it entirely
            if it is smaller than ``min_area_ratio`` of total frame pixels.
 
     Args:
-        confidence_map: Float32 array of shape ``H × W`` with values in
+        confidence_map: Float32 array of shape ``H x W`` with values in
             ``[0, 1]`` as returned by MediaPipe SelfieSegmentation.
         threshold: Per-pixel foreground probability cutoff.
-        upper_body_ratio: Fraction of frame height (from top) to allow.
+        head_skip_ratio: Fraction of frame height (from top) to exclude
+            (face/head region).
+        upper_body_ratio: Fraction of frame height (from top) defining the
+            lower boundary of the garment region.
         min_area_ratio: Minimum component size as a fraction of frame area.
         morph_kernel_size: Square structuring element size in pixels.
 
     Returns:
-        Boolean ``H × W`` mask aligned with the source frame.
+        Boolean ``H x W`` mask aligned with the source frame.
 
     Raises:
         ValueError: If ``confidence_map`` is not a 2-D float32 array.
@@ -133,14 +145,18 @@ def apply_mask_cleanup(
     h, w = confidence_map.shape
     total_pixels = h * w
 
-    # Step 1 — threshold
+    # Step 1 -- threshold
     raw_mask = confidence_map >= threshold
 
-    # Step 2 — upper-body height filter
-    cutoff_row = int(h * upper_body_ratio)
-    raw_mask[cutoff_row:, :] = False
+    # Step 2 -- head/face exclusion (top region)
+    head_cutoff = int(h * head_skip_ratio)
+    raw_mask[:head_cutoff, :] = False
 
-    # Step 3 — morphological open (remove noise) then close (fill holes)
+    # Step 3 -- lower body cutoff
+    lower_cutoff = int(h * upper_body_ratio)
+    raw_mask[lower_cutoff:, :] = False
+
+    # Step 4 -- morphological open (remove noise) then close (fill holes)
     kernel = cv2.getStructuringElement(
         cv2.MORPH_ELLIPSE,
         (morph_kernel_size, morph_kernel_size),
@@ -149,7 +165,7 @@ def apply_mask_cleanup(
     uint8_mask = cv2.morphologyEx(uint8_mask, cv2.MORPH_OPEN, kernel)
     uint8_mask = cv2.morphologyEx(uint8_mask, cv2.MORPH_CLOSE, kernel)
 
-    # Step 4 — keep largest connected component
+    # Step 5 -- keep largest connected component
     num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(
         uint8_mask, connectivity=8
     )
@@ -292,6 +308,7 @@ class MediaPipeSegmenter(Segmenter):
         mask = apply_mask_cleanup(
             confidence_map,
             threshold=self._config.confidence_threshold,
+            head_skip_ratio=self._config.head_skip_ratio,
             upper_body_ratio=self._config.upper_body_ratio,
             min_area_ratio=self._config.min_area_ratio,
             morph_kernel_size=self._config.morph_kernel_size,

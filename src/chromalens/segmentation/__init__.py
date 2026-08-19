@@ -9,10 +9,7 @@ from chromalens.segmentation.mediapipe_backend import (
     apply_mask_cleanup,
     compute_mask_confidence,
 )
-from chromalens.segmentation.schp_backend import (
-    SCHPBackendUnavailableError,
-    SCHPSegmenter,
-)
+from chromalens.segmentation.schp_backend import SCHPSegmenter
 
 __all__ = [
     "Segmenter",
@@ -24,5 +21,4 @@ __all__ = [
     "MediaPipeSegmenterConfig",
     "MediaPipeBackendUnavailableError",
     "SCHPSegmenter",
-    "SCHPBackendUnavailableError",
 ]

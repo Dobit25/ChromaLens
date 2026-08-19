@@ -69,7 +69,7 @@ class TestApplyMaskCleanup:
         result = apply_mask_cleanup(cmap, threshold=0.5, min_area_ratio=0.01)
 
         # Assert
-        assert result[100, 200], "Large component must be retained"
+        assert result[105, 205], "Large component must be retained"
         assert result.sum() > 0
 
     def test_small_noise_blob_is_removed(self) -> None:
