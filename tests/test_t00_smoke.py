@@ -43,20 +43,36 @@ def test_config_rejects_out_of_range_severity() -> None:
 
 
 def test_placeholder_backend_fails_fast_without_fabricating_output() -> None:
-    # T02: MediaPipeSegmenter is now a real backend, not a T00 placeholder.
-    # When mediapipe is not installed it must raise MediaPipeBackendUnavailableError
-    # with an actionable install hint — never return a fabricated mask.
+    # T02: MediaPipeSegmenter is now a real backend.
+    # When mediapipe IS installed, segment() must return a tuple (not fabricate a mask).
+    # When mediapipe is NOT installed, it must raise MediaPipeBackendUnavailableError.
+    # We detect which case applies at runtime.
     packet = FramePacket(
         frame_id=0,
         timestamp_ns=0,
         original_bgr=np.zeros((2, 2, 3), dtype=np.uint8),
     )
 
-    with pytest.raises(
-        MediaPipeBackendUnavailableError,
-        match="segment-mediapipe",  # actionable install hint must be present
-    ):
-        MediaPipeSegmenter().segment(packet)
+    try:
+        import mediapipe  # noqa: F401, PLC0415
+        mediapipe_available = True
+    except ImportError:
+        mediapipe_available = False
+
+    if mediapipe_available:
+        # Backend is real — must return a tuple without fabricating a mask.
+        seg = MediaPipeSegmenter()
+        result = seg.segment(packet)
+        seg.close()
+        assert isinstance(result, tuple), "segment() must return a tuple"
+    else:
+        # Backend unavailable — must raise with an actionable install hint.
+        with pytest.raises(
+            MediaPipeBackendUnavailableError,
+            match="segment-mediapipe",
+        ):
+            MediaPipeSegmenter().segment(packet)
+
 
 
 

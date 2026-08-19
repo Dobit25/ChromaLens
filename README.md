@@ -1,9 +1,9 @@
 # ChromaLens AI
 
 ChromaLens AI is a local, explainable color-vision assistance prototype for
-clothing. The current repository state includes the T01 webcam/local-video
-preview and base renderer. Garment segmentation begins in T02; lighting
-correction begins in T03.
+clothing. **T01** (webcam/video preview) and **T02** (garment segmentation,
+MediaPipe baseline) are complete. Lighting correction begins in T03;
+color extraction in T04.
 
 The MVP is assistive software, not a medical diagnosis tool. The user selects
 their CVD profile and severity.
@@ -69,11 +69,42 @@ conda list --explicit --md5 --name lens
 Review the final command's output and save it as
 `requirements/conda-win-64.lock`; never overwrite the committed lock without
 reviewing every artifact URL, build, and checksum. Then repeat the locked
-install and all verification commands. Task branches
-must not independently choose MediaPipe, DaltonLens, PyTorch, SCHP, ONNX, or
-OpenVINO versions. Those dependencies are added to explicit optional groups
-and the integration lock only when their owning task reaches its dependency
-gate.
+install and all verification commands. Task branches must not independently choose MediaPipe, DaltonLens, PyTorch,
+SCHP, ONNX, or OpenVINO versions. Those dependencies are added to explicit
+optional groups and the integration lock only when their owning task reaches
+its dependency gate.
+
+## Garment segmentation (T02)
+
+The MediaPipe baseline is implemented. Install the optional group before
+running segmentation:
+
+```powershell
+conda run --name lens python -m pip install ".[segment-mediapipe]"
+```
+
+This installs `mediapipe==0.10.21`. Model weights are bundled inside the
+MediaPipe wheel — no manual download required. See `models/README.md` for
+source, license (Apache-2.0), and SCHP-ATR (P1) download steps.
+
+```python
+from chromalens.segmentation import MediaPipeSegmenter
+
+with MediaPipeSegmenter() as seg:
+    regions = seg.segment(packet)   # returns tuple[GarmentRegion, ...]
+```
+
+Each `GarmentRegion` carries a boolean `H × W` mask, `class_name`, and
+`mask_confidence`. The debug overlay draws mask fills and a text panel
+onto a copy of the source frame:
+
+```python
+from chromalens.segmentation import draw_mask_overlay
+
+debug_frame = draw_mask_overlay(
+    packet.original_bgr, regions, backend_info=seg.device_info
+)
+```
 
 ## Camera and local-video preview
 
@@ -149,13 +180,15 @@ media and verifies that video mode never opens a webcam.
 
 ## Current limitations
 
-- T01 contains capture and diagnostics only; it makes no segmentation, color,
-  CVD-risk, recoloring, or performance-target claim.
-- MediaPipe and SCHP classes are T00 contract placeholders. Calling inference
-  raises a backend-specific exception; no placeholder returns a fabricated
-  mask.
+- T02 provides an upper-clothes mask only via MediaPipe SelfieSegmentation.
+  SCHP-ATR (per-class: pants, skirt, dress) is the P1 backend, pending model
+  download approval from the integration owner.
+- The upper-body height filter (`upper_body_ratio=0.75`) is a heuristic and
+  may clip tall subjects standing very close to the camera.
+- T02 contains segmentation only; color extraction, CVD-risk, recoloring, and
+  performance-target claims belong to later tasks.
 - Model weights, datasets, generated artifacts, and private footage are not
-  included.
+  included. See `models/README.md` for download policy.
 
 ## License
 
