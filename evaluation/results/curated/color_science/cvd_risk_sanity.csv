@@ -1,0 +1,7 @@
+case_id,fixture_id,profile,severity,pair_kind,source_rgb,comparison_rgb,delta_e_original,delta_e_cvd,risk_score,risk_level,score_is_heuristic
+CVD-PROTAN-CONFUSING,protan-purple-blue,protan,1.0,confusing,"[130, 60, 180]","[40, 90, 220]",17.344425149547945,7.654908176084501,0.3448311942754461,medium,True
+CVD-PROTAN-CONTROL,protan-control,protan,1.0,control,"[40, 150, 60]","[30, 190, 190]",28.454954609563778,32.054399302625605,0.0,low,True
+CVD-DEUTAN-CONFUSING,deutan-red-olive,deutan,1.0,confusing,"[220, 40, 40]","[120, 120, 30]",45.72321627703423,4.590837446680965,0.6931003144675584,high,True
+CVD-DEUTAN-CONTROL,deutan-control,deutan,1.0,control,"[40, 90, 220]","[235, 220, 40]",79.76844703552429,77.04390908226404,0.0,low,True
+CVD-TRITAN-CONFUSING,tritan-orange-pink,tritan,1.0,confusing,"[230, 130, 30]","[230, 120, 170]",40.090229096567164,7.299191125366877,0.5194192144298746,medium,True
+CVD-TRITAN-CONTROL,tritan-control,tritan,1.0,control,"[220, 40, 40]","[40, 150, 60]",69.86632579642638,63.877938739364765,0.0,low,True

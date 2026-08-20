@@ -1,0 +1,24 @@
+Branch: eval/t09-color-science-phong
+SHA gốc đúng yêu cầu: 47ffa3721280dd51032d5da5c1c0ec1c3377f838
+Đã triển khai evaluator T09 cho color science.
+Đánh giá 11 màu × 3 điều kiện ánh sáng = 33 synthetic cases.
+Color naming: 27/33.
+Lighting stability: 0.545, thấp hơn diagnostic target 0.80.
+Confusion table đầy đủ 11 × 11 = 121 ô.
+Multicolor garment:
+Phát hiện 2 clusters: red, blue.
+Pixel ngoài mask: 0.
+CVD-risk sanity:
+Protan: PASS.
+Deutan: PASS.
+Tritan: PASS.
+Mỗi risk row lưu:
+delta_e_original.
+delta_e_cvd.
+risk_score.
+33 physical cases ghi rõ NOT_RUN vì asset còn TO_BE_ACQUIRED.
+Kết quả T09 hiện có status PARTIAL, không phải hoàn thành physical evaluation.
+Artifact checksum và structural validation: PASS.
+Toàn bộ test: 209 passed.
+Không sửa protocol, schema, dependency, threshold sản phẩm hoặc file coordinator.
+Chưa commit branch.
