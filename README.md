@@ -3,8 +3,9 @@
 ChromaLens AI is a local, explainable color-vision assistance prototype for
 clothing. **T01** (webcam/video preview), the locked **T02** MediaPipe torso-
 mask baseline, **T03** lighting correction, **T04** original-color
-extraction/naming, **T05** CVD simulation/relational risk, and **T06** selective
-assistive recoloring/overlay are complete as independently testable modules.
+extraction/naming, **T05** CVD simulation/relational risk, **T06** selective
+assistive recoloring/overlay, and **T07** rule-based color matching are complete
+as independently testable modules.
 
 The MVP is assistive software, not a medical diagnosis tool. The user selects
 their CVD profile and severity.
@@ -332,6 +333,50 @@ The command writes ignored PNG/JSON output under
 boundaries, font behavior, and limitations are documented in
 [`assets/recolor/README.md`](assets/recolor/README.md).
 
+## Rule-based color matching (T07)
+
+`RuleBasedMatcher` converts only T04's original corrected Lab value to CIELCH
+and applies the validated project-authored table in `assets/suggestions.csv`.
+Neutral sources receive an opposite black/white suggestion. Chromatic sources
+receive neutral, +30-degree analogous, 180-degree complementary, and
+lighter/darker same-hue tone guidance in deterministic priority order.
+
+```python
+from chromalens.matching import RuleBasedMatcher
+
+matcher = RuleBasedMatcher()
+matching = matcher.suggest_from_original_cluster(
+    source_cluster,
+    profile=CVDProfile.DEUTAN,  # optional together with severity
+    severity=1.0,
+)
+```
+
+The method accepts `ColorCluster` or `None`; it has no assistive-display-color
+parameter. Every suggestion echoes `source_original_lab` and
+`source_original_rgb` from the T04 cluster. Missing input or an unknown name
+returns an empty typed result with a safe Vietnamese explanation and never
+invents confidence. `priority` is presentation order, not confidence.
+
+When profile and severity are supplied together, each item includes original
+and CVD-simulated CIEDE2000 source-target separation plus a configurable
+heuristic threshold check. This is informational guidance, not a diagnosis,
+accessibility guarantee, or calibrated probability. Every consumer must show:
+"Đây là gợi ý tham khảo, không phải quy tắc thời trang khách quan."
+
+Reproduce the controlled rule, fallback, source-contract, CVD-check, and
+swatch evidence offline:
+
+```powershell
+conda run --name lens python scripts/t07_matching_evidence.py
+conda run --name lens python -m pytest -q tests/unit/test_t07_matching.py tests/integration/test_t07_original_color_contract.py
+```
+
+The command writes ignored CSV/JSON/PNG output under
+`artifacts/t07-matching/`. The exact schema, provenance, formulas, safety
+contract, and limitations are documented in
+[`assets/matching/README.md`](assets/matching/README.md).
+
 ## Camera and local-video preview
 
 Run the webcam preview using the default camera index:
@@ -393,7 +438,7 @@ The T01 suite generates short MJPG/AVI files under pytest's temporary directory
 and deletes them with the test workspace. It does not commit or download sample
 media and verifies that video mode never opens a webcam.
 
-## T02–T06 handoff contracts
+## T02–T07 handoff contracts
 
 - `chromalens.camera.FrameSource` is the common webcam/video interface.
 - Each successful read produces a `FramePacket` with a sequential frame ID,
@@ -413,6 +458,9 @@ media and verifies that video mode never opens a webcam.
   pixels only inside the exact hard intersection and preserves the source frame.
   Its original corrected and assistive display colors remain separate fields.
 - T06's overlay renderer copies its input and marks simulation as debug-only.
+- T07 accepts only T04's original corrected `ColorCluster`, never T06's
+  assistive display value. It returns deterministic guidance plus an optional
+  CVD-separation diagnostic; neither priority nor separation is confidence.
   T08 owns live composition, current-frame/stale-result behavior, controls, and
   reset/key handling when profile, stream, or track identity changes.
 
@@ -444,7 +492,10 @@ media and verifies that video mode never opens a webcam.
   mask/cluster errors directly limit containment quality. The OpenCV tag
   transliterates accented Vietnamese because its bundled Hershey font is
   ASCII-only.
-- T02–T06 are independently testable modules. Live pipeline composition,
+- T07's CIELCH geometry and five-row project-authored table are simple
+  guidance. They do not model culture, material, occasion, trend, or individual
+  taste; their wording and usefulness require T09 user testing.
+- T02–T07 are independently testable modules. Live pipeline composition,
   user controls, stale-result handling, and performance-target claims remain
   T08/T09 work.
 - Model weights, datasets, generated artifacts, and private footage are not
