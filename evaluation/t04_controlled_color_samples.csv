@@ -1,0 +1,12 @@
+expected_name,r,g,b,note
+đen,20,20,20,Near-black patch above minimum brightness
+trắng,240,240,240,Near-white patch below clipping threshold
+đỏ,249,0,0,Red patch below clipping threshold
+xanh lá,0,128,0,CSS green prototype
+vàng,249,249,0,Yellow patch below clipping threshold
+xanh dương,0,0,249,Blue patch below clipping threshold
+nâu,165,42,42,CSS brown prototype
+tím,128,0,128,CSS purple prototype
+hồng,249,192,203,Pink patch below clipping threshold
+cam,249,165,0,Orange patch below clipping threshold
+xám,128,128,128,CSS gray prototype

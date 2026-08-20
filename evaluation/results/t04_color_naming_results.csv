@@ -1,0 +1,12 @@
+﻿expected_name,predicted_name,correct,r,g,b,lab_l,lab_a,lab_b,cluster_ratio,best_name_score,color_margin,retained_pixels,note
+đen,đen,True,20,20,20,6.427002,0.000000,0.000000,1.000000,0.774764,0.673663,324,Near-black patch above minimum brightness
+trắng,trắng,True,240,240,240,94.647217,0.000000,0.000000,1.000000,0.622982,0.410663,324,Near-white patch below clipping threshold
+đỏ,đỏ,True,249,0,0,51.904297,78.546875,65.906250,1.000000,0.835839,0.749647,324,Red patch below clipping threshold
+xanh lá,xanh lá,True,0,128,0,46.228027,-51.687500,49.890625,1.000000,0.903926,0.879489,324,CSS green prototype
+vàng,vàng,True,249,249,0,94.958496,-21.140625,92.656250,1.000000,0.865583,0.788666,324,Yellow patch below clipping threshold
+xanh dương,xanh dương,True,0,0,249,31.359863,77.671875,-105.781250,1.000000,0.963313,0.932832,324,Blue patch below clipping threshold
+nâu,nâu,True,165,42,42,37.493896,49.656250,30.578125,1.000000,0.765393,0.703059,324,CSS brown prototype
+tím,tím,True,128,0,128,29.785156,58.937500,-36.484375,1.000000,0.874440,0.845460,324,CSS purple prototype
+hồng,hồng,True,249,192,203,82.885742,21.937500,2.390625,1.000000,0.619255,0.444842,324,Pink patch below clipping threshold
+cam,cam,True,249,165,0,74.145508,21.296875,78.062500,1.000000,0.789790,0.719421,324,Orange patch below clipping threshold
+xám,xám,True,128,128,128,53.582764,0.000000,0.000000,1.000000,0.695287,0.594701,324,CSS gray prototype
