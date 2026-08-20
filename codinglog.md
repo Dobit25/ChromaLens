@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-20 00:55 +07:00
+Last updated: 2026-08-20 11:54 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -35,6 +35,7 @@ This table is intentionally empty until an agent starts the plan.
 | T01 | Camera, video source, and base renderer | `DONE` | Codex | 2026-08-18 23:00 +07:00 | 2026-08-18 23:13 +07:00 | T01 start and completion entries below |
 | T02 | Garment segmentation vertical slice | `DONE` | Codex (integration audit) | 2026-08-19 15:06 +07:00 | 2026-08-20 00:35 +07:00 | Corrective implementation and successful PR CI entries below |
 | T03 | White balance and lighting quality | `DONE` | Codex | 2026-08-20 00:47 +07:00 | 2026-08-20 00:55 +07:00 | T03 start and completion entries below |
+| T04 | Dominant color extraction and 11-name mapping | `DONE` | Codex | 2026-08-20 11:43 +07:00 | 2026-08-20 11:54 +07:00 | T04 start and completion entries below |
 
 ## 3. Active blockers
 
@@ -52,6 +53,7 @@ Use this section only for implementation decisions that affect later tasks. Deta
 | DEC-003 | 2026-08-20 | Keep the locked MediaPipe person-derived torso mask as T02 P0 and name it honestly; it is not semantic garment parsing or calibrated confidence. | T02, T04, T06, T08, T09 | T02 corrective validation entry |
 | DEC-004 | 2026-08-20 | Apply the T02 four-hour gate: remove the unverified SCHP copy/runtime and defer any locked SCHP attempt to T10 after T08/T09. | T02, T08, T09, T10 | T02 corrective validation entry |
 | DEC-005 | 2026-08-20 | Keep one Gray-world balancer per ordered stream; use an optional mask only for gain estimation, apply EMA-smoothed gains globally, and report insufficient valid pixels as a visible poor-quality fallback. | T03, T04, T08, T09 | T03 completion entry |
+| DEC-006 | 2026-08-20 | Use conventional float OpenCV CIELAB plus an attributed W3C sRGB multi-anchor equivalent for the Van de Weijer 11-term vocabulary; expose normalized distance scores/margin as heuristics, not probabilities. | T04, T05, T06, T07, T08, T09 | T04 completion entry |
 
 ## 5. Chronological entries
 
@@ -1421,6 +1423,233 @@ physical color-accuracy claims.
 
 `T04 — Dominant color extraction and 11-name mapping`, whose dependencies T02
 and T03 are now both `DONE`.
+
+---
+
+### `2026-08-20 11:43 +07:00` — `T04` `Dominant color extraction and 11-name mapping`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Codex
+**Plan reference:** `plan.md#t04--dominant-color-extraction-and-11-name-mapping`
+**Requirements/rubric affected:** FR-05, FR-06, FR-12; NFR-01, NFR-06, NFR-08; Metrics 02 and 03
+
+#### Objective
+
+Extract original corrected garment colors only from an eroded, valid mask;
+provide robust median and deterministic two-cluster paths; and map every
+retained color to one of 11 documented basic terms with Vietnamese label,
+normalized scores, and best-versus-second margin.
+
+#### Starting state
+
+- Branch `mvp` is clean and synchronized with `origin/mvp` at
+  `dbe4189fa5b101472260d7b3860fc0a3af3f9741`.
+- Required dependencies T02 and T03 are both `DONE`; T03 exposes corrected RGB
+  while preserving original BGR, and T02 exposes aligned boolean masks.
+- Approved environment `lens` runs Python `3.10.20`; `pip check` reports no
+  broken requirements.
+- Baseline repository suite: `62 passed in 4.99s`.
+- No new Python dependency is expected; NumPy and OpenCV already provide the
+  required morphology, color conversion, and array operations.
+
+#### Smallest implementation that satisfies the Definition of Done
+
+- Add `color_extraction.py` with validated thresholds, explicit mask erosion,
+  dark/clipped/optional pixel-confidence rejection, robust Lab median, and
+  locally seeded deterministic `K=2` with minimum-area filtering.
+- Add `color_naming.py` with an explicit float32 sRGB-to-CIELAB convention,
+  a documented 11-family nearest-prototype score distribution, Vietnamese
+  labels, and a non-calibrated best-vs-second margin.
+- Add provenance/license documentation and a controlled CSV containing all 11
+  families; do not import or redistribute the unlicensed Van de Weijer learned
+  lookup table.
+- Add deterministic unit tests plus an offline evidence script that produces a
+  per-class evaluation table and cluster visualization under ignored
+  `artifacts/`.
+- Update README and this log only within T04; do not integrate T05 behavior or
+  the default live pipeline.
+
+#### Source and convention checks before implementation
+
+- OpenCV's official conversion documentation requires float RGB input to be
+  normalized to `[0, 1]`, explicitly distinguishes RGB from default BGR, and
+  defines float CIELAB output as `L*` in `[0, 100]` with signed `a*`, `b*`.
+- The 11 English terms follow Van de Weijer et al.'s published basic-term set.
+  Their learned RGB lookup is not copied because the download page does not
+  state a redistribution license.
+- The equivalent prototype anchors will be selected from W3C CSS Color 4's
+  standardized sRGB named-color table. The W3C source and permissive Software
+  and Document License notice will be recorded, while ChromaLens's selection,
+  family grouping, scores, and Vietnamese translations remain project-authored
+  Apache-2.0 data/code.
+
+#### Commands and checks run before implementation
+
+```text
+git status --short --branch
+git rev-parse HEAD
+git rev-parse origin/mvp
+conda run -n lens python --version
+conda run -n lens python -m pip check
+conda run -n lens python -m pytest -q
+```
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Branch/baseline | PASS, exit 0 | `mvp...origin/mvp`; both SHAs `dbe4189f...` |
+| Approved interpreter | PASS, exit 0 | Python 3.10.20 in `lens` |
+| Dependency consistency | PASS, exit 0 | `No broken requirements found` |
+| Baseline suite | PASS, exit 0 | `62 passed in 4.99s` |
+
+#### Definition-of-Done status at start
+
+- [ ] Tests cover erosion, invalid-pixel rejection, median robustness, and
+  deterministic clustering.
+- [ ] A controlled set spanning all 11 families produces an evaluation table.
+- [ ] Every retained cluster has Lab/RGB, ratio, submask, name, 11 scores, and
+  margin.
+- [ ] Synthetic tests prove no background pixel enters a retained submask.
+
+#### Deviations, limitations, and blockers
+
+- Deviation from plan: none. The plan explicitly permits a documented
+  equivalent lookup instead of the learned Van de Weijer table.
+- Active blocker: none.
+
+---
+
+### `2026-08-20 11:52 +07:00` — `T04` `Dominant color extraction and 11-name mapping complete`
+
+**Status:** `DONE`
+**Owner/agent:** Codex
+**Plan reference:** `plan.md#t04--dominant-color-extraction-and-11-name-mapping`
+
+#### Outcome
+
+T04 now consumes only T03's corrected RGB and T02's aligned garment mask. It
+erodes uncertain boundaries; excludes dark, highlight-clipped, and optionally
+low pixel-confidence samples; converts explicitly to conventional float
+CIELAB; and returns either one robust median cluster or up to two deterministic
+K-means clusters. Every retained `ColorCluster` carries aligned boolean
+submask, Lab/RGB, original name, area ratio, all 11 normalized name scores, and
+best-versus-second margin.
+
+The 11 English keys have explicit Vietnamese labels. Naming uses a documented
+multi-anchor equivalent rather than copying the unlicensed Van de Weijer
+learned table: standardized W3C CSS sRGB anchor values, project-authored family
+grouping, CIE76 nearest-anchor distances, and softmax score normalization.
+
+#### Files changed
+
+| File | Change and reason |
+| --- | --- |
+| `src/chromalens/color_extraction.py` | Added validated erosion/filtering, P0 median, seeded deterministic K=2, minimum-area filtering, specific errors, and `ColorCluster` construction. |
+| `src/chromalens/color_naming.py` | Added explicit RGB/CIELAB conversions, 11-family anchors, Vietnamese labels, normalized scores, and margin. |
+| `assets/color_names/README.md` | Documented vocabulary, algorithm, Lab convention, provenance, license, and limitations. |
+| `assets/color_names/W3C-SOFTWARE-DOCUMENT-LICENSE.md` | Included the required W3C Software and Document License notice for derived named-color material. |
+| `tests/samples/t04/basic11_controlled.csv` | Added one non-anchor controlled sRGB patch per basic family. |
+| `tests/samples/t04/README.md` | Declared authorship, scope, license, and T09 limitations of the controlled set. |
+| `tests/unit/test_t04_color_naming.py` | Added deterministic 11-family, score, label, conversion, and validation tests. |
+| `tests/unit/test_t04_color_extraction.py` | Added erosion, filtering, robustness, determinism, ratio, field, containment, fallback, and configuration tests. |
+| `tests/integration/test_t04_color_pipeline.py` | Added an offline T03-to-T04 RGB/BGR and immutability integration smoke test. |
+| `scripts/t04_color_evidence.py` | Added reproducible CSV/JSON/swatch/cluster evidence generation. |
+| `README.md` | Documented T04 APIs, fields, evidence commands, provenance, semantics, and limitations. |
+| `codinglog.md` | Recorded T04 start, evidence, decision, and completion. |
+
+#### Implementation and decisions
+
+- Corrected `uint8` RGB is normalized to float32 `[0, 1]` before
+  `cv2.COLOR_RGB2LAB`; stored Lab is conventional `L* [0,100]`, signed `a*`
+  and `b*`, never OpenCV's offset-packed uint8 representation.
+- A 3×3 one-iteration erosion uses an explicit zero-valued border. Pixels are
+  valid only when inside the eroded mask, brighter than 16, have no channel at
+  or above 250, and—when an aligned float map is provided—confidence at least
+  0.50. All values are validated/configurable.
+- P0 uses per-channel median in Lab. P1 uses local NumPy RNG seed 17, K-means++
+  initialization, K=2, bounded iterations, and a 10% minimum cluster ratio.
+  Filtered area is not hidden by renormalizing retained ratios.
+- T02's P0 backend exposes only a thresholded mask and region-level heuristic
+  score, not an aligned reusable probability map. T04 therefore accepts an
+  optional pixel-confidence map for a future compatible backend; the current
+  cleaned boolean mask remains the default input.
+- **DEC-006:** T05–T09 must treat `ColorCluster.lab`, `rgb`, and
+  `original_name` as estimates of the original corrected color. `name_scores`
+  and `color_margin` are distance heuristics, separate from mask confidence,
+  lighting quality, and future CVD risk.
+
+#### Commands run and observed results
+
+```text
+conda run -n lens python -m pytest -q tests\unit\test_t04_color_naming.py tests\unit\test_t04_color_extraction.py
+conda run -n lens python -m pytest -q tests\integration\test_t04_color_pipeline.py
+conda run -n lens python scripts\t04_color_evidence.py
+conda run -n lens python -m pip check
+conda run -n lens python -m chromalens --help
+conda run -n lens python -m pytest -q
+conda run -n lens python -m compileall -q src scripts tests
+git diff --exit-code -- pyproject.toml environment.yml requirements
+git diff --check
+git check-ignore -v artifacts/t04-color/basic11_evaluation.csv artifacts/t04-color/evidence.json artifacts/t04-color/basic11_swatch_grid.png artifacts/t04-color/synthetic_cluster_overlay.png
+```
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| T04 unit suite | PASS, exit 0 | Final focused run: `21 passed in 0.25s` |
+| T03-to-T04 integration | PASS, exit 0 | Final run: `1 passed in 0.26s`; corrected RGB names red and original BGR stays byte-identical |
+| Full repository suite | PASS, exit 0 | Final run: `84 passed in 1.64s` |
+| Controlled 11-family table | PASS, exit 0 | `11/11`; ignored `artifacts/t04-color/basic11_evaluation.csv` |
+| Visual evidence | PASS | Swatch grid and two-cluster overlay opened and reviewed after fixing score-text overflow |
+| Dependency/CLI/compile gates | PASS, exit 0 | No broken requirements; hardware-independent help; all Python compiled |
+| Dependency/lock stability | PASS, exit 0 | No diff in `pyproject.toml`, `environment.yml`, or `requirements/` |
+| Whitespace/artifact/size policy | PASS, exit 0 | Diff clean; all generated T04 files ignored; no tracked file over 5 MiB |
+
+#### Measured deterministic evidence
+
+These results validate contracts on controlled sRGB arrays; they are not
+physical color-accuracy, cultural-language, or demo-hardware performance
+claims.
+
+| Measurement | Observed value |
+| --- | ---: |
+| Controlled basic-family rows correct | 11 / 11 |
+| Controlled score margin range | 0.225428–0.685291 |
+| Synthetic K=2 retained names | `red`, `blue` |
+| Synthetic retained ratios | 0.601010, 0.398990 |
+| Pixels outside garment across retained clusters | 0 |
+
+#### Definition of Done
+
+- [x] Unit tests cover exact erosion, dark/clipped/low-confidence rejection,
+  median robustness against a minority outlier, deterministic K=2, and
+  minimum-area filtering.
+- [x] The committed controlled set spans all 11 families and the evidence
+  runner produces a real CSV evaluation table with Lab, predicted/expected
+  names, best/runner-up scores, margin, distance, and correctness: 11/11.
+- [x] Median and K=2 tests assert every retained cluster includes Lab/RGB,
+  ratio, aligned bool submask, canonical name, exactly 11 normalized scores,
+  and non-null margin.
+- [x] Synthetic tests and evidence assert retained submasks are subsets of the
+  eroded garment mask; observed outside-garment pixel count is zero.
+
+#### Deviations and known limitations
+
+- No deviation from `plan.md`: it explicitly permits a documented equivalent
+  lookup. K=2 P1 was completed because deterministic clustering is also named
+  in the T04 Definition of Done.
+- The learned Van de Weijer RGB matrix is not included because its project
+  download page does not state a redistribution license. This avoids an
+  unverifiable license claim while preserving its published 11-term vocabulary.
+- CSS anchors are uneven samples, not a fitted perceptual dataset; distance
+  scores are not calibrated probabilities. Real fabrics, patterns, shadows,
+  mixed lighting, cameras/displays, languages, and user perception require the
+  declared T09 evaluation.
+- K=2 can split illumination/shadow rather than material color and deliberately
+  ignores clusters below 10%. No temporal color smoothing or live composition
+  is added here; those remain T08/T09 responsibilities.
+
+#### Exact next task
+
+`T05 — CVD simulation and relational risk`.
 
 ---
 

@@ -2,8 +2,8 @@
 
 ChromaLens AI is a local, explainable color-vision assistance prototype for
 clothing. **T01** (webcam/video preview), the locked **T02** MediaPipe torso-
-mask baseline, and **T03** lighting correction are complete. Color extraction
-begins in T04.
+mask baseline, **T03** lighting correction, and **T04** original-color
+extraction/naming are complete. CVD simulation and relational risk begin in T05.
 
 The MVP is assistive software, not a medical diagnosis tool. The user selects
 their CVD profile and severity.
@@ -165,6 +165,54 @@ conda run --name lens python -m pytest -q tests/unit/test_t03_white_balance.py
 The evidence command writes a before/after comparison and raw JSON metrics to
 the ignored `artifacts/t03-lighting/` directory.
 
+## Dominant original color and naming (T04)
+
+`DominantColorExtractor` consumes only `FramePacket.corrected_rgb` from T03
+and an aligned `GarmentRegion` from T02. It erodes the garment boundary,
+rejects dark/highlight-clipped pixels, and optionally rejects pixels using an
+aligned floating-point confidence map. The P0 path returns a robust median;
+the P1 path returns up to two locally seeded deterministic K-means clusters
+and filters clusters below the configured minimum area.
+
+```python
+from chromalens.color_extraction import (
+    ColorExtractionMode,
+    DominantColorExtractor,
+)
+
+extractor = DominantColorExtractor()
+median_cluster = extractor.extract(packet, garment)[0]
+two_colors = extractor.extract(
+    packet,
+    garment,
+    mode=ColorExtractionMode.KMEANS_2,
+)
+```
+
+Every retained `ColorCluster` includes conventional float CIELAB, displayable
+original sRGB, ratio relative to all valid garment pixels, an aligned boolean
+submask, canonical English name, all 11 normalized name scores, and the
+best-versus-second score margin. Ratios of retained K-means clusters may sum to
+less than one when a small cluster is deliberately filtered; they are not
+renormalized to hide discarded area.
+
+The supported terms are `black`, `blue`, `brown`, `grey`, `green`, `orange`,
+`pink`, `purple`, `red`, `white`, and `yellow`, with explicit Vietnamese
+labels. The vocabulary, W3C CSS sRGB anchor provenance/license, OpenCV float
+Lab convention, and limitations are documented in
+[`assets/color_names/README.md`](assets/color_names/README.md). Name scores and
+margin are transparent heuristics, not calibrated probabilities.
+
+Reproduce the controlled 11-family table and visual cluster evidence offline:
+
+```powershell
+conda run --name lens python scripts/t04_color_evidence.py
+conda run --name lens python -m pytest -q tests/unit/test_t04_color_naming.py tests/unit/test_t04_color_extraction.py
+```
+
+The script writes `basic11_evaluation.csv`, `evidence.json`, a swatch grid,
+and a synthetic two-cluster overlay under ignored `artifacts/t04-color/`.
+
 ## Camera and local-video preview
 
 Run the webcam preview using the default camera index:
@@ -226,7 +274,7 @@ The T01 suite generates short MJPG/AVI files under pytest's temporary directory
 and deletes them with the test workspace. It does not commit or download sample
 media and verifies that video mode never opens a webcam.
 
-## T02/T03 handoff contracts
+## T02–T04 handoff contracts
 
 - `chromalens.camera.FrameSource` is the common webcam/video interface.
 - Each successful read produces a `FramePacket` with a sequential frame ID,
@@ -236,6 +284,9 @@ media and verifies that video mode never opens a webcam.
 - `chromalens.renderer.render_preview` draws only onto a copied frame.
 - T02 can consume `FramePacket.original_bgr` for segmentation; T03 can produce
   corrected output without changing the source frame.
+- T04 consumes only `corrected_rgb` plus an aligned garment mask and returns
+  original-color `ColorCluster` values; assistive display colors do not exist
+  yet and cannot contaminate extraction.
 
 ## Current limitations
 
@@ -252,8 +303,13 @@ media and verifies that video mode never opens a webcam.
   thresholds. Mixed illuminants, strongly single-colored scenes, or very few
   eligible pixels can limit correction; `used_fallback` and `valid_fraction`
   expose the latter case.
-- T02/T03 contain segmentation and lighting correction only; color extraction,
-  CVD-risk, recoloring, and performance-target claims belong to later tasks.
+- T04's CSS-anchor lookup is transparent and deterministic but cannot represent
+  every shade, language, material, camera, display, or lighting condition. Its
+  11-patch controlled result is contract evidence, not a real-world accuracy
+  claim; broader evaluation and threshold tuning belong to T09.
+- T02–T04 contain segmentation, lighting correction, and original-color
+  extraction only; CVD-risk, recoloring, and performance-target claims belong
+  to later tasks.
 - Model weights, datasets, generated artifacts, and private footage are not
   included. See `models/README.md` for download policy.
 
