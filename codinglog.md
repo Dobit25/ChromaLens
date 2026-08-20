@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-20 00:55 +07:00
+Last updated: 2026-08-20 13:57 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -35,7 +35,7 @@ This table is intentionally empty until an agent starts the plan.
 | T01 | Camera, video source, and base renderer | `DONE` | Codex | 2026-08-18 23:00 +07:00 | 2026-08-18 23:13 +07:00 | T01 start and completion entries below |
 | T02 | Garment segmentation vertical slice | `DONE` | Codex (integration audit) | 2026-08-19 15:06 +07:00 | 2026-08-20 00:35 +07:00 | Corrective implementation and successful PR CI entries below |
 | T03 | White balance and lighting quality | `DONE` | Codex | 2026-08-20 00:47 +07:00 | 2026-08-20 00:55 +07:00 | T03 start and completion entries below |
-| T04 | Dominant color extraction and 11-name mapping | `IN_PROGRESS` | DangTrinhdzZz | <2026-08-20 11:20 +07:00> | T04 start entry below |
+| T04 | Dominant color extraction and 11-name mapping | `DONE` | DangTrinhdzZz | 2026-08-20 11:20 +07:00 | 2026-08-20 13:57 +07:00 | T04 start and completion entries below |
 
 ## 3. Active blockers
 
@@ -53,6 +53,7 @@ Use this section only for implementation decisions that affect later tasks. Deta
 | DEC-003 | 2026-08-20 | Keep the locked MediaPipe person-derived torso mask as T02 P0 and name it honestly; it is not semantic garment parsing or calibrated confidence. | T02, T04, T06, T08, T09 | T02 corrective validation entry |
 | DEC-004 | 2026-08-20 | Apply the T02 four-hour gate: remove the unverified SCHP copy/runtime and defer any locked SCHP attempt to T10 after T08/T09. | T02, T08, T09, T10 | T02 corrective validation entry |
 | DEC-005 | 2026-08-20 | Keep one Gray-world balancer per ordered stream; use an optional mask only for gain estimation, apply EMA-smoothed gains globally, and report insufficient valid pixels as a visible poor-quality fallback. | T03, T04, T08, T09 | T03 completion entry |
+| DEC-006 | 2026-08-20 | Use a documented W3C CSS named-color prototype lookup, conventional float CIE Lab, Delta-E 1976 nearest-prototype naming, and uncalibrated softmax scores for the T04 MVP. | T04, T08, T09 | T04 completion entry |
 
 ## 5. Chronological entries
 
@@ -1491,6 +1492,159 @@ mask alignment, erosion, invalid-pixel rejection, and background exclusion.
 
 - Branch: `work/t04-color-extraction`
 - Start-entry commit: not committed
+- Integration target: `mvp`
+
+---
+
+### `2026-08-20 13:57 +07:00` — `T04` `Dominant color extraction and 11-name mapping complete`
+
+**Status:** `DONE`  
+**Owner/agent:** DangTrinhdzZz  
+**Plan reference:** `plan.md#t04--dominant-color-extraction-and-11-name-mapping`  
+**Requirements/rubric affected:** FR-05, FR-06, FR-14; T04 Definition of Done; explainability, reproducibility, attribution, and original-color preservation
+
+#### Objective
+
+Complete a deterministic T04 pipeline that consumes the T03 corrected RGB
+frame and a T02 aligned garment region, rejects unreliable pixels, estimates
+one or two original garment colors, assigns Vietnamese basic-color names, and
+returns complete validated `ColorCluster` objects.
+
+#### Work performed
+
+- Added configurable mask erosion and dark/clipped-pixel rejection without
+  mutating the corrected RGB frame or garment mask.
+- Added conventional floating-point CIE Lab conversion with explicit RGB
+  channel ordering.
+- Added a robust component-wise median estimator for the P0 uniform-garment
+  path.
+- Added deterministic two-cluster Lab estimation with stable initialization,
+  deterministic tie handling, minimum-area filtering, and retained membership
+  vectors.
+- Added an explainable 11-name Vietnamese color lookup using documented W3C
+  CSS named-color sRGB prototypes.
+- Added temperature-scaled normalized name scores and best-versus-second
+  margins. These values are explicitly treated as uncalibrated heuristics.
+- Added the complete extraction composition from preprocessing through
+  clustering, naming, and aligned boolean `H x W` cluster submasks.
+- Added fail-fast handling for insufficient valid pixels, low valid-pixel
+  fractions, known low mask confidence, invalid configuration, and
+  misaligned masks.
+- Added an integration test that composes a backend-independent T02
+  `Segmenter`, the real T03 `GrayWorldWhiteBalancer`, and the real T04
+  extractor.
+- Added reproducible controlled input and a generated results table spanning
+  all 11 basic-color families.
+- Documented source, attribution, algorithm, score semantics, and limitations
+  in `assets/color_names/README.md`.
+
+#### Files changed
+
+| File | Change | Why |
+| --- | --- | --- |
+| `src/chromalens/color/__init__.py` | Created and expanded | Public T04 exports. |
+| `src/chromalens/color/preprocessing.py` | Created | Mask erosion and valid-pixel selection. |
+| `src/chromalens/color/naming.py` | Created | RGB/Lab conversion and 11-name heuristic. |
+| `src/chromalens/color/clustering.py` | Created | Robust median and deterministic K=2 estimation. |
+| `src/chromalens/color/extraction.py` | Created | Complete T04 composition and aligned submask construction. |
+| `tests/unit/test_t04_preprocessing.py` | Created | Preprocessing, alignment, erosion, and invalid-pixel tests. |
+| `tests/unit/test_t04_naming.py` | Created | All 11 names, Lab convention, scoring, and validation tests. |
+| `tests/unit/test_t04_clustering.py` | Created | Robustness, determinism, ratios, filtering, and membership tests. |
+| `tests/unit/test_t04_extraction.py` | Created | Complete extraction contract and failure-path tests. |
+| `tests/integration/test_t02_t03_t04_pipeline.py` | Created | T02–T04 composition, BGR/RGB, mutation, and containment evidence. |
+| `evaluation/t04_controlled_color_samples.csv` | Created | Declared controlled 11-family synthetic input. |
+| `evaluation/results/t04_color_naming_results.csv` | Created | Machine-readable controlled evaluation results. |
+| `scripts/evaluate_t04_color_names.py` | Created | Reproducible evaluation-table generator. |
+| `assets/color_names/README.md` | Created | Prototype provenance, attribution, algorithm, and limitations. |
+| `codinglog.md` | Modified | Record T04 completion, evidence, and decision DEC-006. |
+
+#### Tests and observed results
+
+| Check | Result |
+| --- | --- |
+| `python -m pytest -q tests/unit/test_t04_preprocessing.py` | PASS — 8 passed |
+| Full suite after preprocessing | PASS — 70 passed |
+| `python -m pytest -q tests/unit/test_t04_naming.py` | PASS — 25 passed |
+| Full suite after naming | PASS — 95 passed |
+| `python -m pytest -q tests/unit/test_t04_clustering.py` | PASS — 14 passed |
+| Full suite after clustering | PASS — 109 passed |
+| `python -m pytest -q tests/unit/test_t04_extraction.py` | PASS — 17 passed |
+| Full suite after extraction | PASS — 126 passed |
+| `python -m pytest -q tests/integration/test_t02_t03_t04_pipeline.py` | PASS — 1 passed |
+| Final observed full suite before documentation | PASS — 127 passed in 3.63 s |
+| `python -m compileall -q src tests` | PASS — no output |
+| `git diff --check` | PASS — no output |
+| Controlled 11-family evaluation | 11/11 correct on declared synthetic uniform patches |
+
+#### Measurements
+
+| Metric | Measured value | Conditions |
+| --- | ---: | --- |
+| Controlled naming result | 11/11, 100% | One synthetic uniform patch per configured prototype family; not real-world garment accuracy |
+| Retained pixels per controlled patch | 324 | 20 x 20 mask, default 3 x 3 one-iteration erosion |
+| Final automated suite | 127 passed | Conda `lens`, Python 3.10.20 |
+
+#### Definition-of-Done check
+
+- [x] Unit tests cover mask erosion, invalid-pixel rejection, median robustness,
+      deterministic clustering, and background exclusion.
+- [x] A controlled set spanning all 11 configured color families produces a
+      reproducible CSV evaluation table.
+- [x] Every retained cluster contains Lab, RGB, ratio, aligned submask,
+      original name, normalized name scores, and margin.
+- [x] Synthetic tests confirm that no background pixel is intentionally
+      included after alignment and erosion.
+- [x] Color prototype source, attribution, algorithm, and limitations are
+      documented.
+- [x] T02 → T03 → T04 composition preserves BGR/RGB channel order and does not
+      mutate the original frame.
+- [x] No T08 application or renderer scope was added.
+
+#### Deviations and decisions
+
+- **Decision ID:** `DEC-006`
+- **Deviation from plan:** Used documented W3C CSS named-color prototypes
+  rather than the learned Van de Weijer color-name distribution.
+- **Reason:** The deterministic lookup is small, explainable, offline,
+  reproducible, and sufficient for the MVP interface and deadline.
+- **Trade-off/impact:** Prototype boundaries are not perceptually uniform.
+  Dark red may map to brown, scores are not calibrated probabilities, and
+  real-world color naming requires broader T09 evaluation.
+- **Owner approval required:** no; `plan.md` permits a documented equivalent
+  lookup.
+
+#### Problems, limitations, or blockers
+
+- The 11/11 result applies only to declared synthetic uniform patches selected
+  near the configured prototypes. It must not be presented as real-world
+  garment accuracy.
+- Absolute black and channel values at or above the clipping threshold are
+  intentionally rejected by preprocessing; controlled samples therefore use
+  non-clipped nearby values.
+- T02 currently supplies a person-derived torso heuristic rather than
+  semantic garment parsing.
+- T03 Gray-world cannot recover physical ground-truth color under arbitrary,
+  mixed, or severely clipped illumination.
+- Nearest-prototype Delta-E 1976 naming does not model cultural or contextual
+  color-name boundaries.
+- No blocker remains for handing T04 to T05/T08.
+
+#### Next action
+
+Commit the remaining integration test, controlled evaluation artifacts,
+prototype provenance, and coding-log evidence. Then open a pull request from
+`work/t04-color-extraction` into `mvp`. The next plan task consuming T04 is
+T05 — CVD simulation and relational risk.
+
+#### Version control
+
+- Branch: `work/t04-color-extraction`
+- T04 start commit: `bf8fdd3`
+- Preprocessing commit: `be89500`
+- Naming commit: `60f45b1`
+- Clustering commit: `7da78eb`
+- Extraction composition commit: `c12078e`
+- Completion-evidence commit: not committed
 - Integration target: `mvp`
 
 ---
