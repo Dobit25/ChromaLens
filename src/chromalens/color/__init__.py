@@ -10,6 +10,13 @@ from chromalens.color.naming import (
     rgb_to_cielab,
 )
 
+from chromalens.color.clustering import (
+    ClusterEstimate,
+    ClusteringConfig,
+    deterministic_k2_estimates,
+    robust_median_estimate,
+)
+
 from chromalens.color.preprocessing import (
     PixelSelection,
     PixelSelectionConfig,
@@ -27,4 +34,8 @@ __all__ = [
     "name_cielab",
     "name_rgb",
     "rgb_to_cielab",
+    "ClusterEstimate",
+    "ClusteringConfig",
+    "deterministic_k2_estimates",
+    "robust_median_estimate",
 ]
