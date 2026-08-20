@@ -4,8 +4,8 @@ ChromaLens AI is a local, explainable color-vision assistance prototype for
 clothing. **T01** (webcam/video preview), the locked **T02** MediaPipe torso-
 mask baseline, **T03** lighting correction, **T04** original-color
 extraction/naming, **T05** CVD simulation/relational risk, **T06** selective
-assistive recoloring/overlay, and **T07** rule-based color matching are complete
-as independently testable modules.
+assistive recoloring/overlay, **T07** rule-based color matching, and **T08**
+end-to-end live composition/controls are complete.
 
 The MVP is assistive software, not a medical diagnosis tool. The user selects
 their CVD profile and severity.
@@ -377,9 +377,13 @@ The command writes ignored CSV/JSON/PNG output under
 contract, and limitations are documented in
 [`assets/matching/README.md`](assets/matching/README.md).
 
-## Camera and local-video preview
+## End-to-end webcam/video pipeline (T08)
 
-Run the webcam preview using the default camera index:
+The full default source path uses the locked MediaPipe CPU backend and composes
+T02-T07 for every displayed frame. Install the locked MediaPipe closure shown
+under **Garment segmentation (T02)** before using these commands.
+
+Launch the webcam demo using the default camera index:
 
 ```powershell
 conda run --name lens python -m chromalens --webcam
@@ -391,7 +395,8 @@ Request a capture resolution or choose another camera when required:
 conda run --name lens python -m chromalens --webcam --camera-index 1 --width 1280 --height 720
 ```
 
-Run a local video without opening a camera:
+Process a local sample video through the same analytical and rendering path
+without opening a camera:
 
 ```powershell
 conda run --name lens python -m chromalens --video C:\path\to\sample.mp4
@@ -406,17 +411,58 @@ conda run --name lens python -m chromalens --webcam --no-display --max-frames 12
 conda run --name lens python -m chromalens --webcam --duration-seconds 120
 ```
 
-The overlay reports source name, observed resolution, frame ID, processed FPS,
-and basic pipeline latency. At T01, pipeline latency is measured from the
-monotonic timestamp assigned immediately after OpenCV returns a frame to the
-start of rendering; it is not yet a sensor-to-photon benchmark.
+Runtime controls are reversible and remain user-selected settings, not a
+medical diagnosis:
 
-The capture loop reads, renders, displays, and discards one frame at a time.
-There is no application queue or frame history in T01. A webcam disconnect is
-reported as an error, while local-video end-of-file is a successful exit. No
-frame is saved or uploaded. OpenCV is asked for a one-frame webcam buffer, but
-backend support for that hint varies; T08 will introduce latest-frame behavior
-if inference becomes slower than capture.
+- `p`: cycle `protan` / `deutan` / `tritan`.
+- `[` and `]`: decrease/increase severity by 0.1 within `[0, 1]`.
+- `r`: enable or disable assistive recoloring without disabling analysis.
+- `v`: cycle views; keys `1`-`5` select `assistive`, `original`, `mask`,
+  `risk`, and `diagnostic` directly.
+
+The equivalent initial values are available as CLI flags, for example:
+
+```powershell
+conda run --name lens python -m chromalens --webcam --profile protan --severity 0.8 --disable-recolor --view original
+```
+
+The overlay keeps original corrected color/margin, heuristic mask confidence,
+CVD risk, and lighting quality as separate fields. Matching uses only the T04
+original corrected cluster; the assistive display color never feeds analysis.
+Every output is tied to the displayed `frame_id`. A missing or failed stage is
+shown as `degraded`/`unavailable` for that current frame; prior masks, colors,
+risks, or recolors are not presented as current results.
+
+Live webcam capture uses an exact capacity-one mailbox: inference takes the
+newest frame and counts overwritten stale frames instead of building latency.
+Finite videos run sequentially through the same pipeline so evaluation frames
+are not skipped. Runtime metrics use bounded buffers (600 latency samples and
+at most 600 RSS samples) and report processed FPS, capture-to-render p50/p95,
+processing p50/p95, dropped frames, degraded frames, and RSS trend. These are
+software-timestamp/development-machine observations, not sensor-to-photon or
+official demo-hardware claims; T09 owns the declared evaluation protocol.
+
+The capture-only T01 diagnostic remains available explicitly and never loads a
+segmentation backend:
+
+```powershell
+conda run --name lens python -m chromalens --video C:\path\to\sample.mp4 --preview-only
+```
+
+No command saves or uploads camera frames by default. Source-open failures,
+missing MediaPipe installation, and live read failures return actionable,
+non-zero exits. Generate reviewable T08 fixture views, a local sample AVI, and
+optional two-minute bounded-runtime metrics offline with:
+
+```powershell
+conda run --name lens python scripts/t08_pipeline_evidence.py
+conda run --name lens python scripts/t08_pipeline_evidence.py --stability-seconds 120
+conda run --name lens python -m chromalens --video artifacts/t08-pipeline/sample_mediapipe.avi --no-display
+```
+
+All generated output is under ignored `artifacts/t08-pipeline/`. The real
+backend visual uses the repository's licensed/public-domain T02 fixture; the
+stability source is generated and contains no private camera image.
 
 ## Verification
 
@@ -434,11 +480,11 @@ The console entry point is equivalent:
 conda run --name lens chromalens --help
 ```
 
-The T01 suite generates short MJPG/AVI files under pytest's temporary directory
+The T01/T08 suites generate short MJPG/AVI files under pytest's temporary directory
 and deletes them with the test workspace. It does not commit or download sample
 media and verifies that video mode never opens a webcam.
 
-## T02–T07 handoff contracts
+## T02-T08 handoff contracts
 
 - `chromalens.camera.FrameSource` is the common webcam/video interface.
 - Each successful read produces a `FramePacket` with a sequential frame ID,
@@ -461,8 +507,13 @@ media and verifies that video mode never opens a webcam.
 - T07 accepts only T04's original corrected `ColorCluster`, never T06's
   assistive display value. It returns deterministic guidance plus an optional
   CVD-separation diagnostic; neither priority nor separation is confidence.
-  T08 owns live composition, current-frame/stale-result behavior, controls, and
-  reset/key handling when profile, stream, or track identity changes.
+  T08 presents that guidance but does not change its source contract.
+- `chromalens.pipeline.ChromaLensPipeline` is the sole T08 composition
+  boundary. It emits typed current-frame stage reports and resets recolor state
+  when profile, severity, or recolor context changes.
+- `LatestFrameReader` has a one-packet live mailbox; video deliberately remains
+  sequential. `TemporalMaskSmoother` intersects history with the current mask,
+  so temporal state cannot resurrect rejected pixels.
 
 ## Current limitations
 
@@ -495,9 +546,11 @@ media and verifies that video mode never opens a webcam.
 - T07's CIELCH geometry and five-row project-authored table are simple
   guidance. They do not model culture, material, occasion, trend, or individual
   taste; their wording and usefulness require T09 user testing.
-- T02–T07 are independently testable modules. Live pipeline composition,
-  user controls, stale-result handling, and performance-target claims remain
-  T08/T09 work.
+- T08 development measurements are not an official hardware benchmark. The
+  current live path runs all analytical modules on every consumed frame and
+  can drop capture frames under load. T09 must declare hardware, footage,
+  conditions, accuracy protocol, and acceptance thresholds before competition
+  performance/quality claims.
 - Model weights, datasets, generated artifacts, and private footage are not
   included. See `models/README.md` for download policy.
 

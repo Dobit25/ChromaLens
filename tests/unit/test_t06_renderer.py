@@ -56,9 +56,11 @@ def test_overlay_lines_label_original_and_assistive_colors_separately() -> None:
     assert lines[1].startswith("Original corrected: red/Do RGB=(220, 40, 40)")
     assert lines[2].startswith("Assistive display: RGB=(0, 120, 251)")
     assert "margin=0.421" in lines[1]
+    assert "Mask confidence: unavailable" in lines[3]
     assert "Risk: high 0.693" in lines[3]
     assert "lighting: good" in lines[3]
     assert "Profile: deutan severity=1.00" in lines[4]
+    assert lines[5] == "Frame: 17 | degraded: none"
 
 
 def test_simulation_view_is_unambiguously_debug_only() -> None:

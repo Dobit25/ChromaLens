@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from time import monotonic_ns
+from typing import TYPE_CHECKING
 import unicodedata
 
 import cv2
@@ -19,6 +20,9 @@ from chromalens.contracts import (
     LightingQuality,
     RiskAssessment,
 )
+
+if TYPE_CHECKING:
+    from chromalens.pipeline import PipelineFrameResult
 
 
 @dataclass(frozen=True, slots=True)
@@ -61,6 +65,39 @@ class OverlayView(str, Enum):
     CVD_SIMULATION_DEBUG = "cvd-simulation-debug"
 
 
+class PipelineView(str, Enum):
+    """Selectable T08 views; simulation remains a separate T06 debug API."""
+
+    ASSISTIVE = "assistive"
+    ORIGINAL = "original"
+    MASK = "mask"
+    RISK = "risk"
+    DIAGNOSTIC = "diagnostic"
+
+
+@dataclass(frozen=True, slots=True)
+class PipelineDisplayState:
+    """Current user controls and live-capture status rendered on every view."""
+
+    profile: CVDProfile
+    severity: float
+    recolor_enabled: bool
+    view: PipelineView
+    dropped_capture_frames: int = 0
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.profile, CVDProfile):
+            raise TypeError("profile must be a CVDProfile selected by the user")
+        if not np.isfinite(self.severity) or not 0.0 <= self.severity <= 1.0:
+            raise ValueError("severity must be finite within [0, 1]")
+        if not isinstance(self.recolor_enabled, bool):
+            raise TypeError("recolor_enabled must be boolean")
+        if not isinstance(self.view, PipelineView):
+            raise TypeError("view must be a PipelineView")
+        if self.dropped_capture_frames < 0:
+            raise ValueError("dropped_capture_frames must be non-negative")
+
+
 @dataclass(frozen=True, slots=True)
 class AssistiveOverlayData:
     """Typed score/tag content; measured and display colors stay separate."""
@@ -76,6 +113,8 @@ class AssistiveOverlayData:
     severity: float
     backend_name: str
     recolor_applied: bool
+    mask_confidence: float | None = None
+    degraded_reason: str | None = None
     view: OverlayView = OverlayView.ASSISTIVE
 
     def __post_init__(self) -> None:
@@ -96,6 +135,13 @@ class AssistiveOverlayData:
             raise ValueError("severity must be finite within [0, 1]")
         if not self.backend_name.strip():
             raise ValueError("backend_name must not be empty")
+        if self.mask_confidence is not None and (
+            not np.isfinite(self.mask_confidence)
+            or not 0.0 <= self.mask_confidence <= 1.0
+        ):
+            raise ValueError("mask_confidence must be finite within [0, 1]")
+        if self.degraded_reason is not None and not self.degraded_reason.strip():
+            raise ValueError("degraded_reason must not be blank")
         if not isinstance(self.view, OverlayView):
             raise TypeError("view must be an OverlayView")
 
@@ -260,6 +306,16 @@ def build_assistive_overlay_lines(data: AssistiveOverlayData) -> tuple[str, ...]
         if data.lighting_quality is None
         else data.lighting_quality.level.value
     )
+    mask_confidence = (
+        "unavailable"
+        if data.mask_confidence is None
+        else f"{data.mask_confidence:.3f} heuristic"
+    )
+    degraded = (
+        "none"
+        if data.degraded_reason is None
+        else _ascii_for_opencv(data.degraded_reason)
+    )
     display_prefix = (
         "Assistive display"
         if data.view is OverlayView.ASSISTIVE
@@ -275,12 +331,16 @@ def build_assistive_overlay_lines(data: AssistiveOverlayData) -> tuple[str, ...]
             f"{display_prefix}: RGB={data.assistive_display_rgb} | "
             f"applied={'yes' if data.recolor_applied else 'no'}"
         ),
-        f"Risk: {data.risk.risk_level} {data.risk.risk_score:.3f} | lighting: {lighting}",
+        (
+            f"Mask confidence: {mask_confidence} | Risk: "
+            f"{data.risk.risk_level} {data.risk.risk_score:.3f} | "
+            f"lighting: {lighting}"
+        ),
         (
             f"Profile: {data.profile.value} severity={data.severity:.2f} | "
             f"backend: {data.backend_name}"
         ),
-        f"Frame: {data.frame_id}",
+        f"Frame: {data.frame_id} | degraded: {degraded}",
     )
 
 
@@ -419,6 +479,308 @@ def _render_labeled_overlay(
             lineType=cv2.LINE_AA,
         )
     return rendered
+
+
+def render_pipeline_view(
+    result: "PipelineFrameResult",
+    *,
+    source_name: str,
+    telemetry: PreviewTelemetry,
+    display_state: PipelineDisplayState,
+) -> ColorFrame:
+    """Render one T08 view using only analysis for the displayed frame ID."""
+
+    if not source_name.strip():
+        raise ValueError("source_name must not be empty")
+    if result.analysis_frame_id != result.packet.frame_id:
+        raise ValueError("stale analysis must not be rendered as the current frame")
+
+    if display_state.view is PipelineView.ASSISTIVE:
+        rendered = _render_pipeline_assistive(result, display_state)
+    else:
+        rendered = _pipeline_base_view(result, display_state.view)
+        if result.primary_region is not None:
+            _draw_double_outline(rendered, result.primary_region.mask)
+        _draw_pipeline_status_panel(
+            rendered,
+            _pipeline_status_lines(result, display_state),
+        )
+
+    _draw_pipeline_footer(
+        rendered,
+        source_name=source_name,
+        telemetry=telemetry,
+        display_state=display_state,
+    )
+    return rendered
+
+
+def _render_pipeline_assistive(
+    result: "PipelineFrameResult",
+    display_state: PipelineDisplayState,
+) -> ColorFrame:
+    region = result.primary_region
+    cluster = result.primary_cluster
+    risk = result.risk
+    if region is None or cluster is None or risk is None:
+        rendered = result.assistive_bgr
+        if region is not None:
+            _draw_double_outline(rendered, region.mask)
+        _draw_pipeline_status_panel(
+            rendered,
+            _pipeline_status_lines(result, display_state),
+        )
+        return rendered
+
+    recolor_debug = result.recolor.debug if result.recolor is not None else None
+    overlay_data = AssistiveOverlayData(
+        frame_id=result.packet.frame_id,
+        original_color_name=cluster.original_name,
+        original_corrected_rgb=cluster.rgb,
+        assistive_display_rgb=(
+            recolor_debug.assistive_display_rgb
+            if recolor_debug is not None
+            else cluster.rgb
+        ),
+        color_margin=cluster.color_margin,
+        risk=risk,
+        lighting_quality=result.packet.lighting_quality,
+        profile=display_state.profile,
+        severity=display_state.severity,
+        backend_name=result.backend_name,
+        recolor_applied=(
+            bool(recolor_debug.applied)
+            if recolor_debug is not None and display_state.recolor_enabled
+            else False
+        ),
+        mask_confidence=region.mask_confidence,
+        degraded_reason=(
+            result.degraded_reasons[0] if result.degraded_reasons else None
+        ),
+    )
+    return render_assistive_overlay(
+        result.assistive_bgr,
+        region.mask,
+        overlay_data,
+    )
+
+
+def _pipeline_base_view(
+    result: "PipelineFrameResult",
+    view: PipelineView,
+) -> ColorFrame:
+    if view is PipelineView.ORIGINAL:
+        return result.packet.original_bgr.copy()
+    if view is PipelineView.MASK:
+        rendered = result.packet.original_bgr.copy()
+        overlay = rendered.copy()
+        for region in result.regions:
+            overlay[region.mask] = (0, 220, 0)
+        cv2.addWeighted(overlay, 0.42, rendered, 0.58, 0.0, dst=rendered)
+        return rendered
+    if view is PipelineView.RISK:
+        rendered = result.packet.original_bgr.copy()
+        if np.any(result.risk_mask):
+            overlay = rendered.copy()
+            overlay[result.risk_mask] = (0, 80, 255)
+            cv2.addWeighted(overlay, 0.52, rendered, 0.48, 0.0, dst=rendered)
+        return rendered
+    if view is PipelineView.DIAGNOSTIC:
+        if result.packet.corrected_rgb is None:
+            rendered = result.packet.original_bgr.copy()
+        else:
+            rendered = cv2.cvtColor(
+                result.packet.corrected_rgb,
+                cv2.COLOR_RGB2BGR,
+            )
+        overlay = rendered.copy()
+        for cluster in result.clusters:
+            overlay[cluster.submask] = cluster.rgb[::-1]
+        cv2.addWeighted(overlay, 0.32, rendered, 0.68, 0.0, dst=rendered)
+        return rendered
+    raise ValueError(f"unsupported non-assistive pipeline view: {view!r}")
+
+
+def _pipeline_status_lines(
+    result: "PipelineFrameResult",
+    display_state: PipelineDisplayState,
+) -> tuple[str, ...]:
+    cluster = result.primary_cluster
+    region = result.primary_region
+    risk = result.risk
+    color_text = (
+        "Original corrected: unavailable | margin=unavailable"
+        if cluster is None
+        else (
+            f"Original corrected: {cluster.original_name}/"
+            f"{_ascii_for_opencv(vietnamese_color_label(cluster.original_name))} "
+            f"RGB={cluster.rgb} | margin="
+            f"{'unavailable' if cluster.color_margin is None else f'{cluster.color_margin:.3f}'}"
+        )
+    )
+    mask_confidence = (
+        "unavailable"
+        if region is None or region.mask_confidence is None
+        else f"{region.mask_confidence:.3f} heuristic"
+    )
+    risk_text = (
+        "unavailable"
+        if risk is None
+        else f"{risk.risk_level} {risk.risk_score:.3f}"
+    )
+    lighting = (
+        "unavailable"
+        if result.packet.lighting_quality is None
+        else result.packet.lighting_quality.level.value
+    )
+    degraded = (
+        "none"
+        if not result.degraded_reasons
+        else _ascii_for_opencv(result.degraded_reasons[0])
+    )
+    guidance = "unavailable"
+    if result.matching is not None and result.matching.suggestions:
+        first = result.matching.suggestions[0]
+        guidance = (
+            f"{first.target_name} ({first.harmony.value}); guidance only, not objective"
+        )
+    return (
+        f"VIEW: {display_state.view.value.upper()} | "
+        f"Analysis: current frame {result.analysis_frame_id}",
+        color_text,
+        f"Mask confidence: {mask_confidence} | CVD risk: {risk_text}",
+        (
+            f"Lighting: {lighting} | profile={display_state.profile.value} "
+            f"severity={display_state.severity:.2f}"
+        ),
+        f"Backend: {result.backend_name}",
+        f"Degraded: {degraded}",
+        f"Match guidance: {guidance}",
+    )
+
+
+def _draw_double_outline(frame: ColorFrame, mask: BinaryMask) -> None:
+    contours, _ = cv2.findContours(
+        mask.astype(np.uint8),
+        cv2.RETR_EXTERNAL,
+        cv2.CHAIN_APPROX_SIMPLE,
+    )
+    if not contours:
+        return
+    cv2.drawContours(frame, contours, -1, (0, 0, 0), 6, cv2.LINE_8)
+    cv2.drawContours(frame, contours, -1, (255, 255, 255), 2, cv2.LINE_8)
+
+
+def _draw_pipeline_status_panel(
+    frame: ColorFrame,
+    lines: tuple[str, ...],
+) -> None:
+    height, width = frame.shape[:2]
+    margin = 8
+    padding = 7
+    line_height = 20
+    font_scale = 0.43
+    thickness = 1
+    maximum_text_width = max(1, width - 2 * margin - 2 * padding)
+    fitted = tuple(
+        _fit_generic_text(line, maximum_text_width, font_scale, thickness)
+        for line in lines
+    )
+    panel_height = min(
+        height,
+        2 * padding + line_height * len(fitted),
+    )
+    overlay = frame.copy()
+    cv2.rectangle(
+        overlay,
+        (margin, margin),
+        (max(margin, width - margin - 1), min(height - 1, margin + panel_height)),
+        (0, 0, 0),
+        -1,
+    )
+    cv2.addWeighted(overlay, 0.86, frame, 0.14, 0.0, dst=frame)
+    for index, line in enumerate(fitted):
+        baseline_y = margin + padding + line_height * (index + 1)
+        if baseline_y >= height:
+            break
+        cv2.putText(
+            frame,
+            line,
+            (margin + padding, baseline_y),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            font_scale,
+            (255, 255, 255),
+            thickness,
+            cv2.LINE_AA,
+        )
+
+
+def _draw_pipeline_footer(
+    frame: ColorFrame,
+    *,
+    source_name: str,
+    telemetry: PreviewTelemetry,
+    display_state: PipelineDisplayState,
+) -> None:
+    height, width = frame.shape[:2]
+    line_height = 19
+    panel_height = min(height, 2 * line_height + 8)
+    y0 = max(0, height - panel_height)
+    cv2.rectangle(frame, (0, y0), (width - 1, height - 1), (0, 0, 0), -1)
+    fps = (
+        "warming"
+        if telemetry.processed_fps is None
+        else f"{telemetry.processed_fps:.1f}"
+    )
+    lines = (
+        (
+            f"{source_name} | FPS={fps} | latency={telemetry.pipeline_latency_ms:.1f}ms "
+            f"| dropped={display_state.dropped_capture_frames}"
+        ),
+        "Keys: p profile | [/] severity | r recolor | v/1-5 view | q/Esc quit",
+    )
+    for index, line in enumerate(lines):
+        fitted = _fit_generic_text(line, max(1, width - 12), 0.42, 1)
+        cv2.putText(
+            frame,
+            fitted,
+            (6, y0 + 16 + index * line_height),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.42,
+            (255, 255, 255),
+            1,
+            cv2.LINE_AA,
+        )
+
+
+def _fit_generic_text(
+    value: str,
+    maximum_width: int,
+    font_scale: float,
+    thickness: int,
+) -> str:
+    if maximum_width <= 0:
+        return ""
+    if cv2.getTextSize(
+        value,
+        cv2.FONT_HERSHEY_SIMPLEX,
+        font_scale,
+        thickness,
+    )[0][0] <= maximum_width:
+        return value
+    suffix = "..."
+    candidate = value
+    while candidate:
+        candidate = candidate[:-1]
+        fitted = candidate.rstrip() + suffix
+        if cv2.getTextSize(
+            fitted,
+            cv2.FONT_HERSHEY_SIMPLEX,
+            font_scale,
+            thickness,
+        )[0][0] <= maximum_width:
+            return fitted
+    return ""
 
 
 def _fit_text_to_width(

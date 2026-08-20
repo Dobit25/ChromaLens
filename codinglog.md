@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-20 16:11 +07:00
+Last updated: 2026-08-20 16:58 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -39,6 +39,7 @@ This table is intentionally empty until an agent starts the plan.
 | T05 | CVD simulation and relational risk | `DONE` | Codex | 2026-08-20 12:11 +07:00 | 2026-08-20 12:27 +07:00 | T05 start and completion entries below |
 | T06 | Selective recolor, outline, and score overlay | `DONE` | Codex | 2026-08-20 13:02 +07:00 | 2026-08-20 13:10 +07:00 | T06 start and completion entries below |
 | T07 | Rule-based color matching | `DONE` | Codex | 2026-08-20 16:02 +07:00 | 2026-08-20 16:11 +07:00 | T07 start and completion entries below |
+| T08 | End-to-end live pipeline and controls | `DONE` | Codex | 2026-08-20 16:24 +07:00 | 2026-08-20 16:58 +07:00 | T08 start and completion entries below |
 
 ## 3. Active blockers
 
@@ -60,6 +61,7 @@ Use this section only for implementation decisions that affect later tasks. Deta
 | DEC-007 | 2026-08-20 | Pin DaltonLens 0.1.5 in the P0 base runtime, preserve exact severity-zero identity, and score CVD-created relational loss from CIEDE2000 collapse plus simulated closeness using configurable heuristic thresholds. | T05, T06, T08, T09 | T05 completion entry |
 | DEC-008 | 2026-08-20 | Select assistive colors by documented CIELCH candidates scored under the chosen CVD simulation; preserve per-pixel L*, use an inward-only exact mask, bounded hysteresis, and separate mandatory assistive/debug-simulation render paths. | T06, T08, T09 | T06 completion entry |
 | DEC-009 | 2026-08-20 | Generate matching guidance only from T04 `ColorCluster` Lab/RGB through a strictly validated project-authored CIELCH rule table; treat priority and optional CVD separation as heuristics, never confidence or objective fashion truth. | T07, T08, T09 | T07 completion entry |
+| DEC-010 | 2026-08-20 | Compose T02-T07 through one typed current-frame pipeline; use a capacity-one newest-frame mailbox for webcam and sequential consumption for finite video. Temporal mask history is intersected with the current mask, and missing stages clear/skip dependent state instead of reusing stale analysis. | T08, T09, T11 | T08 completion entry |
 
 ## 5. Chronological entries
 
@@ -2298,6 +2300,252 @@ accessibility, camera-accuracy, or user-validation claims.
 - Branch: `mvp`
 - Planned atomic commit: `feat: add rule-based color matching`
 - Known-good pre-T07 baseline: `8d0938ebdce9c29aadd4992a0c1e2c462e5f98f9`
+
+---
+
+### `2026-08-20 16:24 +07:00` - `T08` `End-to-end live pipeline and controls`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Codex
+**Plan reference:** `plan.md#t08--end-to-end-live-pipeline-and-controls`
+**Requirements/rubric affected:** FR-01-FR-12; NFR-01-NFR-07; Metrics 01, 02, and 03 working-prototype evidence
+
+#### Objective
+
+Compose the completed T01-T07 modules into one local webcam/video pipeline
+with user-selected profile/severity, recolor and diagnostic controls, bounded
+newest-frame behavior, explicit degraded/stale states, and copied-frame views.
+
+#### Starting state
+
+- Branch `mvp` is clean and synchronized with `origin/mvp` at
+  `7998650f3e8d00d3c81c93f5716c714112230e44`.
+- Required tasks T01-T06 are `DONE`; optional T07 is also `DONE` and may be
+  presented without changing the original-color-only contract.
+- Approved runtime is conda environment `lens`, Python `3.10.20`, executable
+  `D:\Coding\Anaconda\envs\lens\python.exe`.
+- Baseline dependency check: `python -m pip check` reports no broken
+  requirements. Baseline suite: `177 passed in 2.14s`.
+- The only verified AI backend is the locked MediaPipe person-derived torso
+  heuristic on CPU. SCHP remains `DEFERRED` to T10 and must not be invoked.
+
+#### Smallest implementation
+
+- Add `pipeline.py` as the sole composition boundary. Preserve
+  `FramePacket.original_bgr`, run T03-T07 in their documented channel order,
+  and return typed per-frame state including explicit degraded reasons.
+- Add a bounded newest-item mailbox/capture worker for live webcam mode; local
+  video uses the same analytical pipeline synchronously so it never skips the
+  finite evaluation sequence. Never render analysis for a different frame ID
+  as current.
+- Extend the existing CLI and renderer with keyboard/CLI controls for profile,
+  severity, recolor enable/disable, and original/assistive/mask/risk/
+  diagnostic views. Reset temporal state when the stream or CVD context
+  changes.
+- Add deterministic end-to-end tests with a fake segmenter and generated local
+  video, plus an opt-in real MediaPipe smoke/evidence path. Do not add T09's
+  evaluation protocol, claim official demo-hardware performance, or start
+  SCHP/OpenVINO work.
+
+#### Definition-of-Done status at start
+
+- [ ] One command launches webcam demo and another processes sample video.
+- [ ] End-to-end output shows mask, original color, CVD risk, selective
+  recolor when triggered, outline, and separate scores.
+- [ ] User can change profile/severity and disable recoloring.
+- [ ] A two-minute run shows no continuously increasing lag or memory trend.
+- [ ] Degraded/missing modules are explicit and stale results are never shown
+  as current without indication.
+
+#### Deviations, limitations, and blockers
+
+- Deviation from plan: none.
+- Active blocker: none. This development machine is still not declared the
+  official demo hardware, so T08 observations will be labeled accordingly.
+
+---
+
+### `2026-08-20 16:58 +07:00` - `T08` `End-to-end live pipeline and controls`
+
+**Status:** `DONE`
+**Owner/agent:** Codex
+**Plan reference:** `plan.md#t08--end-to-end-live-pipeline-and-controls`
+**Requirements/rubric affected:** FR-01-FR-12; NFR-01-NFR-07; Metrics 01, 02, and 03 working-prototype evidence
+
+#### Outcome
+
+- `python -m chromalens --webcam` now launches the full local MediaPipe CPU
+  pipeline; `--video PATH` runs the same pipeline sequentially. The explicit
+  `--preview-only` option preserves T01 capture diagnostics without loading a
+  segmentation backend.
+- The live renderer exposes assistive, original, mask, risk, and diagnostic
+  views. It shows current frame ID, T04 original corrected color and margin,
+  heuristic mask confidence, T05 risk, T03 lighting quality, backend, dropped
+  frames, and a visible degraded reason without conflating those measurements.
+- CLI and keyboard controls select CVD profile, severity, recolor enablement,
+  and view. A changed CVD/recolor context resets T06 temporal selection state.
+- Webcam capture uses one producer and an exact one-packet mailbox. Slow
+  inference overwrites/counts stale capture frames; it cannot create an
+  unbounded queue. Finite video deliberately remains ordered and lossless.
+- Every `PipelineFrameResult` requires `analysis_frame_id == packet.frame_id`.
+  Empty/failed current segmentation clears mask history and causes dependent
+  color/risk/recolor stages to skip or degrade explicitly; no prior analysis
+  is presented as current.
+
+#### Files changed
+
+| File | Change |
+| --- | --- |
+| `src/chromalens/pipeline.py` | Added typed T02-T07 composition, per-stage reports, current-frame invariant, dependency-aware degradation, and temporal reset. |
+| `src/chromalens/camera.py` | Added the capacity-one `LatestFrameReader`, bounded wait, overwrite count, and deterministic shutdown. |
+| `src/chromalens/tracking.py` | Added bounded current-contained EMA mask smoothing; history can never restore pixels rejected by the current mask. |
+| `src/chromalens/metrics.py` | Added bounded latency/processing/RSS measurements and Windows/Linux RSS probes. |
+| `src/chromalens/renderer.py` | Added five copied-frame T08 views, current analysis/status panel, outline, separate scores, controls, and dropped-frame footer. |
+| `src/chromalens/app.py` | Added full-pipeline CLI/session runner, controls, latest-frame webcam path, sequential video path, cleanup, summaries, and explicit T01 preview path. |
+| `scripts/t08_pipeline_evidence.py` | Added controlled end-to-end visuals, real MediaPipe fixture integration, generated sample AVI, and optional private-free live stability evidence. |
+| `tests/unit/test_t08_tracking_metrics.py` | Added bounded mask/metrics, stale containment, RSS, percentile, and slope tests. |
+| `tests/unit/test_t08_latest_frame.py` | Added hardware-free mailbox overwrite, timeout, and worker shutdown tests. |
+| `tests/integration/test_t08_pipeline.py` | Added end-to-end, background-containment, view, control, degraded/failure, no-stale, and local-video tests. |
+| `tests/test_t00_smoke.py` | Updated the hardware-independent help assertion for the T08 CLI description. |
+| `tests/test_t01_camera_renderer.py` | Made the retained T01 video CLI test select `--preview-only` explicitly. |
+| `README.md` | Documented full commands, controls, views, failure semantics, queue behavior, evidence, metrics scope, privacy, and limitations. |
+| `codinglog.md` | Recorded T08 start, decision, measured evidence, failures/repairs, DoD, and completion. |
+
+#### Implementation decision
+
+- **DEC-010:** One `ChromaLensPipeline` owns the ordered stage composition. A
+  webcam producer retains only the newest packet; finite video uses the same
+  consumer pipeline synchronously. All derived data is current-frame typed.
+  Mask EMA is intersected with the current mask, T03 already smooths gains,
+  and T06 already applies bounded selection hysteresis. T04 original colors
+  and T05 explainable risk values are not independently averaged because doing
+  so would break their exact current-frame relationship or hide stale input.
+- A single-color garment cannot have a fabricated relational risk. It is
+  reported as unavailable until two retained current-color clusters exist;
+  recolor then remains unchanged/skipped.
+
+#### Commands run and observed results
+
+```text
+D:\Coding\Anaconda\envs\lens\python.exe -m compileall -q src tests
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --help
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest tests/unit/test_t08_tracking_metrics.py tests/unit/test_t08_latest_frame.py tests/integration/test_t08_pipeline.py tests/test_t00_smoke.py tests/test_t01_camera_renderer.py -q
+D:\Coding\Anaconda\envs\lens\python.exe scripts/t08_pipeline_evidence.py
+D:\Coding\Anaconda\envs\lens\python.exe scripts/t08_pipeline_evidence.py --stability-seconds 120
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --video artifacts/t08-pipeline/sample_mediapipe.avi --no-display
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --webcam --duration-seconds 3 --no-display
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --webcam --duration-seconds 120 --no-display
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q
+D:\Coding\Anaconda\envs\lens\python.exe -m pip check
+git diff --exit-code -- pyproject.toml environment.yml requirements .github/workflows/ci.yml
+git diff --check
+git check-ignore -v artifacts/t08-pipeline/evidence.json artifacts/t08-pipeline/sample_mediapipe.avi artifacts/t08-pipeline/controlled_assistive.png
+git ls-files (forbidden environment/cache/weight/artifact pattern and tracked files over 5 MiB checks)
+```
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Baseline repository suite | PASS, exit 0 | `177 passed in 2.14s` before implementation |
+| First focused T08 suite | PASS, exit 0 | `25 passed in 1.52s` |
+| Final focused metrics/pipeline repeat | PASS, exit 0 | `12 passed in 0.50s` after the Windows RSS correction and trend fields |
+| Final full repository suite | PASS, exit 0 | `193 passed in 2.08s`; includes non-finite CLI rejection and default-assistive mask-confidence propagation |
+| Controlled full-pipeline evidence | PASS, exit 0 | Red/brown corrected clusters, deutan risk `high/0.800739`, recolor applied, outside-mask bytes unchanged, matching source `red`, all five views written |
+| Real-backend evidence | PASS, exit 0 | `mediapipe-selfie-torso/cpu` returned one aligned region with 73,791 pixels on licensed `astronaut.png`; all five views written |
+| Sample-video full CLI | PASS, exit 0 | 8/8 frames through real MediaPipe, clean `end_of_video`, no webcam opened |
+| Webcam full CLI smoke | PASS, exit 0 | 32 frames at 640x480 in 3.69 s; clean duration stop and resources released |
+| Two-minute synthetic-live run | PASS, exit 0 | 931 processed; 1,255 stale capture frames dropped; fixed 600 latency/95 RSS samples; zero degraded frames |
+| Two-minute real webcam run | PASS, exit 0 | 1,765 processed; 1,262 stale capture frames dropped; duration `120.36 s`; no frames saved/uploaded |
+| Dependency/lock/CI stability | PASS, exit 0 | No change to `pyproject.toml`, environment/lock files, or CI workflow; `pip check` reports no broken requirements |
+| Repository policy | PASS, exit 0 | Generated PNG/JSON/AVI ignored; no tracked cache/environment/model artifact or file over 5 MiB |
+
+#### Evidence-command repair record
+
+- The first 120-second synthetic run completed but returned RSS as
+  `unavailable`; it was not accepted as memory evidence. Cause: the Windows
+  process handle used the default 32-bit `ctypes` return type. The smallest
+  repair declared `HANDLE`/argument/result types for `GetProcessMemoryInfo` and
+  added a positive-host-RSS unit test. No product behavior or dependency
+  changed.
+- A second synthetic run measured RSS but its full-session regression included
+  allocator warm-up. Bounded steady-state delta/slope and latency slope fields
+  were added so warm-up could be distinguished from continuous growth. The
+  final controlled and webcam runs below are the accepted observations.
+
+#### Measured T08 evidence
+
+These are local development-machine observations, not official demo-hardware,
+sensor-to-photon, accuracy, medical, or T09 evaluation claims.
+
+| Measurement | Synthetic live 360x240 | Real webcam 640x480 |
+| --- | ---: | ---: |
+| Requested/measured duration | 120.0 / 120.109 s | 120.0 / 120.36 s |
+| Backend | controlled test double / CPU | MediaPipe torso heuristic / CPU |
+| Processed frames / FPS | 931 / 7.75 | 1,765 / 14.66 |
+| Dropped stale capture frames | 1,255 | 1,262 |
+| Capture-to-render p50 / p95 | 156 / 235 ms | 93 / 172 ms |
+| Processing p50 / p95 | 125 / 203 ms | retained internally; not printed by CLI summary |
+| Latency regression over retained samples | +16.74 ms/min | -18.51 ms/min |
+| RSS start / end / peak | 108.13 / 110.43 / 118.69 MiB | 131.25 / 173.14 / 208.36 MiB |
+| RSS whole-session delta | +2.31 MiB | +41.89 MiB warm-up-inclusive |
+| RSS second-half delta | -8.06 MiB | -15.77 MiB |
+| RSS second-half regression | +1.97 MiB/min, non-monotonic | +5.95 MiB/min, non-monotonic |
+| Degraded frames | 0 | 1,235 |
+
+The capacity-one mailbox and 600-entry latency bound make queue/state memory
+constant. Both memory traces ended below their observed peaks and both
+second-half endpoint deltas were negative; the webcam latency slope was also
+negative. Therefore neither run showed continuously accumulating queue lag or
+a continuously increasing RSS trace. The positive second-half RSS regression
+despite negative endpoint deltas records non-monotonic allocator/runtime
+variation and must not be interpreted as a leak-free guarantee. T09 owns a
+declared protocol and longer/laptop-specific performance characterization.
+
+#### Definition of Done
+
+- [x] One command launches the full webcam demo and `--video PATH` processes a
+  sample video through the same pipeline; both were executed with real
+  MediaPipe and exit 0.
+- [x] Controlled and real fixture views show current garment mask, original
+  corrected color/margin, relational risk, triggered selective recolor,
+  double outline, lighting quality, mask confidence, and separate risk score.
+- [x] CLI plus `p`, `[`, `]`, `r`, `v`, and `1`-`5` controls change
+  profile/severity/recolor/view; deterministic tests cover reversible state.
+- [x] Two independent 120-second latest-frame runs completed with bounded
+  sample/state storage, explicit dropped-frame counts, no accumulating queue
+  lag, and non-monotonic rather than continuously increasing RSS evidence.
+- [x] Missing/failing segmentation is visible per current frame; tests prove
+  prior mask/color/risk/recolor state is cleared and frame-ID mismatch is
+  rejected before rendering.
+
+#### Deviations and known limitations
+
+- Deviation from `plan.md`: none. No dependency, lock, CI workflow, MVP scope,
+  SCHP, OpenVINO, T09 protocol, dataset, or threshold changed.
+- The real webcam run reported 1,235 degraded frames because the heuristic did
+  not consistently retain a person/torso in the uncontrolled camera scene.
+  This demonstrates explicit degradation, not segmentation adequacy; T09 must
+  use declared footage/conditions and record failure examples.
+- MediaPipe remains a person-derived torso heuristic, not semantic garment
+  parsing. A multicolor retained mask is required for relational risk and
+  selective recolor; plain/single-cluster garments correctly report no pair.
+- The current P0 pipeline runs every analytical module on each consumed frame.
+  It prioritizes newest-frame latency over capture completeness and therefore
+  drops frames under load. Optimization is deferred to T10 only after T09.
+- Runtime metrics begin before warm-up, use process working set/RSS and software
+  monotonic timestamps, and are not sensor-to-photon measurements. OpenCV and
+  MediaPipe allocator behavior can retain memory after warm-up.
+- The renderer uses OpenCV's ASCII-only Hershey font; Vietnamese labels are
+  transliterated in-frame while exact Unicode remains in structured results.
+
+#### Exact next task
+
+`T09 - Evaluation, responsible AI, and evidence package`.
+
+#### Version control
+
+- Branch: `mvp`
+- Planned atomic commit: `feat: compose end-to-end live pipeline`
+- Known-good pre-T08 baseline: `7998650f3e8d00d3c81c93f5716c714112230e44`
 
 ---
 

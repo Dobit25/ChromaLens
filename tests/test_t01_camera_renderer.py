@@ -89,7 +89,9 @@ def test_video_cli_runs_to_eof_without_opening_webcam(
     _write_test_video(video_path, frame_count=4)
 
     with patch("chromalens.app.open_webcam") as webcam_factory:
-        exit_code = main(["--video", str(video_path), "--no-display"])
+        exit_code = main(
+            ["--video", str(video_path), "--preview-only", "--no-display"]
+        )
 
     assert exit_code == 0
     webcam_factory.assert_not_called()
