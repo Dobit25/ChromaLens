@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-20 12:27 +07:00
+Last updated: 2026-08-20 13:10 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -37,6 +37,7 @@ This table is intentionally empty until an agent starts the plan.
 | T03 | White balance and lighting quality | `DONE` | Codex | 2026-08-20 00:47 +07:00 | 2026-08-20 00:55 +07:00 | T03 start and completion entries below |
 | T04 | Dominant color extraction and 11-name mapping | `DONE` | Codex | 2026-08-20 11:43 +07:00 | 2026-08-20 11:54 +07:00 | T04 start and completion entries below |
 | T05 | CVD simulation and relational risk | `DONE` | Codex | 2026-08-20 12:11 +07:00 | 2026-08-20 12:27 +07:00 | T05 start and completion entries below |
+| T06 | Selective recolor, outline, and score overlay | `DONE` | Codex | 2026-08-20 13:02 +07:00 | 2026-08-20 13:10 +07:00 | T06 start and completion entries below |
 
 ## 3. Active blockers
 
@@ -56,6 +57,7 @@ Use this section only for implementation decisions that affect later tasks. Deta
 | DEC-005 | 2026-08-20 | Keep one Gray-world balancer per ordered stream; use an optional mask only for gain estimation, apply EMA-smoothed gains globally, and report insufficient valid pixels as a visible poor-quality fallback. | T03, T04, T08, T09 | T03 completion entry |
 | DEC-006 | 2026-08-20 | Use conventional float OpenCV CIELAB plus an attributed W3C sRGB multi-anchor equivalent for the Van de Weijer 11-term vocabulary; expose normalized distance scores/margin as heuristics, not probabilities. | T04, T05, T06, T07, T08, T09 | T04 completion entry |
 | DEC-007 | 2026-08-20 | Pin DaltonLens 0.1.5 in the P0 base runtime, preserve exact severity-zero identity, and score CVD-created relational loss from CIEDE2000 collapse plus simulated closeness using configurable heuristic thresholds. | T05, T06, T08, T09 | T05 completion entry |
+| DEC-008 | 2026-08-20 | Select assistive colors by documented CIELCH candidates scored under the chosen CVD simulation; preserve per-pixel L*, use an inward-only exact mask, bounded hysteresis, and separate mandatory assistive/debug-simulation render paths. | T06, T08, T09 | T06 completion entry |
 
 ## 5. Chronological entries
 
@@ -1902,6 +1904,211 @@ severity-zero rows were byte-identical to their source.
 - Branch: `mvp`
 - Planned commit message: `feat: add CVD simulation and relational risk`
 - Known-good pre-T05 baseline: `5313ff8ab177bb0adf6fefb4980e19a7d0d4e643`
+
+---
+
+### `2026-08-20 13:02 +07:00` — `T06` `Selective recolor, outline, and score overlay`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Codex
+**Plan reference:** `plan.md#t06--selective-recolor-outline-and-score-overlay`
+**Requirements/rubric affected:** FR-08, FR-09, FR-11, FR-12; NFR-01, NFR-05, NFR-06, NFR-08; Metrics 02 and 03
+
+#### Objective
+
+Transform only the risky retained garment-color pixels into an assistive
+display color chosen for the active CVD profile; preserve source pixels and
+texture/lightness as practical; stabilize the selection over time; and render
+a clearly labeled, high-contrast outline/tag with separate original-color,
+assistive-color, confidence, risk, lighting, profile, severity, and backend
+diagnostics.
+
+#### Starting state
+
+- Branch `mvp` is clean and synchronized with `origin/mvp` at
+  `2d2877dac27f3fa235315dba19ba10f383dad124`.
+- Required dependencies T02, T04, and T05 are all `DONE`. T04 exposes original
+  corrected RGB/Lab clusters and aligned retained submasks; T05 exposes the
+  selected-profile relational risk without confusing simulation with output.
+- Approved environment `lens` runs Python `3.10.20`; `pip check` reports no
+  broken requirements.
+- Baseline repository suite: `126 passed in 1.96s`.
+- No new Python dependency is expected; NumPy and OpenCV provide candidate
+  transforms, Lab conversion, distance transforms, morphology, and rendering.
+
+#### Smallest implementation that satisfies the Definition of Done
+
+- Add a documented deterministic candidate-color optimizer. Score candidates
+  by their simulated CVD separation from the comparison color while penalizing
+  unnecessary departure from the original; never use a universal color map.
+- Intersect garment, retained-cluster, and risk masks exactly. Shift only Lab
+  chroma while preserving each source pixel's L*; use inward-only alpha
+  feathering so every pixel outside the hard recolor mask remains byte-identical.
+- Add bounded per-key temporal hysteresis for the selected display color and
+  prove a static sequence has zero repeated switching.
+- Extend the renderer with a double black/white contour and opaque high-
+  contrast tag. Keep simulation in an explicitly labeled debug-only mode and
+  label original and assistive colors separately in typed debug data.
+- Add deterministic unit/integration tests plus ignored offline image/JSON
+  evidence. Do not compose the live T08 application or add T07 matching.
+
+#### Definition-of-Done status at start
+
+- [ ] Pixels outside the hard recolor mask remain unchanged before overlays.
+- [ ] Debug data separately labels original and assistive display colors.
+- [ ] A static short sequence does not repeatedly switch display color.
+- [ ] The tag remains readable on light and dark backgrounds.
+- [ ] Simulation is debug-only and never labeled as the assistive result.
+
+#### Deviations, limitations, and blockers
+
+- Deviation from plan: none; candidate-color transformation is explicitly
+  permitted by T06.
+- Active blocker: none.
+
+---
+
+### `2026-08-20 13:10 +07:00` — `T06` `Selective recolor, outline, and score overlay complete`
+
+**Status:** `DONE`
+**Owner/agent:** Codex
+**Plan reference:** `plan.md#t06--selective-recolor-outline-and-score-overlay`
+
+#### Outcome
+
+T06 now provides a deterministic `SelectiveRecolorer` that starts from the
+unchanged camera/display BGR frame, keeps T04 original corrected color data
+separate, and changes only the exact garment/retained-cluster/risk-mask
+intersection. It generates CIELCH candidates for the selected CVD context,
+scores simulated separation with an identity-departure penalty, preserves each
+pixel's L* before gamut conversion, feathers inward only, and holds the chosen
+display color with bounded per-key hysteresis.
+
+The extended renderer draws a double black/white garment contour and an opaque
+black tag with white border/text. Typed overlay data separately exposes the
+original corrected color, assistive display target, color margin, relational
+risk, lighting quality, profile, severity, backend, and frame ID. Assistive and
+CVD-simulation renderers reject the other's view enum; the simulation path
+therefore requires the visible `CVD SIMULATION (DEBUG ONLY)` label.
+
+#### Files changed
+
+| File | Change and reason |
+| --- | --- |
+| `src/chromalens/recolor.py` | Added validated candidate optimization, exact containment, inward alpha, Lab chroma transform, bounded LRU hysteresis, typed results/debug data, and explicit no-change reasons. |
+| `src/chromalens/renderer.py` | Added typed assistive/debug views, inspectable score lines, high-contrast tag, double outline, copied-frame rendering, and mutually exclusive assistive/simulation entry points while preserving T01 APIs. |
+| `tests/unit/test_t06_recolor.py` | Added deterministic containment, alpha, lightness, profile-dependent candidate, inactive path, hysteresis, bounded-state, validation, and immutability tests. |
+| `tests/unit/test_t06_renderer.py` | Added separate-label, mandatory debug-mode, light/dark tag, double-contour, copy, and validation tests. |
+| `tests/integration/test_t06_assistive_slice.py` | Added a T04-to-T05-to-T06 static vertical-slice test with exact outside-mask invariance. |
+| `scripts/t06_recolor_overlay_evidence.py` | Added reproducible ignored PNG/JSON evidence and fail-fast DoD assertions. |
+| `assets/recolor/README.md` | Documented algorithm, formula, thresholds, channel boundaries, containment, temporal policy, renderer, provenance, evidence, and limitations. |
+| `README.md` | Documented T06 use, handoff contracts, evidence commands, view safety, and limitations. |
+| `codinglog.md` | Recorded T06 start, decisions, actual evidence, and completion. |
+
+#### Implementation decisions
+
+- **DEC-008:** Use a project-authored candidate-color transform rather than a
+  universal mapping. For each CIELCH hue/chroma candidate, objective equals
+  simulated CIEDE2000 separation minus `0.18` times original-to-candidate
+  CIEDE2000. Default activation is risk `>=0.25` plus at least `3.0` simulated
+  Delta-E00 improvement. These are configurable T09 validation hypotheses.
+- Pixel assignment is restricted to the hard intersection even after
+  feathering. Distance-transform alpha is zero outside the hard mask; only
+  chroma is shifted and the source L* plane remains untouched before sRGB
+  gamut clipping/quantization.
+- A challenger must exceed the retained objective by `2.0` for three
+  consecutive frames. Per-key state is LRU-bounded at 32 entries. T08 must
+  reset or key by profile/stream/track identity when those identities change.
+- OpenCV Hershey text transliterates accented Vietnamese in-frame (`Đỏ` →
+  `Do`); canonical accented labels remain in the T04 API. A Unicode font must
+  be bundled and license-reviewed before changing this behavior.
+
+#### Commands run and observed results
+
+```text
+D:\Coding\Anaconda\envs\lens\python.exe -m compileall -q src
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q tests\unit\test_t06_recolor.py tests\unit\test_t06_renderer.py tests\integration\test_t06_assistive_slice.py
+D:\Coding\Anaconda\envs\lens\python.exe scripts\t06_recolor_overlay_evidence.py
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q
+D:\Coding\Anaconda\envs\lens\python.exe -m compileall -q src scripts tests
+D:\Coding\Anaconda\envs\lens\python.exe -m pip check
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --help
+git diff --exit-code -- pyproject.toml environment.yml requirements .github/workflows/ci.yml
+git diff --check
+git check-ignore -v artifacts/t06-recolor-overlay/evidence.json artifacts/t06-recolor-overlay/assistive_overlay.png artifacts/t06-recolor-overlay/cvd_simulation_debug_only.png
+git ls-files artifacts .env '*.onnx' '*.pth' '*.pt' '*.mp4' '*.avi'
+```
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| First focused run | FAIL: `2 failed, 29 passed`; one regex expected different wording and the readability test crop extended beyond the dynamically sized tag | Terminal output |
+| Smallest focused-test repairs | Aligned the error-message expectation and restricted the comparison crop to the known opaque tag core; then replaced an exact-255 anti-aliased text assertion with a high-luminance threshold | Test diff; no product threshold/scope change |
+| Final focused T06 suite | PASS, exit 0 | `31 passed in 0.42s` |
+| Full repository suite | PASS, exit 0 | `157 passed in 2.03s` |
+| Evidence runner | PASS, exit 0 | Six PNGs plus `evidence.json` under ignored `artifacts/t06-recolor-overlay/` |
+| Visual evidence review | PASS | Assistive result, explicitly debug-only simulation, masks/feather, double outline, and light/dark tag opened and inspected |
+| Compile/dependency/CLI gates | PASS, exit 0 | All source/script/test modules compiled; no broken requirements; help rendered without camera/model/hardware |
+| Dependency/lock/CI stability | PASS, exit 0 | No diff in `pyproject.toml`, `environment.yml`, `requirements/`, or CI workflow; no new dependency |
+| Artifact/size policy | PASS, exit 0 | Generated evidence is ignored; no queried environment/model/media artifact is tracked; no tracked or pending file exceeds 5 MiB |
+
+#### Measured deterministic evidence
+
+These are controlled synthetic contract measurements, not perception,
+clinical, physical color-accuracy, or demo-hardware performance claims.
+
+| Measurement | Observed value |
+| --- | ---: |
+| Hard recolor-mask pixels | 44,022 |
+| Changed pixels inside hard mask | 44,022 |
+| Changed pixels outside hard mask before overlay | 0 |
+| Maximum alpha outside hard mask | 0.0 |
+| Maximum L* change at full-alpha pixels after sRGB round trip | 0.891113 |
+| Static sequence | 20 frames; 1 unique assistive target; 0 switches |
+| Original corrected representative RGB | `(218, 38, 38)` |
+| Assistive display representative RGB | `(0, 119, 249)` |
+| Original/assistive simulated Delta-E00 to comparison | 5.015549 / 58.405531 |
+| Light/dark opaque tag core | Byte-identical; visual review PASS |
+| Assistive/simulation labels | `VIEW: ASSISTIVE RESULT` / `VIEW: CVD SIMULATION (DEBUG ONLY)` |
+
+#### Definition of Done
+
+- [x] Synthetic tests and evidence show every pixel outside the exact hard
+  recolor mask remains byte-identical before overlays: observed count `0`.
+- [x] `RecolorDebugData` and `AssistiveOverlayData` separately name/store
+  `original_corrected_rgb` and `assistive_display_rgb`; evidence records both.
+- [x] A 20-frame static run retains one display target with zero switches;
+  separate tests exercise three-frame challenger hysteresis and the 32-state
+  bound.
+- [x] The tag uses an opaque black field, white border/text, and a double
+  contour. Its declared core is byte-identical over light/dark backgrounds and
+  both variants were visually reviewed.
+- [x] Simulation has its own mandatory renderer/view enum and visible
+  `DEBUG ONLY` label. The assistive renderer rejects simulation view data, and
+  debug data calls the assistive target separate rather than the shown result.
+
+#### Deviations and known limitations
+
+- Deviation from `plan.md`: none. The plan explicitly permits candidate-color
+  optimization, and no T07/T08 behavior or dependency was introduced.
+- Candidate/risk/hysteresis thresholds are explainable, uncalibrated
+  heuristics. T09 must validate them with declared garments, displays, profiles,
+  users, lighting, movement, and failure cases.
+- L* is preserved before gamut clipping and 8-bit quantization, not guaranteed
+  physically identical afterward. Controlled full-alpha maximum was `0.891113`.
+- T06 quality inherits mask, white-balance, cluster, simulation, and display
+  limitations. Inward feathering may leave a narrow original-color edge.
+- T06 remains an independently testable slice; T08 owns webcam/video
+  composition, controls, stale-result policy, and live performance.
+
+#### Exact next task
+
+`T07 — Rule-based color matching` (P1, optional before the P0 T08 composition).
+
+#### Version control
+
+- Branch: `mvp`
+- Planned atomic commit: `feat: add selective recolor and score overlay`
+- Known-good pre-T06 baseline: `2d2877dac27f3fa235315dba19ba10f383dad124`
 
 ---
 

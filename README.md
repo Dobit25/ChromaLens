@@ -3,7 +3,8 @@
 ChromaLens AI is a local, explainable color-vision assistance prototype for
 clothing. **T01** (webcam/video preview), the locked **T02** MediaPipe torso-
 mask baseline, **T03** lighting correction, **T04** original-color
-extraction/naming, and **T05** CVD simulation/relational risk are complete.
+extraction/naming, **T05** CVD simulation/relational risk, and **T06** selective
+assistive recoloring/overlay are complete as independently testable modules.
 
 The MVP is assistive software, not a medical diagnosis tool. The user selects
 their CVD profile and severity.
@@ -272,6 +273,65 @@ The evidence script writes `known_patch_simulation.png`,
 `artifacts/t05-cvd-risk/` directory. Simulation is an internal risk/debug view,
 not the assistive recolored output that belongs to T06.
 
+## Selective recolor and score overlay (T06)
+
+`SelectiveRecolorer` consumes the unchanged camera/display BGR frame, one T04
+original corrected cluster, its T05 relational assessment and comparison
+color, plus explicit aligned garment/cluster/risk masks. Its hard mask is
+exactly the three-way intersection. An inward distance-transform feather has
+zero alpha outside that mask, so every outside pixel remains byte-identical
+before outlines and text are added.
+
+The project-authored candidate optimizer rotates/scales the original CIELCH
+chroma while keeping representative lightness fixed, simulates each candidate
+for the selected profile/severity, maximizes simulated CIEDE2000 separation,
+and penalizes unnecessary departure from the original. It applies no universal
+source-to-target color rule. Per-key selection uses three-frame hysteresis and
+a 32-entry LRU bound by default.
+
+```python
+from chromalens.recolor import SelectiveRecolorer
+
+result = SelectiveRecolorer().recolor(
+    packet.original_bgr,
+    garment_mask=region.mask,
+    cluster=source_cluster,
+    risk_mask=source_cluster.submask,
+    comparison_rgb=comparison_cluster.rgb,
+    risk=risk,
+    profile=CVDProfile.DEUTAN,
+    severity=1.0,
+    state_key="video:track-4:cluster-red",
+)
+```
+
+`result.debug.original_corrected_rgb` and
+`result.debug.assistive_display_rgb` are deliberately separate. The first is
+the T04 estimate used for analysis; the second is a representative display
+target and must never feed color extraction or T07 matching.
+
+`render_assistive_overlay` draws a thick black then thin white contour and an
+opaque black/white score tag onto a copy. `AssistiveOverlayData` keeps original
+color/margin, display color, risk, lighting quality, profile, severity, backend,
+and frame ID explicit. `render_assistive_overlay` rejects simulation view data;
+the separate `render_cvd_simulation_debug_overlay` requires
+`OverlayView.CVD_SIMULATION_DEBUG`, emits `CVD SIMULATION (DEBUG ONLY)`, and
+labels the assistive target as separate. The declared simulation path therefore
+cannot silently masquerade as the assistive result.
+
+Reproduce the controlled containment, lightness, temporal, label, contour, and
+light/dark tag evidence offline:
+
+```powershell
+conda run --name lens python scripts/t06_recolor_overlay_evidence.py
+conda run --name lens python -m pytest -q tests/unit/test_t06_recolor.py tests/unit/test_t06_renderer.py tests/integration/test_t06_assistive_slice.py
+```
+
+The command writes ignored PNG/JSON output under
+`artifacts/t06-recolor-overlay/`. Algorithm details, defaults, RGB/BGR
+boundaries, font behavior, and limitations are documented in
+[`assets/recolor/README.md`](assets/recolor/README.md).
+
 ## Camera and local-video preview
 
 Run the webcam preview using the default camera index:
@@ -333,7 +393,7 @@ The T01 suite generates short MJPG/AVI files under pytest's temporary directory
 and deletes them with the test workspace. It does not commit or download sample
 media and verifies that video mode never opens a webcam.
 
-## T02–T05 handoff contracts
+## T02–T06 handoff contracts
 
 - `chromalens.camera.FrameSource` is the common webcam/video interface.
 - Each successful read produces a `FramePacket` with a sequential frame ID,
@@ -349,6 +409,12 @@ media and verifies that video mode never opens a webcam.
 - T05 simulates those original cluster RGB values under a user-selected
   profile/severity and returns relational `RiskAssessment` values containing
   both Delta-E measurements, numeric risk score, and display level.
+- T06 selects a representative assistive color from T04/T05 data, but assigns
+  pixels only inside the exact hard intersection and preserves the source frame.
+  Its original corrected and assistive display colors remain separate fields.
+- T06's overlay renderer copies its input and marks simulation as debug-only.
+  T08 owns live composition, current-frame/stale-result behavior, controls, and
+  reset/key handling when profile, stream, or track identity changes.
 
 ## Current limitations
 
@@ -373,9 +439,14 @@ media and verifies that video mode never opens a webcam.
   Machado/DaltonLens simulation and the risk formula approximate perception;
   DaltonLens documents an additional tritan limitation. Delta-E thresholds and
   risk levels are uncalibrated heuristics requiring T09 evaluation.
-- T02–T05 contain segmentation, lighting correction, original-color
-  extraction, simulation, and relational risk only; recoloring, live pipeline
-  composition, and performance-target claims belong to later tasks.
+- T06's candidate score, risk activation, feathering, and hysteresis defaults
+  are explainable but uncalibrated. Gamut clipping can slightly shift L*, and
+  mask/cluster errors directly limit containment quality. The OpenCV tag
+  transliterates accented Vietnamese because its bundled Hershey font is
+  ASCII-only.
+- T02–T06 are independently testable modules. Live pipeline composition,
+  user controls, stale-result handling, and performance-target claims remain
+  T08/T09 work.
 - Model weights, datasets, generated artifacts, and private footage are not
   included. See `models/README.md` for download policy.
 
