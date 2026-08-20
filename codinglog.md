@@ -35,6 +35,7 @@ This table is intentionally empty until an agent starts the plan.
 | T01 | Camera, video source, and base renderer | `DONE` | Codex | 2026-08-18 23:00 +07:00 | 2026-08-18 23:13 +07:00 | T01 start and completion entries below |
 | T02 | Garment segmentation vertical slice | `DONE` | Codex (integration audit) | 2026-08-19 15:06 +07:00 | 2026-08-20 00:35 +07:00 | Corrective implementation and successful PR CI entries below |
 | T03 | White balance and lighting quality | `DONE` | Codex | 2026-08-20 00:47 +07:00 | 2026-08-20 00:55 +07:00 | T03 start and completion entries below |
+| T04 | Dominant color extraction and 11-name mapping | `IN_PROGRESS` | DangTrinhdzZz | <2026-08-20 11:20 +07:00> | T04 start entry below |
 
 ## 3. Active blockers
 
@@ -1423,6 +1424,77 @@ physical color-accuracy claims.
 and T03 are now both `DONE`.
 
 ---
+
+### `<2026-08-20 11:20>` — `T04` `Dominant color extraction and 11-name mapping`
+
+**Status:** `IN_PROGRESS`  
+**Owner/agent:** DangTrinhdzZz  
+**Plan reference:** `plan.md#t04--dominant-color-extraction-and-11-name-mapping`  
+**Requirements/rubric affected:** T04 Definition of Done; original-color extraction, explainability, and reproducibility requirements
+
+#### Objective
+
+Implement deterministic dominant-color extraction from the T03 corrected RGB
+frame and the T02 aligned garment mask. Return validated `ColorCluster`
+objects with original RGB/Lab estimates, retained ratios and submasks,
+Vietnamese 11-color names, score distributions, and best-vs-second margins.
+
+#### Starting state
+
+- Branch: `work/t04-color-extraction`.
+- Baseline commit: `dbe4189`.
+- T02 and T03 are `DONE` and available on this branch.
+- Approved environment: conda `lens`, Python 3.10.20.
+- Dependency check: `python -m pip check` reported `No broken requirements found.`
+- Baseline suite: `python -m pytest -q` reported `62 passed in 4.45s`.
+- Working tree was clean before this entry.
+
+#### Planned implementation
+
+- Validate corrected RGB frames and aligned boolean garment masks.
+- Erode garment masks and reject dark, clipped, or otherwise invalid pixels.
+- Document and consistently use a CIE Lab convention.
+- Implement robust median estimation as P0.
+- Implement deterministic `K=2` clustering with minimum-area filtering as P1.
+- Map retained colors to 11 Vietnamese basic-color names.
+- Return name scores and the best-vs-second score margin.
+- Add unit, integration, and reproducible evidence coverage.
+- Record the source and license of any color-name prototypes or data.
+
+#### Scope boundaries
+
+- Do not modify the frozen contracts in `contracts.py`.
+- Do not integrate T04 into `app.py` or `renderer.py`; T08 owns pipeline composition.
+- Do not add unapproved dependencies or independently change lock files.
+- Do not modify T02 or T03 behavior.
+
+#### Tests and observed results
+
+| Check | Result |
+| --- | --- |
+| Existing complete repository suite | PASS — `62 passed in 4.45s` |
+| Dependency consistency | PASS — `No broken requirements found.` |
+| T04-specific tests | NOT RUN — implementation has not started |
+
+#### Known risks and limitations
+
+- T02 currently supplies a person-derived torso heuristic rather than semantic garment parsing.
+- T03 Gray-world correction cannot recover physical ground-truth color under arbitrary or mixed illumination.
+- The 11-color mapping will be an explainable MVP heuristic and requires controlled T09 evaluation.
+
+#### Next action
+
+Create the T04 color package and begin with synthetic preprocessing tests for
+mask alignment, erosion, invalid-pixel rejection, and background exclusion.
+
+#### Version control
+
+- Branch: `work/t04-color-extraction`
+- Start-entry commit: not committed
+- Integration target: `mvp`
+
+---
+
 
 ## 6. Final handoff checklist
 
