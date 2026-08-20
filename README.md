@@ -436,11 +436,27 @@ risks, or recolors are not presented as current results.
 Live webcam capture uses an exact capacity-one mailbox: inference takes the
 newest frame and counts overwritten stale frames instead of building latency.
 Finite videos run sequentially through the same pipeline so evaluation frames
-are not skipped. Runtime metrics use bounded buffers (600 latency samples and
-at most 600 RSS samples) and report processed FPS, capture-to-render p50/p95,
-processing p50/p95, dropped frames, degraded frames, and RSS trend. These are
-software-timestamp/development-machine observations, not sensor-to-photon or
-official demo-hardware claims; T09 owns the declared evaluation protocol.
+are not skipped. Runtime metrics use bounded buffers (10,000 samples per
+latency series and at most 10,000 RSS samples). The T09-frozen names are:
+
+- `source_read_to_render_ms`: starts at the monotonic timestamp created after
+  `VideoCapture.read()` returns and ends after the renderer completes. It is
+  available in GUI and headless runs.
+- `source_read_to_display_submit_ms`: has the same start and ends immediately
+  after `cv2.imshow()` returns. It is available only in GUI runs and measures
+  software submission, not physical display emission.
+- `sensor_to_photon_ms`: `NOT_MEASURED` unless an external synchronized
+  apparatus is used.
+
+The first two are software-timestamp/development-machine observations. They
+must not be described as camera exposure-to-display, sensor-to-photon, or the
+time at which the screen actually emits light. T09's frozen definitions,
+formulae, thresholds, and result schema are in
+[`evaluation/protocol.md`](evaluation/protocol.md).
+
+The lightweight value drawn inside an overlay is labeled `pre-render age` (or
+`frame age at overlay` in preview-only mode). It is sampled before the overlay
+renderer runs and is a live diagnostic only; it is not a T09 latency metric.
 
 The capture-only T01 diagnostic remains available explicitly and never loads a
 segmentation backend:
@@ -463,6 +479,56 @@ conda run --name lens python -m chromalens --video artifacts/t08-pipeline/sample
 All generated output is under ignored `artifacts/t08-pipeline/`. The real
 backend visual uses the repository's licensed/public-domain T02 fixture; the
 stability source is generated and contains no private camera image.
+
+## T09 evaluation Gate 0
+
+T09 is `IN_PROGRESS`. Before results are produced, Gate 0 freezes protocol
+version `1.0.0` in these coordinator-owned files:
+
+- [`evaluation/protocol.md`](evaluation/protocol.md): procedure, hardware and
+  resolution declarations, units, formulae, thresholds, latency semantics,
+  claim limits, and evidence policy;
+- [`evaluation/schema/t09-result.schema.json`](evaluation/schema/t09-result.schema.json)
+  and [`evaluation/schema/metric_registry.json`](evaluation/schema/metric_registry.json):
+  machine-readable result and metric contracts;
+- [`evaluation/fixtures/test_cases.csv`](evaluation/fixtures/test_cases.csv):
+  the frozen case matrix, including honest `TO_BE_ACQUIRED` slots;
+- [`evaluation/OWNERSHIP.md`](evaluation/OWNERSHIP.md): non-overlapping branch,
+  result, script, and test ownership.
+
+The shared runtime instrumentation already supports the frozen 15-second
+warm-up followed by a 120-second measured interval. `--duration-seconds`
+counts the measured interval when a warm-up is set:
+
+```powershell
+conda run --name lens python -m chromalens --webcam --metrics-warmup-seconds 15 --duration-seconds 120
+conda run --name lens python -m chromalens --webcam --no-display --metrics-warmup-seconds 15 --duration-seconds 120
+```
+
+The summary exposes the separately named latency percentiles, sample counts,
+RSS values/slopes, and the frozen four-window continuous-growth diagnostics.
+The benchmark workstream converts those observations to schema 1.0.0 results;
+it does not redefine or re-instrument them.
+
+After the Gate commit is pushed and CI is green, contributors update `mvp`,
+verify its exact hash against the coordinator handoff, and create branches
+from that commit:
+
+```powershell
+git switch mvp
+git pull --ff-only origin mvp
+git rev-parse HEAD
+git switch -c eval/t09-segmentation-dong
+# or: eval/t09-color-science-phong
+# or: eval/t09-performance-rai-trinh
+```
+
+Do not branch from pre-gate T08 commit `f315fd7`. Small curated UTF-8
+CSV/JSON/Markdown results belong under each assigned
+`evaluation/results/curated/` namespace. Raw video, private footage, images,
+arrays, and bulk evidence stay below ignored `artifacts/t09/`. Every report
+artifact needs a manifest with provenance/consent, license, exact byte size,
+and SHA-256. Never use `git add -f` to bypass the artifact policy.
 
 ## Verification
 

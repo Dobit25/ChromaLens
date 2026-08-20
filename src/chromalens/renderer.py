@@ -55,7 +55,7 @@ class PreviewTelemetry:
     """Basic display measurements, separate from later AI confidences."""
 
     processed_fps: float | None
-    pipeline_latency_ms: float
+    frame_age_at_overlay_ms: float
 
 
 class OverlayView(str, Enum):
@@ -222,7 +222,7 @@ class PreviewMetricsTracker:
 
         return PreviewTelemetry(
             processed_fps=self._fps_ema,
-            pipeline_latency_ms=(now_ns - packet.timestamp_ns) / 1_000_000.0,
+            frame_age_at_overlay_ms=(now_ns - packet.timestamp_ns) / 1_000_000.0,
         )
 
 
@@ -246,7 +246,8 @@ def render_preview(
     lines = (
         f"Source: {source_name}",
         f"Resolution: {width}x{height} | Frame: {packet.frame_id}",
-        f"Processed FPS: {fps_text} | Pipeline latency: {telemetry.pipeline_latency_ms:.1f} ms",
+        f"Processed FPS: {fps_text} | Frame age at overlay: "
+        f"{telemetry.frame_age_at_overlay_ms:.1f} ms",
         "Press q or Esc to quit",
     )
 
@@ -734,7 +735,8 @@ def _draw_pipeline_footer(
     )
     lines = (
         (
-            f"{source_name} | FPS={fps} | latency={telemetry.pipeline_latency_ms:.1f}ms "
+            f"{source_name} | FPS={fps} | pre-render age="
+            f"{telemetry.frame_age_at_overlay_ms:.1f}ms "
             f"| dropped={display_state.dropped_capture_frames}"
         ),
         "Keys: p profile | [/] severity | r recolor | v/1-5 view | q/Esc quit",

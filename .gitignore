@@ -38,7 +38,15 @@ models/*
 artifacts/
 generated/
 outputs/
-evaluation/results/
+# T09 keeps small curated text results in Git. Raw media, arrays, private
+# footage, and bulk evidence stay under the ignored artifacts/t09/ tree.
+evaluation/results/**
+!evaluation/results/README.md
+!evaluation/results/curated/
+!evaluation/results/curated/**/
+!evaluation/results/curated/**/*.csv
+!evaluation/results/curated/**/*.json
+!evaluation/results/curated/**/*.md
 datasets/
 
 # Editors and operating-system metadata

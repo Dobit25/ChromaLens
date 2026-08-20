@@ -121,17 +121,37 @@ jobs:
         shell: pwsh
         run: python -m pytest -q
 
-      - name: Reject committed environments, caches, weights, and large binaries
+      - name: Reject forbidden artifacts and oversized tracked files
         shell: pwsh
         run: |
           $forbiddenPattern = '(^|/)(\.venv|venv|env|__pycache__|\.pytest_cache|[^/]+\.egg-info)(/|$)|(^|/)\.env(\.|$)|\.(ckpt|onnx|pb|pth|pt|safetensors|task|tflite)$'
-          $forbidden = git ls-files | Select-String -Pattern $forbiddenPattern
+          $trackedFiles = @(git ls-files)
+          $forbidden = $trackedFiles | Select-String -Pattern $forbiddenPattern
           if ($forbidden) {
             $forbidden
             throw 'Forbidden generated, environment, model, or binary path is tracked.'
           }
 
-          $largeFiles = git ls-files | ForEach-Object {
+          $t09ResultPattern = '^evaluation/results/README\.md$|^evaluation/results/curated/(summary\.md|(end_to_end|segmentation|color_science|performance_responsible_ai)/.+\.(csv|json|md))$'
+          $forbiddenT09 = @($trackedFiles | Where-Object {
+            $_ -match '^artifacts/t09/' -or
+            ($_.StartsWith('evaluation/results/') -and $_ -notmatch $t09ResultPattern)
+          })
+          if ($forbiddenT09) {
+            $forbiddenT09
+            throw 'T09 raw/private/binary evidence or an unowned result path is tracked.'
+          }
+
+          $oversizedCurated = @($trackedFiles | Where-Object {
+            $_ -match '^evaluation/results/curated/' -and
+            (Get-Item -LiteralPath $_).Length -gt 1MB
+          })
+          if ($oversizedCurated) {
+            $oversizedCurated
+            throw 'A curated T09 result exceeds the frozen 1 MiB per-file limit.'
+          }
+
+          $largeFiles = $trackedFiles | ForEach-Object {
             if (Test-Path -LiteralPath $_) {
               $item = Get-Item -LiteralPath $_
               if ($item.Length -gt 5MB) {

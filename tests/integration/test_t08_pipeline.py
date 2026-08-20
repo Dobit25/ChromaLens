@@ -243,6 +243,10 @@ def test_cli_rejects_non_finite_duration_and_severity() -> None:
         parser.parse_args(["--webcam", "--duration-seconds", "nan"])
     with pytest.raises(SystemExit):
         parser.parse_args(["--webcam", "--severity", "nan"])
+    with pytest.raises(SystemExit):
+        parser.parse_args(["--webcam", "--metrics-warmup-seconds", "nan"])
+    with pytest.raises(SystemExit):
+        parser.parse_args(["--webcam", "--metrics-warmup-seconds", "-1"])
 
 
 def test_local_video_runs_the_same_pipeline_to_clean_eof(tmp_path: Path) -> None:
@@ -257,6 +261,56 @@ def test_local_video_runs_the_same_pipeline_to_clean_eof(tmp_path: Path) -> None
     assert session.frames_processed == 3
     assert session.stop_reason == "end_of_video"
     assert session.metrics.total_frames == 3
-    assert session.metrics.retained_latency_samples == 3
+    assert session.metrics.retained_source_read_to_render_samples == 3
+    assert session.metrics.retained_source_read_to_display_submit_samples == 0
     assert segmenter.calls == 3
     assert segmenter.closed
+
+
+def test_gui_session_records_display_submit_after_render(tmp_path: Path) -> None:
+    video_path = tmp_path / "t09-gui-metric.avi"
+    _write_video(video_path, frame_count=2)
+    source = open_video(video_path)
+    pipeline = ChromaLensPipeline(MaskSegmenter(), stream_id=source.name)
+
+    with (
+        patch("chromalens.app.cv2.imshow") as imshow,
+        patch("chromalens.app.cv2.waitKey", return_value=ord("q")),
+        patch("chromalens.app.cv2.getWindowProperty", return_value=1.0),
+        patch("chromalens.app.cv2.destroyWindow"),
+    ):
+        session = run_pipeline_session(source, pipeline, display=True)
+
+    assert session.frames_processed == 1
+    assert session.stop_reason == "user_exit"
+    assert session.metrics.retained_source_read_to_render_samples == 1
+    assert session.metrics.retained_source_read_to_display_submit_samples == 1
+    assert session.metrics.source_read_to_render_p50_ms is not None
+    assert session.metrics.source_read_to_display_submit_p50_ms is not None
+    assert (
+        session.metrics.source_read_to_display_submit_p50_ms
+        >= session.metrics.source_read_to_render_p50_ms
+    )
+    imshow.assert_called_once()
+
+
+def test_metrics_warmup_excludes_frames_before_measured_duration(tmp_path: Path) -> None:
+    video_path = tmp_path / "t09-warmup.avi"
+    _write_video(video_path, frame_count=10)
+    source = open_video(video_path)
+    pipeline = ChromaLensPipeline(MaskSegmenter(), stream_id=source.name)
+    ticks = iter(index / 100.0 for index in range(100))
+
+    with patch("chromalens.app.monotonic", side_effect=lambda: next(ticks)):
+        session = run_pipeline_session(
+            source,
+            pipeline,
+            display=False,
+            duration_seconds=0.03,
+            metrics_warmup_seconds=0.02,
+        )
+
+    assert session.stop_reason == "duration_limit"
+    assert session.frames_processed == 4
+    assert session.metrics.total_frames == 3
+    assert session.metrics.retained_source_read_to_render_samples == 3

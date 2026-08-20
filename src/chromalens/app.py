@@ -206,7 +206,19 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--duration-seconds",
         type=_positive_float,
-        help="stop after this wall-clock duration",
+        help=(
+            "stop after this measured duration; a metrics warm-up is added "
+            "before it (preview-only mode uses this as total duration)"
+        ),
+    )
+    parser.add_argument(
+        "--metrics-warmup-seconds",
+        type=_non_negative_float,
+        default=0.0,
+        help=(
+            "process this many full-pipeline warm-up seconds before resetting "
+            "T09 runtime metrics (default: 0)"
+        ),
     )
     parser.add_argument(
         "--no-display",
@@ -267,6 +279,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             display=not args.no_display,
             max_frames=args.max_frames,
             duration_seconds=args.duration_seconds,
+            metrics_warmup_seconds=args.metrics_warmup_seconds,
             window_title=args.window_title,
         )
     except SegmenterUnavailableError as error:
@@ -304,21 +317,27 @@ def run_pipeline_session(
     display: bool = True,
     max_frames: int | None = None,
     duration_seconds: float | None = None,
+    metrics_warmup_seconds: float = 0.0,
     window_title: str = "ChromaLens AI - T08 Live Pipeline",
 ) -> PipelineSessionResult:
     """Run the same analytical pipeline for a latest-frame webcam or video."""
 
     _validate_session_limits(max_frames, duration_seconds, window_title)
+    if not isfinite(metrics_warmup_seconds) or metrics_warmup_seconds < 0.0:
+        raise ValueError("metrics_warmup_seconds must be finite and non-negative")
     active_controls = controls or RuntimeControls()
     preview_metrics = PreviewMetricsTracker()
-    runtime_metrics = RuntimeMetricsTracker()
+    runtime_metrics: RuntimeMetricsTracker | None = None
     started_at = monotonic()
+    measurement_started_at: float | None = None
     frames_processed = 0
-    degraded_frames = 0
+    measured_degraded_frames = 0
     stop_reason = "unknown"
     window_created = False
     latest_reader = LatestFrameReader(source).start() if source.is_live else None
     dropped_frames = 0
+    dropped_at_measurement_start = 0
+    metrics_completed_at_ns: int | None = None
     video_frame_period_seconds = (
         1.0 / source.nominal_fps
         if display and not source.is_live and source.nominal_fps is not None
@@ -328,7 +347,21 @@ def run_pipeline_session(
 
     try:
         while True:
-            if duration_seconds is not None and monotonic() - started_at >= duration_seconds:
+            now = monotonic()
+            if (
+                runtime_metrics is None
+                and now - started_at >= metrics_warmup_seconds
+            ):
+                runtime_metrics = RuntimeMetricsTracker()
+                measurement_started_at = now
+                dropped_at_measurement_start = (
+                    latest_reader.dropped_frames if latest_reader else 0
+                )
+            if (
+                duration_seconds is not None
+                and measurement_started_at is not None
+                and now - measurement_started_at >= duration_seconds
+            ):
                 stop_reason = "duration_limit"
                 break
             try:
@@ -358,18 +391,41 @@ def run_pipeline_session(
                     dropped_capture_frames=dropped_frames
                 ),
             )
-            completed_ns = monotonic_ns()
-            runtime_metrics.observe(
-                capture_to_render_ms=(completed_ns - packet.timestamp_ns) / 1_000_000.0,
-                processing_ms=(completed_ns - processing_started_ns) / 1_000_000.0,
-                observed_ns=completed_ns,
-            )
+            render_completed_ns = monotonic_ns()
             frames_processed += 1
-            degraded_frames += int(analysis.degraded)
 
+            display_submitted_ns: int | None = None
             if display:
                 cv2.imshow(window_title, rendered)
+                display_submitted_ns = monotonic_ns()
                 window_created = True
+
+            observed_ns = (
+                render_completed_ns
+                if display_submitted_ns is None
+                else display_submitted_ns
+            )
+            if runtime_metrics is not None:
+                runtime_metrics.observe(
+                    source_read_to_render_ms=(
+                        render_completed_ns - packet.timestamp_ns
+                    )
+                    / 1_000_000.0,
+                    source_read_to_display_submit_ms=(
+                        None
+                        if display_submitted_ns is None
+                        else (display_submitted_ns - packet.timestamp_ns)
+                        / 1_000_000.0
+                    ),
+                    frame_processing_to_render_ms=(
+                        render_completed_ns - processing_started_ns
+                    )
+                    / 1_000_000.0,
+                    observed_ns=observed_ns,
+                )
+                measured_degraded_frames += int(analysis.degraded)
+
+            if display:
                 wait_ms = 1
                 if video_frame_period_seconds is not None:
                     next_video_frame_at += video_frame_period_seconds
@@ -391,6 +447,9 @@ def run_pipeline_session(
                 stop_reason = "frame_limit"
                 break
     finally:
+        if runtime_metrics is None:
+            runtime_metrics = RuntimeMetricsTracker()
+        metrics_completed_at_ns = monotonic_ns()
         if latest_reader is not None:
             latest_reader.close()
             dropped_frames = latest_reader.dropped_frames
@@ -403,11 +462,11 @@ def run_pipeline_session(
             except cv2.error:
                 pass
 
-    completed_at_ns = monotonic_ns()
+    assert metrics_completed_at_ns is not None
     metrics = runtime_metrics.snapshot(
-        dropped_capture_frames=dropped_frames,
-        degraded_frames=degraded_frames,
-        observed_ns=completed_at_ns,
+        dropped_capture_frames=max(0, dropped_frames - dropped_at_measurement_start),
+        degraded_frames=measured_degraded_frames,
+        observed_ns=metrics_completed_at_ns,
     )
     return PipelineSessionResult(
         source_name=source.name,
@@ -531,9 +590,21 @@ def _pipeline_summary(result: PipelineSessionResult) -> str:
         f"Pipeline complete: source={result.source_name} backend={result.backend_name} "
         f"frames={result.frames_processed} resolution={resolution} "
         f"elapsed={result.elapsed_seconds:.2f}s reason={result.stop_reason} "
+        f"measurement_elapsed={metrics.elapsed_seconds:.2f}s "
         f"fps={_optional_number(metrics.processed_fps)} "
-        f"latency_p50_ms={_optional_number(metrics.capture_to_render_p50_ms)} "
-        f"latency_p95_ms={_optional_number(metrics.capture_to_render_p95_ms)} "
+        f"source_read_to_render_p50_ms="
+        f"{_optional_number(metrics.source_read_to_render_p50_ms)} "
+        f"source_read_to_render_p95_ms="
+        f"{_optional_number(metrics.source_read_to_render_p95_ms)} "
+        f"source_read_to_display_submit_p50_ms="
+        f"{_optional_number(metrics.source_read_to_display_submit_p50_ms)} "
+        f"source_read_to_display_submit_p95_ms="
+        f"{_optional_number(metrics.source_read_to_display_submit_p95_ms)} "
+        f"frame_processing_to_render_p50_ms="
+        f"{_optional_number(metrics.frame_processing_to_render_p50_ms)} "
+        f"frame_processing_to_render_p95_ms="
+        f"{_optional_number(metrics.frame_processing_to_render_p95_ms)} "
+        f"sensor_to_photon_ms=NOT_MEASURED "
         f"rss_start_mib={_optional_number(metrics.rss_start_mib)} "
         f"rss_end_mib={_optional_number(metrics.rss_end_mib)} "
         f"rss_peak_mib={_optional_number(metrics.rss_peak_mib)} "
@@ -542,14 +613,25 @@ def _pipeline_summary(result: PipelineSessionResult) -> str:
         f"{_optional_number(metrics.rss_steady_state_delta_mib)} "
         f"rss_steady_slope_mib_per_min="
         f"{_optional_number(metrics.rss_steady_state_slope_mib_per_minute)} "
-        f"latency_slope_ms_per_min="
-        f"{_optional_number(metrics.capture_to_render_slope_ms_per_minute)} "
+        f"source_read_to_render_slope_ms_per_min="
+        f"{_optional_number(metrics.source_read_to_render_slope_ms_per_minute)} "
+        f"latency_continuous_growth="
+        f"{_optional_bool(metrics.latency_continuous_growth_flag)} "
+        f"rss_continuous_growth="
+        f"{_optional_bool(metrics.rss_continuous_growth_flag)} "
+        f"render_samples={metrics.retained_source_read_to_render_samples} "
+        f"display_submit_samples="
+        f"{metrics.retained_source_read_to_display_submit_samples} "
         f"dropped={metrics.dropped_capture_frames} degraded={metrics.degraded_frames}"
     )
 
 
 def _optional_number(value: float | None) -> str:
     return "unavailable" if value is None else f"{value:.2f}"
+
+
+def _optional_bool(value: bool | None) -> str:
+    return "unavailable" if value is None else str(value).lower()
 
 
 def _positive_int(value: str) -> int:
@@ -570,6 +652,13 @@ def _positive_float(value: str) -> float:
     parsed = float(value)
     if not isfinite(parsed) or parsed <= 0.0:
         raise argparse.ArgumentTypeError("must be finite and positive")
+    return parsed
+
+
+def _non_negative_float(value: str) -> float:
+    parsed = float(value)
+    if not isfinite(parsed) or parsed < 0.0:
+        raise argparse.ArgumentTypeError("must be a finite non-negative number")
     return parsed
 
 

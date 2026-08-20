@@ -71,8 +71,9 @@ def test_runtime_metrics_keep_bounded_samples_and_report_measured_values() -> No
     )
     for index in range(4):
         tracker.observe(
-            capture_to_render_ms=float(index + 1),
-            processing_ms=float(index) + 0.5,
+            source_read_to_render_ms=float(index + 1),
+            source_read_to_display_submit_ms=float(index + 1.25),
+            frame_processing_to_render_ms=float(index) + 0.5,
             observed_ns=(index + 1) * 1_000_000_000,
         )
 
@@ -84,16 +85,61 @@ def test_runtime_metrics_keep_bounded_samples_and_report_measured_values() -> No
 
     assert snapshot.total_frames == 4
     assert snapshot.processed_fps == pytest.approx(0.8)
-    assert snapshot.retained_latency_samples == 3
+    assert snapshot.retained_source_read_to_render_samples == 3
+    assert snapshot.retained_source_read_to_display_submit_samples == 3
     assert snapshot.retained_memory_samples == 3
-    assert snapshot.capture_to_render_p50_ms == pytest.approx(3.0)
+    assert snapshot.source_read_to_render_p50_ms == pytest.approx(3.0)
+    assert snapshot.source_read_to_display_submit_p50_ms == pytest.approx(3.25)
     assert snapshot.rss_delta_mib == pytest.approx(2.0)
     assert snapshot.rss_slope_mib_per_minute == pytest.approx(60.0)
     assert snapshot.rss_steady_state_delta_mib == pytest.approx(1.0)
     assert snapshot.rss_steady_state_slope_mib_per_minute == pytest.approx(60.0)
-    assert snapshot.capture_to_render_slope_ms_per_minute == pytest.approx(60.0)
+    assert snapshot.source_read_to_render_slope_ms_per_minute == pytest.approx(60.0)
+    assert snapshot.latency_continuous_growth_flag is None
+    assert snapshot.rss_continuous_growth_flag is None
     assert snapshot.dropped_capture_frames == 7
     assert snapshot.degraded_frames == 2
+
+
+def test_headless_runtime_metrics_leave_display_submit_unmeasured() -> None:
+    clock_values = iter([0])
+    tracker = RuntimeMetricsTracker(
+        RuntimeMetricsConfig(max_samples=3, memory_sample_interval_frames=10),
+        clock_ns=lambda: next(clock_values),
+        rss_provider=lambda: None,
+    )
+
+    tracker.observe(
+        source_read_to_render_ms=12.5,
+        frame_processing_to_render_ms=10.0,
+        observed_ns=1_000_000_000,
+    )
+    snapshot = tracker.snapshot(observed_ns=1_000_000_000)
+
+    assert snapshot.source_read_to_render_p50_ms == pytest.approx(12.5)
+    assert snapshot.source_read_to_display_submit_p50_ms is None
+    assert snapshot.retained_source_read_to_display_submit_samples == 0
+
+
+def test_runtime_metrics_apply_frozen_four_window_growth_rule() -> None:
+    clock_values = iter([0])
+    rss_values = iter([100, 105, 120, 135, 150, 150])
+    tracker = RuntimeMetricsTracker(
+        RuntimeMetricsConfig(max_samples=20, memory_sample_interval_frames=1),
+        clock_ns=lambda: next(clock_values),
+        rss_provider=lambda: next(rss_values) * 1024 * 1024,
+    )
+    for elapsed_seconds, latency_ms in ((5, 10.0), (35, 40.0), (65, 70.0), (95, 100.0)):
+        tracker.observe(
+            source_read_to_render_ms=latency_ms,
+            frame_processing_to_render_ms=latency_ms - 1.0,
+            observed_ns=elapsed_seconds * 1_000_000_000,
+        )
+
+    snapshot = tracker.snapshot(observed_ns=120_000_000_000)
+
+    assert snapshot.latency_continuous_growth_flag is True
+    assert snapshot.rss_continuous_growth_flag is True
 
 
 def test_runtime_rss_probe_returns_a_positive_value_on_supported_host() -> None:

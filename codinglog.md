@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-20 16:58 +07:00
+Last updated: 2026-08-20 19:21 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -40,6 +40,7 @@ This table is intentionally empty until an agent starts the plan.
 | T06 | Selective recolor, outline, and score overlay | `DONE` | Codex | 2026-08-20 13:02 +07:00 | 2026-08-20 13:10 +07:00 | T06 start and completion entries below |
 | T07 | Rule-based color matching | `DONE` | Codex | 2026-08-20 16:02 +07:00 | 2026-08-20 16:11 +07:00 | T07 start and completion entries below |
 | T08 | End-to-end live pipeline and controls | `DONE` | Codex | 2026-08-20 16:24 +07:00 | 2026-08-20 16:58 +07:00 | T08 start and completion entries below |
+| T09 | Evaluation, responsible AI, and evidence package | `IN_PROGRESS` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-20 19:21 +07:00 | T09 Gate 0 start/completion entries below; evaluation workstreams not yet run |
 
 ## 3. Active blockers
 
@@ -62,6 +63,7 @@ Use this section only for implementation decisions that affect later tasks. Deta
 | DEC-008 | 2026-08-20 | Select assistive colors by documented CIELCH candidates scored under the chosen CVD simulation; preserve per-pixel L*, use an inward-only exact mask, bounded hysteresis, and separate mandatory assistive/debug-simulation render paths. | T06, T08, T09 | T06 completion entry |
 | DEC-009 | 2026-08-20 | Generate matching guidance only from T04 `ColorCluster` Lab/RGB through a strictly validated project-authored CIELCH rule table; treat priority and optional CVD separation as heuristics, never confidence or objective fashion truth. | T07, T08, T09 | T07 completion entry |
 | DEC-010 | 2026-08-20 | Compose T02-T07 through one typed current-frame pipeline; use a capacity-one newest-frame mailbox for webcam and sequential consumption for finite video. Temporal mask history is intersected with the current mask, and missing stages clear/skip dependent state instead of reusing stale analysis. | T08, T09, T11 | T08 completion entry |
+| DEC-011 | 2026-08-20 | Freeze T09 protocol/schema/metric/case contracts at version 1.0.0; distinguish render-complete, GUI-submit, and externally measured latency; track only curated text results and assign disjoint workstream namespaces. | T09, T10, T11 | T09 Gate 0 completion entry |
 
 ## 5. Chronological entries
 
@@ -2546,6 +2548,256 @@ declared protocol and longer/laptop-specific performance characterization.
 - Branch: `mvp`
 - Planned atomic commit: `feat: compose end-to-end live pipeline`
 - Known-good pre-T08 baseline: `7998650f3e8d00d3c81c93f5716c714112230e44`
+
+---
+
+### `2026-08-20 18:59 +07:00` - `T09` `Evaluation Gate 0 and collaboration contract`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex (coordinators)
+**Plan reference:** `plan.md#t09--evaluation-responsible-ai-and-evidence-package`
+**Requirements/rubric affected:** FR-12, FR-18; NFR-02-NFR-08; Metrics 01, 02, and 03 evidence integrity
+
+#### Objective
+
+Freeze one versioned T09 protocol, machine-readable result contract, declared
+fixture/test-case matrix, metric names/formulas/units/thresholds, artifact and
+consent policy, and non-overlapping file ownership before three collaborators
+branch from `mvp`.
+
+#### Starting state
+
+- Branch `mvp` is clean and synchronized with `origin/mvp` at T08 commit
+  `f315fd766f01c231c3265c3f91522e1c5e50af9e`.
+- T08 is `DONE`; T09 is the exact next task. SCHP/OpenVINO remain deferred to
+  T10 and are outside this gate.
+- Approved runtime is `D:\Coding\Anaconda\envs\lens\python.exe`, Python
+  `3.10.20`; `pip check` reports no broken requirements.
+- Current T08 packet timestamps are taken immediately after
+  `VideoCapture.read()` returns a frame. The existing measurement ends after
+  rendering and before `cv2.imshow`; it is therefore a software
+  capture-return-to-render-complete latency, not sensor-to-photon latency.
+- The current machine remains a development machine, not declared official
+  demo hardware. Every T09 performance record must identify its exact host,
+  resolution, backend, and device.
+
+#### Smallest Gate 0 implementation
+
+- Freeze protocol version `1.0.0`, a JSON Schema, and an explicit case matrix.
+- Rename/extend the T08 instrumentation so the public fields and CLI use the
+  exact locked latency semantics and GUI submission is measured separately.
+- Track only small curated CSV/JSON/Markdown results below
+  `evaluation/results/`; keep raw/private/large evidence below ignored
+  `artifacts/t09/` and require manifests, provenance/consent, licenses, sizes,
+  and SHA-256 checksums for every report artifact.
+- Assign disjoint result/script/test namespaces to the four T09 workstreams;
+  shared protocol/schema/configuration files remain coordinator-owned.
+- Add hardware-, webcam-, network-, and model-independent Gate 0 tests. Do not
+  run the evaluation or report T09 as `DONE` in this commit.
+
+#### Baseline commands and observed results
+
+```text
+git status --short --branch
+git branch --show-current
+git rev-parse HEAD
+git rev-parse origin/mvp
+D:\Coding\Anaconda\envs\lens\python.exe --version
+D:\Coding\Anaconda\envs\lens\python.exe -m pip check
+rg --files
+```
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Git baseline | PASS, exit 0 | Clean synchronized `mvp`; local/remote SHA `f315fd7...` |
+| Approved interpreter | PASS, exit 0 | Python 3.10.20 in the isolated `lens` environment |
+| Dependency consistency | PASS, exit 0 | `No broken requirements found` |
+| Source-of-truth conflict check | PASS | T09 depends on completed T08; requested Gate 0 is within T09 and does not alter `plan.md` |
+| Gate files/tests | NOT RUN - implementation begins after this status entry | N/A |
+
+#### Definition-of-Done status
+
+- [ ] `evaluation/protocol.md` freezes data, hardware-recording requirements,
+  resolutions, thresholds, and procedures before results are produced.
+- [ ] Machine-readable schema and human-readable result/artifact policy are
+  versioned, validated, and collaboration-safe.
+- [ ] Latency names distinguish source-read return, render completion, GUI
+  submission, and unavailable sensor-to-photon measurement.
+- [ ] Fixture/test-case list and file ownership are explicit and non-overlapping.
+- [ ] Curated result text is trackable; raw/private/large artifacts stay ignored.
+- [ ] Local tests and CI-equivalent gates pass before the commit is pushed.
+
+#### Deviations, limitations, and blockers
+
+- Deviation from `plan.md`: none; freezing the protocol before reporting any
+  result is the first T09 work item.
+- Active blocker: none. Missing future footage or official demo-hardware
+  declaration is represented as an explicit acquisition/measurement status;
+  it does not block freezing an honest protocol.
+
+#### Exact next action
+
+Create and validate the Gate 0 contract, commit it atomically on `mvp`, push
+it to `origin/mvp`, and wait for CI before collaborators create branches from
+that exact commit.
+
+---
+
+### `2026-08-20 19:21 +07:00` - `T09` `Evaluation Gate 0 complete`
+
+**Status:** `IN_PROGRESS` - Gate 0 is complete; T09 measurements and reports
+have not been produced.
+**Owner/agent:** Repository owner + Codex (coordinators)
+**Plan reference:** `plan.md#t09--evaluation-responsible-ai-and-evidence-package`
+
+#### Outcome
+
+- Froze protocol, result schema, metric registry, case registry, and file
+  ownership at version `1.0.0` before any T09 result was reported.
+- Locked 92 case rows: a 33-row 11-color x three-lighting physical matrix; 11
+  available digital contract patches; 20 segmentation cases including three
+  planned annotated cases; six CVD confusing/control pairs; ten end-to-end
+  cases; five performance/latency-semantics cases; and responsible-AI/manual
+  baseline cases. Missing media remains honestly `TO_BE_ACQUIRED`.
+- Locked 32 metric definitions with names, formulas, units, aggregations, and
+  claim thresholds. Context performance floor/target now uses the GUI software
+  proxy `source_read_to_display_submit_ms`; headless uses
+  `source_read_to_render_ms`; `sensor_to_photon_ms` remains `NOT_MEASURED`
+  without external synchronized apparatus.
+- Corrected shared instrumentation before branch creation. Frame timestamps
+  remain after `VideoCapture.read()` returns. Runtime tracking now separately
+  ends after render and after `cv2.imshow()`, supports a 15-second warm-up plus
+  measured-duration reset, retains up to 10,000 bounded samples, and computes
+  the frozen four-window latency/RSS growth diagnostics. The pre-render overlay
+  value is renamed `frame_age_at_overlay_ms` and is explicitly not a T09
+  latency metric.
+- Made small curated CSV/JSON/Markdown result namespaces trackable while raw
+  media/private footage/large evidence remains ignored below `artifacts/t09/`.
+  CI rejects forced raw T09 artifacts, unowned result paths, unsupported result
+  extensions, and curated files over 1 MiB.
+- Required an embedded artifact manifest with provenance/consent, license,
+  exact byte size, generation command, derivation links, and SHA-256 for every
+  report artifact. `git add -f` is prohibited.
+- Assigned coordinator/common files and four disjoint result/script/test
+  namespaces so individual T09 workstreams do not edit `codinglog.md` or each
+  other's outputs.
+
+#### Files changed
+
+| File/path | Change and reason |
+| --- | --- |
+| `evaluation/protocol.md` | Created the frozen human-readable Gate 0 contract. |
+| `evaluation/schema/t09-result.schema.json` | Created strict JSON Schema 2020-12 result structure and responsible-AI/artifact contracts. |
+| `evaluation/schema/metric_registry.json` | Created the 32-definition metric/formula/unit/threshold registry. |
+| `evaluation/fixtures/test_cases.csv` | Created the frozen 92-case registry. |
+| `evaluation/fixtures/README.md` | Documented case columns and honest acquisition states. |
+| `evaluation/OWNERSHIP.md` | Froze shared and per-workstream file ownership/branch namespaces. |
+| `evaluation/results/README.md` | Documented tracked curated text versus ignored raw artifact policy. |
+| `.gitignore` | Unignored only curated T09 CSV/JSON/Markdown result paths while preserving raw artifact ignores. |
+| `.github/workflows/ci.yml` | Enforced T09 result namespaces/extensions/1 MiB limit and rejection of tracked `artifacts/t09/`. |
+| `src/chromalens/metrics.py` | Renamed/extended bounded instrumentation and added frozen growth diagnostics. |
+| `src/chromalens/app.py` | Recorded post-render/post-`imshow` endpoints separately; added warm-up boundary and unambiguous CLI summary. |
+| `src/chromalens/renderer.py` | Renamed the pre-render overlay age so it cannot be mistaken for an evaluation latency. |
+| `tests/test_t09_gate.py` | Added schema/metric/case/ownership/artifact/semantics Gate tests. |
+| `tests/unit/test_t08_tracking_metrics.py` | Updated metric names and tested headless omission plus four-window growth. |
+| `tests/integration/test_t08_pipeline.py` | Tested headless/GUI sample separation and warm-up exclusion. |
+| `tests/test_t01_camera_renderer.py` | Updated the live diagnostic field name. |
+| `README.md` | Documented frozen semantics, warm-up commands, branch point, ownership, and artifact policy. |
+| `codinglog.md` | Recorded Gate start, observed repairs, decision, evidence, and continued T09 status. |
+
+#### Commands run
+
+```text
+git status --short --branch
+git branch --show-current
+git rev-parse HEAD
+git rev-parse origin/mvp
+Get-CimInstance Win32_Processor / Win32_ComputerSystem / Win32_OperatingSystem / Win32_VideoController
+Get-PnpDevice -Class Camera -Status OK
+D:\Coding\Anaconda\envs\lens\python.exe --version
+D:\Coding\Anaconda\envs\lens\python.exe -m pip check
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --help
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q tests\test_t09_gate.py tests\unit\test_t08_tracking_metrics.py
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q tests\test_t09_gate.py tests\unit\test_t08_tracking_metrics.py tests\integration\test_t08_pipeline.py
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q
+D:\Coding\Anaconda\envs\lens\python.exe -m compileall -q src scripts tests
+D:\Coding\Anaconda\envs\lens\python.exe - (JSON/CSV registry audit via stdin)
+D:\Coding\Anaconda\envs\lens\python.exe - (six CVD pair sanity calculations via stdin)
+git diff --exit-code -- pyproject.toml environment.yml requirements
+git diff --check
+git check-ignore -q --no-index -- <curated and raw T09 policy probes>
+```
+
+#### Tests and observed results
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| First focused Gate run | FAIL at assertion level: 2 failed and 11 passed because two expected Markdown phrases crossed line breaks | Terminal output |
+| Smallest repair | Normalized whitespace in the two documentation assertions; protocol/runtime semantics did not change | `tests/test_t09_gate.py` |
+| Focused Gate/runtime/pipeline suite | PASS, exit 0 | Final `25 passed in 0.75s` |
+| Full repository suite | PASS, exit 0 | Final staged-content rerun `204 passed in 2.78s` |
+| Schema/registry/case audit | First `python -c` attempt failed before audit with a PowerShell quoting `SyntaxError`; stdin rerun PASS, exit 0 | Schema `1.0.0`; 32 metrics; 92 unique case rows |
+| CVD pair order check | PASS, exit 0 | Protan `0.344831 > 0`; deutan `0.693100 > 0`; tritan `0.519419 > 0` |
+| CLI/dependency/compile | PASS, exit 0 | Help includes warm-up option; no broken requirements; all Python compiled |
+| Dependency and lock stability | PASS, exit 0 | No diff in `pyproject.toml`, `environment.yml`, or `requirements/`; no package installed |
+| Ignore-policy probes | PASS, exit 0 | Curated CSV/JSON/Markdown and results README not ignored; result media and all `artifacts/t09/` probes ignored |
+| Whitespace check | PASS, exit 0 | `git diff --check`; only Windows LF-to-CRLF notices were printed |
+
+#### Frozen thresholds and semantics evidence
+
+- Demo floor: at least 5 processed FPS and GUI p50
+  `source_read_to_display_submit_ms <= 350` on owner-declared demo hardware or
+  an explicit limitation; project target 10 FPS and 200 ms.
+- Performance interval: 15 seconds warm-up plus 120 measured seconds; linear
+  p50/p95 over an untruncated bounded sample set.
+- Continuous-growth diagnostic: four strictly increasing 30-second medians
+  plus an absolute/relative increase guard; automated positive-path test.
+- Digital color contract: 11/11; physical matrix has no authorized calibrated
+  accuracy pass threshold and must report the full table/confusion matrix.
+- Segmentation: adequacy rating at least 2 is usable; all 20 cases visible;
+  aggregate adequacy and IoU remain observation-only.
+- Existing risk medium/high thresholds remain 0.25/0.60; each confusing pair
+  must outrank its same-profile control.
+- Outside-mask changed pixels, stale frame-ID mismatches, checksum mismatches,
+  and unconsented tracked media all require exactly zero.
+
+#### Definition-of-Done status
+
+- [x] Gate 0 freezes data/case IDs, host/resolution recording, thresholds,
+  metric semantics, procedure, schema, and ownership before results.
+- [x] Machine-readable schema/registry and human-readable policy are tested.
+- [x] GUI/headless latency endpoints are separate and sensor-to-photon is not
+  fabricated.
+- [x] Curated text tracking and raw/private/bulk artifact exclusion are tested
+  and enforced in CI.
+- [x] Gate-specific and full automated suites pass without webcam/network or
+  external model weights.
+- [ ] T09 plan DoD is not complete: workstream measurements/reports and three
+  measured failure examples have not yet been produced.
+
+#### Decision and limitations
+
+- **Decision ID:** `DEC-011`.
+- The Gate host is recorded only as a development machine. No official demo
+  hardware or sensor-to-photon value is declared.
+- Physical color/lighting inputs, new segmentation footage/annotations,
+  personal footage consent, and user feedback are not present. Frozen
+  acquisition slots must remain `NOT_RUN` until compliant assets exist.
+- JSON Schema is parsed and structurally cross-checked with the metric/case
+  registries using the locked standard-library/pytest environment. No new
+  schema-validation dependency was added; workstream result validation must
+  use the frozen schema plus registry checks in their tests.
+- This commit prepares and gates T09 only. It does not start T10 or create
+  collaborator branches.
+
+#### Version control and next action
+
+- Branch: `mvp`.
+- Pre-gate baseline: `f315fd766f01c231c3265c3f91522e1c5e50af9e`.
+- Planned atomic commit: `chore: freeze T09 evaluation protocol`.
+- Exact next action after push and green CI: Dong, Phong, and Trinh create
+  their assigned branches from the new Gate 0 commit; coordinators continue
+  the `end_to_end` T09 workstream on `mvp`.
 
 ---
 

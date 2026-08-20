@@ -77,7 +77,7 @@ def test_renderer_overlays_a_copy_and_preserves_original_frame() -> None:
     assert np.array_equal(packet.original_bgr, before)
     assert not np.shares_memory(rendered, packet.original_bgr)
     assert not np.array_equal(rendered, packet.original_bgr)
-    assert telemetry.pipeline_latency_ms == pytest.approx(2.0)
+    assert telemetry.frame_age_at_overlay_ms == pytest.approx(2.0)
     assert telemetry.processed_fps is None
 
 
