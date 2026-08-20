@@ -11,6 +11,7 @@ requires-python = ">=3.10,<3.11"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
 dependencies = [
+    "daltonlens==0.1.5",
     "numpy==1.26.4",
     "opencv-contrib-python==4.10.0.84",
 ]

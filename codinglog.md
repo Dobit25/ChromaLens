@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-20 11:54 +07:00
+Last updated: 2026-08-20 12:27 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -36,6 +36,7 @@ This table is intentionally empty until an agent starts the plan.
 | T02 | Garment segmentation vertical slice | `DONE` | Codex (integration audit) | 2026-08-19 15:06 +07:00 | 2026-08-20 00:35 +07:00 | Corrective implementation and successful PR CI entries below |
 | T03 | White balance and lighting quality | `DONE` | Codex | 2026-08-20 00:47 +07:00 | 2026-08-20 00:55 +07:00 | T03 start and completion entries below |
 | T04 | Dominant color extraction and 11-name mapping | `DONE` | Codex | 2026-08-20 11:43 +07:00 | 2026-08-20 11:54 +07:00 | T04 start and completion entries below |
+| T05 | CVD simulation and relational risk | `DONE` | Codex | 2026-08-20 12:11 +07:00 | 2026-08-20 12:27 +07:00 | T05 start and completion entries below |
 
 ## 3. Active blockers
 
@@ -54,6 +55,7 @@ Use this section only for implementation decisions that affect later tasks. Deta
 | DEC-004 | 2026-08-20 | Apply the T02 four-hour gate: remove the unverified SCHP copy/runtime and defer any locked SCHP attempt to T10 after T08/T09. | T02, T08, T09, T10 | T02 corrective validation entry |
 | DEC-005 | 2026-08-20 | Keep one Gray-world balancer per ordered stream; use an optional mask only for gain estimation, apply EMA-smoothed gains globally, and report insufficient valid pixels as a visible poor-quality fallback. | T03, T04, T08, T09 | T03 completion entry |
 | DEC-006 | 2026-08-20 | Use conventional float OpenCV CIELAB plus an attributed W3C sRGB multi-anchor equivalent for the Van de Weijer 11-term vocabulary; expose normalized distance scores/margin as heuristics, not probabilities. | T04, T05, T06, T07, T08, T09 | T04 completion entry |
+| DEC-007 | 2026-08-20 | Pin DaltonLens 0.1.5 in the P0 base runtime, preserve exact severity-zero identity, and score CVD-created relational loss from CIEDE2000 collapse plus simulated closeness using configurable heuristic thresholds. | T05, T06, T08, T09 | T05 completion entry |
 
 ## 5. Chronological entries
 
@@ -1650,6 +1652,256 @@ claims.
 #### Exact next task
 
 `T05 — CVD simulation and relational risk`.
+
+---
+
+### `2026-08-20 12:11 +07:00` — `T05` `CVD simulation and relational risk`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Codex
+**Plan reference:** `plan.md#t05--cvd-simulation-and-relational-risk`
+**Requirements/rubric affected:** FR-07, FR-08, FR-09, FR-12; NFR-01, NFR-06, NFR-08; Metrics 02 and 03
+
+#### Objective
+
+Simulate the three user-selected CVD profiles with validated severity using
+the documented Machado model, then compare retained original garment-color
+clusters with CIEDE2000 before and after simulation and return an explainable,
+configurable relational-risk assessment.
+
+#### Starting state
+
+- Branch `mvp` is clean and synchronized with `origin/mvp` at
+  `5313ff8ab177bb0adf6fefb4980e19a7d0d4e643`.
+- Required dependency T04 is `DONE`; each retained `ColorCluster` carries the
+  original corrected RGB/Lab estimate, ratio, name, and aligned submask.
+- Approved environment `lens` runs Python `3.10.20`; `pip check` reports no
+  broken requirements.
+- Baseline repository suite: `84 passed in 11.03s`.
+- Official PyPI/GitHub metadata identifies `daltonlens==0.1.5` as a pure
+  Python package supporting Machado 2009, `protan`/`deutan`/`tritan`, severity,
+  Python `>=3.7`, and the MIT License. Installation/API compatibility in the
+  approved environment has not yet been tested.
+
+#### Smallest implementation that satisfies the Definition of Done
+
+- Add one explicit RGB-input Machado simulation boundary backed by the exact
+  locked DaltonLens release; severity zero will short-circuit to an identity
+  copy and all other severities will use DaltonLens's sRGB/linear-RGB handling.
+- Add an independently tested CIEDE2000 implementation and a validated risk
+  configuration whose score/`low`/`medium`/`high` thresholds remain visible
+  heuristics, never confidence or diagnosis.
+- Compare all unordered pairs of retained clusters inside one garment for P0,
+  preserving both original and simulated Delta-E values in the existing
+  `RiskAssessment` contract. Top-bottom/background comparisons remain P1 and
+  will not be fabricated without corresponding regions.
+- Add deterministic known-patch, published Delta-E reference, confusing-pair,
+  contract, and validation tests plus offline evidence/provenance documentation.
+- Update all affected collaboration locks and CI lock-freshness checks; do not
+  add T06 recoloring or T08 live composition.
+
+#### Commands and checks run before implementation
+
+```text
+git status --short --branch
+git branch --show-current
+git rev-parse HEAD
+git rev-parse origin/mvp
+git log -5 --oneline --decorate
+D:\Coding\Anaconda\envs\lens\python.exe --version
+D:\Coding\Anaconda\envs\lens\python.exe -c "import sys; print(sys.executable)"
+D:\Coding\Anaconda\envs\lens\python.exe -m pip check
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q
+rg --files
+```
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Branch/baseline | PASS, exit 0 | Clean `mvp`; local/remote SHA `5313ff8a...` |
+| Approved interpreter | PASS, exit 0 | Python 3.10.20 at `D:\Coding\Anaconda\envs\lens\python.exe` |
+| Dependency consistency | PASS, exit 0 | `No broken requirements found` |
+| Baseline suite | PASS, exit 0 | `84 passed in 11.03s` |
+| Repository inventory | PASS, exit 0 | T05 source/test modules do not yet exist |
+
+#### Definition-of-Done status at start
+
+- [ ] Severity zero is identity within numerical tolerance.
+- [ ] All profiles run without channel-order errors on known color patches.
+- [ ] A known confusing pair receives greater risk than a clearly separated
+  control for at least one declared profile.
+- [ ] Output records original Delta-E, simulated Delta-E, score, and level.
+- [ ] Thresholds are configurable and documented as requiring user validation.
+
+#### Deviations, limitations, and blockers
+
+- Deviation from plan: none.
+- Active blocker: none. DaltonLens installation/API and exact dependency-lock
+  compatibility must pass before its integration is accepted.
+
+---
+
+### `2026-08-20 12:27 +07:00` — `T05` `CVD simulation and relational risk complete`
+
+**Status:** `DONE`
+**Owner/agent:** Codex
+**Plan reference:** `plan.md#t05--cvd-simulation-and-relational-risk`
+
+#### Outcome
+
+T05 now reuses the T00 `CVDProfile` enum and validates severity at its public
+simulation boundary. `MachadoSimulator` exposes an explicit uint8 sRGB/RGB
+contract backed by pinned DaltonLens 0.1.5. Non-zero severity follows
+DaltonLens's sRGB-to-linear-RGB, Machado matrix, clipping, and sRGB encoding;
+severity zero returns an independent byte-identical copy to avoid the
+library's observed 255-to-254 uint8 round-trip loss.
+
+`RelationalRiskDetector` computes independently verified CIEDE2000 distances
+for original corrected colors and their selected-profile simulations, derives
+a configurable collapse/closeness score, assigns `low`/`medium`/`high`, and
+retains both distances plus the score in `RiskAssessment`. Its P0 cluster API
+compares every unordered retained pair inside one garment. It returns no
+fabricated result when fewer than two clusters exist; top-bottom/background
+comparisons remain P1 for later work with real corresponding regions.
+
+#### Files changed
+
+| File | Change and reason |
+| --- | --- |
+| `src/chromalens/cvd_simulation.py` | Added validated RGB/profile/severity boundary and DaltonLens Machado adapter with exact zero-severity identity. |
+| `src/chromalens/risk_detection.py` | Added CIEDE2000, validated heuristic configuration, risk levels, pair assessment, and within-garment cluster comparison. |
+| `tests/unit/test_t05_cvd_simulation.py` | Added fixed RGB-patch expectations, identity/copy, channel-order, profile, and validation tests. |
+| `tests/unit/test_t05_risk_detection.py` | Added Sharma supplemental CIEDE2000 vectors, risk ranking/output/configuration, cluster-pair, and invalid-input tests. |
+| `tests/integration/test_t05_color_risk_pipeline.py` | Added deterministic T04 K=2 to T05 relational-risk integration and source-immutability check. |
+| `scripts/t05_cvd_risk_evidence.py` | Added offline JSON/CSV/swatch evidence for all profiles and declared pair comparisons. |
+| `assets/cvd/README.md` | Documented algorithms, RGB/gamma convention, provenance, formula, thresholds, and responsible limitations. |
+| `assets/cvd/DALTONLENS-MIT-LICENSE.md` | Preserved the upstream DaltonLens MIT notice. |
+| `pyproject.toml` | Pinned the P0 runtime dependency `daltonlens==0.1.5`. |
+| `requirements/py310-win64.lock` | Added hashed DaltonLens 0.1.5 and Pillow 12.3.0 base closure. |
+| `requirements/lock-tools-py310-win64.lock` | Regenerated the base-plus-lock-tool closure with the same hashes. |
+| `requirements/segment-mediapipe-py310-win64.lock` | Added DaltonLens and its existing Pillow relationship to the full backend closure. |
+| `requirements/README.md` | Documented T05 ownership in all affected locks. |
+| `.github/workflows/ci.yml` | Added an exact DaltonLens runtime assertion to the locked base job; existing regeneration covers all changed locks. |
+| `README.md` | Added T05 usage, reproducible evidence, thresholds, contracts, provenance, and limitations. |
+| `codinglog.md` | Recorded T05 baseline, implementation, measurements, decisions, and completion. |
+
+#### Dependency and implementation decisions
+
+- **DEC-007:** DaltonLens is a P0 base dependency rather than an optional extra,
+  so the normal locked install and base CI cannot silently skip T05. Exact
+  installed additions are `daltonlens==0.1.5` and its transitive
+  `Pillow==12.3.0`; NumPy remains `1.26.4`.
+- The upstream package wheel is pure Python, declares Python `>=3.7`, carries
+  an MIT license file, and installs cleanly under approved Python 3.10.20.
+- CIEDE2000 was implemented locally without a new scientific dependency and
+  checked against ten published Sharma/Wu/Dalal reference cases, including
+  neutral and hue-wrap cases.
+- Default risk configuration is original floor `5.0`, simulated confusion
+  distance `20.0`, medium score `0.25`, and high score `0.60`. Score equals
+  relative Delta-E loss multiplied by post-simulation closeness. These values
+  are explicit uncalibrated heuristics for T09 validation.
+
+#### Commands run
+
+```text
+D:\Coding\Anaconda\envs\lens\python.exe -m pip install --disable-pip-version-check daltonlens==0.1.5
+D:\Coding\Anaconda\envs\lens\python.exe -m pip check
+D:\Coding\Anaconda\envs\lens\python.exe -c "inspect DaltonLens metadata, API, simulator, and sRGB transfer functions"
+git ls-remote --tags https://github.com/DaltonLens/DaltonLens-Python.git
+D:\Coding\Anaconda\envs\lens\python.exe -m pip index versions daltonlens
+D:\Coding\Anaconda\envs\lens\python.exe -m compileall -q src
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q tests\unit\test_t05_cvd_simulation.py tests\unit\test_t05_risk_detection.py tests\integration\test_t05_color_risk_pipeline.py
+D:\Coding\Anaconda\envs\lens\python.exe -m piptools compile --quiet pyproject.toml --extra dev --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/py310-win64.lock
+D:\Coding\Anaconda\envs\lens\python.exe -m piptools compile --quiet pyproject.toml --extra lock --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/lock-tools-py310-win64.lock
+D:\Coding\Anaconda\envs\lens\python.exe -m piptools compile --quiet pyproject.toml --extra dev --extra segment-mediapipe --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/segment-mediapipe-py310-win64.lock
+D:\Coding\Anaconda\envs\lens\python.exe -m pip install --disable-pip-version-check --require-hashes --requirement requirements\py310-win64.lock
+D:\Coding\Anaconda\envs\lens\python.exe -m pip install --disable-pip-version-check --require-hashes --requirement requirements\lock-tools-py310-win64.lock
+D:\Coding\Anaconda\envs\lens\python.exe -m pip install --disable-pip-version-check --require-hashes --requirement requirements\segment-mediapipe-py310-win64.lock
+D:\Coding\Anaconda\envs\lens\python.exe -m pip install --disable-pip-version-check --no-build-isolation --no-deps --editable ".[dev]"
+D:\Coding\Anaconda\envs\lens\python.exe scripts\t05_cvd_risk_evidence.py
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q
+D:\Coding\Anaconda\envs\lens\python.exe -m compileall -q src scripts tests
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --help
+D:\Coding\Anaconda\envs\lens\python.exe -m pip check
+git diff --check
+git check-ignore -v artifacts/t05-cvd-risk/evidence.json artifacts/t05-cvd-risk/pair_risk_evaluation.csv artifacts/t05-cvd-risk/known_patch_simulation.png
+git ls-files artifacts .env '*.onnx' '*.pth' '*.pt' '*.mp4' '*.avi'
+```
+
+The three lock-generation commands were repeated with SHA-256 checks before
+and after regeneration to prove byte-stable output.
+
+#### Tests and observed results
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| T05 focused unit/integration suite | PASS, exit 0 | Initial `41 passed in 0.37s`; final after zero-distance guard `42 passed in 0.38s` |
+| Full repository suite | PASS, exit 0 | Initial `125 passed in 1.78s`; locked rerun `125 passed in 1.93s`; final `126 passed in 2.18s` |
+| CIEDE2000 reference vectors | PASS | Ten published expected values within absolute tolerance `0.00005` |
+| Hashed base/tool/MediaPipe installs | PASS, exit 0 | Every dependency satisfied under `--require-hashes`; `pip check` clean |
+| Deterministic lock regeneration | PASS, exit 0 | SHA-256 base `23634BD2...BF44E`, tools `D385A875...5931`, MediaPipe `3ABB7AF8...071A` unchanged after regeneration |
+| CLI and compile gates | PASS, exit 0 | Help printed without camera/model; all source/script/test modules compiled |
+| Evidence command | PASS, exit 0 | Ignored CSV, JSON, and PNG written under `artifacts/t05-cvd-risk/` |
+| Visual evidence review | PASS | Known-patch original/protan/deutan/tritan swatch rows opened and inspected |
+| Whitespace/artifact/size policy | PASS, exit 0 | Diff clean; generated evidence ignored; no queried generated/model/media file tracked; no tracked file over 5 MiB |
+
+#### Measured deterministic evidence
+
+These are controlled sRGB algorithm/contract checks, not user-perception,
+medical, physical color-accuracy, or official demo-hardware measurements.
+
+| Case/profile | Original Delta-E00 | Simulated Delta-E00 | Risk score/level |
+| --- | ---: | ---: | --- |
+| Deutan red `(220,40,40)` vs olive `(120,120,30)` | 45.723216 | 4.590837 | 0.693100 / `high` |
+| Deutan blue `(40,90,220)` vs yellow `(235,220,40)` control | 79.768447 | 77.043909 | 0.000000 / `low` |
+| Protan purple vs blue controlled case | 17.344425 | 7.654908 | 0.344831 / `medium` |
+| Tritan orange vs pink controlled case | 40.090229 | 7.299191 | 0.519419 / `medium` |
+
+All six known RGB patches ran for every profile at severity one, and all three
+severity-zero rows were byte-identical to their source.
+
+#### Definition of Done
+
+- [x] Severity zero is identity within numerical tolerance: it is exact for
+  all three profiles, returns a non-aliasing copy, and leaves source bytes
+  unchanged.
+- [x] Protan, deutan, and tritan match fixed locked-DaltonLens outputs on red,
+  green, blue, white, black, and yellow RGB patches; direct single-red output
+  also guards RGB/BGR ordering.
+- [x] The declared deutan red/olive confusing pair scores `0.693100`, greater
+  than the blue/yellow control score `0.000000`.
+- [x] Every result contains `delta_e_original`, `delta_e_cvd`, `risk_score`,
+  and `risk_level`, with stable source/comparison identifiers.
+- [x] All risk thresholds are validated configuration values and documented as
+  heuristics requiring T09 user/evaluation validation.
+
+#### Deviations and known limitations
+
+- No deviation from T05 P0. The T00 profile enum and risk dataclass were reused
+  rather than duplicated; the plan's permitted verified DaltonLens path was
+  selected and locked.
+- Final self-review added an explicit zero-original-distance guard and test so
+  a deliberately configured zero floor cannot cause division by zero; no
+  formula, threshold, dependency, or scope changed.
+- Top-bottom and adjacent-background comparisons are P1 and were not added
+  without semantic regions. T06 can consume within-garment assessments now;
+  richer relationships require real region contracts/evidence.
+- DaltonLens 0.1.5 is a 2021 release and its own Machado class documents poorer
+  tritanopia suitability. The package and algorithm are pinned/attributed, but
+  correctness for individual users is not established by these tests.
+- Simulation approximates appearance and is debug/risk input, not the future
+  assistive recolored display. Profile/severity selection is not diagnosis.
+- Risk thresholds and controlled pairs are uncalibrated. T09 must evaluate
+  them across declared users, displays, lighting, garments, and failure cases.
+
+#### Exact next task
+
+`T06 — Selective recolor, outline, and score overlay`.
+
+#### Version control
+
+- Branch: `mvp`
+- Planned commit message: `feat: add CVD simulation and relational risk`
+- Known-good pre-T05 baseline: `5313ff8ab177bb0adf6fefb4980e19a7d0d4e643`
 
 ---
 

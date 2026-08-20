@@ -109,7 +109,9 @@ jobs:
 
       - name: Check dependency consistency
         shell: pwsh
-        run: python -m pip check
+        run: |
+          python -m pip check
+          python -c "from importlib import metadata; assert metadata.version('daltonlens') == '0.1.5'; print('daltonlens=' + metadata.version('daltonlens'))"
 
       - name: Check hardware-independent CLI
         shell: pwsh

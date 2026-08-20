@@ -2,8 +2,8 @@
 
 ChromaLens AI is a local, explainable color-vision assistance prototype for
 clothing. **T01** (webcam/video preview), the locked **T02** MediaPipe torso-
-mask baseline, **T03** lighting correction, and **T04** original-color
-extraction/naming are complete. CVD simulation and relational risk begin in T05.
+mask baseline, **T03** lighting correction, **T04** original-color
+extraction/naming, and **T05** CVD simulation/relational risk are complete.
 
 The MVP is assistive software, not a medical diagnosis tool. The user selects
 their CVD profile and severity.
@@ -213,6 +213,65 @@ conda run --name lens python -m pytest -q tests/unit/test_t04_color_naming.py te
 The script writes `basic11_evaluation.csv`, `evidence.json`, a swatch grid,
 and a synthetic two-cluster overlay under ignored `artifacts/t04-color/`.
 
+## CVD simulation and relational risk (T05)
+
+`MachadoSimulator` accepts and returns `uint8 H x W x 3` gamma-encoded sRGB
+in explicit **RGB** order. It maps the existing user-selected `CVDProfile` to
+DaltonLens's Machado 2009 implementation. For non-zero severity, pinned
+`daltonlens==0.1.5` performs sRGB decoding to linear RGB, the Machado transform,
+gamut clipping, and sRGB encoding. Severity zero returns a byte-identical copy
+without mutating or aliasing the input.
+
+```python
+from chromalens.config import CVDProfile
+from chromalens.cvd_simulation import MachadoSimulator
+
+simulator = MachadoSimulator()
+simulated_rgb = simulator.simulate_rgb(
+    corrected_rgb,
+    profile=CVDProfile.DEUTAN,
+    severity=0.8,
+)
+```
+
+`RelationalRiskDetector` uses original corrected cluster RGB values only. It
+computes CIEDE2000 before and after the selected simulation, retains both
+distances, derives a numeric heuristic score, and maps the score to
+`low`/`medium`/`high`. T05 P0 evaluates every unordered retained-color pair
+inside one garment; it returns an empty tuple for fewer than two clusters and
+does not fabricate top-bottom/background comparisons.
+
+```python
+from chromalens.risk_detection import RelationalRiskDetector
+
+assessments = RelationalRiskDetector().assess_cluster_pairs(
+    clusters,
+    garment_id="track-4:upper-clothes",
+    profile=CVDProfile.DEUTAN,
+    severity=0.8,
+)
+```
+
+The default heuristic uses `minimum_original_delta_e=5.0`,
+`cvd_confusion_delta_e=20.0`, `medium_score_threshold=0.25`, and
+`high_score_threshold=0.60`. These are validated configuration values, not
+probabilities, medical thresholds, or universal perceptual truth. Formula,
+papers, DaltonLens version/tag/license, gamma behavior, and limitations are
+documented in [`assets/cvd/README.md`](assets/cvd/README.md); T09 must validate
+the thresholds with declared conditions and users before competition claims.
+
+Reproduce known-patch simulation and pair-risk evidence offline:
+
+```powershell
+conda run --name lens python scripts/t05_cvd_risk_evidence.py
+conda run --name lens python -m pytest -q tests/unit/test_t05_cvd_simulation.py tests/unit/test_t05_risk_detection.py
+```
+
+The evidence script writes `known_patch_simulation.png`,
+`pair_risk_evaluation.csv`, and `evidence.json` under the ignored
+`artifacts/t05-cvd-risk/` directory. Simulation is an internal risk/debug view,
+not the assistive recolored output that belongs to T06.
+
 ## Camera and local-video preview
 
 Run the webcam preview using the default camera index:
@@ -274,7 +333,7 @@ The T01 suite generates short MJPG/AVI files under pytest's temporary directory
 and deletes them with the test workspace. It does not commit or download sample
 media and verifies that video mode never opens a webcam.
 
-## T02–T04 handoff contracts
+## T02–T05 handoff contracts
 
 - `chromalens.camera.FrameSource` is the common webcam/video interface.
 - Each successful read produces a `FramePacket` with a sequential frame ID,
@@ -287,6 +346,9 @@ media and verifies that video mode never opens a webcam.
 - T04 consumes only `corrected_rgb` plus an aligned garment mask and returns
   original-color `ColorCluster` values; assistive display colors do not exist
   yet and cannot contaminate extraction.
+- T05 simulates those original cluster RGB values under a user-selected
+  profile/severity and returns relational `RiskAssessment` values containing
+  both Delta-E measurements, numeric risk score, and display level.
 
 ## Current limitations
 
@@ -307,9 +369,13 @@ media and verifies that video mode never opens a webcam.
   every shade, language, material, camera, display, or lighting condition. Its
   11-patch controlled result is contract evidence, not a real-world accuracy
   claim; broader evaluation and threshold tuning belong to T09.
-- T02–T04 contain segmentation, lighting correction, and original-color
-  extraction only; CVD-risk, recoloring, and performance-target claims belong
-  to later tasks.
+- T05's CVD profile and severity are user-selected settings, not diagnosis.
+  Machado/DaltonLens simulation and the risk formula approximate perception;
+  DaltonLens documents an additional tritan limitation. Delta-E thresholds and
+  risk levels are uncalibrated heuristics requiring T09 evaluation.
+- T02–T05 contain segmentation, lighting correction, original-color
+  extraction, simulation, and relational risk only; recoloring, live pipeline
+  composition, and performance-target claims belong to later tasks.
 - Model weights, datasets, generated artifacts, and private footage are not
   included. See `models/README.md` for download policy.
 
