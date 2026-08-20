@@ -17,6 +17,13 @@ from chromalens.color.clustering import (
     robust_median_estimate,
 )
 
+from chromalens.color.extraction import (
+    ColorExtractionConfig,
+    ExtractionMode,
+    InsufficientColorDataError,
+    extract_garment_colors,
+)
+
 from chromalens.color.preprocessing import (
     PixelSelection,
     PixelSelectionConfig,
@@ -38,4 +45,8 @@ __all__ = [
     "ClusteringConfig",
     "deterministic_k2_estimates",
     "robust_median_estimate",
+    "ColorExtractionConfig",
+    "ExtractionMode",
+    "InsufficientColorDataError",
+    "extract_garment_colors",
 ]
