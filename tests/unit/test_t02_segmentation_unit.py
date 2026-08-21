@@ -14,6 +14,7 @@ from chromalens.segmentation.debug import draw_mask_overlay
 from chromalens.segmentation.mediapipe_backend import (
     MediaPipeBackendUnavailableError,
     MediaPipeSegmenterConfig,
+    _face_exclusion_row,
     apply_mask_cleanup,
     compute_mask_confidence,
 )
@@ -181,6 +182,45 @@ class TestComputeMaskConfidence:
         assert result is not None
         assert 0.0 <= result <= 1.0
 
+
+# ---------------------------------------------------------------------------
+# _face_exclusion_row
+# ---------------------------------------------------------------------------
+
+class DummyBox:
+    def __init__(self, ymin: float, height: float):
+        self.ymin = ymin
+        self.height = height
+
+class DummyLocationData:
+    def __init__(self, ymin: float, height: float):
+        self.relative_bounding_box = DummyBox(ymin, height)
+
+class DummyDetection:
+    def __init__(self, ymin: float, height: float):
+        self.location_data = DummyLocationData(ymin, height)
+
+class TestFaceExclusionRow:
+    def test_empty_detections_returns_none(self) -> None:
+        assert _face_exclusion_row([], frame_height=1000, margin_ratio=0.1, max_height_ratio=0.4) is None
+
+    def test_valid_face_calculates_correct_cutoff(self) -> None:
+        # ymin=0.1, height=0.2 => bottom=0.3. margin=0.1 => 0.2 * 1.1 = 0.22. total_relative_bottom = 0.1 + 0.22 = 0.32
+        d = DummyDetection(0.1, 0.2)
+        cutoff = _face_exclusion_row([d], frame_height=1000, margin_ratio=0.1, max_height_ratio=0.4)
+        assert cutoff == 320
+
+    def test_large_face_is_ignored(self) -> None:
+        # height=0.5 > max_height_ratio(0.4) => ignored
+        d = DummyDetection(0.1, 0.5)
+        assert _face_exclusion_row([d], frame_height=1000, margin_ratio=0.1, max_height_ratio=0.4) is None
+
+    def test_multiple_faces_returns_max_cutoff(self) -> None:
+        d1 = DummyDetection(0.1, 0.1) # bottom = 0.1 + 0.1*1.1 = 0.21 -> 210
+        d2 = DummyDetection(0.2, 0.1) # bottom = 0.2 + 0.1*1.1 = 0.31 -> 310
+        d_large = DummyDetection(0.2, 0.5) # ignored
+        cutoff = _face_exclusion_row([d1, d2, d_large], frame_height=1000, margin_ratio=0.1, max_height_ratio=0.4)
+        assert cutoff == 310
 
 # ---------------------------------------------------------------------------
 # GarmentRegion contract

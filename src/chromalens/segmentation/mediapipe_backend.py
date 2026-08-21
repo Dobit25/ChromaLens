@@ -74,6 +74,7 @@ class MediaPipeSegmenterConfig:
     face_model_selection: int = 1
     face_min_detection_confidence: float = 0.40
     face_margin_ratio: float = 0.10
+    face_max_height_ratio: float = 0.40
     confidence_threshold: float = 0.5
     head_skip_ratio: float = 0.22
     upper_body_ratio: float = 0.80
@@ -88,6 +89,7 @@ class MediaPipeSegmenterConfig:
         for name in (
             "face_min_detection_confidence",
             "face_margin_ratio",
+            "face_max_height_ratio",
             "confidence_threshold",
             "head_skip_ratio",
             "upper_body_ratio",
@@ -387,6 +389,7 @@ class MediaPipeSegmenter(Segmenter):
             face_result.detections,
             frame_height=frame_height,
             margin_ratio=self._config.face_margin_ratio,
+            max_height_ratio=self._config.face_max_height_ratio,
         )
 
         mask = apply_mask_cleanup(
@@ -428,6 +431,7 @@ def _face_exclusion_row(
     *,
     frame_height: int,
     margin_ratio: float,
+    max_height_ratio: float,
 ) -> int | None:
     """Return a conservative global row below all detected face boxes."""
     if not detections:
@@ -436,7 +440,7 @@ def _face_exclusion_row(
     cutoffs: list[int] = []
     for detection in detections:  # type: ignore[union-attr]
         box = detection.location_data.relative_bounding_box
-        if box.height <= 0:
+        if not (0.0 < box.height <= max_height_ratio):
             continue
         relative_bottom = box.ymin + box.height * (1.0 + margin_ratio)
         cutoffs.append(round(relative_bottom * frame_height))
