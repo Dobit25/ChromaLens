@@ -31,6 +31,10 @@ lock = [
 segment-mediapipe = [
     "mediapipe==0.10.21",
 ]
+segment-schp = [
+    "torch==2.3.1",
+    "torchvision==0.18.1",
+]
 
 [project.scripts]
 chromalens = "chromalens.app:main"
