@@ -71,7 +71,7 @@ Use this section only for implementation decisions that affect later tasks. Deta
 
 **Status:** `IN_PROGRESS`
 **Owner/agent:** Codex
-**Plan reference:** `plan.md#t00--repository-bootstrap-and-contracts`  
+**Plan reference:** `plan.md#t00--repository-bootstrap-and-contracts`
 **Requirements/rubric affected:** Repository bootstrap; NFR-01, NFR-06, NFR-07, NFR-08; Metric 03 tech-stack evidence
 
 #### Objective
@@ -156,9 +156,9 @@ Create the minimal T00 packaging, contracts, CLI, backend interface placeholders
 
 ### `2026-08-16 18:06 +07:00` — `T00` `Repository bootstrap and contracts complete`
 
-**Status:** `DONE`  
-**Owner/agent:** Codex  
-**Plan reference:** `plan.md#t00--repository-bootstrap-and-contracts`  
+**Status:** `DONE`
+**Owner/agent:** Codex
+**Plan reference:** `plan.md#t00--repository-bootstrap-and-contracts`
 **Requirements/rubric affected:** Repository bootstrap; NFR-01, NFR-06, NFR-07, NFR-08; Metric 03 tech-stack evidence
 
 #### Objective
@@ -722,9 +722,9 @@ T02 — Garment segmentation vertical slice and T03 — White balance and lighti
 
 ### `2026-08-19 15:06 +07:00` — `T02` `Garment segmentation vertical slice`
 
-**Status:** `IN_PROGRESS`  
-**Owner/agent:** Đông  
-**Plan reference:** `plan.md#t02--garment-segmentation-vertical-slice`  
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Đông
+**Plan reference:** `plan.md#t02--garment-segmentation-vertical-slice`
 **Requirements/rubric affected:** FR-02, FR-03, FR-04; NFR-01, NFR-02; Metric 02 working-prototype readiness
 
 #### Objective
@@ -772,9 +772,9 @@ C:\Users\DELL\miniconda3\envs\lens\python.exe -m pip index versions mediapipe
 
 ### `2026-08-19 15:15 +07:00` — `T02` `Garment segmentation vertical slice complete`
 
-**Status:** `DONE`  
-**Owner/agent:** Đông  
-**Plan reference:** `plan.md#t02--garment-segmentation-vertical-slice`  
+**Status:** `DONE`
+**Owner/agent:** Đông
+**Plan reference:** `plan.md#t02--garment-segmentation-vertical-slice`
 **Requirements/rubric affected:** FR-02, FR-03, FR-04; NFR-01, NFR-02; Metric 02 working-prototype readiness
 
 #### Objective
@@ -886,9 +886,9 @@ git push
 
 ### `[YYYY-MM-DD HH:MM TZ]` — `[TASK_ID]` `[Short task title]`
 
-**Status:** `IN_PROGRESS | PARTIAL | BLOCKED | DONE | DEFERRED`  
-**Owner/agent:**  
-**Plan reference:** `plan.md#...`  
+**Status:** `IN_PROGRESS | PARTIAL | BLOCKED | DONE | DEFERRED`
+**Owner/agent:**
+**Plan reference:** `plan.md#...`
 **Requirements/rubric affected:** `FR-...`, `NFR-...`, Metric `...`
 
 #### Objective
@@ -2816,3 +2816,33 @@ Complete this only after all P0 work is finished.
 - [ ] Privacy and responsible-AI behavior are recorded.
 - [ ] A known-good demo version/commit is identified.
 - [ ] The next human action for competition submission is stated.
+
+### `2026-08-21 17:55 +07:00` — `T02` `SCHP segmentation backend integration`
+
+**Status:** `DONE`
+**Owner/agent:** Codex
+**Plan reference:** `plan.md#t02--garment-segmentation-vertical-slice`
+
+#### Objective
+
+Implement the `SCHPSegmenter` behind the existing `Segmenter` interface using the `segment-schp` library and ATR dataset pretrained weights to provide full garment segmentation.
+
+#### Work performed
+
+- Downloaded the SCHP model weights to `models/schp_atr.pth`.
+- Implemented `SCHPSegmenter` class inside `src/chromalens/segmentation/schp_backend.py`.
+- Mocked the C++ JIT compilation dependency (`inplace_abn`) in the SCHP repository to use standard PyTorch operators, eliminating the need for a C++ compiler (`Ninja`).
+- Created and successfully passed unit tests in `tests/unit/segmentation/test_schp_backend.py` to ensure only correct ATR garment classes (e.g. upper-clothes, pants, skirt, dress) are mapped and background/face are excluded.
+- Validated SCHP output structure and latency on CPU with an integration test using the NASA Shepard fixture. Memory overhead was negligible as weights were cached.
+
+#### Result
+
+- The `SCHPSegmenter` correctly isolates the full garment while ignoring the astronaut helmet and background, solving the torso-only limitations of MediaPipe.
+- `MediaPipeSegmenter` remains the baseline/fallback.
+
+#### Evidence
+- **Integration Test Latency (CPU)**: 2.912 seconds per frame (0.3 FPS).
+- **Downloaded Model**: `schp_atr.pth`
+  - Size: 267445237 bytes
+  - SHA-256: E9D7C91CE3B4E7133DF56B599FC817B533E3439C5E8D282A59126D2FDA339A2A
+- **Artifact Output**: `artifacts/t09/segmentation/debug_after/SCHP_SEG-PUB-NASA-SHEPARD.jpg`
