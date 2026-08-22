@@ -1,6 +1,6 @@
 # T09 Performance Evidence
 
-Status: `COMPLETE` for the four frozen performance cases. Responsible-AI evidence remains `PENDING` for the next Trinh work item.
+Status: Performance evidence: `COMPLETE`. Responsible-AI audit execution: `COMPLETE`. License compliance: `GAPS_RECORDED` (not PASS).
 
 These are development-host observations (`host_role=development`, `declared_demo_hardware=false`). No demo-floor or project-target PASS claim is made here.
 
@@ -57,7 +57,27 @@ The following raw benchmark JSON and generated video remain under ignored `artif
 | `artifacts/t09/performance_responsible_ai/t09-performance-perf-video-gui-120-20260821t170351z.json` | PERF-VIDEO-GUI-120 | 12544 | `e26674d85c7940ecd99e39259f5d6add6e643f089301f2c05cdd2ff0e3155a45` | false |
 | `artifacts/t09/performance_responsible_ai/t09-performance-perf-video-headless-120-20260821t170011z.json` | PERF-VIDEO-HEADLESS-120 | 12758 | `9ec98841c1d3e3f6eee4cad4139001535391db516959e07a3d78c4d63ebfd517` | false |
 | `artifacts/t09/performance_responsible_ai/inputs/generated-360x240.avi` | PERF-VIDEO-GUI-120; PERF-VIDEO-HEADLESS-120 | 1357144 | `3361444ba0a6c9119e10cc677fe5214f7035c2a2dda0e86c35be52a6d99d0244` | false |
+| `artifacts/t09/performance_responsible_ai/t09-manual-roi-f59b5913-20260822t172922z.json` | BASELINE-MANUAL-ROI | 5307 | `a2392deae77829d358d86a22f9929d48b4e3c3d61f3cf943d8ab39c445a57d02` | false |
+| `artifacts/t09/performance_responsible_ai/t09-responsible-ai-audit-63d6a1c9-20260822t185636z.json` | PERF-SENSOR-EXTERNAL; BASELINE-FIXED-RGB; RAI-ARTIFACT-INTEGRITY; RAI-PRIVACY; RAI-LICENSE; RAI-LIMITATIONS; RAI-USER-VALIDATION | 22107 | `cd703496b87dcb90ec438ff935f5100e7cfb7d313a489da3012ceec6e89244a5` | false |
+
+## Manual ROI and Responsible-AI evidence
+
+- Manual ROI evidence: `COMPLETE` at commit `c0e3e7a759e6ffeb8b2b903583b8cf05927b8416`; median completion time: `3.016` s.
+- Manual ROI is a human non-AI baseline, not automatic garment localization. It records timing/hash metadata only; no image, ROI geometry, crop, screenshot, pixel array, or base64 data is included.
+- Responsible-AI audit execution: `COMPLETE` at commit `3bd976bb09bdc4605bb3149089d9c00d4c11f470`. Sensor-to-photon remains `NOT_MEASURED`; user validation remains `NOT_MEASURED`.
+- Unconsented tracked media count: `0 PASS`. Artifact checksum mismatch count: `0 PASS`.
+- License compliance: `GAPS_RECORDED`, not PASS. Recorded gaps: `runtime-package-daltonlens`; `runtime-package-mediapipe`; `runtime-package-numpy`; `runtime-package-opencv-contrib-python`; `schp-atr-deferred`.
+- Five public fixtures are not demographic validation. The product is not medically validated and does not make a medical diagnosis claim.
+
+## Recorded limitations
+
+- High degraded-frame rates were measured in all four performance cases; impact: reduced full-quality rendering; boundary: report values remain unmodified.
+- RSS continuous-growth flag is FAIL in three of four cases; impact: potential long-run memory risk; mitigation: retain bounded-queue/RSS investigation as open work.
+- Development host is not declared demo hardware; impact: no demo-threshold PASS claim; mitigation: repeat on declared demo hardware.
+- sensor_to_photon_ms is NOT_MEASURED without external apparatus; impact: physical display latency is unknown; mitigation: acquire synchronized apparatus.
+- Five public images are not demographic validation; impact: coverage gaps for segmentation, lighting, occlusion, backgrounds, and color similarity remain; mitigation: consented, reviewed evaluation expansion.
+- The product is not a medical diagnosis and energy consumption is not measured; impact: no clinical or energy-use claim; mitigation: retain these boundaries.
 
 ## Scope boundary
 
-This step consolidates measured performance and hardware evidence only. Responsible-AI evidence, including the full privacy, bias, limitations, license, and user-validation package, is `PENDING` for the next work item.
+This report consolidates measured development-host performance and the validated timing/hash-only Manual ROI and Responsible-AI audit summaries. It does not claim a demo-hardware threshold PASS, sensor-to-photon measurement, medical validation, or demographic validation.

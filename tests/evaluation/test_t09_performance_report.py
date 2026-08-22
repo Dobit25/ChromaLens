@@ -273,6 +273,85 @@ def test_development_demo_threshold_cannot_be_pass_or_fail(tmp_path: Path) -> No
         reporter.load_and_validate(artifact_dir, video_path)
 
 
+def test_manual_roi_wrong_sha_case_commit_or_trial_count_fails_closed(tmp_path: Path) -> None:
+    manual_path = _copy_official_json(tmp_path, reporter.MANUAL_ROI_PATH)
+    with pytest.raises(reporter.EvidenceValidationError, match="SHA-256"):
+        reporter.validate_manual_roi(manual_path, expected_path=manual_path, expected_sha256="0" * 64)
+
+    payload = _read(manual_path)
+    payload["cases"][0]["case_id"] = "WRONG"
+    _write(manual_path, payload)
+    with pytest.raises(reporter.EvidenceValidationError, match="case/fixture"):
+        reporter.validate_manual_roi(manual_path, **_manual_kwargs(manual_path))
+
+    payload = _read(manual_path)
+    payload["cases"][0]["case_id"] = "BASELINE-MANUAL-ROI"
+    payload["git_commit"] = "a" * 40
+    _write(manual_path, payload)
+    with pytest.raises(reporter.EvidenceValidationError, match="Git commit"):
+        reporter.validate_manual_roi(manual_path, **_manual_kwargs(manual_path))
+
+    payload = _official_payload(reporter.MANUAL_ROI_PATH)
+    trials = json.loads(payload["notes"].removeprefix("manual_roi_trial_metadata="))
+    payload["notes"] = "manual_roi_trial_metadata=" + json.dumps(trials[:4])
+    _write(manual_path, payload)
+    with pytest.raises(reporter.EvidenceValidationError, match="exactly five trials"):
+        reporter.validate_manual_roi(manual_path, **_manual_kwargs(manual_path))
+
+
+def test_responsible_ai_audit_wrong_sha_case_commit_metric_and_privacy_fail_closed(tmp_path: Path) -> None:
+    audit_path = _copy_official_json(tmp_path, reporter.RESPONSIBLE_AI_AUDIT_PATH)
+    with pytest.raises(reporter.EvidenceValidationError, match="SHA-256"):
+        reporter.validate_responsible_ai_audit(audit_path, expected_path=audit_path, expected_sha256="0" * 64)
+
+    payload = _read(audit_path)
+    payload["cases"][0]["case_id"] = "WRONG"
+    _write(audit_path, payload)
+    with pytest.raises(reporter.EvidenceValidationError, match="case/fixture"):
+        reporter.validate_responsible_ai_audit(audit_path, **_audit_kwargs(audit_path))
+
+    payload = _official_payload(reporter.RESPONSIBLE_AI_AUDIT_PATH)
+    payload["git_commit"] = "a" * 40
+    _write(audit_path, payload)
+    with pytest.raises(reporter.EvidenceValidationError, match="Git commit"):
+        reporter.validate_responsible_ai_audit(audit_path, **_audit_kwargs(audit_path))
+
+    payload = _official_payload(reporter.RESPONSIBLE_AI_AUDIT_PATH)
+    _audit_metric(payload, "unconsented_tracked_media_count", "RAI-PRIVACY")["value"] = 1
+    _write(audit_path, payload)
+    with pytest.raises(reporter.EvidenceValidationError, match="0/PASS"):
+        reporter.validate_responsible_ai_audit(audit_path, **_audit_kwargs(audit_path))
+
+    payload = _official_payload(reporter.RESPONSIBLE_AI_AUDIT_PATH)
+    findings = _audit_findings(payload); findings["privacy"]["unknown_tracked_media"] = ["unknown/private.jpg"]
+    payload["notes"] = "responsible_ai_audit_findings=" + json.dumps(findings, sort_keys=True, separators=(",", ":"))
+    _write(audit_path, payload)
+    with pytest.raises(reporter.EvidenceValidationError, match="tracked-media"):
+        reporter.validate_responsible_ai_audit(audit_path, **_audit_kwargs(audit_path))
+
+
+def test_responsible_ai_audit_cannot_replace_gaps_recorded_with_pass(tmp_path: Path) -> None:
+    audit_path = _copy_official_json(tmp_path, reporter.RESPONSIBLE_AI_AUDIT_PATH)
+    payload = _read(audit_path)
+    findings = _audit_findings(payload); findings["compliance_status"] = "PASS"
+    payload["notes"] = "responsible_ai_audit_findings=" + json.dumps(findings, sort_keys=True, separators=(",", ":"))
+    _write(audit_path, payload)
+    with pytest.raises(reporter.EvidenceValidationError, match="GAPS_RECORDED"):
+        reporter.validate_responsible_ai_audit(audit_path, **_audit_kwargs(audit_path))
+
+
+def test_official_report_evidence_is_deterministic_and_manifest_has_seven_items() -> None:
+    evidence = reporter.load_and_validate_report_evidence()
+    first, second = reporter.render_report(evidence), reporter.render_report(evidence)
+    manifest_rows = [line for line in first.splitlines() if line.startswith("| `artifacts/t09/")]
+    assert first == second
+    assert len(manifest_rows) == 7
+    assert "Manual ROI evidence: `COMPLETE`" in first and "`3.016` s" in first
+    assert "Sensor-to-photon remains `NOT_MEASURED`; user validation remains `NOT_MEASURED`" in first
+    assert "License compliance: `GAPS_RECORDED`, not PASS" in first
+    assert all(f"`{gap}`" in first for gap in reporter.LICENSE_GAPS)
+
+
 def test_cli_output_path_is_limited_to_trinh_namespace() -> None:
     reporter._validate_cli_output(
         Path("evaluation/results/curated/performance_responsible_ai/report.md")
@@ -401,3 +480,37 @@ def _read(path: Path) -> dict[str, object]:
 
 def _write(path: Path, payload: dict[str, object]) -> None:
     path.write_text(json.dumps(payload), encoding="utf-8")
+
+
+def _official_payload(path: Path) -> dict[str, object]:
+    return _read(ROOT / path)
+
+
+def _copy_official_json(tmp_path: Path, relative_path: Path) -> Path:
+    destination = tmp_path / relative_path.name
+    destination.write_text((ROOT / relative_path).read_text(encoding="utf-8"), encoding="utf-8")
+    return destination
+
+
+def _manual_kwargs(path: Path) -> dict[str, object]:
+    return {
+        "expected_path": path,
+        "expected_sha256": reporter.sha256_file(path),
+        "expected_commit": reporter.EXPECTED_MANUAL_ROI_COMMIT,
+    }
+
+
+def _audit_kwargs(path: Path) -> dict[str, object]:
+    return {
+        "expected_path": path,
+        "expected_sha256": reporter.sha256_file(path),
+        "expected_commit": reporter.EXPECTED_RESPONSIBLE_AI_AUDIT_COMMIT,
+    }
+
+
+def _audit_metric(payload: dict[str, object], name: str, case_id: str) -> dict[str, object]:
+    return next(metric for metric in payload["metrics"] if metric["name"] == name and metric["case_ids"] == [case_id])
+
+
+def _audit_findings(payload: dict[str, object]) -> dict[str, object]:
+    return json.loads(payload["notes"].removeprefix("responsible_ai_audit_findings="))

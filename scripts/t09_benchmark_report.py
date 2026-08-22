@@ -11,6 +11,7 @@ from dataclasses import dataclass
 import hashlib
 import json
 from math import isfinite
+from statistics import median
 import os
 from pathlib import Path
 import re
@@ -20,9 +21,34 @@ from typing import Any, Sequence
 PROTOCOL_VERSION = "1.0.0"
 ARTIFACT_DIR = Path("artifacts/t09/performance_responsible_ai")
 VIDEO_PATH = ARTIFACT_DIR / "inputs/generated-360x240.avi"
+MANUAL_ROI_PATH = ARTIFACT_DIR / "t09-manual-roi-f59b5913-20260822t172922z.json"
+RESPONSIBLE_AI_AUDIT_PATH = ARTIFACT_DIR / "t09-responsible-ai-audit-63d6a1c9-20260822t185636z.json"
 REPORT_PATH = Path("evaluation/results/curated/performance_responsible_ai/report.md")
 CURATED_NAMESPACE = REPORT_PATH.parent
 GIT_SHA_PATTERN = re.compile(r"[0-9a-f]{40}\Z")
+EXPECTED_MANUAL_ROI_SHA256 = "a2392deae77829d358d86a22f9929d48b4e3c3d61f3cf943d8ab39c445a57d02"
+EXPECTED_MANUAL_ROI_COMMIT = "c0e3e7a759e6ffeb8b2b903583b8cf05927b8416"
+EXPECTED_RESPONSIBLE_AI_AUDIT_SHA256 = "cd703496b87dcb90ec438ff935f5100e7cfb7d313a489da3012ceec6e89244a5"
+EXPECTED_RESPONSIBLE_AI_AUDIT_COMMIT = "3bd976bb09bdc4605bb3149089d9c00d4c11f470"
+MANUAL_ROI_CASE = ("BASELINE-MANUAL-ROI", "manual-roi-public-fixtures")
+RESPONSIBLE_AI_CASES = (
+    ("PERF-SENSOR-EXTERNAL", "external-sensor-apparatus"),
+    ("BASELINE-FIXED-RGB", "fixed-rgb-explanation"),
+    ("RAI-ARTIFACT-INTEGRITY", "artifact-manifest-all"),
+    ("RAI-PRIVACY", "privacy-audit"),
+    ("RAI-LICENSE", "license-attribution-audit"),
+    ("RAI-LIMITATIONS", "failure-and-bias-report"),
+    ("RAI-USER-VALIDATION", "user-validation-status"),
+)
+TRACKED_T02_FIXTURES = (
+    "tests/samples/t02/astronaut.png", "tests/samples/t02/cc0_woman.jpg",
+    "tests/samples/t02/loc_lincoln.jpg", "tests/samples/t02/loc_man.jpg",
+    "tests/samples/t02/nasa_shepard.jpg",
+)
+LICENSE_GAPS = (
+    "runtime-package-daltonlens", "runtime-package-mediapipe", "runtime-package-numpy",
+    "runtime-package-opencv-contrib-python", "schp-atr-deferred",
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -149,10 +175,28 @@ class PerformanceEvidence:
     video_byte_size: int
 
 
+@dataclass(frozen=True, slots=True)
+class SupplementalEvidence:
+    path: Path
+    payload: dict[str, Any]
+    sha256: str
+    byte_size: int
+    findings: dict[str, Any] | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class ReportEvidence:
+    performance: PerformanceEvidence
+    manual_roi: SupplementalEvidence
+    responsible_ai_audit: SupplementalEvidence
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--artifact-dir", type=Path, default=ARTIFACT_DIR)
     parser.add_argument("--video-path", type=Path, default=VIDEO_PATH)
+    parser.add_argument("--manual-roi-path", type=Path, default=MANUAL_ROI_PATH)
+    parser.add_argument("--responsible-ai-audit-path", type=Path, default=RESPONSIBLE_AI_AUDIT_PATH)
     parser.add_argument("--output", type=Path, default=REPORT_PATH)
     return parser
 
@@ -164,7 +208,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         _validate_cli_output(args.output)
     except EvidenceValidationError as exc:
         parser.error(str(exc))
-    evidence = load_and_validate(args.artifact_dir, args.video_path)
+    evidence = load_and_validate_report_evidence(
+        args.artifact_dir, args.video_path, args.manual_roi_path, args.responsible_ai_audit_path
+    )
     write_report_atomic(evidence, args.output)
     print(f"T09 performance report written: {args.output}")
     return 0
@@ -207,6 +253,20 @@ def load_and_validate(
     )
 
 
+def load_and_validate_report_evidence(
+    artifact_dir: Path = ARTIFACT_DIR,
+    video_path: Path = VIDEO_PATH,
+    manual_roi_path: Path = MANUAL_ROI_PATH,
+    responsible_ai_audit_path: Path = RESPONSIBLE_AI_AUDIT_PATH,
+) -> ReportEvidence:
+    """Validate all seven report inputs before a curated report can be replaced."""
+    return ReportEvidence(
+        performance=load_and_validate(artifact_dir, video_path),
+        manual_roi=validate_manual_roi(manual_roi_path),
+        responsible_ai_audit=validate_responsible_ai_audit(responsible_ai_audit_path),
+    )
+
+
 def _load_artifact(path: Path) -> ValidatedArtifact:
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
@@ -227,6 +287,152 @@ def _load_artifact(path: Path) -> ValidatedArtifact:
         sha256=sha256_file(path),
         byte_size=path.stat().st_size,
     )
+
+
+def validate_manual_roi(
+    path: Path = MANUAL_ROI_PATH, *, expected_path: Path = MANUAL_ROI_PATH,
+    expected_sha256: str = EXPECTED_MANUAL_ROI_SHA256,
+    expected_commit: str = EXPECTED_MANUAL_ROI_COMMIT,
+) -> SupplementalEvidence:
+    """Validate timing/hash-only Manual ROI evidence without loading image content."""
+    payload, digest = _load_canonical_json(path, expected_path, expected_sha256, "Manual ROI")
+    if payload.get("result_status") != "COMPLETE" or payload.get("git_commit") != expected_commit:
+        raise EvidenceValidationError("Manual ROI result_status or Git commit is invalid")
+    _validate_versions_and_workstream(payload, path)
+    _validate_cases(payload, MANUAL_ROI_CASE, label="Manual ROI")
+    if payload.get("artifacts") != []:
+        raise EvidenceValidationError("Manual ROI evidence must not contain media artifacts")
+    trials = _prefixed_json(payload.get("notes"), "manual_roi_trial_metadata=", "Manual ROI trial metadata")
+    if not isinstance(trials, list) or len(trials) != 5:
+        raise EvidenceValidationError("Manual ROI evidence must contain exactly five trials")
+    trial_times: list[float] = []
+    for trial in trials:
+        if not isinstance(trial, dict) or set(trial) != {"completion_seconds", "fixture_name", "fixture_sha256", "native_height", "native_width"}:
+            raise EvidenceValidationError("Manual ROI trial contains unsupported media or ROI data")
+        completion = trial.get("completion_seconds")
+        if not _is_finite_number(completion) or completion < 0:
+            raise EvidenceValidationError("Manual ROI trial completion time is invalid")
+        trial_times.append(float(completion))
+    metrics = _index_supplemental_metrics(payload, path)
+    completion = metrics.get(("manual_baseline_completion_seconds", "median", "BASELINE-MANUAL-ROI"))
+    if completion is None or completion.get("status") != "MEASURED" or completion.get("unit") != "second" or completion.get("threshold_id") != "observation_only" or completion.get("threshold_result") != "NOT_EVALUATED":
+        raise EvidenceValidationError("Manual ROI median completion metric is invalid")
+    value = completion.get("value")
+    if not _is_finite_number(value) or float(value) < 0 or float(value) != median(trial_times):
+        raise EvidenceValidationError("Manual ROI median completion time is invalid")
+    _reject_raw_media_fields(payload, "Manual ROI")
+    return SupplementalEvidence(path, payload, digest, path.stat().st_size)
+
+
+def validate_responsible_ai_audit(
+    path: Path = RESPONSIBLE_AI_AUDIT_PATH, *, expected_path: Path = RESPONSIBLE_AI_AUDIT_PATH,
+    expected_sha256: str = EXPECTED_RESPONSIBLE_AI_AUDIT_SHA256,
+    expected_commit: str = EXPECTED_RESPONSIBLE_AI_AUDIT_COMMIT,
+) -> SupplementalEvidence:
+    """Validate the fixed Responsible-AI audit summary without accepting raw media."""
+    payload, digest = _load_canonical_json(path, expected_path, expected_sha256, "Responsible-AI audit")
+    if payload.get("result_status") != "COMPLETE" or payload.get("git_commit") != expected_commit:
+        raise EvidenceValidationError("Responsible-AI audit result_status or Git commit is invalid")
+    _validate_versions_and_workstream(payload, path)
+    _validate_cases(payload, *RESPONSIBLE_AI_CASES, label="Responsible-AI audit")
+    if payload.get("artifacts") != []:
+        raise EvidenceValidationError("Responsible-AI audit must not contain media artifacts")
+    metrics = _index_supplemental_metrics(payload, path)
+    for aggregation in ("p50", "p95"):
+        sensor = metrics.get(("sensor_to_photon_ms", aggregation, "PERF-SENSOR-EXTERNAL"))
+        if sensor is None or sensor.get("status") != "NOT_MEASURED" or sensor.get("value") is not None:
+            raise EvidenceValidationError("Responsible-AI audit sensor metric must remain NOT_MEASURED")
+    for case_id in ("BASELINE-FIXED-RGB", "RAI-ARTIFACT-INTEGRITY", "RAI-LICENSE"):
+        _require_zero_pass_metric(metrics, "artifact_checksum_mismatch_count", case_id)
+    for case_id in ("RAI-PRIVACY", "RAI-LIMITATIONS", "RAI-USER-VALIDATION"):
+        _require_zero_pass_metric(metrics, "unconsented_tracked_media_count", case_id)
+    findings = _prefixed_json(payload.get("notes"), "responsible_ai_audit_findings=", "Responsible-AI findings")
+    if not isinstance(findings, dict) or findings.get("compliance_status") != "GAPS_RECORDED":
+        raise EvidenceValidationError("Responsible-AI audit compliance_status must be GAPS_RECORDED")
+    privacy = findings.get("privacy")
+    if not isinstance(privacy, dict) or tuple(privacy.get("tracked_media", ())) != TRACKED_T02_FIXTURES or privacy.get("unknown_tracked_media") != []:
+        raise EvidenceValidationError("Responsible-AI audit tracked-media provenance is invalid")
+    fixtures = privacy.get("fixtures")
+    if not isinstance(fixtures, list) or {item.get("path") for item in fixtures if isinstance(item, dict)} != set(TRACKED_T02_FIXTURES) or len(fixtures) != 5:
+        raise EvidenceValidationError("Responsible-AI audit must retain exactly five tracked T02 fixtures")
+    if tuple(findings.get("license_gaps", ())) != LICENSE_GAPS:
+        raise EvidenceValidationError("Responsible-AI audit license gaps do not match locked evidence")
+    if not isinstance(findings.get("user_validation"), str) or not findings["user_validation"].startswith("NOT_MEASURED") or payload.get("responsible_ai", {}).get("user_validation_status") != "NOT_MEASURED":
+        raise EvidenceValidationError("Responsible-AI audit user validation must remain NOT_MEASURED")
+    _reject_raw_media_fields(payload, "Responsible-AI audit")
+    return SupplementalEvidence(path, payload, digest, path.stat().st_size, findings)
+
+
+def _load_canonical_json(path: Path, expected_path: Path, expected_sha256: str, label: str) -> tuple[dict[str, Any], str]:
+    if path.resolve() != expected_path.resolve() or not path.is_file():
+        raise EvidenceValidationError(f"{label} path is not the locked canonical file")
+    digest = sha256_file(path)
+    if digest != expected_sha256:
+        raise EvidenceValidationError(f"{label} SHA-256 does not match locked evidence")
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise EvidenceValidationError(f"cannot read {label} JSON") from exc
+    if not isinstance(payload, dict):
+        raise EvidenceValidationError(f"{label} payload must be an object")
+    return payload, digest
+
+
+def _validate_versions_and_workstream(payload: dict[str, Any], path: Path) -> None:
+    for version_key in ("protocol_version", "schema_version", "metric_registry_version"):
+        if payload.get(version_key) != PROTOCOL_VERSION:
+            raise EvidenceValidationError(f"{path}: {version_key} must be {PROTOCOL_VERSION!r}")
+    if payload.get("workstream") != "performance_responsible_ai":
+        raise EvidenceValidationError(f"{path}: workstream must be performance_responsible_ai")
+
+
+def _validate_cases(payload: dict[str, Any], *expected: tuple[str, str], label: str) -> None:
+    cases = payload.get("cases")
+    actual = tuple((case.get("case_id"), case.get("fixture_id")) for case in cases) if isinstance(cases, list) and all(isinstance(case, dict) for case in cases) else ()
+    if actual != expected or any(case.get("status") != "COMPLETE" for case in cases):
+        raise EvidenceValidationError(f"{label} case/fixture contract is invalid")
+
+
+def _index_supplemental_metrics(payload: dict[str, Any], path: Path) -> dict[tuple[str, str, str], dict[str, Any]]:
+    records = payload.get("metrics")
+    if not isinstance(records, list):
+        raise EvidenceValidationError(f"{path}: metrics must be an array")
+    indexed: dict[tuple[str, str, str], dict[str, Any]] = {}
+    for record in records:
+        if not isinstance(record, dict) or not isinstance(record.get("case_ids"), list) or len(record["case_ids"]) != 1:
+            raise EvidenceValidationError(f"{path}: supplemental metric is invalid")
+        key = (record.get("name"), record.get("aggregation"), record["case_ids"][0])
+        if key in indexed:
+            raise EvidenceValidationError(f"{path}: duplicate supplemental metric {key}")
+        indexed[key] = record
+    return indexed
+
+
+def _require_zero_pass_metric(metrics: dict[tuple[str, str, str], dict[str, Any]], name: str, case_id: str) -> None:
+    record = metrics.get((name, "count", case_id))
+    if record is None or record.get("status") != "MEASURED" or record.get("value") != 0 or record.get("threshold_result") != "PASS":
+        raise EvidenceValidationError(f"Responsible-AI audit {name} for {case_id} must be 0/PASS")
+
+
+def _prefixed_json(value: object, prefix: str, label: str) -> object:
+    if not isinstance(value, str) or not value.startswith(prefix):
+        raise EvidenceValidationError(f"{label} is missing or invalid")
+    try:
+        return json.loads(value.removeprefix(prefix))
+    except json.JSONDecodeError as exc:
+        raise EvidenceValidationError(f"{label} is not valid JSON") from exc
+
+
+def _reject_raw_media_fields(value: object, label: str) -> None:
+    forbidden = ("base64", "screenshot", "crop", "media_bytes", "frame_bytes", "pixel_values", "roi_coordinates")
+    if isinstance(value, dict):
+        for key, nested in value.items():
+            if key != "notes" and any(token in key.casefold() for token in forbidden):
+                raise EvidenceValidationError(f"{label} contains forbidden raw media field {key!r}")
+            _reject_raw_media_fields(nested, label)
+    elif isinstance(value, list):
+        for item in value:
+            _reject_raw_media_fields(item, label)
 
 
 def _validate_payload(path: Path, payload: dict[str, Any]) -> None:
@@ -457,7 +663,7 @@ def _resolution(value: object) -> tuple[int, int] | None:
     return width, height
 
 
-def write_report_atomic(evidence: PerformanceEvidence, output_path: Path = REPORT_PATH) -> None:
+def write_report_atomic(evidence: PerformanceEvidence | ReportEvidence, output_path: Path = REPORT_PATH) -> None:
     """Replace the curated report only after fully validated text is prepared."""
     content = render_report(evidence)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -473,13 +679,19 @@ def write_report_atomic(evidence: PerformanceEvidence, output_path: Path = REPOR
             temporary.unlink()
 
 
-def render_report(evidence: PerformanceEvidence) -> str:
-    common_environment = evidence.artifacts[0].payload["environment"]
-    commit = evidence.artifacts[0].payload["git_commit"]
+def render_report(evidence: PerformanceEvidence | ReportEvidence) -> str:
+    performance = evidence.performance if isinstance(evidence, ReportEvidence) else evidence
+    common_environment = performance.artifacts[0].payload["environment"]
+    commit = performance.artifacts[0].payload["git_commit"]
+    status = (
+        "Status: Performance evidence: `COMPLETE`. Responsible-AI audit execution: `COMPLETE`. License compliance: `GAPS_RECORDED` (not PASS)."
+        if isinstance(evidence, ReportEvidence)
+        else "Status: `COMPLETE` for the four frozen performance cases. Responsible-AI evidence remains `PENDING` for the next Trinh work item."
+    )
     lines = [
         "# T09 Performance Evidence",
         "",
-        "Status: `COMPLETE` for the four frozen performance cases. Responsible-AI evidence remains `PENDING` for the next Trinh work item.",
+        status,
         "",
         "These are development-host observations (`host_role=development`, `declared_demo_hardware=false`). No demo-floor or project-target PASS claim is made here.",
         "",
@@ -499,7 +711,7 @@ def render_report(evidence: PerformanceEvidence) -> str:
         "| Case | Created UTC | Source | Resolution | Mode | Warm-up / measurement | Result |",
         "| --- | --- | --- | --- | --- | --- | --- |",
     ]
-    for artifact in evidence.artifacts:
+    for artifact in performance.artifacts:
         payload, environment = artifact.payload, artifact.payload["environment"]
         lines.append(
             "| " + " | ".join((
@@ -521,7 +733,7 @@ def render_report(evidence: PerformanceEvidence) -> str:
         "| Case | FPS | Render p50 / p95 (ms) | Render slope (ms/min) | Display-submit p50 / p95 (ms) | Sensor-to-photon p50 / p95 (ms) | Processing p50 / p95 (ms) | Frames | Dropped capture frames | Degraded rate | Retained render / display samples |",
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | ---: | ---: |",
     ))
-    for artifact in evidence.artifacts:
+    for artifact in performance.artifacts:
         metric = artifact.metrics
         lines.append("| " + " | ".join((
             artifact.case_id,
@@ -545,7 +757,7 @@ def render_report(evidence: PerformanceEvidence) -> str:
         "| Case | RSS start / end / peak (MiB) | RSS delta (MiB) | RSS slope (MiB/min) | Render-latency growth flag | RSS growth flag |",
         "| --- | ---: | ---: | ---: | --- | --- |",
     ))
-    for artifact in evidence.artifacts:
+    for artifact in performance.artifacts:
         metric = artifact.metrics
         lines.append("| " + " | ".join((
             artifact.case_id,
@@ -564,18 +776,38 @@ def render_report(evidence: PerformanceEvidence) -> str:
         "| Artifact | Related case | Bytes | SHA-256 | Tracked in Git |",
         "| --- | --- | ---: | --- | --- |",
     ))
-    for artifact in evidence.artifacts:
+    for artifact in performance.artifacts:
         lines.append(
             f"| `{artifact.path.as_posix()}` | {artifact.case_id} | {artifact.byte_size} | `{artifact.sha256}` | false |"
         )
     lines.append(
-        f"| `{evidence.video_path.as_posix()}` | PERF-VIDEO-GUI-120; PERF-VIDEO-HEADLESS-120 | {evidence.video_byte_size} | `{evidence.video_sha256}` | false |"
+        f"| `{performance.video_path.as_posix()}` | PERF-VIDEO-GUI-120; PERF-VIDEO-HEADLESS-120 | {performance.video_byte_size} | `{performance.video_sha256}` | false |"
     )
+    if isinstance(evidence, ReportEvidence):
+        lines.extend((
+            f"| `{evidence.manual_roi.path.as_posix()}` | BASELINE-MANUAL-ROI | {evidence.manual_roi.byte_size} | `{evidence.manual_roi.sha256}` | false |",
+            f"| `{evidence.responsible_ai_audit.path.as_posix()}` | PERF-SENSOR-EXTERNAL; BASELINE-FIXED-RGB; RAI-ARTIFACT-INTEGRITY; RAI-PRIVACY; RAI-LICENSE; RAI-LIMITATIONS; RAI-USER-VALIDATION | {evidence.responsible_ai_audit.byte_size} | `{evidence.responsible_ai_audit.sha256}` | false |",
+            "",
+            "## Manual ROI and Responsible-AI evidence",
+            "",
+            f"- Manual ROI evidence: `COMPLETE` at commit `{evidence.manual_roi.payload['git_commit']}`; median completion time: `{_manual_median_text(evidence.manual_roi.payload)}` s.",
+            "- Manual ROI is a human non-AI baseline, not automatic garment localization. It records timing/hash metadata only; no image, ROI geometry, crop, screenshot, pixel array, or base64 data is included.",
+            f"- Responsible-AI audit execution: `COMPLETE` at commit `{evidence.responsible_ai_audit.payload['git_commit']}`. Sensor-to-photon remains `NOT_MEASURED`; user validation remains `NOT_MEASURED`.",
+            "- Unconsented tracked media count: `0 PASS`. Artifact checksum mismatch count: `0 PASS`.",
+            "- License compliance: `GAPS_RECORDED`, not PASS. Recorded gaps: " + "; ".join(f"`{gap}`" for gap in evidence.responsible_ai_audit.findings["license_gaps"]) + ".",
+            "- Five public fixtures are not demographic validation. The product is not medically validated and does not make a medical diagnosis claim.",
+            "",
+            "## Recorded limitations",
+            "",
+        ))
+        lines.extend(f"- {limitation}" for limitation in evidence.responsible_ai_audit.payload["limitations"])
     lines.extend((
         "",
         "## Scope boundary",
         "",
-        "This step consolidates measured performance and hardware evidence only. Responsible-AI evidence, including the full privacy, bias, limitations, license, and user-validation package, is `PENDING` for the next work item.",
+        "This report consolidates measured development-host performance and the validated timing/hash-only Manual ROI and Responsible-AI audit summaries. It does not claim a demo-hardware threshold PASS, sensor-to-photon measurement, medical validation, or demographic validation."
+        if isinstance(evidence, ReportEvidence)
+        else "This step consolidates measured performance and hardware evidence only. Responsible-AI evidence, including the full privacy, bias, limitations, license, and user-validation package, is `PENDING` for the next work item.",
         "",
     ))
     return "\n".join(lines)
@@ -606,6 +838,13 @@ def _pair(metrics: dict[tuple[str, str], dict[str, Any]], name: str) -> str:
 def _flag(metrics: dict[tuple[str, str], dict[str, Any]], name: str) -> str:
     record = metrics[(name, "single")]
     return _value(metrics, name, "single") + f" [{record.get('threshold_result')}]"
+
+
+def _manual_median_text(payload: dict[str, Any]) -> str:
+    record = _index_supplemental_metrics(payload, MANUAL_ROI_PATH)[
+        ("manual_baseline_completion_seconds", "median", "BASELINE-MANUAL-ROI")
+    ]
+    return f"{float(record['value']):.3f}"
 
 
 def _dropped_capture_frames(artifact: ValidatedArtifact) -> str:
