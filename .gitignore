@@ -35,7 +35,6 @@ models/*
 !models/README.md
 
 # Generated or private media/evaluation output
-artifacts/
 generated/
 outputs/
 # T09 keeps small curated text results in Git. Raw media, arrays, private

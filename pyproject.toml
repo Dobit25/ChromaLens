@@ -18,6 +18,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "jsonschema==4.23.0",
     "pytest==8.3.5",
     "setuptools==83.0.0",
     "wheel==0.47.0",
