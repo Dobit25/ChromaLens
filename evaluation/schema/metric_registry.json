@@ -1,0 +1,276 @@
+{
+  "registry_version": "1.0.0",
+  "protocol_version": "1.0.0",
+  "clock": "monotonic",
+  "percentile_method": "linear",
+  "metrics": [
+    {
+      "name": "processed_fps",
+      "unit": "frames/s",
+      "value_type": "number",
+      "allowed_aggregations": ["single"],
+      "formula": "processed_frame_count / measured_elapsed_seconds",
+      "thresholds": [
+        {"id": "demo_floor", "comparator": ">=", "value": 5.0},
+        {"id": "project_target", "comparator": ">=", "value": 10.0}
+      ]
+    },
+    {
+      "name": "source_read_to_render_ms",
+      "unit": "ms",
+      "value_type": "number",
+      "allowed_aggregations": ["p50", "p95", "window_median"],
+      "formula": "(render_complete_monotonic_ns - frame_packet_timestamp_ns) / 1000000",
+      "thresholds": [{"id": "observation_only", "comparator": "report_only", "value": null}]
+    },
+    {
+      "name": "source_read_to_render_slope_ms_per_minute",
+      "unit": "ms/min",
+      "value_type": "number",
+      "allowed_aggregations": ["whole_session"],
+      "formula": "ordinary least-squares slope of source_read_to_render_ms against elapsed seconds multiplied by 60",
+      "thresholds": [{"id": "observation_only", "comparator": "report_only", "value": null}]
+    },
+    {
+      "name": "source_read_to_display_submit_ms",
+      "unit": "ms",
+      "value_type": "number",
+      "allowed_aggregations": ["p50", "p95", "window_median"],
+      "formula": "(post_cv2_imshow_monotonic_ns - frame_packet_timestamp_ns) / 1000000",
+      "thresholds": [
+        {"id": "demo_floor_p50", "comparator": "<=", "value": 350.0},
+        {"id": "project_target_p50", "comparator": "<=", "value": 200.0}
+      ]
+    },
+    {
+      "name": "sensor_to_photon_ms",
+      "unit": "ms",
+      "value_type": "number",
+      "allowed_aggregations": ["p50", "p95"],
+      "formula": "external synchronized sensor stimulus to measured emitted display light",
+      "thresholds": [{"id": "external_apparatus_required", "comparator": "report_only", "value": null}]
+    },
+    {
+      "name": "frame_processing_to_render_ms",
+      "unit": "ms",
+      "value_type": "number",
+      "allowed_aggregations": ["p50", "p95"],
+      "formula": "(render_complete_monotonic_ns - processing_start_monotonic_ns) / 1000000",
+      "thresholds": [{"id": "observation_only", "comparator": "report_only", "value": null}]
+    },
+    {
+      "name": "rss_mib",
+      "unit": "MiB",
+      "value_type": "number",
+      "allowed_aggregations": ["start", "end", "peak", "window_median"],
+      "formula": "resident_or_working_set_bytes / 1048576",
+      "thresholds": [{"id": "observation_only", "comparator": "report_only", "value": null}]
+    },
+    {
+      "name": "rss_delta_mib",
+      "unit": "MiB",
+      "value_type": "number",
+      "allowed_aggregations": ["whole_session", "steady_state"],
+      "formula": "rss_end_mib - rss_start_mib for the named interval",
+      "thresholds": [{"id": "observation_only", "comparator": "report_only", "value": null}]
+    },
+    {
+      "name": "rss_slope_mib_per_minute",
+      "unit": "MiB/min",
+      "value_type": "number",
+      "allowed_aggregations": ["whole_session", "steady_state"],
+      "formula": "ordinary least-squares slope of RSS MiB against elapsed seconds multiplied by 60",
+      "thresholds": [{"id": "observation_only", "comparator": "report_only", "value": null}]
+    },
+    {
+      "name": "latency_continuous_growth_flag",
+      "unit": "boolean",
+      "value_type": "boolean",
+      "allowed_aggregations": ["single"],
+      "formula": "true iff four 30-second source_read_to_render_ms medians strictly increase and Q4-Q1 > max(20 ms, 0.10*Q1)",
+      "thresholds": [{"id": "required", "comparator": "==", "value": false}]
+    },
+    {
+      "name": "rss_continuous_growth_flag",
+      "unit": "boolean",
+      "value_type": "boolean",
+      "allowed_aggregations": ["single"],
+      "formula": "true iff four 30-second RSS medians strictly increase and Q4-Q1 > max(8 MiB, 0.05*Q1)",
+      "thresholds": [{"id": "required", "comparator": "==", "value": false}]
+    },
+    {
+      "name": "processed_frame_count",
+      "unit": "frame",
+      "value_type": "integer",
+      "allowed_aggregations": ["count"],
+      "formula": "count of frames completing render in the measurement interval",
+      "thresholds": [{"id": "must_be_positive", "comparator": ">", "value": 0}]
+    },
+    {
+      "name": "dropped_capture_frame_count",
+      "unit": "frame",
+      "value_type": "integer",
+      "allowed_aggregations": ["count"],
+      "formula": "count of newest-frame mailbox overwrites during the measurement interval",
+      "thresholds": [{"id": "observation_only", "comparator": "report_only", "value": null}]
+    },
+    {
+      "name": "degraded_frame_rate",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": ["single"],
+      "formula": "degraded_frame_count / processed_frame_count",
+      "thresholds": [{"id": "observation_only", "comparator": "report_only", "value": null}]
+    },
+    {
+      "name": "retained_source_read_to_render_sample_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": ["count"],
+      "formula": "number of source_read_to_render_ms samples retained for aggregation",
+      "thresholds": [{"id": "no_truncation", "comparator": "==processed_frame_count", "value": null}]
+    },
+    {
+      "name": "retained_source_read_to_display_submit_sample_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": ["count"],
+      "formula": "number of source_read_to_display_submit_ms samples retained for aggregation; equals processed frames for GUI and zero for headless",
+      "thresholds": [{"id": "no_truncation_gui", "comparator": "==processed_frame_count_or_zero_headless", "value": null}]
+    },
+    {
+      "name": "color_name_accuracy",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": ["overall", "per_class", "per_lighting"],
+      "formula": "correct_evaluated_cases / evaluated_cases",
+      "thresholds": [
+        {"id": "digital_contract", "comparator": "==", "value": 1.0},
+        {"id": "physical_observation", "comparator": "report_only", "value": null}
+      ]
+    },
+    {
+      "name": "color_name_evaluated_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": ["count", "per_class", "per_lighting"],
+      "formula": "count of non-missing color-name cases in the stated slice",
+      "thresholds": [{"id": "report_coverage", "comparator": "report_only", "value": null}]
+    },
+    {
+      "name": "lighting_name_stability_rate",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": ["overall", "per_class"],
+      "formula": "color families with one unchanged predicted name across all three lighting conditions / evaluated families",
+      "thresholds": [{"id": "diagnostic_target", "comparator": ">=", "value": 0.8}]
+    },
+    {
+      "name": "segmentation_iou",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": ["single", "mean", "median"],
+      "formula": "intersection_pixel_count / union_pixel_count; empty-empty is NOT_APPLICABLE",
+      "thresholds": [{"id": "observation_only", "comparator": "report_only", "value": null}]
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "unit": "rating_0_3",
+      "value_type": "integer",
+      "allowed_aggregations": ["single", "median"],
+      "formula": "manual rating using protocol 0-3 rubric with recorded reason",
+      "thresholds": [{"id": "adequate_case", "comparator": ">=", "value": 2}]
+    },
+    {
+      "name": "segmentation_adequate_rate",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": ["overall", "per_category"],
+      "formula": "cases with segmentation_adequacy_rating >= 2 / evaluated segmentation cases",
+      "thresholds": [{"id": "observation_only", "comparator": "report_only", "value": null}]
+    },
+    {
+      "name": "delta_e_original",
+      "unit": "delta_e_00",
+      "value_type": "number",
+      "allowed_aggregations": ["single"],
+      "formula": "CIEDE2000 distance between the original corrected color pair",
+      "thresholds": [{"id": "record_required", "comparator": "report_only", "value": null}]
+    },
+    {
+      "name": "delta_e_cvd",
+      "unit": "delta_e_00",
+      "value_type": "number",
+      "allowed_aggregations": ["single"],
+      "formula": "CIEDE2000 distance between the selected-profile simulated color pair",
+      "thresholds": [{"id": "record_required", "comparator": "report_only", "value": null}]
+    },
+    {
+      "name": "risk_score",
+      "unit": "score_0_1",
+      "value_type": "number",
+      "allowed_aggregations": ["single"],
+      "formula": "configured relative Delta-E00 loss multiplied by simulated closeness",
+      "thresholds": [
+        {"id": "medium", "comparator": ">=", "value": 0.25},
+        {"id": "high", "comparator": ">=", "value": 0.6}
+      ]
+    },
+    {
+      "name": "risk_sanity_order_pass",
+      "unit": "boolean",
+      "value_type": "boolean",
+      "allowed_aggregations": ["single", "overall"],
+      "formula": "declared confusing-pair risk_score > same-profile control-pair risk_score",
+      "thresholds": [{"id": "required_each_profile", "comparator": "==", "value": true}]
+    },
+    {
+      "name": "outside_recolor_mask_changed_pixel_count",
+      "unit": "pixel",
+      "value_type": "integer",
+      "allowed_aggregations": ["count"],
+      "formula": "count of unequal source/output pixels outside hard recolor mask before outline and tag overlays",
+      "thresholds": [{"id": "required", "comparator": "==", "value": 0}]
+    },
+    {
+      "name": "temporal_assistive_color_switch_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": ["count"],
+      "formula": "number of consecutive-frame changes in selected assistive target RGB after first selection",
+      "thresholds": [{"id": "static_required", "comparator": "==", "value": 0}]
+    },
+    {
+      "name": "analysis_frame_id_mismatch_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": ["count"],
+      "formula": "count of attempted render results where analysis_frame_id differs from current frame_id",
+      "thresholds": [{"id": "required", "comparator": "==", "value": 0}]
+    },
+    {
+      "name": "artifact_checksum_mismatch_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": ["count"],
+      "formula": "count of manifest SHA-256 values not matching exact artifact bytes",
+      "thresholds": [{"id": "required", "comparator": "==", "value": 0}]
+    },
+    {
+      "name": "unconsented_tracked_media_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": ["count"],
+      "formula": "tracked media artifacts without valid consent/provenance or any tracked private/raw media",
+      "thresholds": [{"id": "required", "comparator": "==", "value": 0}]
+    },
+    {
+      "name": "manual_baseline_completion_seconds",
+      "unit": "second",
+      "value_type": "number",
+      "allowed_aggregations": ["single", "median"],
+      "formula": "wall-clock seconds for the declared manual region-selection task",
+      "thresholds": [{"id": "observation_only", "comparator": "report_only", "value": null}]
+    }
+  ]
+}

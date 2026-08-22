@@ -1,0 +1,12 @@
+expected_name,label_vi,r,g,b,condition
+black,Đen,15,15,15,near-black neutral
+blue,Xanh dương,30,80,220,moderate blue
+brown,Nâu,130,70,40,medium brown
+grey,Xám,128,128,128,mid neutral
+green,Xanh lá,20,150,60,moderate green
+orange,Cam,240,140,20,moderate orange
+pink,Hồng,240,150,180,light pink
+purple,Tím,120,50,150,medium purple
+red,Đỏ,220,40,40,moderate red
+white,Trắng,240,240,240,near-white neutral
+yellow,Vàng,230,220,30,moderate yellow

@@ -1,1 +1,627 @@
-# ChromaLens
+# ChromaLens AI
+
+ChromaLens AI is a local, explainable color-vision assistance prototype for
+clothing. **T01** (webcam/video preview), the locked **T02** MediaPipe torso-
+mask baseline, **T03** lighting correction, **T04** original-color
+extraction/naming, **T05** CVD simulation/relational risk, **T06** selective
+assistive recoloring/overlay, **T07** rule-based color matching, and **T08**
+end-to-end live composition/controls are complete.
+
+The MVP is assistive software, not a medical diagnosis tool. The user selects
+their CVD profile and severity.
+
+## Requirements
+
+- Windows development environment used by the project.
+- Conda.
+- The committed Conda and pip lock files under `requirements/`.
+
+Do not install project dependencies into the Anaconda base environment.
+
+## Locked collaboration environment
+
+All contributors and coding agents must create `lens` from the committed
+Windows/Python 3.10 baseline. Do not use `pip freeze` as a replacement for the
+lock file and do not install unrecorded packages manually.
+
+From the repository root:
+
+```powershell
+conda create --name lens --file requirements/conda-win-64.lock
+conda run --name lens python -m pip install --require-hashes --requirement requirements/py310-win64.lock
+conda run --name lens python -m pip install --no-build-isolation --no-deps --editable ".[dev]"
+```
+
+The explicit Conda lock pins every bootstrap artifact, build, URL, and MD5,
+including Python 3.10.20 and pip 26.1.2. `environment.yml` is the concise,
+human-readable declaration of the supported interpreter and bootstrap tools.
+The hashed pip lock pins every currently approved base/development Python
+package and transitive dependency. The final command installs only the local
+ChromaLens package; dependency resolution is deliberately disabled.
+
+If `lens` already exists and matches the Conda lock, re-run the two pip
+commands to apply the committed lock. Recreate the environment if Python,
+pip, or any Conda package build differs from the lock.
+
+Verify the environment:
+
+```powershell
+conda run --name lens python --version
+conda run --name lens python -m pip check
+conda run --name lens python -m chromalens --help
+conda run --name lens python -m pytest -q
+```
+
+## Dependency change policy
+
+`pyproject.toml` is the source of direct dependency intent. The lock file is
+the source of the exact resolved install. Both must change in the same owner-
+reviewed dependency commit.
+
+Only the integration owner regenerates the shared lock. After an approved
+direct dependency change:
+
+```powershell
+conda run --name lens python -m pip install --editable ".[lock]"
+conda run --name lens pip-compile pyproject.toml --extra dev --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/py310-win64.lock
+conda run --name lens pip-compile pyproject.toml --extra lock --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/lock-tools-py310-win64.lock
+conda run --name lens pip-compile pyproject.toml --extra dev --extra segment-mediapipe --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/segment-mediapipe-py310-win64.lock
+conda list --explicit --md5 --name lens
+```
+
+Review the final command's output and save it as
+`requirements/conda-win-64.lock`; never overwrite the committed lock without
+reviewing every artifact URL, build, and checksum. Then repeat the locked
+install and all verification commands. Task branches must not independently choose MediaPipe, DaltonLens, PyTorch,
+SCHP, ONNX, or OpenVINO versions. Those dependencies are added to explicit
+optional groups and the integration lock only when their owning task reaches
+its dependency gate.
+
+## Garment segmentation (T02)
+
+Install the complete, hashed MediaPipe dependency closure before running
+segmentation. Do not resolve the optional group directly:
+
+```powershell
+conda run --name lens python -m pip install --require-hashes --requirement requirements/segment-mediapipe-py310-win64.lock
+conda run --name lens python -m pip install --no-build-isolation --no-deps --editable ".[dev,segment-mediapipe]"
+```
+
+This installs `mediapipe==0.10.21` and every transitive dependency at the
+committed hashes. Model assets are bundled inside the MediaPipe wheel; no
+manual download is required. See `models/README.md` for source, license
+(Apache-2.0), and the deferred SCHP-ATR decision.
+
+```python
+from chromalens.segmentation import MediaPipeSegmenter
+
+with MediaPipeSegmenter() as seg:
+    regions = seg.segment(packet)   # returns tuple[GarmentRegion, ...]
+```
+
+Each `GarmentRegion` carries a boolean `H × W` mask, `class_name`, and
+`mask_confidence`. Here confidence is the mean MediaPipe person-foreground
+score inside the retained mask; it is a heuristic, not a calibrated garment
+probability. The debug overlay draws mask fills and a text panel
+onto a copy of the source frame:
+
+```python
+from chromalens.segmentation import draw_mask_overlay
+
+debug_frame = draw_mask_overlay(
+    packet.original_bgr, regions, backend_info=seg.device_info
+)
+```
+
+Reproduce the five-scene, real-runtime evidence without a camera or network:
+
+```powershell
+conda run --name lens python scripts/t02_segmentation_evidence.py
+```
+
+The command writes five reviewable overlays plus `evidence.json` under the
+ignored `artifacts/t02-segmentation/` directory. Fixture provenance, rights,
+and checksums are recorded in `tests/samples/t02/README.md`.
+
+## White balance and lighting quality (T03)
+
+`GrayWorldWhiteBalancer` accepts an OpenCV `uint8 H × W × 3` BGR frame and
+returns a new RGB frame. It estimates bounded Gray-world gains from pixels in
+the configured brightness/saturation range, then applies per-stream EMA to
+the gains. An optional aligned boolean mask may restrict only the estimation
+region; correction and whole-frame lighting diagnostics remain global.
+
+```python
+from chromalens.white_balance import GrayWorldWhiteBalancer
+
+white_balancer = GrayWorldWhiteBalancer()
+result = white_balancer.process(packet, estimation_mask=garment_mask)
+
+# packet.original_bgr is unchanged
+corrected_rgb = packet.corrected_rgb
+quality = packet.lighting_quality
+```
+
+Use one balancer instance per ordered camera/video stream and call `reset()`
+before reusing it for an unrelated stream. `WhiteBalanceResult` exposes raw
+and EMA-smoothed BGR gains, the valid-pixel fraction, and fallback use. If too
+few eligible pixels exist, correction uses the previous gain (or identity for
+the first frame) and reports `poor`; it never reports a fabricated successful
+estimate.
+
+The `good`/`medium`/`poor` label is a configurable heuristic over dark-pixel
+fraction, highlight-clipped fraction, gain extremity, and temporal gain
+variation. Raw values remain available in `LightingQuality`; the label is not
+a calibrated probability or color-confidence score. Gray-world reduces a
+global channel cast under its neutral-scene assumption, but does not recover
+physical ground-truth garment color under arbitrary or mixed illumination.
+
+Reproduce the deterministic T03 evidence without a camera, network, model, or
+special hardware:
+
+```powershell
+conda run --name lens python scripts/t03_lighting_evidence.py
+conda run --name lens python -m pytest -q tests/unit/test_t03_white_balance.py
+```
+
+The evidence command writes a before/after comparison and raw JSON metrics to
+the ignored `artifacts/t03-lighting/` directory.
+
+## Dominant original color and naming (T04)
+
+`DominantColorExtractor` consumes only `FramePacket.corrected_rgb` from T03
+and an aligned `GarmentRegion` from T02. It erodes the garment boundary,
+rejects dark/highlight-clipped pixels, and optionally rejects pixels using an
+aligned floating-point confidence map. The P0 path returns a robust median;
+the P1 path returns up to two locally seeded deterministic K-means clusters
+and filters clusters below the configured minimum area.
+
+```python
+from chromalens.color_extraction import (
+    ColorExtractionMode,
+    DominantColorExtractor,
+)
+
+extractor = DominantColorExtractor()
+median_cluster = extractor.extract(packet, garment)[0]
+two_colors = extractor.extract(
+    packet,
+    garment,
+    mode=ColorExtractionMode.KMEANS_2,
+)
+```
+
+Every retained `ColorCluster` includes conventional float CIELAB, displayable
+original sRGB, ratio relative to all valid garment pixels, an aligned boolean
+submask, canonical English name, all 11 normalized name scores, and the
+best-versus-second score margin. Ratios of retained K-means clusters may sum to
+less than one when a small cluster is deliberately filtered; they are not
+renormalized to hide discarded area.
+
+The supported terms are `black`, `blue`, `brown`, `grey`, `green`, `orange`,
+`pink`, `purple`, `red`, `white`, and `yellow`, with explicit Vietnamese
+labels. The vocabulary, W3C CSS sRGB anchor provenance/license, OpenCV float
+Lab convention, and limitations are documented in
+[`assets/color_names/README.md`](assets/color_names/README.md). Name scores and
+margin are transparent heuristics, not calibrated probabilities.
+
+Reproduce the controlled 11-family table and visual cluster evidence offline:
+
+```powershell
+conda run --name lens python scripts/t04_color_evidence.py
+conda run --name lens python -m pytest -q tests/unit/test_t04_color_naming.py tests/unit/test_t04_color_extraction.py
+```
+
+The script writes `basic11_evaluation.csv`, `evidence.json`, a swatch grid,
+and a synthetic two-cluster overlay under ignored `artifacts/t04-color/`.
+
+## CVD simulation and relational risk (T05)
+
+`MachadoSimulator` accepts and returns `uint8 H x W x 3` gamma-encoded sRGB
+in explicit **RGB** order. It maps the existing user-selected `CVDProfile` to
+DaltonLens's Machado 2009 implementation. For non-zero severity, pinned
+`daltonlens==0.1.5` performs sRGB decoding to linear RGB, the Machado transform,
+gamut clipping, and sRGB encoding. Severity zero returns a byte-identical copy
+without mutating or aliasing the input.
+
+```python
+from chromalens.config import CVDProfile
+from chromalens.cvd_simulation import MachadoSimulator
+
+simulator = MachadoSimulator()
+simulated_rgb = simulator.simulate_rgb(
+    corrected_rgb,
+    profile=CVDProfile.DEUTAN,
+    severity=0.8,
+)
+```
+
+`RelationalRiskDetector` uses original corrected cluster RGB values only. It
+computes CIEDE2000 before and after the selected simulation, retains both
+distances, derives a numeric heuristic score, and maps the score to
+`low`/`medium`/`high`. T05 P0 evaluates every unordered retained-color pair
+inside one garment; it returns an empty tuple for fewer than two clusters and
+does not fabricate top-bottom/background comparisons.
+
+```python
+from chromalens.risk_detection import RelationalRiskDetector
+
+assessments = RelationalRiskDetector().assess_cluster_pairs(
+    clusters,
+    garment_id="track-4:upper-clothes",
+    profile=CVDProfile.DEUTAN,
+    severity=0.8,
+)
+```
+
+The default heuristic uses `minimum_original_delta_e=5.0`,
+`cvd_confusion_delta_e=20.0`, `medium_score_threshold=0.25`, and
+`high_score_threshold=0.60`. These are validated configuration values, not
+probabilities, medical thresholds, or universal perceptual truth. Formula,
+papers, DaltonLens version/tag/license, gamma behavior, and limitations are
+documented in [`assets/cvd/README.md`](assets/cvd/README.md); T09 must validate
+the thresholds with declared conditions and users before competition claims.
+
+Reproduce known-patch simulation and pair-risk evidence offline:
+
+```powershell
+conda run --name lens python scripts/t05_cvd_risk_evidence.py
+conda run --name lens python -m pytest -q tests/unit/test_t05_cvd_simulation.py tests/unit/test_t05_risk_detection.py
+```
+
+The evidence script writes `known_patch_simulation.png`,
+`pair_risk_evaluation.csv`, and `evidence.json` under the ignored
+`artifacts/t05-cvd-risk/` directory. Simulation is an internal risk/debug view,
+not the assistive recolored output that belongs to T06.
+
+## Selective recolor and score overlay (T06)
+
+`SelectiveRecolorer` consumes the unchanged camera/display BGR frame, one T04
+original corrected cluster, its T05 relational assessment and comparison
+color, plus explicit aligned garment/cluster/risk masks. Its hard mask is
+exactly the three-way intersection. An inward distance-transform feather has
+zero alpha outside that mask, so every outside pixel remains byte-identical
+before outlines and text are added.
+
+The project-authored candidate optimizer rotates/scales the original CIELCH
+chroma while keeping representative lightness fixed, simulates each candidate
+for the selected profile/severity, maximizes simulated CIEDE2000 separation,
+and penalizes unnecessary departure from the original. It applies no universal
+source-to-target color rule. Per-key selection uses three-frame hysteresis and
+a 32-entry LRU bound by default.
+
+```python
+from chromalens.recolor import SelectiveRecolorer
+
+result = SelectiveRecolorer().recolor(
+    packet.original_bgr,
+    garment_mask=region.mask,
+    cluster=source_cluster,
+    risk_mask=source_cluster.submask,
+    comparison_rgb=comparison_cluster.rgb,
+    risk=risk,
+    profile=CVDProfile.DEUTAN,
+    severity=1.0,
+    state_key="video:track-4:cluster-red",
+)
+```
+
+`result.debug.original_corrected_rgb` and
+`result.debug.assistive_display_rgb` are deliberately separate. The first is
+the T04 estimate used for analysis; the second is a representative display
+target and must never feed color extraction or T07 matching.
+
+`render_assistive_overlay` draws a thick black then thin white contour and an
+opaque black/white score tag onto a copy. `AssistiveOverlayData` keeps original
+color/margin, display color, risk, lighting quality, profile, severity, backend,
+and frame ID explicit. `render_assistive_overlay` rejects simulation view data;
+the separate `render_cvd_simulation_debug_overlay` requires
+`OverlayView.CVD_SIMULATION_DEBUG`, emits `CVD SIMULATION (DEBUG ONLY)`, and
+labels the assistive target as separate. The declared simulation path therefore
+cannot silently masquerade as the assistive result.
+
+Reproduce the controlled containment, lightness, temporal, label, contour, and
+light/dark tag evidence offline:
+
+```powershell
+conda run --name lens python scripts/t06_recolor_overlay_evidence.py
+conda run --name lens python -m pytest -q tests/unit/test_t06_recolor.py tests/unit/test_t06_renderer.py tests/integration/test_t06_assistive_slice.py
+```
+
+The command writes ignored PNG/JSON output under
+`artifacts/t06-recolor-overlay/`. Algorithm details, defaults, RGB/BGR
+boundaries, font behavior, and limitations are documented in
+[`assets/recolor/README.md`](assets/recolor/README.md).
+
+## Rule-based color matching (T07)
+
+`RuleBasedMatcher` converts only T04's original corrected Lab value to CIELCH
+and applies the validated project-authored table in `assets/suggestions.csv`.
+Neutral sources receive an opposite black/white suggestion. Chromatic sources
+receive neutral, +30-degree analogous, 180-degree complementary, and
+lighter/darker same-hue tone guidance in deterministic priority order.
+
+```python
+from chromalens.matching import RuleBasedMatcher
+
+matcher = RuleBasedMatcher()
+matching = matcher.suggest_from_original_cluster(
+    source_cluster,
+    profile=CVDProfile.DEUTAN,  # optional together with severity
+    severity=1.0,
+)
+```
+
+The method accepts `ColorCluster` or `None`; it has no assistive-display-color
+parameter. Every suggestion echoes `source_original_lab` and
+`source_original_rgb` from the T04 cluster. Missing input or an unknown name
+returns an empty typed result with a safe Vietnamese explanation and never
+invents confidence. `priority` is presentation order, not confidence.
+
+When profile and severity are supplied together, each item includes original
+and CVD-simulated CIEDE2000 source-target separation plus a configurable
+heuristic threshold check. This is informational guidance, not a diagnosis,
+accessibility guarantee, or calibrated probability. Every consumer must show:
+"Đây là gợi ý tham khảo, không phải quy tắc thời trang khách quan."
+
+Reproduce the controlled rule, fallback, source-contract, CVD-check, and
+swatch evidence offline:
+
+```powershell
+conda run --name lens python scripts/t07_matching_evidence.py
+conda run --name lens python -m pytest -q tests/unit/test_t07_matching.py tests/integration/test_t07_original_color_contract.py
+```
+
+The command writes ignored CSV/JSON/PNG output under
+`artifacts/t07-matching/`. The exact schema, provenance, formulas, safety
+contract, and limitations are documented in
+[`assets/matching/README.md`](assets/matching/README.md).
+
+## End-to-end webcam/video pipeline (T08)
+
+The full default source path uses the locked MediaPipe CPU backend and composes
+T02-T07 for every displayed frame. Install the locked MediaPipe closure shown
+under **Garment segmentation (T02)** before using these commands.
+
+Launch the webcam demo using the default camera index:
+
+```powershell
+conda run --name lens python -m chromalens --webcam
+```
+
+Request a capture resolution or choose another camera when required:
+
+```powershell
+conda run --name lens python -m chromalens --webcam --camera-index 1 --width 1280 --height 720
+```
+
+Process a local sample video through the same analytical and rendering path
+without opening a camera:
+
+```powershell
+conda run --name lens python -m chromalens --video C:\path\to\sample.mp4
+```
+
+Press `q`, Escape, or close the window to exit. Automated/headless checks can
+avoid GUI and bound execution explicitly:
+
+```powershell
+conda run --name lens python -m chromalens --video C:\path\to\sample.mp4 --no-display
+conda run --name lens python -m chromalens --webcam --no-display --max-frames 120
+conda run --name lens python -m chromalens --webcam --duration-seconds 120
+```
+
+Runtime controls are reversible and remain user-selected settings, not a
+medical diagnosis:
+
+- `p`: cycle `protan` / `deutan` / `tritan`.
+- `[` and `]`: decrease/increase severity by 0.1 within `[0, 1]`.
+- `r`: enable or disable assistive recoloring without disabling analysis.
+- `v`: cycle views; keys `1`-`5` select `assistive`, `original`, `mask`,
+  `risk`, and `diagnostic` directly.
+
+The equivalent initial values are available as CLI flags, for example:
+
+```powershell
+conda run --name lens python -m chromalens --webcam --profile protan --severity 0.8 --disable-recolor --view original
+```
+
+The overlay keeps original corrected color/margin, heuristic mask confidence,
+CVD risk, and lighting quality as separate fields. Matching uses only the T04
+original corrected cluster; the assistive display color never feeds analysis.
+Every output is tied to the displayed `frame_id`. A missing or failed stage is
+shown as `degraded`/`unavailable` for that current frame; prior masks, colors,
+risks, or recolors are not presented as current results.
+
+Live webcam capture uses an exact capacity-one mailbox: inference takes the
+newest frame and counts overwritten stale frames instead of building latency.
+Finite videos run sequentially through the same pipeline so evaluation frames
+are not skipped. Runtime metrics use bounded buffers (10,000 samples per
+latency series and at most 10,000 RSS samples). The T09-frozen names are:
+
+- `source_read_to_render_ms`: starts at the monotonic timestamp created after
+  `VideoCapture.read()` returns and ends after the renderer completes. It is
+  available in GUI and headless runs.
+- `source_read_to_display_submit_ms`: has the same start and ends immediately
+  after `cv2.imshow()` returns. It is available only in GUI runs and measures
+  software submission, not physical display emission.
+- `sensor_to_photon_ms`: `NOT_MEASURED` unless an external synchronized
+  apparatus is used.
+
+The first two are software-timestamp/development-machine observations. They
+must not be described as camera exposure-to-display, sensor-to-photon, or the
+time at which the screen actually emits light. T09's frozen definitions,
+formulae, thresholds, and result schema are in
+[`evaluation/protocol.md`](evaluation/protocol.md).
+
+The lightweight value drawn inside an overlay is labeled `pre-render age` (or
+`frame age at overlay` in preview-only mode). It is sampled before the overlay
+renderer runs and is a live diagnostic only; it is not a T09 latency metric.
+
+The capture-only T01 diagnostic remains available explicitly and never loads a
+segmentation backend:
+
+```powershell
+conda run --name lens python -m chromalens --video C:\path\to\sample.mp4 --preview-only
+```
+
+No command saves or uploads camera frames by default. Source-open failures,
+missing MediaPipe installation, and live read failures return actionable,
+non-zero exits. Generate reviewable T08 fixture views, a local sample AVI, and
+optional two-minute bounded-runtime metrics offline with:
+
+```powershell
+conda run --name lens python scripts/t08_pipeline_evidence.py
+conda run --name lens python scripts/t08_pipeline_evidence.py --stability-seconds 120
+conda run --name lens python -m chromalens --video artifacts/t08-pipeline/sample_mediapipe.avi --no-display
+```
+
+All generated output is under ignored `artifacts/t08-pipeline/`. The real
+backend visual uses the repository's licensed/public-domain T02 fixture; the
+stability source is generated and contains no private camera image.
+
+## T09 evaluation Gate 0
+
+T09 is `IN_PROGRESS`. Before results are produced, Gate 0 freezes protocol
+version `1.0.0` in these coordinator-owned files:
+
+- [`evaluation/protocol.md`](evaluation/protocol.md): procedure, hardware and
+  resolution declarations, units, formulae, thresholds, latency semantics,
+  claim limits, and evidence policy;
+- [`evaluation/schema/t09-result.schema.json`](evaluation/schema/t09-result.schema.json)
+  and [`evaluation/schema/metric_registry.json`](evaluation/schema/metric_registry.json):
+  machine-readable result and metric contracts;
+- [`evaluation/fixtures/test_cases.csv`](evaluation/fixtures/test_cases.csv):
+  the frozen case matrix, including honest `TO_BE_ACQUIRED` slots;
+- [`evaluation/OWNERSHIP.md`](evaluation/OWNERSHIP.md): non-overlapping branch,
+  result, script, and test ownership.
+
+The shared runtime instrumentation already supports the frozen 15-second
+warm-up followed by a 120-second measured interval. `--duration-seconds`
+counts the measured interval when a warm-up is set:
+
+```powershell
+conda run --name lens python -m chromalens --webcam --metrics-warmup-seconds 15 --duration-seconds 120
+conda run --name lens python -m chromalens --webcam --no-display --metrics-warmup-seconds 15 --duration-seconds 120
+```
+
+The summary exposes the separately named latency percentiles, sample counts,
+RSS values/slopes, and the frozen four-window continuous-growth diagnostics.
+The benchmark workstream converts those observations to schema 1.0.0 results;
+it does not redefine or re-instrument them.
+
+After the Gate commit is pushed and CI is green, contributors update `mvp`,
+verify its exact hash against the coordinator handoff, and create branches
+from that commit:
+
+```powershell
+git switch mvp
+git pull --ff-only origin mvp
+git rev-parse HEAD
+git switch -c eval/t09-segmentation-dong
+# or: eval/t09-color-science-phong
+# or: eval/t09-performance-rai-trinh
+```
+
+Do not branch from pre-gate T08 commit `f315fd7`. Small curated UTF-8
+CSV/JSON/Markdown results belong under each assigned
+`evaluation/results/curated/` namespace. Raw video, private footage, images,
+arrays, and bulk evidence stay below ignored `artifacts/t09/`. Every report
+artifact needs a manifest with provenance/consent, license, exact byte size,
+and SHA-256. Never use `git add -f` to bypass the artifact policy.
+
+## Verification
+
+These commands require no webcam, network access at runtime, model weights, or
+special inference hardware:
+
+```powershell
+conda run --name lens python -m chromalens --help
+conda run --name lens python -m pytest -q
+```
+
+The console entry point is equivalent:
+
+```powershell
+conda run --name lens chromalens --help
+```
+
+The T01/T08 suites generate short MJPG/AVI files under pytest's temporary directory
+and deletes them with the test workspace. It does not commit or download sample
+media and verifies that video mode never opens a webcam.
+
+## T02-T08 handoff contracts
+
+- `chromalens.camera.FrameSource` is the common webcam/video interface.
+- Each successful read produces a `FramePacket` with a sequential frame ID,
+  monotonic timestamp, and unchanged original BGR frame.
+- Finite video EOF returns `None`; live-source read failures raise a specific,
+  actionable exception.
+- `chromalens.renderer.render_preview` draws only onto a copied frame.
+- T02 can consume `FramePacket.original_bgr` for segmentation; T03 can produce
+  corrected output without changing the source frame.
+- T04 consumes only `corrected_rgb` plus an aligned garment mask and returns
+  original-color `ColorCluster` values; assistive display colors do not exist
+  yet and cannot contaminate extraction.
+- T05 simulates those original cluster RGB values under a user-selected
+  profile/severity and returns relational `RiskAssessment` values containing
+  both Delta-E measurements, numeric risk score, and display level.
+- T06 selects a representative assistive color from T04/T05 data, but assigns
+  pixels only inside the exact hard intersection and preserves the source frame.
+  Its original corrected and assistive display colors remain separate fields.
+- T06's overlay renderer copies its input and marks simulation as debug-only.
+- T07 accepts only T04's original corrected `ColorCluster`, never T06's
+  assistive display value. It returns deterministic guidance plus an optional
+  CVD-separation diagnostic; neither priority nor separation is confidence.
+  T08 presents that guidance but does not change its source contract.
+- `chromalens.pipeline.ChromaLensPipeline` is the sole T08 composition
+  boundary. It emits typed current-frame stage reports and resets recolor state
+  when profile, severity, or recolor context changes.
+- `LatestFrameReader` has a one-packet live mailbox; video deliberately remains
+  sequential. `TemporalMaskSmoother` intersects history with the current mask,
+  so temporal state cannot resurrect rejected pixels.
+
+## Current limitations
+
+- MediaPipe Selfie Segmentation predicts prominent humans, not semantic
+  garment classes. T02 combines it with face exclusion and vertical cleanup to
+  approximate a torso/upper-clothes mask. Hands, carried objects, or background
+  attached to the person silhouette can remain.
+- SCHP-ATR was not validated within the T02 time box and is explicitly
+  `DEFERRED` to T10; its dependencies and weights are not installed.
+- Face detection and the upper-body cutoff (`upper_body_ratio=0.80`) are
+  heuristics and can clip clothing or retain non-clothing pixels, especially
+  with occlusion, multiple people, unusual poses, or an undetected face.
+- T03 uses the Gray-world neutral-scene assumption and heuristic lighting
+  thresholds. Mixed illuminants, strongly single-colored scenes, or very few
+  eligible pixels can limit correction; `used_fallback` and `valid_fraction`
+  expose the latter case.
+- T04's CSS-anchor lookup is transparent and deterministic but cannot represent
+  every shade, language, material, camera, display, or lighting condition. Its
+  11-patch controlled result is contract evidence, not a real-world accuracy
+  claim; broader evaluation and threshold tuning belong to T09.
+- T05's CVD profile and severity are user-selected settings, not diagnosis.
+  Machado/DaltonLens simulation and the risk formula approximate perception;
+  DaltonLens documents an additional tritan limitation. Delta-E thresholds and
+  risk levels are uncalibrated heuristics requiring T09 evaluation.
+- T06's candidate score, risk activation, feathering, and hysteresis defaults
+  are explainable but uncalibrated. Gamut clipping can slightly shift L*, and
+  mask/cluster errors directly limit containment quality. The OpenCV tag
+  transliterates accented Vietnamese because its bundled Hershey font is
+  ASCII-only.
+- T07's CIELCH geometry and five-row project-authored table are simple
+  guidance. They do not model culture, material, occasion, trend, or individual
+  taste; their wording and usefulness require T09 user testing.
+- T08 development measurements are not an official hardware benchmark. The
+  current live path runs all analytical modules on every consumed frame and
+  can drop capture frames under load. T09 must declare hardware, footage,
+  conditions, accuracy protocol, and acceptance thresholds before competition
+  performance/quality claims.
+- Model weights, datasets, generated artifacts, and private footage are not
+  included. See `models/README.md` for download policy.
+
+## License
+
+ChromaLens AI is licensed under the Apache License 2.0. Third-party model,
+dataset, algorithm, and code attribution will be documented as each component
+is integrated.

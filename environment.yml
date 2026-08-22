@@ -1,0 +1,8 @@
+name: lens
+channels:
+  - defaults
+dependencies:
+  - python=3.10.20=hb00fc5c_1
+  - pip=26.1.2=pyhc872135_0
+  - setuptools=83.0.0=py310haa95532_0
+  - wheel=0.47.0=py310haa95532_0
