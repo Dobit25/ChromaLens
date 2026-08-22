@@ -1,0 +1,1141 @@
+{
+  "protocol_version": "1.0.0",
+  "schema_version": "1.0.0",
+  "metric_registry_version": "1.0.0",
+  "result_id": "t09-segmentation-dong-20260822t183851z",
+  "workstream": "segmentation",
+  "result_status": "COMPLETE",
+  "git_commit": "68e0d004e8308a48219169e386a34d246a80f1c8",
+  "created_at_utc": "2026-08-22T18:37:02Z",
+  "operator": {
+    "role": "segmentation_evaluator",
+    "identifier": "dong_workstream_owner"
+  },
+  "environment": {
+    "host_role": "development",
+    "declared_demo_hardware": false,
+    "manufacturer": "DESKTOP-JFOSV3I",
+    "model": "Generic",
+    "operating_system": "Windows 10",
+    "cpu": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel",
+    "physical_core_count": 4,
+    "logical_processor_count": 8,
+    "ram_gib": 7.744907379150391,
+    "gpu": null,
+    "npu": null,
+    "camera_or_source": "static_images",
+    "python_version": "3.10.20",
+    "package_versions": {
+      "chromalens": "1.0.0",
+      "numpy": "1.26.4",
+      "opencv-python": "4.10.0",
+      "torch": "2.3.1"
+    },
+    "lock_sha256": "09aa20458803b9a996c272dbb6a6b5a7ba67943f3562ff1d18b898fd43a53840",
+    "backend_name": "schp-atr",
+    "backend_device": "CPU",
+    "source_kind": "image",
+    "source_resolution": {
+      "width": 640,
+      "height": 480
+    },
+    "render_resolution": {
+      "width": 640,
+      "height": 480
+    },
+    "display_mode": "headless",
+    "warmup_seconds": 0.0,
+    "measurement_seconds": 0.0
+  },
+  "cases": [
+    {
+      "case_id": "SEG-PUB-ASTRONAUT",
+      "status": "COMPLETE",
+      "fixture_id": "t02-astronaut",
+      "artifact_ids": [
+        "art-seg-pub-astronaut-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-PUB-CC0-WOMAN",
+      "status": "COMPLETE",
+      "fixture_id": "t02-cc0-woman",
+      "artifact_ids": [
+        "art-seg-pub-cc0-woman-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-PUB-LOC-LINCOLN",
+      "status": "COMPLETE",
+      "fixture_id": "t02-loc-lincoln",
+      "artifact_ids": [
+        "art-seg-pub-loc-lincoln-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-PUB-LOC-MAN",
+      "status": "COMPLETE",
+      "fixture_id": "t02-loc-man",
+      "artifact_ids": [
+        "art-seg-pub-loc-man-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-PUB-NASA-SHEPARD",
+      "status": "COMPLETE",
+      "fixture_id": "t02-nasa-shepard",
+      "artifact_ids": [
+        "art-seg-pub-nasa-shepard-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-ANN-PLAIN-UPPER",
+      "status": "COMPLETE",
+      "fixture_id": "plain-upper-annotated",
+      "artifact_ids": [
+        "art-seg-ann-plain-upper-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-ANN-PLAIN-LOWER",
+      "status": "COMPLETE",
+      "fixture_id": "plain-lower-annotated",
+      "artifact_ids": [
+        "art-seg-ann-plain-lower-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-ANN-MULTICOLOR-UPPER",
+      "status": "COMPLETE",
+      "fixture_id": "multicolor-upper-annotated",
+      "artifact_ids": [
+        "art-seg-ann-multicolor-upper-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-MULTICOLOR-DRESS",
+      "status": "COMPLETE",
+      "fixture_id": "multicolor-dress",
+      "artifact_ids": [
+        "art-seg-multicolor-dress-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-LOW-LIGHT",
+      "status": "COMPLETE",
+      "fixture_id": "low-light-person",
+      "artifact_ids": [
+        "art-seg-low-light-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-WARM-LIGHT",
+      "status": "COMPLETE",
+      "fixture_id": "warm-light-person",
+      "artifact_ids": [
+        "art-seg-warm-light-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-MOTION-SLOW",
+      "status": "COMPLETE",
+      "fixture_id": "moving-person-slow",
+      "artifact_ids": [
+        "art-seg-motion-slow-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-MOTION-FAST",
+      "status": "COMPLETE",
+      "fixture_id": "moving-person-fast",
+      "artifact_ids": [
+        "art-seg-motion-fast-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-OCCLUSION",
+      "status": "COMPLETE",
+      "fixture_id": "arms-occlude-garment",
+      "artifact_ids": [
+        "art-seg-occlusion-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-CARRIED-OBJECT",
+      "status": "COMPLETE",
+      "fixture_id": "carried-object",
+      "artifact_ids": [
+        "art-seg-carried-object-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-SIMILAR-BACKGROUND",
+      "status": "COMPLETE",
+      "fixture_id": "similar-background",
+      "artifact_ids": [
+        "art-seg-similar-background-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-POSE-SEATED",
+      "status": "COMPLETE",
+      "fixture_id": "seated-unusual-pose",
+      "artifact_ids": [
+        "art-seg-pose-seated-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-CLOSE-CROP",
+      "status": "COMPLETE",
+      "fixture_id": "close-camera-crop",
+      "artifact_ids": [
+        "art-seg-close-crop-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-MULTI-PERSON",
+      "status": "COMPLETE",
+      "fixture_id": "multiple-people",
+      "artifact_ids": [
+        "art-seg-multi-person-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    },
+    {
+      "case_id": "SEG-NO-PERSON",
+      "status": "COMPLETE",
+      "fixture_id": "no-person-scene",
+      "artifact_ids": [
+        "art-seg-no-person-overlay"
+      ],
+      "reason": "Successfully evaluated"
+    }
+  ],
+  "configuration": {
+    "cvd_profile": "not_applicable",
+    "severity": null,
+    "thresholds": {}
+  },
+  "metrics": [
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 2,
+      "case_ids": [
+        "SEG-PUB-ASTRONAUT"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "h\u01a1i l\u1eb9m 1 ch\u00fat v\u00e0o m\u0169 b\u1ea3o hi\u1ec3m s\u00e1t \u00e1o",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 3,
+      "case_ids": [
+        "SEG-PUB-CC0-WOMAN"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "kh\u00e1 chu\u1ea9n x\u00e1c, bao h\u1ebft c\u1ea3 v\u00e1y, l\u1ed7i nh\u1ecf kh\u00f4ng \u0111\u00e1ng k\u1ec3",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 2,
+      "case_ids": [
+        "SEG-PUB-LOC-LINCOLN"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "kh\u00e1 \u1ed5n, l\u1eb9m v\u00e0o b\u00e0n tay tr\u00e1i",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 3,
+      "case_ids": [
+        "SEG-PUB-LOC-MAN"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "chu\u1ea9n x\u00e1c",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-PUB-NASA-SHEPARD"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "bao tr\u00f9m c\u1ea3 qu\u1ea7n \u00e1o v\u00e0 m\u1eb7t v\u00e0 b\u1ed1i c\u1ea3nh",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-ANN-PLAIN-UPPER"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "H\u1ec7 th\u1ed1ng nh\u1eadn di\u1ec7n \u0111\u01b0\u1ee3c trang ph\u1ee5c ph\u1ea7n th\u00e2n tr\u00ean, nh\u01b0ng mask c\u1ee7a backend c\u0169ng bao g\u1ed3m c\u1ea3 trang ph\u1ee5c ph\u1ea7n th\u00e2n d\u01b0\u1edbi do logic g\u1ed9p c\u00e1c nh\u00e3n trang ph\u1ee5c, d\u1eabn \u0111\u1ebfn v\u00f9ng m\u1ee5c ti\u00eau b\u1ecb l\u1eabn t\u1ea1p",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-ANN-PLAIN-LOWER"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "H\u1ec7 th\u1ed1ng nh\u1eadn di\u1ec7n \u0111\u01b0\u1ee3c trang ph\u1ee5c ph\u1ea7n th\u00e2n d\u01b0\u1edbi, nh\u01b0ng mask c\u0169ng bao g\u1ed3m c\u1ea3 trang ph\u1ee5c ph\u1ea7n th\u00e2n tr\u00ean do backend \u0111ang g\u1ed9p c\u00e1c nh\u00e3n trang ph\u1ee5c th\u00e0nh m\u1ed9t mask chung, d\u1eabn \u0111\u1ebfn v\u00f9ng m\u1ee5c ti\u00eau b\u1ecb l\u1eabn t\u1ea1p.",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-ANN-MULTICOLOR-UPPER"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "H\u1ec7 th\u1ed1ng nh\u1eadn di\u1ec7n \u0111\u01b0\u1ee3c trang ph\u1ee5c ph\u1ea7n th\u00e2n tr\u00ean, nh\u01b0ng mask c\u0169ng bao g\u1ed3m c\u1ea3 trang ph\u1ee5c ph\u1ea7n th\u00e2n d\u01b0\u1edbi do backend \u0111ang g\u1ed9p c\u00e1c nh\u00e3n trang ph\u1ee5c th\u00e0nh m\u1ed9t mask chung, d\u1eabn \u0111\u1ebfn v\u00f9ng m\u1ee5c ti\u00eau b\u1ecb l\u1eabn t\u1ea1p.",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "SEG-MULTICOLOR-DRESS"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "sai ho\u00e0n to\u00e0n, mask c\u00e1nh tay ch\u1ee9 kh\u00f4ng mask v\u00e1y",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 3,
+      "case_ids": [
+        "SEG-LOW-LIGHT"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "kh\u00e1 chu\u1ea9n, mask qu\u1ea7n \u00e1o , n\u00e9 ph\u1ea7n b\u00e0n tay",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-WARM-LIGHT"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "mask lu\u00f4n  c\u1ea3 v\u1eadt th\u1ec3 c\u00f3 \u0111\u00e8 l\u00ean v\u00e1y, mask 1 ph\u1ea7n background",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 2,
+      "case_ids": [
+        "SEG-MOTION-SLOW"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "mask \u0111\u01b0\u1ee3c qu\u1ea7n \u00e1o, nh\u01b0ng ch\u01b0a \u1ed5n \u0111\u1ecbnh v\u00e0 \u0111\u1ea7y \u0111\u1ee7",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 2,
+      "case_ids": [
+        "SEG-MOTION-FAST"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "nh\u1eadn di\u1ec7n kh\u00e1 t\u1ed1t, kh\u00f4ng nh\u1eadn ph\u1ea7n c\u00f3 t\u00f3c che l\u00ean qu\u1ea7n \u00e1o",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 2,
+      "case_ids": [
+        "SEG-OCCLUSION"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "nh\u1eadn di\u1ec7n \u0111\u1ee7 qu\u1ea7n \u00e1o c\u1ee7a \u0111\u1ed1i t\u01b0\u1ee3ng, nh\u1eadn di\u1ec7n lu\u00f4n c\u1ea3 \u0111\u1ed3 v\u1eadt ch\u1eddm v\u00e0o qu\u1ea7n \u00e1o",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-CARRIED-OBJECT"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "nh\u1eadn di\u1ec7n \u0111\u1ee7 qu\u1ea7n \u00e1o, d\u00ednh hoa \u0111ang c\u1ea7m tr\u00ean tay, 1 ch\u00fat \u1edf m\u1eb7t",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 3,
+      "case_ids": [
+        "SEG-SIMILAR-BACKGROUND"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "nh\u1eadn di\u1ec7n t\u1ed1t, n\u00e9 \u0111\u00fang ph\u1ea7n c\u00e1nh tay",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 3,
+      "case_ids": [
+        "SEG-POSE-SEATED"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "nh\u1eadn di\u1ec7n t\u1ed1t c\u1ea3 b\u1ed9 qu\u1ea7n \u00e1o, kh\u00f4ng l\u1ea5y t\u00f3c",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-CLOSE-CROP"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "nh\u1eadn di\u1ec7n \u0111\u00fang ph\u1ea7n \u00e1o , d\u00ednh c\u1ea3 b\u00f3 hoa \u00f4m tr\u00ean tay",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-MULTI-PERSON"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "nh\u1eadn di\u1ec7n \u0111\u00fang ph\u1ea7n \u00e1o c\u1ee7a c\u1ea3 2 ng\u01b0\u1eddi, nh\u01b0ng d\u00ednh lu\u00f4n c\u1ea3 b\u00f3 hoa \u00f4m tr\u00ean ng\u01b0\u1eddi",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "SEG-NO-PERSON"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "kh\u00f4ng c\u00f3 ng\u01b0\u1eddi n\u00e0o nh\u01b0ng v\u1eabn mask 1 b\u1ee5i c\u00e2y",
+      "method": "manual_inspection"
+    },
+    {
+      "name": "segmentation_iou",
+      "aggregation": "single",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 0.6155587317653732,
+      "case_ids": [
+        "SEG-ANN-PLAIN-UPPER"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "PASS",
+      "reason": "IoU calculated as 0.6156",
+      "method": "annotation_comparison"
+    },
+    {
+      "name": "segmentation_iou",
+      "aggregation": "single",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 0.6910520512371314,
+      "case_ids": [
+        "SEG-ANN-PLAIN-LOWER"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "PASS",
+      "reason": "IoU calculated as 0.6911",
+      "method": "annotation_comparison"
+    },
+    {
+      "name": "segmentation_iou",
+      "aggregation": "single",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 0.8270765282420983,
+      "case_ids": [
+        "SEG-ANN-MULTICOLOR-UPPER"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "PASS",
+      "reason": "IoU calculated as 0.8271",
+      "method": "annotation_comparison"
+    },
+    {
+      "name": "segmentation_adequate_rate",
+      "aggregation": "overall",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 0.5,
+      "case_ids": [
+        "SEG-PUB-ASTRONAUT",
+        "SEG-PUB-CC0-WOMAN",
+        "SEG-PUB-LOC-LINCOLN",
+        "SEG-PUB-LOC-MAN",
+        "SEG-PUB-NASA-SHEPARD",
+        "SEG-ANN-PLAIN-UPPER",
+        "SEG-ANN-PLAIN-LOWER",
+        "SEG-ANN-MULTICOLOR-UPPER",
+        "SEG-MULTICOLOR-DRESS",
+        "SEG-LOW-LIGHT",
+        "SEG-WARM-LIGHT",
+        "SEG-MOTION-SLOW",
+        "SEG-MOTION-FAST",
+        "SEG-OCCLUSION",
+        "SEG-CARRIED-OBJECT",
+        "SEG-SIMILAR-BACKGROUND",
+        "SEG-POSE-SEATED",
+        "SEG-CLOSE-CROP",
+        "SEG-MULTI-PERSON",
+        "SEG-NO-PERSON"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "10/20 cases adequate",
+      "method": "aggregate_count"
+    }
+  ],
+  "artifacts": [
+    {
+      "artifact_id": "art-seg-pub-astronaut-overlay",
+      "case_ids": [
+        "SEG-PUB-ASTRONAUT"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-PUB-ASTRONAUT_overlay.jpg",
+      "sha256": "111e43c733df26b1a99efefa1ef38c5d73073037851ee0a8c6fc625e40751424",
+      "byte_size": 90127,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-pub-cc0-woman-overlay",
+      "case_ids": [
+        "SEG-PUB-CC0-WOMAN"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-PUB-CC0-WOMAN_overlay.jpg",
+      "sha256": "1dc65cc1653d55c6394031134fb50e413b10967055a5a452b4c8c5fa65cb3696",
+      "byte_size": 571191,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-pub-loc-lincoln-overlay",
+      "case_ids": [
+        "SEG-PUB-LOC-LINCOLN"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-PUB-LOC-LINCOLN_overlay.jpg",
+      "sha256": "f8e8ff8bbe48a9a21b6779d9e8539c3fcdb7c60ec682e94e46abcc1a0be64d0c",
+      "byte_size": 263055,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-pub-loc-man-overlay",
+      "case_ids": [
+        "SEG-PUB-LOC-MAN"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-PUB-LOC-MAN_overlay.jpg",
+      "sha256": "cfe216188434a575ba94fa9c03574b8ebe3c814341028714db41155db4612fe1",
+      "byte_size": 290879,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-pub-nasa-shepard-overlay",
+      "case_ids": [
+        "SEG-PUB-NASA-SHEPARD"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-PUB-NASA-SHEPARD_overlay.jpg",
+      "sha256": "a71d7b2ac154557b13342f533809091391c131d656fdd619016dacdb99abcb4b",
+      "byte_size": 381116,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-ann-plain-upper-overlay",
+      "case_ids": [
+        "SEG-ANN-PLAIN-UPPER"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-ANN-PLAIN-UPPER_overlay.jpg",
+      "sha256": "6b82ea13ff0928b726d25ede18cd7ebd0d12604f899bb313ea18643902edc06c",
+      "byte_size": 585318,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-ann-plain-lower-overlay",
+      "case_ids": [
+        "SEG-ANN-PLAIN-LOWER"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-ANN-PLAIN-LOWER_overlay.jpg",
+      "sha256": "be038b68fad8222df9a75893e234ad41e78687daaf3ded492dc0186226db316e",
+      "byte_size": 3739200,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-ann-multicolor-upper-overlay",
+      "case_ids": [
+        "SEG-ANN-MULTICOLOR-UPPER"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-ANN-MULTICOLOR-UPPER_overlay.jpg",
+      "sha256": "e7306b62c6ebe5cdb8f81d387d51e0d7a74653de05ae10821929b77726e3682c",
+      "byte_size": 2162758,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-multicolor-dress-overlay",
+      "case_ids": [
+        "SEG-MULTICOLOR-DRESS"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-MULTICOLOR-DRESS_overlay.jpg",
+      "sha256": "7adc5352ceda1a98be97fe9073c764deecd6e5057a2089ef32eb71d0760b69b4",
+      "byte_size": 5394151,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-low-light-overlay",
+      "case_ids": [
+        "SEG-LOW-LIGHT"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-LOW-LIGHT_overlay.jpg",
+      "sha256": "2570737de67999dae648f7b72d3db4fdc37d16a0441871b18b32de6af56b8a0c",
+      "byte_size": 2318402,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-warm-light-overlay",
+      "case_ids": [
+        "SEG-WARM-LIGHT"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-WARM-LIGHT_overlay.jpg",
+      "sha256": "c2f5711b19c0c3eae81acc87ab415771ea3c6c5df90fa1d7298a8536cf7f8dd7",
+      "byte_size": 3089371,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-motion-slow-overlay",
+      "case_ids": [
+        "SEG-MOTION-SLOW"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-MOTION-SLOW_overlay.avi",
+      "sha256": "3c2b019d5d9db2169fd25479d8aae8d515764f279ace0fb4be55677a19cbe3f4",
+      "byte_size": 9028820,
+      "media_type": "video/x-msvideo",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-motion-fast-overlay",
+      "case_ids": [
+        "SEG-MOTION-FAST"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-MOTION-FAST_overlay.avi",
+      "sha256": "85d2425be57d20192a3b70d9f8bca650f5b13dd8631c6e3760fffea2a2da3df1",
+      "byte_size": 29575638,
+      "media_type": "video/x-msvideo",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-occlusion-overlay",
+      "case_ids": [
+        "SEG-OCCLUSION"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-OCCLUSION_overlay.jpg",
+      "sha256": "a86e8ff524db683299f64423366691e0a7376968db69fce72c1cb2af253ddd73",
+      "byte_size": 2661714,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-carried-object-overlay",
+      "case_ids": [
+        "SEG-CARRIED-OBJECT"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-CARRIED-OBJECT_overlay.jpg",
+      "sha256": "9a7f39f2b63ffdee78ade2926659a4d3604742aa0f03baccab20abecc2c09782",
+      "byte_size": 3075371,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-similar-background-overlay",
+      "case_ids": [
+        "SEG-SIMILAR-BACKGROUND"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-SIMILAR-BACKGROUND_overlay.jpg",
+      "sha256": "b980e63cbb34d8a0651834f46ad0373d2dd11ea0b8cceeb4f401eb17017e0bf4",
+      "byte_size": 3899461,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-pose-seated-overlay",
+      "case_ids": [
+        "SEG-POSE-SEATED"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-POSE-SEATED_overlay.jpg",
+      "sha256": "49f6db47064d86f958a39f94806faf215fa0c1a488299f8f1c9ca0ffbb4c4250",
+      "byte_size": 3803051,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-close-crop-overlay",
+      "case_ids": [
+        "SEG-CLOSE-CROP"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-CLOSE-CROP_overlay.jpg",
+      "sha256": "189e1c380c96b4592e979f0196137c4f93af05ae5fe9da11ebef067f6b046087",
+      "byte_size": 3283333,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-multi-person-overlay",
+      "case_ids": [
+        "SEG-MULTI-PERSON"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-MULTI-PERSON_overlay.jpg",
+      "sha256": "12a1a95ea439b8c6575c230e7dcf8a5c740873c9d0e25608214a74c5a5816dc5",
+      "byte_size": 2008802,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "art-seg-no-person-overlay",
+      "case_ids": [
+        "SEG-NO-PERSON"
+      ],
+      "relative_path": "artifacts/t09/segmentation/overlays/SEG-NO-PERSON_overlay.jpg",
+      "sha256": "b04a7100e5da9447b725d3f379863f2c9a208aa7d71ad92b296ba9e0fd2691ab",
+      "byte_size": 3319126,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "system",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Project source",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    }
+  ],
+  "commands": [
+    {
+      "command": "python scripts/t09_segmentation_eval.py",
+      "exit_code": 0,
+      "started_at_utc": "2026-08-22T18:37:02Z",
+      "ended_at_utc": "2026-08-22T18:37:02Z",
+      "output_summary": "Evaluated 20 cases"
+    }
+  ],
+  "failure_cases": [
+    {
+      "failure_id": "FAIL-SEG-001",
+      "case_ids": [
+        "SEG-MULTICOLOR-DRESS"
+      ],
+      "observed_behavior": "Masks arm instead of dress",
+      "expected_behavior": "Masks the multicolored dress, excludes arms",
+      "user_impact": "Recolors the user's arm unexpectedly",
+      "reproduction": "Run segmentation on artifacts/t09/segmentation/inputs/multicolor-dress.jpg",
+      "mitigation": "Wait for SCHP backend integration or fine-tune model to better distinguish skin/clothing",
+      "status": "OPEN"
+    },
+    {
+      "failure_id": "FAIL-SEG-002",
+      "case_ids": [
+        "SEG-MULTI-PERSON"
+      ],
+      "observed_behavior": "Masks all clothing on multiple people as a single merged mask",
+      "expected_behavior": "Segment only the target user's clothing or separate instances",
+      "user_impact": "Recolors clothing of bystanders",
+      "reproduction": "Run segmentation on artifacts/t09/segmentation/inputs/multi-person.jpg",
+      "mitigation": "Integrate person tracking (e.g. ByteTrack) to isolate the primary subject before garment segmentation",
+      "status": "OPEN"
+    },
+    {
+      "failure_id": "FAIL-SEG-003",
+      "case_ids": [
+        "SEG-CARRIED-OBJECT",
+        "SEG-CLOSE-CROP"
+      ],
+      "observed_behavior": "Includes occluding objects (flowers) in the garment mask",
+      "expected_behavior": "Excludes the carried object from the garment mask",
+      "user_impact": "Recolors the carried object (flowers) unnecessarily",
+      "reproduction": "Run segmentation on artifacts/t09/segmentation/inputs/carried-object.jpg",
+      "mitigation": "Use a backend capable of detecting occlusions (e.g. SCHP-ATR) or add object detection to mask out hands/props",
+      "status": "OPEN"
+    }
+  ],
+  "limitations": [
+    "SCHP-ATR may include carried objects or crossed arms in the garment mask",
+    "No ground-truth annotations available currently",
+    "Hands and occlusions are commonly included in the mask"
+  ],
+  "responsible_ai": {
+    "runtime_local_offline": true,
+    "frames_saved_by_default": false,
+    "frames_uploaded_by_default": false,
+    "medical_diagnosis_claim": false,
+    "user_selected_profile": true,
+    "privacy_summary": "No unconsented frames collected",
+    "bias_coverage_summary": "Tested mostly on historical public figures, demographic bias likely",
+    "environmental_summary": "Executed on CPU, lightweight model",
+    "license_summary": "Used public domain and CC0 images",
+    "user_validation_status": "NOT_MEASURED"
+  }
+}

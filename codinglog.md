@@ -2846,3 +2846,42 @@ Implement the `SCHPSegmenter` behind the existing `Segmenter` interface using th
   - Size: 267445237 bytes
   - SHA-256: E9D7C91CE3B4E7133DF56B599FC817B533E3439C5E8D282A59126D2FDA339A2A
 - **Artifact Output**: `artifacts/t09/segmentation/debug_after/SCHP_SEG-PUB-NASA-SHEPARD.jpg`
+
+### `2026-08-22 18:40 +07:00` — `T09` `Segmentation evaluation and failure analysis`
+
+**Status:** `DONE` (for segmentation workstream)
+**Owner/agent:** Dong
+**Plan reference:** `plan.md#t09--evaluation-responsible-ai-and-evidence-package`
+
+#### Objective
+
+Run the curated segmentation protocol (`t09_segmentation_eval.py`), collect adequacy ratings and IoU metrics, and identify 3 evidence-backed failure cases.
+
+#### Work performed
+
+- Ran `scripts/t09_segmentation_eval.py` to evaluate 20 curated segmentation cases (static images and videos, including different lightings, poses, and multiple subjects).
+- Rated each overlay manually based on the SCHP-ATR output adequacy.
+- Saved the output metadata and artifacts to `t09-segmentation-result-dong.json`.
+- Logged 3 evidence-backed failure cases identified during the evaluation.
+
+#### Evidence-backed failure cases
+
+1. **FAIL-SEG-001 (SEG-MULTICOLOR-DRESS)**
+   - **Observed:** Masks arm instead of the multicolored dress.
+   - **Root Cause:** Model confusion distinguishing between skin and complex clothing patterns.
+   - **Mitigation:** Wait for further SCHP backend integration or fine-tune the model to better distinguish skin/clothing.
+
+2. **FAIL-SEG-002 (SEG-MULTI-PERSON)**
+   - **Observed:** Masks all clothing on multiple people as a single merged mask.
+   - **Root Cause:** Backend merges all clothing labels into a single mask without instance differentiation.
+   - **Mitigation:** Integrate person tracking (e.g. ByteTrack) to isolate the primary subject before garment segmentation.
+
+3. **FAIL-SEG-003 (SEG-CARRIED-OBJECT / SEG-CLOSE-CROP)**
+   - **Observed:** Includes occluding objects (like a bouquet of flowers) in the garment mask.
+   - **Root Cause:** Model does not distinguish between clothing and objects held directly over it.
+   - **Mitigation:** Use a backend capable of detecting occlusions or add object detection to mask out hands/props.
+
+#### Result
+
+- The evaluation data, metrics (e.g., 50% adequate rate for current test set), and failure cases were successfully recorded in `t09-segmentation-result-dong.json`.
+- The evaluation highlights strengths (e.g., handles seated poses and background similar to clothing) and weaknesses (e.g., multi-person, occlusions, complex multicolored patterns).
