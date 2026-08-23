@@ -177,6 +177,10 @@ def ignored_artifact_manifest(
     license_id: str,
     license_evidence: str,
     derived_from: Sequence[str] = (),
+    source_url: str | None = None,
+    consent_status: str = "NOT_APPLICABLE_NO_PERSON",
+    consent_record_ref: str | None = None,
+    contains_personal_data: bool = False,
 ) -> dict[str, Any]:
     return {
         "artifact_id": artifact_id,
@@ -191,13 +195,13 @@ def ignored_artifact_manifest(
         "provenance": {
             "provenance_class": provenance_class,
             "creator_or_source": creator_or_source,
-            "source_url": None,
+            "source_url": source_url,
             "created_or_captured_at_utc": created_at_utc,
             "license_id": license_id,
             "license_evidence": license_evidence,
-            "consent_status": "NOT_APPLICABLE_NO_PERSON",
-            "consent_record_ref": None,
-            "contains_personal_data": False,
+            "consent_status": consent_status,
+            "consent_record_ref": consent_record_ref,
+            "contains_personal_data": contains_personal_data,
         },
     }
 

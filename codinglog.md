@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-23 22:19 +07:00
+Last updated: 2026-08-23 22:59 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -2989,6 +2989,66 @@ git check-attr text eol -- evaluation/results/curated/color_science/result.json 
 Integrate the consented Dong media locally under ignored `artifacts/t09/`,
 rerun the exact 20 segmentation cases using the locked default MediaPipe
 backend, then complete the coordinator-owned end-to-end workstream.
+
+---
+
+### `2026-08-23 22:59 +07:00` - `T09` `Coordinator completion pass started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex (coordinators)
+**Plan reference:** `plan.md#t09--evaluation-responsible-ai-and-evidence-package`
+
+#### Objective
+
+Complete the outstanding default-backend segmentation and coordinator-owned
+end-to-end workstreams, regenerate a cross-workstream summary, and determine
+the final T09 status strictly from protocol 1.0.0 evidence. Missing physical
+lighting assets will remain visible as `NOT_RUN`; no synthetic result will be
+relabeled as a physical observation.
+
+#### Starting state and smallest implementation
+
+- Clean local `mvp` at `b697774f241e2c6e041f187fc95f98738a719aa1`,
+  four T09 integration commits ahead of `origin/mvp`.
+- T00-T08 are `DONE`; T09 remains `IN_PROGRESS` with validated partial color
+  and performance/responsible-AI packages.
+- Use only the locked `lens` Python 3.10.20 environment and the current
+  `mediapipe-selfie-torso/cpu` baseline. SCHP/OpenVINO remain T10 work.
+- Select only Dong's 15 consented inputs and three reviewed annotations into
+  ignored `artifacts/t09/segmentation/`; do not merge the branch's raw-media,
+  frozen-registry, dependency, SCHP, or coding-log changes.
+- Build a raw-independent tested evaluator, run all 20 frozen segmentation
+  cases with the real default backend, record manual adequacy and annotated
+  IoU, and verify every available ignored byte by SHA-256.
+- Generate all deterministic end-to-end cases, execute any acquired moving
+  case without silently substituting media, and save schema-valid JSON plus
+  human-readable CSV/Markdown evidence and at least three concrete failures.
+- Update the cross-workstream summary and documentation, validate all curated
+  packages, run the complete repository/CLI/dependency/artifact gates, then
+  set T09 to `DONE` only if every required plan criterion has real evidence.
+
+#### Consent and evidence boundary
+
+The repository owner has stated that Dong's raw media was verified as
+consented for use. The committed manifest will contain only a non-identifying
+data-custodian reference and exact provenance/checksum fields; raw images,
+videos, masks, overlays, and private consent records remain ignored and are
+never added with `git add -f`.
+
+#### Baseline checks
+
+| Check | Result |
+| --- | --- |
+| Git state | PASS, exit 0: clean `mvp`, HEAD `b697774...`, ahead of `origin/mvp` by four commits |
+| Frozen registry | PASS: 50 color, 20 segmentation, 10 end-to-end, and 12 performance/responsible-AI cases |
+| Approved runtime | Pending final recorded execution in this completion pass |
+| Physical 11 x 3 inputs | NOT AVAILABLE at start; exact rows remain `NOT_RUN` unless compliant assets are actually acquired |
+
+#### Next action
+
+Materialize and checksum Dong's consented media only below the ignored
+segmentation artifact namespace, then implement and run the corrected
+MediaPipe evaluation.
 
 ---
 
