@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-20 19:21 +07:00
+Last updated: 2026-08-23 21:59 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -40,7 +40,7 @@ This table is intentionally empty until an agent starts the plan.
 | T06 | Selective recolor, outline, and score overlay | `DONE` | Codex | 2026-08-20 13:02 +07:00 | 2026-08-20 13:10 +07:00 | T06 start and completion entries below |
 | T07 | Rule-based color matching | `DONE` | Codex | 2026-08-20 16:02 +07:00 | 2026-08-20 16:11 +07:00 | T07 start and completion entries below |
 | T08 | End-to-end live pipeline and controls | `DONE` | Codex | 2026-08-20 16:24 +07:00 | 2026-08-20 16:58 +07:00 | T08 start and completion entries below |
-| T09 | Evaluation, responsible AI, and evidence package | `IN_PROGRESS` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-20 19:21 +07:00 | T09 Gate 0 start/completion entries below; evaluation workstreams not yet run |
+| T09 | Evaluation, responsible AI, and evidence package | `IN_PROGRESS` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-23 21:59 +07:00 | Gate 0 plus Trinh/Phong selective-integration entry below; final T09 workstreams remain incomplete |
 
 ## 3. Active blockers
 
@@ -2798,6 +2798,83 @@ git check-ignore -q --no-index -- <curated and raw T09 policy probes>
 - Exact next action after push and green CI: Dong, Phong, and Trinh create
   their assigned branches from the new Gate 0 commit; coordinators continue
   the `end_to_end` T09 workstream on `mvp`.
+
+---
+
+### `2026-08-23 21:59 +07:00` - `T09` `Selective Trinh/Phong evidence integration started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex (coordinators)
+**Plan reference:** `plan.md#t09--evaluation-responsible-ai-and-evidence-package`
+
+#### Objective
+
+Select the valid benchmark/manual-baseline/responsible-AI work from Trinh's
+branch and the deterministic lighting/color/CVD work from Phong's branch,
+then regenerate coordinator-owned, schema-valid curated results on `mvp`
+without merging either branch wholesale or depending on ignored raw files.
+
+#### Starting state and reviewed sources
+
+- Clean synchronized branch `mvp` at Gate 0 commit
+  `47ffa3721280dd51032d5da5c1c0ec1c3377f838`.
+- Trinh branch tip:
+  `b5da1c0e4975f3f4b07f08cec83bf0ada457bf2e`; retained source commits are
+  `7bc76d0` (benchmark), `23e55f8`/`b5da1c0` (report), `c0e3e7a` (manual ROI),
+  and `3bd976b` (responsible-AI audit).
+- Phong branch tip:
+  `82ce430d2f7157d8e26254ed2cfd9f69ad82eeb4`.
+- Approved environment remains isolated conda environment `lens`, Python
+  `3.10.20`; `pip check` exited 0 before implementation.
+- The collaborator branches are evidence sources only. Their commits are not
+  merged or cherry-picked because their generated packages do not yet satisfy
+  the frozen registry/checksum/reproducibility gate.
+
+#### Smallest implementation
+
+- Retain a hardware-independent benchmark result mapper and a runnable raw
+  benchmark command using the already frozen T08 latency instrumentation.
+- Convert Trinh's measured development-host observations and manual ROI median
+  into a tracked schema-1.0.0 result, preserving `sensor_to_photon_ms` as
+  `NOT_MEASURED` and explicitly withholding demo-hardware claims.
+- Retain Phong's deterministic synthetic-lighting, 121-cell confusion table,
+  K=2 containment, and six CVD sanity calculations, while making the result
+  cover the exact 50 frozen color-science IDs: 33 physical rows remain
+  `NOT_RUN`, 11 digital contract rows run, and six CVD rows run.
+- Collect current environment metadata dynamically for newly executed color
+  evidence. Force curated text output to LF so exact-byte SHA-256 manifests
+  remain stable across Windows checkout normalization.
+- Add a standard-library schema/metric/case/checksum validator and tests that
+  pass without webcam, network, model download, physical color assets, or
+  ignored raw benchmark JSON.
+
+#### Baseline checks
+
+```text
+git status --short --branch
+git branch --show-current
+git rev-parse HEAD
+git rev-parse origin/mvp
+D:\Coding\Anaconda\envs\lens\python.exe --version
+D:\Coding\Anaconda\envs\lens\python.exe -m pip check
+git log --oneline --decorate --graph --all -20
+git diff --stat 47ffa372..origin/eval/t09-performance-rai-trinh
+git diff --stat 47ffa372..origin/phong-updated_1
+```
+
+| Check | Result |
+| --- | --- |
+| Git baseline | PASS, exit 0: clean `mvp`; local/remote both `47ffa372...` |
+| Approved interpreter | PASS, exit 0: Python 3.10.20 in `lens` |
+| Dependency consistency | PASS, exit 0: no broken requirements |
+| Source-of-truth conflict | PASS: no frozen protocol/schema/fixture or MVP scope change is required |
+| Physical color assets | NOT AVAILABLE: exact frozen rows must remain `NOT_RUN`; no result will be fabricated |
+
+#### Completion state
+
+Implementation, result regeneration, focused tests, full tests, and final
+evidence are pending and will be appended in a later entry. T09 remains
+`IN_PROGRESS`.
 
 ---
 
