@@ -1,0 +1,45 @@
+case_id,fixture_id,category,lighting,status,expected_name,predicted_name,correct,reason
+COL-BLACK-DAYLIGHT,physical-basic11-black,color_lighting,daylight,NOT_RUN,black,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-BLACK-NEUTRAL,physical-basic11-black,color_lighting,neutral_indoor,NOT_RUN,black,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-BLACK-WARMLOW,physical-basic11-black,color_lighting,warm_low,NOT_RUN,black,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-BLUE-DAYLIGHT,physical-basic11-blue,color_lighting,daylight,NOT_RUN,blue,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-BLUE-NEUTRAL,physical-basic11-blue,color_lighting,neutral_indoor,NOT_RUN,blue,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-BLUE-WARMLOW,physical-basic11-blue,color_lighting,warm_low,NOT_RUN,blue,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-BROWN-DAYLIGHT,physical-basic11-brown,color_lighting,daylight,NOT_RUN,brown,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-BROWN-NEUTRAL,physical-basic11-brown,color_lighting,neutral_indoor,NOT_RUN,brown,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-BROWN-WARMLOW,physical-basic11-brown,color_lighting,warm_low,NOT_RUN,brown,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-GREY-DAYLIGHT,physical-basic11-grey,color_lighting,daylight,NOT_RUN,grey,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-GREY-NEUTRAL,physical-basic11-grey,color_lighting,neutral_indoor,NOT_RUN,grey,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-GREY-WARMLOW,physical-basic11-grey,color_lighting,warm_low,NOT_RUN,grey,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-GREEN-DAYLIGHT,physical-basic11-green,color_lighting,daylight,NOT_RUN,green,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-GREEN-NEUTRAL,physical-basic11-green,color_lighting,neutral_indoor,NOT_RUN,green,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-GREEN-WARMLOW,physical-basic11-green,color_lighting,warm_low,NOT_RUN,green,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-ORANGE-DAYLIGHT,physical-basic11-orange,color_lighting,daylight,NOT_RUN,orange,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-ORANGE-NEUTRAL,physical-basic11-orange,color_lighting,neutral_indoor,NOT_RUN,orange,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-ORANGE-WARMLOW,physical-basic11-orange,color_lighting,warm_low,NOT_RUN,orange,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-PINK-DAYLIGHT,physical-basic11-pink,color_lighting,daylight,NOT_RUN,pink,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-PINK-NEUTRAL,physical-basic11-pink,color_lighting,neutral_indoor,NOT_RUN,pink,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-PINK-WARMLOW,physical-basic11-pink,color_lighting,warm_low,NOT_RUN,pink,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-PURPLE-DAYLIGHT,physical-basic11-purple,color_lighting,daylight,NOT_RUN,purple,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-PURPLE-NEUTRAL,physical-basic11-purple,color_lighting,neutral_indoor,NOT_RUN,purple,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-PURPLE-WARMLOW,physical-basic11-purple,color_lighting,warm_low,NOT_RUN,purple,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-RED-DAYLIGHT,physical-basic11-red,color_lighting,daylight,NOT_RUN,red,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-RED-NEUTRAL,physical-basic11-red,color_lighting,neutral_indoor,NOT_RUN,red,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-RED-WARMLOW,physical-basic11-red,color_lighting,warm_low,NOT_RUN,red,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-WHITE-DAYLIGHT,physical-basic11-white,color_lighting,daylight,NOT_RUN,white,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-WHITE-NEUTRAL,physical-basic11-white,color_lighting,neutral_indoor,NOT_RUN,white,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-WHITE-WARMLOW,physical-basic11-white,color_lighting,warm_low,NOT_RUN,white,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-YELLOW-DAYLIGHT,physical-basic11-yellow,color_lighting,daylight,NOT_RUN,yellow,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-YELLOW-NEUTRAL,physical-basic11-yellow,color_lighting,neutral_indoor,NOT_RUN,yellow,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-YELLOW-WARMLOW,physical-basic11-yellow,color_lighting,warm_low,NOT_RUN,yellow,,,exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement
+COL-CONTRACT-BLACK,basic11-black,color_contract,digital,COMPLETE,black,black,True,deterministic tracked digital color-naming contract patch
+COL-CONTRACT-BLUE,basic11-blue,color_contract,digital,COMPLETE,blue,blue,True,deterministic tracked digital color-naming contract patch
+COL-CONTRACT-BROWN,basic11-brown,color_contract,digital,COMPLETE,brown,brown,True,deterministic tracked digital color-naming contract patch
+COL-CONTRACT-GREY,basic11-grey,color_contract,digital,COMPLETE,grey,grey,True,deterministic tracked digital color-naming contract patch
+COL-CONTRACT-GREEN,basic11-green,color_contract,digital,COMPLETE,green,green,True,deterministic tracked digital color-naming contract patch
+COL-CONTRACT-ORANGE,basic11-orange,color_contract,digital,COMPLETE,orange,orange,True,deterministic tracked digital color-naming contract patch
+COL-CONTRACT-PINK,basic11-pink,color_contract,digital,COMPLETE,pink,pink,True,deterministic tracked digital color-naming contract patch
+COL-CONTRACT-PURPLE,basic11-purple,color_contract,digital,COMPLETE,purple,purple,True,deterministic tracked digital color-naming contract patch
+COL-CONTRACT-RED,basic11-red,color_contract,digital,COMPLETE,red,red,True,deterministic tracked digital color-naming contract patch
+COL-CONTRACT-WHITE,basic11-white,color_contract,digital,COMPLETE,white,white,True,deterministic tracked digital color-naming contract patch
+COL-CONTRACT-YELLOW,basic11-yellow,color_contract,digital,COMPLETE,yellow,yellow,True,deterministic tracked digital color-naming contract patch

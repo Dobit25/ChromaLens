@@ -1,0 +1,98 @@
+case_ids,name,aggregation,unit,status,value,threshold_id,threshold_result,method
+PERF-WEBCAM-GUI-120,processed_fps,single,frames/s,MEASURED,18.497687789026372,demo_floor,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,source_read_to_render_ms,p50,ms,MEASURED,62.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,source_read_to_render_ms,p95,ms,MEASURED,156.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,source_read_to_render_slope_ms_per_minute,whole_session,ms/min,MEASURED,-6.965429760462803,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,frame_processing_to_render_ms,p50,ms,MEASURED,32.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,frame_processing_to_render_ms,p95,ms,MEASURED,140.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,rss_mib,start,MiB,MEASURED,187.12890625,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,rss_mib,end,MiB,MEASURED,178.34765625,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,rss_mib,peak,MiB,MEASURED,218.8671875,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,rss_delta_mib,whole_session,MiB,MEASURED,-8.78125,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,rss_slope_mib_per_minute,whole_session,MiB/min,MEASURED,6.900712044036851,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,latency_continuous_growth_flag,single,boolean,MEASURED,False,required,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,rss_continuous_growth_flag,single,boolean,MEASURED,True,required,FAIL,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,processed_frame_count,count,frame,MEASURED,2220,must_be_positive,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,degraded_frame_rate,single,ratio,MEASURED,0.9355855855855856,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,retained_source_read_to_render_sample_count,count,count,MEASURED,2220,no_truncation,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,retained_source_read_to_display_submit_sample_count,count,count,MEASURED,2220,no_truncation_gui,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,dropped_capture_frame_count,count,frame,MEASURED,1382,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,source_read_to_display_submit_ms,p50,ms,MEASURED,62.0,demo_floor_p50,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,source_read_to_display_submit_ms,p95,ms,MEASURED,156.0,,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-GUI-120,sensor_to_photon_ms,p50,ms,NOT_MEASURED,,external_apparatus_required,NOT_EVALUATED,No external apparatus; software timestamps cannot measure sensor-to-photon
+PERF-WEBCAM-GUI-120,sensor_to_photon_ms,p95,ms,NOT_MEASURED,,external_apparatus_required,NOT_EVALUATED,No external apparatus; software timestamps cannot measure sensor-to-photon
+PERF-WEBCAM-HEADLESS-120,processed_fps,single,frames/s,MEASURED,21.25,demo_floor,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,source_read_to_render_ms,p50,ms,MEASURED,47.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,source_read_to_render_ms,p95,ms,MEASURED,125.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,source_read_to_render_slope_ms_per_minute,whole_session,ms/min,MEASURED,9.796190674127388,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,frame_processing_to_render_ms,p50,ms,MEASURED,32.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,frame_processing_to_render_ms,p95,ms,MEASURED,94.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,rss_mib,start,MiB,MEASURED,191.671875,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,rss_mib,end,MiB,MEASURED,165.87109375,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,rss_mib,peak,MiB,MEASURED,216.68359375,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,rss_delta_mib,whole_session,MiB,MEASURED,-25.80078125,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,rss_slope_mib_per_minute,whole_session,MiB/min,MEASURED,6.966297357784202,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,latency_continuous_growth_flag,single,boolean,MEASURED,False,required,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,rss_continuous_growth_flag,single,boolean,MEASURED,True,required,FAIL,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,processed_frame_count,count,frame,MEASURED,2550,must_be_positive,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,degraded_frame_rate,single,ratio,MEASURED,0.876078431372549,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,retained_source_read_to_render_sample_count,count,count,MEASURED,2550,no_truncation,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,retained_source_read_to_display_submit_sample_count,count,count,MEASURED,0,no_truncation_gui,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,dropped_capture_frame_count,count,frame,MEASURED,1051,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-WEBCAM-HEADLESS-120,source_read_to_display_submit_ms,p50,ms,NOT_MEASURED,,demo_floor_p50,NOT_EVALUATED,T09 protocol 1.0.0 explicit unmeasured boundary
+PERF-WEBCAM-HEADLESS-120,source_read_to_display_submit_ms,p95,ms,NOT_MEASURED,,,NOT_EVALUATED,T09 protocol 1.0.0 explicit unmeasured boundary
+PERF-WEBCAM-HEADLESS-120,sensor_to_photon_ms,p50,ms,NOT_MEASURED,,external_apparatus_required,NOT_EVALUATED,No external apparatus; software timestamps cannot measure sensor-to-photon
+PERF-WEBCAM-HEADLESS-120,sensor_to_photon_ms,p95,ms,NOT_MEASURED,,external_apparatus_required,NOT_EVALUATED,No external apparatus; software timestamps cannot measure sensor-to-photon
+PERF-VIDEO-GUI-120,processed_fps,single,frames/s,MEASURED,30.0,demo_floor,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,source_read_to_render_ms,p50,ms,MEASURED,16.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,source_read_to_render_ms,p95,ms,MEASURED,32.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,source_read_to_render_slope_ms_per_minute,whole_session,ms/min,MEASURED,-0.5640926120804822,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,frame_processing_to_render_ms,p50,ms,MEASURED,16.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,frame_processing_to_render_ms,p95,ms,MEASURED,32.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,rss_mib,start,MiB,MEASURED,138.265625,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,rss_mib,end,MiB,MEASURED,120.1953125,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,rss_mib,peak,MiB,MEASURED,148.99609375,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,rss_delta_mib,whole_session,MiB,MEASURED,-18.0703125,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,rss_slope_mib_per_minute,whole_session,MiB/min,MEASURED,3.6218831940234897,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,latency_continuous_growth_flag,single,boolean,MEASURED,False,required,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,rss_continuous_growth_flag,single,boolean,MEASURED,False,required,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,processed_frame_count,count,frame,MEASURED,3600,must_be_positive,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,degraded_frame_rate,single,ratio,MEASURED,0.9833333333333333,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,retained_source_read_to_render_sample_count,count,count,MEASURED,3600,no_truncation,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,retained_source_read_to_display_submit_sample_count,count,count,MEASURED,3600,no_truncation_gui,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,dropped_capture_frame_count,count,frame,NOT_APPLICABLE,,observation_only,NOT_APPLICABLE,T09 protocol 1.0.0 explicit unmeasured boundary
+PERF-VIDEO-GUI-120,source_read_to_display_submit_ms,p50,ms,MEASURED,16.0,demo_floor_p50,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,source_read_to_display_submit_ms,p95,ms,MEASURED,32.0,,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-GUI-120,sensor_to_photon_ms,p50,ms,NOT_MEASURED,,external_apparatus_required,NOT_EVALUATED,No external apparatus; software timestamps cannot measure sensor-to-photon
+PERF-VIDEO-GUI-120,sensor_to_photon_ms,p95,ms,NOT_MEASURED,,external_apparatus_required,NOT_EVALUATED,No external apparatus; software timestamps cannot measure sensor-to-photon
+PERF-VIDEO-HEADLESS-120,processed_fps,single,frames/s,MEASURED,48.95,demo_floor,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,source_read_to_render_ms,p50,ms,MEASURED,16.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,source_read_to_render_ms,p95,ms,MEASURED,32.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,source_read_to_render_slope_ms_per_minute,whole_session,ms/min,MEASURED,-0.023785868979778566,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,frame_processing_to_render_ms,p50,ms,MEASURED,16.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,frame_processing_to_render_ms,p95,ms,MEASURED,32.0,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,rss_mib,start,MiB,MEASURED,131.2578125,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,rss_mib,end,MiB,MEASURED,116.23828125,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,rss_mib,peak,MiB,MEASURED,151.30078125,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,rss_delta_mib,whole_session,MiB,MEASURED,-15.01953125,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,rss_slope_mib_per_minute,whole_session,MiB/min,MEASURED,6.678754087905211,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,latency_continuous_growth_flag,single,boolean,MEASURED,False,required,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,rss_continuous_growth_flag,single,boolean,MEASURED,True,required,FAIL,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,processed_frame_count,count,frame,MEASURED,5874,must_be_positive,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,degraded_frame_rate,single,ratio,MEASURED,0.9838270343888321,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,retained_source_read_to_render_sample_count,count,count,MEASURED,5874,no_truncation,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,retained_source_read_to_display_submit_sample_count,count,count,MEASURED,0,no_truncation_gui,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+PERF-VIDEO-HEADLESS-120,dropped_capture_frame_count,count,frame,NOT_APPLICABLE,,observation_only,NOT_APPLICABLE,T09 protocol 1.0.0 explicit unmeasured boundary
+PERF-VIDEO-HEADLESS-120,source_read_to_display_submit_ms,p50,ms,NOT_MEASURED,,demo_floor_p50,NOT_EVALUATED,T09 protocol 1.0.0 explicit unmeasured boundary
+PERF-VIDEO-HEADLESS-120,source_read_to_display_submit_ms,p95,ms,NOT_MEASURED,,,NOT_EVALUATED,T09 protocol 1.0.0 explicit unmeasured boundary
+PERF-VIDEO-HEADLESS-120,sensor_to_photon_ms,p50,ms,NOT_MEASURED,,external_apparatus_required,NOT_EVALUATED,No external apparatus; software timestamps cannot measure sensor-to-photon
+PERF-VIDEO-HEADLESS-120,sensor_to_photon_ms,p95,ms,NOT_MEASURED,,external_apparatus_required,NOT_EVALUATED,No external apparatus; software timestamps cannot measure sensor-to-photon
+PERF-SENSOR-EXTERNAL,sensor_to_photon_ms,p50,ms,NOT_MEASURED,,external_apparatus_required,NOT_EVALUATED,No external apparatus; sensor-to-photon remains NOT_MEASURED
+PERF-SENSOR-EXTERNAL,sensor_to_photon_ms,p95,ms,NOT_MEASURED,,external_apparatus_required,NOT_EVALUATED,No external apparatus; sensor-to-photon remains NOT_MEASURED
+BASELINE-MANUAL-ROI,manual_baseline_completion_seconds,median,second,MEASURED,3.016,observation_only,NOT_EVALUATED,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+BASELINE-FIXED-RGB,artifact_checksum_mismatch_count,count,count,MEASURED,0,required,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+RAI-ARTIFACT-INTEGRITY,artifact_checksum_mismatch_count,count,count,NOT_MEASURED,,required,NOT_EVALUATED,T09 protocol 1.0.0 explicit unmeasured boundary
+RAI-PRIVACY,unconsented_tracked_media_count,count,count,MEASURED,0,required,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+RAI-LICENSE,artifact_checksum_mismatch_count,count,count,MEASURED,0,required,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+RAI-LIMITATIONS,unconsented_tracked_media_count,count,count,MEASURED,0,required,PASS,T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0
+RAI-USER-VALIDATION,unconsented_tracked_media_count,count,count,NOT_MEASURED,,required,NOT_EVALUATED,T09 protocol 1.0.0 explicit unmeasured boundary

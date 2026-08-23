@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-23 21:59 +07:00
+Last updated: 2026-08-23 22:19 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -40,7 +40,7 @@ This table is intentionally empty until an agent starts the plan.
 | T06 | Selective recolor, outline, and score overlay | `DONE` | Codex | 2026-08-20 13:02 +07:00 | 2026-08-20 13:10 +07:00 | T06 start and completion entries below |
 | T07 | Rule-based color matching | `DONE` | Codex | 2026-08-20 16:02 +07:00 | 2026-08-20 16:11 +07:00 | T07 start and completion entries below |
 | T08 | End-to-end live pipeline and controls | `DONE` | Codex | 2026-08-20 16:24 +07:00 | 2026-08-20 16:58 +07:00 | T08 start and completion entries below |
-| T09 | Evaluation, responsible AI, and evidence package | `IN_PROGRESS` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-23 21:59 +07:00 | Gate 0 plus Trinh/Phong selective-integration entry below; final T09 workstreams remain incomplete |
+| T09 | Evaluation, responsible AI, and evidence package | `IN_PROGRESS` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-23 22:19 +07:00 | Gate 0 plus validated Trinh/Phong curated packages below; segmentation, end-to-end, physical color, and final summary remain incomplete |
 
 ## 3. Active blockers
 
@@ -2875,6 +2875,120 @@ git diff --stat 47ffa372..origin/phong-updated_1
 Implementation, result regeneration, focused tests, full tests, and final
 evidence are pending and will be appended in a later entry. T09 remains
 `IN_PROGRESS`.
+
+---
+
+### `2026-08-23 22:19 +07:00` - `T09` `Trinh/Phong curated integration complete`
+
+**Status:** `IN_PROGRESS` - these two workstreams are integrated as honest
+`PARTIAL` evidence; T09 overall is not complete.
+**Owner/agent:** Repository owner + Codex (coordinators)
+**Plan reference:** `plan.md#t09--evaluation-responsible-ai-and-evidence-package`
+
+#### Outcome
+
+- Retained Trinh's runnable four-case benchmark logic using the frozen T08
+  timestamps, with distinct `source_read_to_render_ms` and
+  `source_read_to_display_submit_ms`; `sensor_to_photon_ms` is always
+  `NOT_MEASURED` without external apparatus.
+- Regenerated one tracked 12-case performance/responsible-AI result from
+  Trinh's four measured development-host observations. The result records 97
+  metrics, manual ROI median `3.016 s`, non-AI baseline explanation, privacy,
+  bias, environmental limits, license gaps, and four concrete failure records.
+- Preserved complete size/SHA-256/provenance manifests for Trinh's seven
+  ignored artifacts. Those raw bytes are absent on this coordinator checkout,
+  so raw re-verification is visibly `PARTIAL`; no test depends on them and no
+  checksum success is fabricated. Two tracked curated artifacts are rehashed.
+- Retained Phong's deterministic three-lighting logic, 121-cell confusion
+  table, K=2 two-color containment, and all six CVD sanity calculations.
+- Regenerated the color result with exactly 50 frozen IDs: 11/11 digital
+  contract cases and six CVD cases are `COMPLETE`; all exact 33 physical rows
+  are present as `NOT_RUN`. The supplemental synthetic matrix remains separate
+  from physical claims: 27/33 names and stability `6/11 = 0.545`, below the
+  frozen 0.80 diagnostic target.
+- Collected the newly executed color environment dynamically. No Lenovo model,
+  CPU, RAM, GPU, package, lock hash, or Git commit is hard-coded in the color
+  evaluator.
+- Added a standard-library validator covering JSON Schema constructs used by
+  schema 1.0.0, metric names/units/aggregations/threshold IDs, exact case
+  coverage, artifact references, tracked checksums, and optional strict ignored
+  artifact checks. Curated outputs use forced LF so SHA-256 remains stable on
+  Windows checkouts with `core.autocrlf=true`.
+- No collaborator branch was merged or cherry-picked, no dependency changed,
+  and no webcam/model download/physical asset was used in coordinator tests.
+
+#### Result identities and scope
+
+| Result | Generator commit | Status | Coverage |
+| --- | --- | --- | --- |
+| `t09-color-science-20260823t151615z` | `432b835339283fbcef8168d5680c21737b410339` | `PARTIAL` | 50 exact cases; 17 complete, 33 physical not run; 30 metrics; five tracked artifacts verified |
+| `t09-performance-rai-20260823t151726z` | `74447afd4110e90dc2cf0ece9de27f01bb1a09a1` | `PARTIAL` | 12 exact cases; eight complete, two partial, two not run; 97 metrics; two tracked artifacts verified; seven ignored artifacts unavailable |
+
+Performance values remain observations from Trinh's LENOVO 83JC development
+host at measurement commit `7bc76d0526b34e7e366fe0cef730dc86680f5ef3`.
+They were not rerun or relabeled as demo-hardware measurements.
+
+#### Files changed
+
+| Path | Purpose |
+| --- | --- |
+| `.gitattributes` | Force curated result bytes to LF for cross-checkout checksums. |
+| `scripts/t09_evaluation_common.py` | Dynamic environment, Git, time, output, and manifest helpers. |
+| `scripts/t09_result_validation.py` | Dependency-free schema/registry/case/checksum gate. |
+| `scripts/t09_benchmark_performance.py` | Runnable raw four-case frozen benchmark. |
+| `scripts/t09_benchmark_report.py` | Coordinator regeneration of Trinh performance/RAI package. |
+| `scripts/t09_responsible_ai_manual_roi.py` | Interactive timing-only manual ROI baseline; no geometry/media storage. |
+| `scripts/t09_color_science_eval.py` | Corrected exact-registry color/lighting/CVD generator. |
+| `evaluation/results/curated/color_science/**` | Six tracked color CSV/JSON/Markdown result files. |
+| `evaluation/results/curated/performance_responsible_ai/**` | Three tracked performance/RAI CSV/JSON/Markdown result files. |
+| `tests/evaluation/**` | Raw-independent evaluator, semantic, schema, case, and checksum tests. |
+| `README.md` | Regeneration, benchmark, manual baseline, and strict validation commands. |
+| `codinglog.md` | Start, repairs, commands, results, limitations, and current status. |
+
+#### Commands and observed results
+
+```text
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q tests/evaluation
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q
+D:\Coding\Anaconda\envs\lens\python.exe scripts/t09_color_science_eval.py
+D:\Coding\Anaconda\envs\lens\python.exe scripts/t09_benchmark_report.py
+D:\Coding\Anaconda\envs\lens\python.exe scripts/t09_result_validation.py
+D:\Coding\Anaconda\envs\lens\python.exe -m pip check
+D:\Coding\Anaconda\envs\lens\python.exe -m compileall -q src scripts tests
+git diff --check
+git check-ignore -v artifacts/t09/performance_responsible_ai/example.json artifacts/t09/color_science/example.png
+git check-attr text eol -- evaluation/results/curated/color_science/result.json evaluation/results/curated/performance_responsible_ai/result.json
+```
+
+| Check | Result |
+| --- | --- |
+| First focused evaluator run | FAIL: 2 failed, 15 passed because the black digital contract patch was intentionally rejected by the extraction dark-pixel filter before naming. Smallest repair: digital contract now tests the T04 naming lookup directly; extraction filters remain active in supplemental garment paths. |
+| Focused rerun after repair | PASS: 17 passed; after checked-in result tests, final 22 passed in 0.69 s. |
+| First direct generator invocation | FAIL before output: both commands raised `ModuleNotFoundError: scripts` because direct-file execution did not include repository root. Smallest repair: direct CLI bootstrap adds only repository root to `sys.path`; `--help` and focused tests passed. |
+| First combined result validation | Color PASS; performance FAIL on a metric threshold ID copied with a non-registry name. Smallest repair: align processed/degraded/drop/retained metric aggregations and threshold IDs exactly to registry 1.0.0, commit, regenerate. |
+| Final curated validation | PASS: color 50 cases/30 metrics/five tracked artifacts; performance 12 cases/97 metrics/two tracked artifacts, with seven ignored raw artifacts honestly unavailable. |
+| Full repository suite | PASS: 226 passed in 3.42 s. |
+| Dependency/compile | PASS: no broken requirements; compileall exit 0. |
+| Raw artifact Git policy | PASS: no `artifacts/t09/` file is tracked; probes remain ignored. |
+| Curated line-ending policy | PASS: both result JSON paths report `text: set`, `eol: lf`. |
+
+#### Commits and limitations
+
+- `2ef6c32` - evaluator/validator/test integration.
+- `432b835` - direct CLI execution repair and color generator baseline.
+- `74447af` - exact performance metric-registry alignment and performance
+  generator baseline.
+- The curated evidence/doc commit is created after this log entry.
+- T09 remains `IN_PROGRESS`, not `DONE`: physical 11 x 3 observations,
+  coordinator-side raw benchmark recovery or a declared-host rerun,
+  segmentation/default-backend integration, end-to-end evaluation, and the
+  final cross-workstream summary remain outstanding.
+
+#### Exact next action
+
+Integrate the consented Dong media locally under ignored `artifacts/t09/`,
+rerun the exact 20 segmentation cases using the locked default MediaPipe
+backend, then complete the coordinator-owned end-to-end workstream.
 
 ---
 

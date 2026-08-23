@@ -1,0 +1,1663 @@
+{
+  "protocol_version": "1.0.0",
+  "schema_version": "1.0.0",
+  "metric_registry_version": "1.0.0",
+  "result_id": "t09-color-science-20260823t151615z",
+  "workstream": "color_science",
+  "result_status": "PARTIAL",
+  "git_commit": "432b835339283fbcef8168d5680c21737b410339",
+  "created_at_utc": "2026-08-23T15:16:15.494544Z",
+  "operator": {
+    "role": "color_evaluator",
+    "identifier": "coordinator-regeneration-from-phong"
+  },
+  "environment": {
+    "host_role": "development",
+    "declared_demo_hardware": false,
+    "manufacturer": "LENOVO",
+    "model": "83DV",
+    "operating_system": "Windows-10-10.0.26200-SP0",
+    "cpu": "13th Gen Intel(R) Core(TM) i5-13450HX",
+    "physical_core_count": 10,
+    "logical_processor_count": 16,
+    "ram_gib": 15.781120300292969,
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "npu": "USB Input Device; Microsoft Input Configuration Device; USB Input Device; USB Input Device; USB Input Device; USB Input Device",
+    "camera_or_source": "tracked digital patches and inline synthetic pairs",
+    "python_version": "3.10.20",
+    "package_versions": {
+      "chromalens-ai": "0.1.0",
+      "numpy": "1.26.4",
+      "opencv-contrib-python": "4.10.0.84",
+      "mediapipe": "0.10.21",
+      "daltonlens": "0.1.5"
+    },
+    "lock_sha256": "23634bd25d39d7f03468afb042526b537af36b5382bf2871ad619066d93bf44e",
+    "backend_name": "deterministic-color-science-and-daltonlens-machado2009",
+    "backend_device": "cpu",
+    "source_kind": "inline_synthetic",
+    "source_resolution": {
+      "width": 128,
+      "height": 128
+    },
+    "render_resolution": {
+      "width": 128,
+      "height": 128
+    },
+    "display_mode": "not_applicable",
+    "warmup_seconds": 0.0,
+    "measurement_seconds": 0.0,
+    "external_measurement_apparatus": null
+  },
+  "cases": [
+    {
+      "case_id": "COL-BLACK-DAYLIGHT",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-black",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-BLACK-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-black",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-BLACK-WARMLOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-black",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-BLUE-DAYLIGHT",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-blue",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-BLUE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-blue",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-BLUE-WARMLOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-blue",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-BROWN-DAYLIGHT",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-brown",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-BROWN-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-brown",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-BROWN-WARMLOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-brown",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-GREY-DAYLIGHT",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-grey",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-GREY-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-grey",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-GREY-WARMLOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-grey",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-GREEN-DAYLIGHT",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-green",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-GREEN-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-green",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-GREEN-WARMLOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-green",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-ORANGE-DAYLIGHT",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-orange",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-ORANGE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-orange",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-ORANGE-WARMLOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-orange",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-PINK-DAYLIGHT",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-pink",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-PINK-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-pink",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-PINK-WARMLOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-pink",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-PURPLE-DAYLIGHT",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-purple",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-PURPLE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-purple",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-PURPLE-WARMLOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-purple",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-RED-DAYLIGHT",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-red",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-RED-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-red",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-RED-WARMLOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-red",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-WHITE-DAYLIGHT",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-white",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-WHITE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-white",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-WHITE-WARMLOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-white",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-YELLOW-DAYLIGHT",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-yellow",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-YELLOW-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-yellow",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-YELLOW-WARMLOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-basic11-yellow",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report"
+      ],
+      "reason": "exact physical asset remains TO_BE_ACQUIRED; supplemental synthetic evidence is not a replacement"
+    },
+    {
+      "case_id": "COL-CONTRACT-BLACK",
+      "status": "COMPLETE",
+      "fixture_id": "basic11-black",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report",
+        "synthetic-lighting-matrix",
+        "color-confusion-table"
+      ],
+      "reason": "deterministic tracked digital color-naming contract patch"
+    },
+    {
+      "case_id": "COL-CONTRACT-BLUE",
+      "status": "COMPLETE",
+      "fixture_id": "basic11-blue",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report",
+        "synthetic-lighting-matrix",
+        "color-confusion-table"
+      ],
+      "reason": "deterministic tracked digital color-naming contract patch"
+    },
+    {
+      "case_id": "COL-CONTRACT-BROWN",
+      "status": "COMPLETE",
+      "fixture_id": "basic11-brown",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report",
+        "synthetic-lighting-matrix",
+        "color-confusion-table"
+      ],
+      "reason": "deterministic tracked digital color-naming contract patch"
+    },
+    {
+      "case_id": "COL-CONTRACT-GREY",
+      "status": "COMPLETE",
+      "fixture_id": "basic11-grey",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report",
+        "synthetic-lighting-matrix",
+        "color-confusion-table"
+      ],
+      "reason": "deterministic tracked digital color-naming contract patch"
+    },
+    {
+      "case_id": "COL-CONTRACT-GREEN",
+      "status": "COMPLETE",
+      "fixture_id": "basic11-green",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report",
+        "synthetic-lighting-matrix",
+        "color-confusion-table"
+      ],
+      "reason": "deterministic tracked digital color-naming contract patch"
+    },
+    {
+      "case_id": "COL-CONTRACT-ORANGE",
+      "status": "COMPLETE",
+      "fixture_id": "basic11-orange",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report",
+        "synthetic-lighting-matrix",
+        "color-confusion-table"
+      ],
+      "reason": "deterministic tracked digital color-naming contract patch"
+    },
+    {
+      "case_id": "COL-CONTRACT-PINK",
+      "status": "COMPLETE",
+      "fixture_id": "basic11-pink",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report",
+        "synthetic-lighting-matrix",
+        "color-confusion-table"
+      ],
+      "reason": "deterministic tracked digital color-naming contract patch"
+    },
+    {
+      "case_id": "COL-CONTRACT-PURPLE",
+      "status": "COMPLETE",
+      "fixture_id": "basic11-purple",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report",
+        "synthetic-lighting-matrix",
+        "color-confusion-table"
+      ],
+      "reason": "deterministic tracked digital color-naming contract patch"
+    },
+    {
+      "case_id": "COL-CONTRACT-RED",
+      "status": "COMPLETE",
+      "fixture_id": "basic11-red",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report",
+        "synthetic-lighting-matrix",
+        "color-confusion-table"
+      ],
+      "reason": "deterministic tracked digital color-naming contract patch"
+    },
+    {
+      "case_id": "COL-CONTRACT-WHITE",
+      "status": "COMPLETE",
+      "fixture_id": "basic11-white",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report",
+        "synthetic-lighting-matrix",
+        "color-confusion-table"
+      ],
+      "reason": "deterministic tracked digital color-naming contract patch"
+    },
+    {
+      "case_id": "COL-CONTRACT-YELLOW",
+      "status": "COMPLETE",
+      "fixture_id": "basic11-yellow",
+      "artifact_ids": [
+        "color-name-matrix",
+        "color-science-report",
+        "synthetic-lighting-matrix",
+        "color-confusion-table"
+      ],
+      "reason": "deterministic tracked digital color-naming contract patch"
+    },
+    {
+      "case_id": "CVD-PROTAN-CONFUSING",
+      "status": "COMPLETE",
+      "fixture_id": "protan-purple-blue",
+      "artifact_ids": [
+        "cvd-risk-sanity",
+        "color-science-report"
+      ],
+      "reason": "frozen inline synthetic CVD sanity pair"
+    },
+    {
+      "case_id": "CVD-PROTAN-CONTROL",
+      "status": "COMPLETE",
+      "fixture_id": "protan-control",
+      "artifact_ids": [
+        "cvd-risk-sanity",
+        "color-science-report"
+      ],
+      "reason": "frozen inline synthetic CVD sanity pair"
+    },
+    {
+      "case_id": "CVD-DEUTAN-CONFUSING",
+      "status": "COMPLETE",
+      "fixture_id": "deutan-red-olive",
+      "artifact_ids": [
+        "cvd-risk-sanity",
+        "color-science-report"
+      ],
+      "reason": "frozen inline synthetic CVD sanity pair"
+    },
+    {
+      "case_id": "CVD-DEUTAN-CONTROL",
+      "status": "COMPLETE",
+      "fixture_id": "deutan-control",
+      "artifact_ids": [
+        "cvd-risk-sanity",
+        "color-science-report"
+      ],
+      "reason": "frozen inline synthetic CVD sanity pair"
+    },
+    {
+      "case_id": "CVD-TRITAN-CONFUSING",
+      "status": "COMPLETE",
+      "fixture_id": "tritan-orange-pink",
+      "artifact_ids": [
+        "cvd-risk-sanity",
+        "color-science-report"
+      ],
+      "reason": "frozen inline synthetic CVD sanity pair"
+    },
+    {
+      "case_id": "CVD-TRITAN-CONTROL",
+      "status": "COMPLETE",
+      "fixture_id": "tritan-control",
+      "artifact_ids": [
+        "cvd-risk-sanity",
+        "color-science-report"
+      ],
+      "reason": "frozen inline synthetic CVD sanity pair"
+    }
+  ],
+  "configuration": {
+    "cvd_profile": "not_applicable",
+    "severity": null,
+    "random_seed": 17,
+    "thresholds": {
+      "lighting_stability_diagnostic_target": 0.8,
+      "risk_medium": 0.25,
+      "risk_high": 0.6
+    },
+    "settings": {
+      "synthetic_frame_size": "128x128",
+      "lighting_gains_rgb": "daylight=1.00,1.00,1.00;neutral_indoor=0.95,1.00,1.05;warm_low=1.15,0.85,0.65",
+      "measurement_git_commit": "432b835339283fbcef8168d5680c21737b410339",
+      "source_branch_commit": "82ce430d2f7157d8e26254ed2cfd9f69ad82eeb4"
+    }
+  },
+  "metrics": [
+    {
+      "name": "color_name_accuracy",
+      "aggregation": "overall",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 1.0,
+      "case_ids": [
+        "COL-CONTRACT-BLACK",
+        "COL-CONTRACT-BLUE",
+        "COL-CONTRACT-BROWN",
+        "COL-CONTRACT-GREY",
+        "COL-CONTRACT-GREEN",
+        "COL-CONTRACT-ORANGE",
+        "COL-CONTRACT-PINK",
+        "COL-CONTRACT-PURPLE",
+        "COL-CONTRACT-RED",
+        "COL-CONTRACT-WHITE",
+        "COL-CONTRACT-YELLOW"
+      ],
+      "threshold_id": "digital_contract",
+      "threshold_result": "PASS",
+      "reason": "Exact frozen tracked 11-name digital contract.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "evidence_scope": "frozen_digital_contract"
+      }
+    },
+    {
+      "name": "color_name_evaluated_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 11,
+      "case_ids": [
+        "COL-CONTRACT-BLACK",
+        "COL-CONTRACT-BLUE",
+        "COL-CONTRACT-BROWN",
+        "COL-CONTRACT-GREY",
+        "COL-CONTRACT-GREEN",
+        "COL-CONTRACT-ORANGE",
+        "COL-CONTRACT-PINK",
+        "COL-CONTRACT-PURPLE",
+        "COL-CONTRACT-RED",
+        "COL-CONTRACT-WHITE",
+        "COL-CONTRACT-YELLOW"
+      ],
+      "threshold_id": "report_coverage",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Count of completed frozen digital contract rows.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "evidence_scope": "frozen_digital_contract"
+      }
+    },
+    {
+      "name": "color_name_accuracy",
+      "aggregation": "overall",
+      "unit": "ratio",
+      "status": "NOT_MEASURED",
+      "value": null,
+      "case_ids": [
+        "COL-BLACK-DAYLIGHT",
+        "COL-BLACK-NEUTRAL",
+        "COL-BLACK-WARMLOW",
+        "COL-BLUE-DAYLIGHT",
+        "COL-BLUE-NEUTRAL",
+        "COL-BLUE-WARMLOW",
+        "COL-BROWN-DAYLIGHT",
+        "COL-BROWN-NEUTRAL",
+        "COL-BROWN-WARMLOW",
+        "COL-GREY-DAYLIGHT",
+        "COL-GREY-NEUTRAL",
+        "COL-GREY-WARMLOW",
+        "COL-GREEN-DAYLIGHT",
+        "COL-GREEN-NEUTRAL",
+        "COL-GREEN-WARMLOW",
+        "COL-ORANGE-DAYLIGHT",
+        "COL-ORANGE-NEUTRAL",
+        "COL-ORANGE-WARMLOW",
+        "COL-PINK-DAYLIGHT",
+        "COL-PINK-NEUTRAL",
+        "COL-PINK-WARMLOW",
+        "COL-PURPLE-DAYLIGHT",
+        "COL-PURPLE-NEUTRAL",
+        "COL-PURPLE-WARMLOW",
+        "COL-RED-DAYLIGHT",
+        "COL-RED-NEUTRAL",
+        "COL-RED-WARMLOW",
+        "COL-WHITE-DAYLIGHT",
+        "COL-WHITE-NEUTRAL",
+        "COL-WHITE-WARMLOW",
+        "COL-YELLOW-DAYLIGHT",
+        "COL-YELLOW-NEUTRAL",
+        "COL-YELLOW-WARMLOW"
+      ],
+      "threshold_id": "physical_observation",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Physical assets remain TO_BE_ACQUIRED; synthetic gains are not physical accuracy.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "evidence_scope": "frozen_physical_matrix"
+      }
+    },
+    {
+      "name": "color_name_evaluated_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "COL-BLACK-DAYLIGHT",
+        "COL-BLACK-NEUTRAL",
+        "COL-BLACK-WARMLOW",
+        "COL-BLUE-DAYLIGHT",
+        "COL-BLUE-NEUTRAL",
+        "COL-BLUE-WARMLOW",
+        "COL-BROWN-DAYLIGHT",
+        "COL-BROWN-NEUTRAL",
+        "COL-BROWN-WARMLOW",
+        "COL-GREY-DAYLIGHT",
+        "COL-GREY-NEUTRAL",
+        "COL-GREY-WARMLOW",
+        "COL-GREEN-DAYLIGHT",
+        "COL-GREEN-NEUTRAL",
+        "COL-GREEN-WARMLOW",
+        "COL-ORANGE-DAYLIGHT",
+        "COL-ORANGE-NEUTRAL",
+        "COL-ORANGE-WARMLOW",
+        "COL-PINK-DAYLIGHT",
+        "COL-PINK-NEUTRAL",
+        "COL-PINK-WARMLOW",
+        "COL-PURPLE-DAYLIGHT",
+        "COL-PURPLE-NEUTRAL",
+        "COL-PURPLE-WARMLOW",
+        "COL-RED-DAYLIGHT",
+        "COL-RED-NEUTRAL",
+        "COL-RED-WARMLOW",
+        "COL-WHITE-DAYLIGHT",
+        "COL-WHITE-NEUTRAL",
+        "COL-WHITE-WARMLOW",
+        "COL-YELLOW-DAYLIGHT",
+        "COL-YELLOW-NEUTRAL",
+        "COL-YELLOW-WARMLOW"
+      ],
+      "threshold_id": "report_coverage",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Zero physical rows have an authorized asset.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "evidence_scope": "frozen_physical_matrix"
+      }
+    },
+    {
+      "name": "lighting_name_stability_rate",
+      "aggregation": "overall",
+      "unit": "ratio",
+      "status": "NOT_MEASURED",
+      "value": null,
+      "case_ids": [
+        "COL-BLACK-DAYLIGHT",
+        "COL-BLACK-NEUTRAL",
+        "COL-BLACK-WARMLOW",
+        "COL-BLUE-DAYLIGHT",
+        "COL-BLUE-NEUTRAL",
+        "COL-BLUE-WARMLOW",
+        "COL-BROWN-DAYLIGHT",
+        "COL-BROWN-NEUTRAL",
+        "COL-BROWN-WARMLOW",
+        "COL-GREY-DAYLIGHT",
+        "COL-GREY-NEUTRAL",
+        "COL-GREY-WARMLOW",
+        "COL-GREEN-DAYLIGHT",
+        "COL-GREEN-NEUTRAL",
+        "COL-GREEN-WARMLOW",
+        "COL-ORANGE-DAYLIGHT",
+        "COL-ORANGE-NEUTRAL",
+        "COL-ORANGE-WARMLOW",
+        "COL-PINK-DAYLIGHT",
+        "COL-PINK-NEUTRAL",
+        "COL-PINK-WARMLOW",
+        "COL-PURPLE-DAYLIGHT",
+        "COL-PURPLE-NEUTRAL",
+        "COL-PURPLE-WARMLOW",
+        "COL-RED-DAYLIGHT",
+        "COL-RED-NEUTRAL",
+        "COL-RED-WARMLOW",
+        "COL-WHITE-DAYLIGHT",
+        "COL-WHITE-NEUTRAL",
+        "COL-WHITE-WARMLOW",
+        "COL-YELLOW-DAYLIGHT",
+        "COL-YELLOW-NEUTRAL",
+        "COL-YELLOW-WARMLOW"
+      ],
+      "threshold_id": "diagnostic_target",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Physical three-lighting stability is NOT_MEASURED pending assets.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "evidence_scope": "frozen_physical_matrix"
+      }
+    },
+    {
+      "name": "color_name_accuracy",
+      "aggregation": "overall",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 0.8181818181818182,
+      "case_ids": [
+        "COL-CONTRACT-BLACK",
+        "COL-CONTRACT-BLUE",
+        "COL-CONTRACT-BROWN",
+        "COL-CONTRACT-GREY",
+        "COL-CONTRACT-GREEN",
+        "COL-CONTRACT-ORANGE",
+        "COL-CONTRACT-PINK",
+        "COL-CONTRACT-PURPLE",
+        "COL-CONTRACT-RED",
+        "COL-CONTRACT-WHITE",
+        "COL-CONTRACT-YELLOW"
+      ],
+      "threshold_id": null,
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Supplemental deterministic gain transforms of the contract patches; not physical accuracy.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "evidence_scope": "supplemental_synthetic_three_lighting"
+      }
+    },
+    {
+      "name": "color_name_evaluated_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 33,
+      "case_ids": [
+        "COL-CONTRACT-BLACK",
+        "COL-CONTRACT-BLUE",
+        "COL-CONTRACT-BROWN",
+        "COL-CONTRACT-GREY",
+        "COL-CONTRACT-GREEN",
+        "COL-CONTRACT-ORANGE",
+        "COL-CONTRACT-PINK",
+        "COL-CONTRACT-PURPLE",
+        "COL-CONTRACT-RED",
+        "COL-CONTRACT-WHITE",
+        "COL-CONTRACT-YELLOW"
+      ],
+      "threshold_id": "report_coverage",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Count of supplemental deterministic gain-transform observations.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "evidence_scope": "supplemental_synthetic_three_lighting"
+      }
+    },
+    {
+      "name": "lighting_name_stability_rate",
+      "aggregation": "overall",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 0.5454545454545454,
+      "case_ids": [
+        "COL-CONTRACT-BLACK",
+        "COL-CONTRACT-BLUE",
+        "COL-CONTRACT-BROWN",
+        "COL-CONTRACT-GREY",
+        "COL-CONTRACT-GREEN",
+        "COL-CONTRACT-ORANGE",
+        "COL-CONTRACT-PINK",
+        "COL-CONTRACT-PURPLE",
+        "COL-CONTRACT-RED",
+        "COL-CONTRACT-WHITE",
+        "COL-CONTRACT-YELLOW"
+      ],
+      "threshold_id": "diagnostic_target",
+      "threshold_result": "FAIL",
+      "reason": "Supplemental diagnostic: unchanged predicted name across all three synthetic gains.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "evidence_scope": "supplemental_synthetic_three_lighting"
+      }
+    },
+    {
+      "name": "delta_e_original",
+      "aggregation": "single",
+      "unit": "delta_e_00",
+      "status": "MEASURED",
+      "value": 17.344425149547945,
+      "case_ids": [
+        "CVD-PROTAN-CONFUSING"
+      ],
+      "threshold_id": "record_required",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "protan",
+        "pair_kind": "confusing"
+      }
+    },
+    {
+      "name": "delta_e_cvd",
+      "aggregation": "single",
+      "unit": "delta_e_00",
+      "status": "MEASURED",
+      "value": 7.654908176084501,
+      "case_ids": [
+        "CVD-PROTAN-CONFUSING"
+      ],
+      "threshold_id": "record_required",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "protan",
+        "pair_kind": "confusing"
+      }
+    },
+    {
+      "name": "risk_score",
+      "aggregation": "single",
+      "unit": "score_0_1",
+      "status": "MEASURED",
+      "value": 0.3448311942754461,
+      "case_ids": [
+        "CVD-PROTAN-CONFUSING"
+      ],
+      "threshold_id": null,
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "protan",
+        "pair_kind": "confusing"
+      }
+    },
+    {
+      "name": "delta_e_original",
+      "aggregation": "single",
+      "unit": "delta_e_00",
+      "status": "MEASURED",
+      "value": 28.454954609563778,
+      "case_ids": [
+        "CVD-PROTAN-CONTROL"
+      ],
+      "threshold_id": "record_required",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "protan",
+        "pair_kind": "control"
+      }
+    },
+    {
+      "name": "delta_e_cvd",
+      "aggregation": "single",
+      "unit": "delta_e_00",
+      "status": "MEASURED",
+      "value": 32.054399302625605,
+      "case_ids": [
+        "CVD-PROTAN-CONTROL"
+      ],
+      "threshold_id": "record_required",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "protan",
+        "pair_kind": "control"
+      }
+    },
+    {
+      "name": "risk_score",
+      "aggregation": "single",
+      "unit": "score_0_1",
+      "status": "MEASURED",
+      "value": 0.0,
+      "case_ids": [
+        "CVD-PROTAN-CONTROL"
+      ],
+      "threshold_id": null,
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "protan",
+        "pair_kind": "control"
+      }
+    },
+    {
+      "name": "delta_e_original",
+      "aggregation": "single",
+      "unit": "delta_e_00",
+      "status": "MEASURED",
+      "value": 45.72321627703423,
+      "case_ids": [
+        "CVD-DEUTAN-CONFUSING"
+      ],
+      "threshold_id": "record_required",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "deutan",
+        "pair_kind": "confusing"
+      }
+    },
+    {
+      "name": "delta_e_cvd",
+      "aggregation": "single",
+      "unit": "delta_e_00",
+      "status": "MEASURED",
+      "value": 4.590837446680965,
+      "case_ids": [
+        "CVD-DEUTAN-CONFUSING"
+      ],
+      "threshold_id": "record_required",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "deutan",
+        "pair_kind": "confusing"
+      }
+    },
+    {
+      "name": "risk_score",
+      "aggregation": "single",
+      "unit": "score_0_1",
+      "status": "MEASURED",
+      "value": 0.6931003144675584,
+      "case_ids": [
+        "CVD-DEUTAN-CONFUSING"
+      ],
+      "threshold_id": null,
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "deutan",
+        "pair_kind": "confusing"
+      }
+    },
+    {
+      "name": "delta_e_original",
+      "aggregation": "single",
+      "unit": "delta_e_00",
+      "status": "MEASURED",
+      "value": 79.76844703552429,
+      "case_ids": [
+        "CVD-DEUTAN-CONTROL"
+      ],
+      "threshold_id": "record_required",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "deutan",
+        "pair_kind": "control"
+      }
+    },
+    {
+      "name": "delta_e_cvd",
+      "aggregation": "single",
+      "unit": "delta_e_00",
+      "status": "MEASURED",
+      "value": 77.04390908226404,
+      "case_ids": [
+        "CVD-DEUTAN-CONTROL"
+      ],
+      "threshold_id": "record_required",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "deutan",
+        "pair_kind": "control"
+      }
+    },
+    {
+      "name": "risk_score",
+      "aggregation": "single",
+      "unit": "score_0_1",
+      "status": "MEASURED",
+      "value": 0.0,
+      "case_ids": [
+        "CVD-DEUTAN-CONTROL"
+      ],
+      "threshold_id": null,
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "deutan",
+        "pair_kind": "control"
+      }
+    },
+    {
+      "name": "delta_e_original",
+      "aggregation": "single",
+      "unit": "delta_e_00",
+      "status": "MEASURED",
+      "value": 40.090229096567164,
+      "case_ids": [
+        "CVD-TRITAN-CONFUSING"
+      ],
+      "threshold_id": "record_required",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "tritan",
+        "pair_kind": "confusing"
+      }
+    },
+    {
+      "name": "delta_e_cvd",
+      "aggregation": "single",
+      "unit": "delta_e_00",
+      "status": "MEASURED",
+      "value": 7.299191125366877,
+      "case_ids": [
+        "CVD-TRITAN-CONFUSING"
+      ],
+      "threshold_id": "record_required",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "tritan",
+        "pair_kind": "confusing"
+      }
+    },
+    {
+      "name": "risk_score",
+      "aggregation": "single",
+      "unit": "score_0_1",
+      "status": "MEASURED",
+      "value": 0.5194192144298746,
+      "case_ids": [
+        "CVD-TRITAN-CONFUSING"
+      ],
+      "threshold_id": null,
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "tritan",
+        "pair_kind": "confusing"
+      }
+    },
+    {
+      "name": "delta_e_original",
+      "aggregation": "single",
+      "unit": "delta_e_00",
+      "status": "MEASURED",
+      "value": 69.86632579642638,
+      "case_ids": [
+        "CVD-TRITAN-CONTROL"
+      ],
+      "threshold_id": "record_required",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "tritan",
+        "pair_kind": "control"
+      }
+    },
+    {
+      "name": "delta_e_cvd",
+      "aggregation": "single",
+      "unit": "delta_e_00",
+      "status": "MEASURED",
+      "value": 63.877938739364765,
+      "case_ids": [
+        "CVD-TRITAN-CONTROL"
+      ],
+      "threshold_id": "record_required",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "tritan",
+        "pair_kind": "control"
+      }
+    },
+    {
+      "name": "risk_score",
+      "aggregation": "single",
+      "unit": "score_0_1",
+      "status": "MEASURED",
+      "value": 0.0,
+      "case_ids": [
+        "CVD-TRITAN-CONTROL"
+      ],
+      "threshold_id": null,
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Frozen T05 relational-risk implementation; score is heuristic.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "tritan",
+        "pair_kind": "control"
+      }
+    },
+    {
+      "name": "risk_sanity_order_pass",
+      "aggregation": "single",
+      "unit": "boolean",
+      "status": "MEASURED",
+      "value": true,
+      "case_ids": [
+        "CVD-PROTAN-CONFUSING",
+        "CVD-PROTAN-CONTROL"
+      ],
+      "threshold_id": "required_each_profile",
+      "threshold_result": "PASS",
+      "reason": "Confusing-pair risk score must exceed its same-profile control.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "protan"
+      }
+    },
+    {
+      "name": "risk_sanity_order_pass",
+      "aggregation": "single",
+      "unit": "boolean",
+      "status": "MEASURED",
+      "value": true,
+      "case_ids": [
+        "CVD-DEUTAN-CONFUSING",
+        "CVD-DEUTAN-CONTROL"
+      ],
+      "threshold_id": "required_each_profile",
+      "threshold_result": "PASS",
+      "reason": "Confusing-pair risk score must exceed its same-profile control.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "deutan"
+      }
+    },
+    {
+      "name": "risk_sanity_order_pass",
+      "aggregation": "single",
+      "unit": "boolean",
+      "status": "MEASURED",
+      "value": true,
+      "case_ids": [
+        "CVD-TRITAN-CONFUSING",
+        "CVD-TRITAN-CONTROL"
+      ],
+      "threshold_id": "required_each_profile",
+      "threshold_result": "PASS",
+      "reason": "Confusing-pair risk score must exceed its same-profile control.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "profile": "tritan"
+      }
+    },
+    {
+      "name": "artifact_checksum_mismatch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "COL-BLACK-DAYLIGHT",
+        "COL-BLACK-NEUTRAL",
+        "COL-BLACK-WARMLOW",
+        "COL-BLUE-DAYLIGHT",
+        "COL-BLUE-NEUTRAL",
+        "COL-BLUE-WARMLOW",
+        "COL-BROWN-DAYLIGHT",
+        "COL-BROWN-NEUTRAL",
+        "COL-BROWN-WARMLOW",
+        "COL-GREY-DAYLIGHT",
+        "COL-GREY-NEUTRAL",
+        "COL-GREY-WARMLOW",
+        "COL-GREEN-DAYLIGHT",
+        "COL-GREEN-NEUTRAL",
+        "COL-GREEN-WARMLOW",
+        "COL-ORANGE-DAYLIGHT",
+        "COL-ORANGE-NEUTRAL",
+        "COL-ORANGE-WARMLOW",
+        "COL-PINK-DAYLIGHT",
+        "COL-PINK-NEUTRAL",
+        "COL-PINK-WARMLOW",
+        "COL-PURPLE-DAYLIGHT",
+        "COL-PURPLE-NEUTRAL",
+        "COL-PURPLE-WARMLOW",
+        "COL-RED-DAYLIGHT",
+        "COL-RED-NEUTRAL",
+        "COL-RED-WARMLOW",
+        "COL-WHITE-DAYLIGHT",
+        "COL-WHITE-NEUTRAL",
+        "COL-WHITE-WARMLOW",
+        "COL-YELLOW-DAYLIGHT",
+        "COL-YELLOW-NEUTRAL",
+        "COL-YELLOW-WARMLOW",
+        "COL-CONTRACT-BLACK",
+        "COL-CONTRACT-BLUE",
+        "COL-CONTRACT-BROWN",
+        "COL-CONTRACT-GREY",
+        "COL-CONTRACT-GREEN",
+        "COL-CONTRACT-ORANGE",
+        "COL-CONTRACT-PINK",
+        "COL-CONTRACT-PURPLE",
+        "COL-CONTRACT-RED",
+        "COL-CONTRACT-WHITE",
+        "COL-CONTRACT-YELLOW",
+        "CVD-PROTAN-CONFUSING",
+        "CVD-PROTAN-CONTROL",
+        "CVD-DEUTAN-CONFUSING",
+        "CVD-DEUTAN-CONTROL",
+        "CVD-TRITAN-CONFUSING",
+        "CVD-TRITAN-CONTROL"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "Exact bytes of all five tracked manifest artifacts were hashed after generation.",
+      "method": "T09 protocol 1.0.0 frozen implementation",
+      "dimensions": {
+        "scope": "five_tracked_manifest_artifacts"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "artifact_id": "color-name-matrix",
+      "case_ids": [
+        "COL-BLACK-DAYLIGHT",
+        "COL-BLACK-NEUTRAL",
+        "COL-BLACK-WARMLOW",
+        "COL-BLUE-DAYLIGHT",
+        "COL-BLUE-NEUTRAL",
+        "COL-BLUE-WARMLOW",
+        "COL-BROWN-DAYLIGHT",
+        "COL-BROWN-NEUTRAL",
+        "COL-BROWN-WARMLOW",
+        "COL-GREY-DAYLIGHT",
+        "COL-GREY-NEUTRAL",
+        "COL-GREY-WARMLOW",
+        "COL-GREEN-DAYLIGHT",
+        "COL-GREEN-NEUTRAL",
+        "COL-GREEN-WARMLOW",
+        "COL-ORANGE-DAYLIGHT",
+        "COL-ORANGE-NEUTRAL",
+        "COL-ORANGE-WARMLOW",
+        "COL-PINK-DAYLIGHT",
+        "COL-PINK-NEUTRAL",
+        "COL-PINK-WARMLOW",
+        "COL-PURPLE-DAYLIGHT",
+        "COL-PURPLE-NEUTRAL",
+        "COL-PURPLE-WARMLOW",
+        "COL-RED-DAYLIGHT",
+        "COL-RED-NEUTRAL",
+        "COL-RED-WARMLOW",
+        "COL-WHITE-DAYLIGHT",
+        "COL-WHITE-NEUTRAL",
+        "COL-WHITE-WARMLOW",
+        "COL-YELLOW-DAYLIGHT",
+        "COL-YELLOW-NEUTRAL",
+        "COL-YELLOW-WARMLOW",
+        "COL-CONTRACT-BLACK",
+        "COL-CONTRACT-BLUE",
+        "COL-CONTRACT-BROWN",
+        "COL-CONTRACT-GREY",
+        "COL-CONTRACT-GREEN",
+        "COL-CONTRACT-ORANGE",
+        "COL-CONTRACT-PINK",
+        "COL-CONTRACT-PURPLE",
+        "COL-CONTRACT-RED",
+        "COL-CONTRACT-WHITE",
+        "COL-CONTRACT-YELLOW"
+      ],
+      "relative_path": "evaluation/results/curated/color_science/color_name_matrix.csv",
+      "sha256": "80b99796e6f46bb70c0a3e1a2d3a62a2864b3efc6de2de4a6c69eb761cb3ec56",
+      "byte_size": 7586,
+      "media_type": "text/csv",
+      "tracked_in_git": true,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_color_science_eval.py",
+      "provenance": {
+        "provenance_class": "curated_result",
+        "creator_or_source": "ChromaLens coordinator color evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": "2026-08-23T15:16:15.494544Z",
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and T09 protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "synthetic-lighting-matrix",
+      "case_ids": [
+        "COL-CONTRACT-BLACK",
+        "COL-CONTRACT-BLUE",
+        "COL-CONTRACT-BROWN",
+        "COL-CONTRACT-GREY",
+        "COL-CONTRACT-GREEN",
+        "COL-CONTRACT-ORANGE",
+        "COL-CONTRACT-PINK",
+        "COL-CONTRACT-PURPLE",
+        "COL-CONTRACT-RED",
+        "COL-CONTRACT-WHITE",
+        "COL-CONTRACT-YELLOW"
+      ],
+      "relative_path": "evaluation/results/curated/color_science/synthetic_lighting_matrix.csv",
+      "sha256": "54069f99268f836cadf289f868e72df5202dafa990c42705d0cfec920744411f",
+      "byte_size": 7458,
+      "media_type": "text/csv",
+      "tracked_in_git": true,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_color_science_eval.py",
+      "provenance": {
+        "provenance_class": "curated_result",
+        "creator_or_source": "Phong logic, coordinator-regenerated",
+        "source_url": null,
+        "created_or_captured_at_utc": "2026-08-23T15:16:15.494544Z",
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and T09 protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "color-confusion-table",
+      "case_ids": [
+        "COL-CONTRACT-BLACK",
+        "COL-CONTRACT-BLUE",
+        "COL-CONTRACT-BROWN",
+        "COL-CONTRACT-GREY",
+        "COL-CONTRACT-GREEN",
+        "COL-CONTRACT-ORANGE",
+        "COL-CONTRACT-PINK",
+        "COL-CONTRACT-PURPLE",
+        "COL-CONTRACT-RED",
+        "COL-CONTRACT-WHITE",
+        "COL-CONTRACT-YELLOW"
+      ],
+      "relative_path": "evaluation/results/curated/color_science/color_confusion_table.csv",
+      "sha256": "90be77a8a54530ccd5d5cdcd8878a8c0559ddb8c6b0b841128f22e9f0fb23b27",
+      "byte_size": 6056,
+      "media_type": "text/csv",
+      "tracked_in_git": true,
+      "derived_from": [
+        "synthetic-lighting-matrix"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_color_science_eval.py",
+      "provenance": {
+        "provenance_class": "curated_result",
+        "creator_or_source": "Phong logic, coordinator-regenerated",
+        "source_url": null,
+        "created_or_captured_at_utc": "2026-08-23T15:16:15.494544Z",
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and T09 protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "cvd-risk-sanity",
+      "case_ids": [
+        "CVD-PROTAN-CONFUSING",
+        "CVD-PROTAN-CONTROL",
+        "CVD-DEUTAN-CONFUSING",
+        "CVD-DEUTAN-CONTROL",
+        "CVD-TRITAN-CONFUSING",
+        "CVD-TRITAN-CONTROL"
+      ],
+      "relative_path": "evaluation/results/curated/color_science/cvd_risk_sanity.csv",
+      "sha256": "93066e9c32bff400bb6a48a450c59c6eb05a685950939ef77b9071e38b9a89be",
+      "byte_size": 1083,
+      "media_type": "text/csv",
+      "tracked_in_git": true,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_color_science_eval.py",
+      "provenance": {
+        "provenance_class": "curated_result",
+        "creator_or_source": "Phong logic, coordinator-regenerated",
+        "source_url": null,
+        "created_or_captured_at_utc": "2026-08-23T15:16:15.494544Z",
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and T09 protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "color-science-report",
+      "case_ids": [
+        "COL-BLACK-DAYLIGHT",
+        "COL-BLACK-NEUTRAL",
+        "COL-BLACK-WARMLOW",
+        "COL-BLUE-DAYLIGHT",
+        "COL-BLUE-NEUTRAL",
+        "COL-BLUE-WARMLOW",
+        "COL-BROWN-DAYLIGHT",
+        "COL-BROWN-NEUTRAL",
+        "COL-BROWN-WARMLOW",
+        "COL-GREY-DAYLIGHT",
+        "COL-GREY-NEUTRAL",
+        "COL-GREY-WARMLOW",
+        "COL-GREEN-DAYLIGHT",
+        "COL-GREEN-NEUTRAL",
+        "COL-GREEN-WARMLOW",
+        "COL-ORANGE-DAYLIGHT",
+        "COL-ORANGE-NEUTRAL",
+        "COL-ORANGE-WARMLOW",
+        "COL-PINK-DAYLIGHT",
+        "COL-PINK-NEUTRAL",
+        "COL-PINK-WARMLOW",
+        "COL-PURPLE-DAYLIGHT",
+        "COL-PURPLE-NEUTRAL",
+        "COL-PURPLE-WARMLOW",
+        "COL-RED-DAYLIGHT",
+        "COL-RED-NEUTRAL",
+        "COL-RED-WARMLOW",
+        "COL-WHITE-DAYLIGHT",
+        "COL-WHITE-NEUTRAL",
+        "COL-WHITE-WARMLOW",
+        "COL-YELLOW-DAYLIGHT",
+        "COL-YELLOW-NEUTRAL",
+        "COL-YELLOW-WARMLOW",
+        "COL-CONTRACT-BLACK",
+        "COL-CONTRACT-BLUE",
+        "COL-CONTRACT-BROWN",
+        "COL-CONTRACT-GREY",
+        "COL-CONTRACT-GREEN",
+        "COL-CONTRACT-ORANGE",
+        "COL-CONTRACT-PINK",
+        "COL-CONTRACT-PURPLE",
+        "COL-CONTRACT-RED",
+        "COL-CONTRACT-WHITE",
+        "COL-CONTRACT-YELLOW",
+        "CVD-PROTAN-CONFUSING",
+        "CVD-PROTAN-CONTROL",
+        "CVD-DEUTAN-CONFUSING",
+        "CVD-DEUTAN-CONTROL",
+        "CVD-TRITAN-CONFUSING",
+        "CVD-TRITAN-CONTROL"
+      ],
+      "relative_path": "evaluation/results/curated/color_science/report.md",
+      "sha256": "eb3fde91d98bee8c166fb816d31f7344b2535cf4fefbb2b3eb54e1f90ae40548",
+      "byte_size": 2098,
+      "media_type": "text/markdown",
+      "tracked_in_git": true,
+      "derived_from": [
+        "color-name-matrix",
+        "synthetic-lighting-matrix",
+        "color-confusion-table",
+        "cvd-risk-sanity"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_color_science_eval.py",
+      "provenance": {
+        "provenance_class": "curated_result",
+        "creator_or_source": "ChromaLens coordinators",
+        "source_url": null,
+        "created_or_captured_at_utc": "2026-08-23T15:16:15.494544Z",
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and T09 protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    }
+  ],
+  "commands": [
+    {
+      "command": "conda run --name lens python scripts/t09_color_science_eval.py",
+      "exit_code": 0,
+      "started_at_utc": "2026-08-23T15:16:15.297795Z",
+      "ended_at_utc": "2026-08-23T15:16:15.494544Z",
+      "output_summary": "Generated exact frozen 50-case coverage, 11 digital contract rows, 33 supplemental lighting rows, 121 confusion cells, six CVD rows, and five tracked artifact manifests."
+    }
+  ],
+  "failure_cases": [
+    {
+      "failure_id": "FAIL-COLOR-PHYSICAL-ASSETS-MISSING",
+      "case_ids": [
+        "COL-BLACK-DAYLIGHT",
+        "COL-BLACK-NEUTRAL",
+        "COL-BLACK-WARMLOW",
+        "COL-BLUE-DAYLIGHT",
+        "COL-BLUE-NEUTRAL",
+        "COL-BLUE-WARMLOW",
+        "COL-BROWN-DAYLIGHT",
+        "COL-BROWN-NEUTRAL",
+        "COL-BROWN-WARMLOW",
+        "COL-GREY-DAYLIGHT",
+        "COL-GREY-NEUTRAL",
+        "COL-GREY-WARMLOW",
+        "COL-GREEN-DAYLIGHT",
+        "COL-GREEN-NEUTRAL",
+        "COL-GREEN-WARMLOW",
+        "COL-ORANGE-DAYLIGHT",
+        "COL-ORANGE-NEUTRAL",
+        "COL-ORANGE-WARMLOW",
+        "COL-PINK-DAYLIGHT",
+        "COL-PINK-NEUTRAL",
+        "COL-PINK-WARMLOW",
+        "COL-PURPLE-DAYLIGHT",
+        "COL-PURPLE-NEUTRAL",
+        "COL-PURPLE-WARMLOW",
+        "COL-RED-DAYLIGHT",
+        "COL-RED-NEUTRAL",
+        "COL-RED-WARMLOW",
+        "COL-WHITE-DAYLIGHT",
+        "COL-WHITE-NEUTRAL",
+        "COL-WHITE-WARMLOW",
+        "COL-YELLOW-DAYLIGHT",
+        "COL-YELLOW-NEUTRAL",
+        "COL-YELLOW-WARMLOW"
+      ],
+      "observed_behavior": "All 33 frozen physical color-lighting cases remain NOT_RUN.",
+      "expected_behavior": "Measure the 11 physical color families under three declared lights.",
+      "user_impact": "No camera color-name accuracy, lighting stability, or population performance claim can be made.",
+      "reproduction": "conda run --name lens python scripts/t09_color_science_eval.py",
+      "mitigation": "Acquire licensed or consented physical captures and rerun while retaining this supplemental synthetic evidence separately.",
+      "status": "OPEN"
+    },
+    {
+      "failure_id": "FAIL-COLOR-SYNTHETIC-STABILITY",
+      "case_ids": [
+        "COL-CONTRACT-BLACK",
+        "COL-CONTRACT-BLUE",
+        "COL-CONTRACT-BROWN",
+        "COL-CONTRACT-GREY",
+        "COL-CONTRACT-GREEN",
+        "COL-CONTRACT-ORANGE",
+        "COL-CONTRACT-PINK",
+        "COL-CONTRACT-PURPLE",
+        "COL-CONTRACT-RED",
+        "COL-CONTRACT-WHITE",
+        "COL-CONTRACT-YELLOW"
+      ],
+      "observed_behavior": "Supplemental synthetic lighting name stability was 0.545, below the 0.80 diagnostic target.",
+      "expected_behavior": "At least 0.80 stability on the declared diagnostic.",
+      "user_impact": "Lighting changes can alter the displayed basic color family.",
+      "reproduction": "conda run --name lens python scripts/t09_color_science_eval.py",
+      "mitigation": "Keep lighting quality visible; collect physical evidence before tuning.",
+      "status": "ACCEPTED_LIMITATION"
+    }
+  ],
+  "limitations": [
+    "Synthetic RGB gains do not model physical illuminants, exposure, camera ISP, glare, or display behavior.",
+    "The 33 frozen physical cases remain NOT_RUN and are not replaced by supplemental data.",
+    "Color-name scores and margins are heuristics rather than calibrated probabilities.",
+    "CVD risk values are configured relational heuristics, not medical probabilities.",
+    "No demographic, clinical, usability, or population-level claim is supported."
+  ],
+  "responsible_ai": {
+    "runtime_local_offline": true,
+    "frames_saved_by_default": false,
+    "frames_uploaded_by_default": false,
+    "medical_diagnosis_claim": false,
+    "user_selected_profile": true,
+    "privacy_summary": "This evaluator uses tracked digital patches and inline synthetic data only.",
+    "bias_coverage_summary": "Skin tone, body presentation, material, camera, display, and physical lighting coverage remain unvalidated.",
+    "environmental_summary": "No training or model download; deterministic CPU color science reuses the locked environment.",
+    "license_summary": "Generated evidence is Apache-2.0; existing repository attribution documents OpenCV, DaltonLens/Machado, and color anchors.",
+    "user_validation_status": "NOT_MEASURED"
+  },
+  "notes": "Coordinator regeneration of Phong's useful logic. Frozen physical coverage remains explicitly incomplete."
+}

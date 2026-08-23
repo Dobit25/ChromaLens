@@ -530,6 +530,58 @@ arrays, and bulk evidence stay below ignored `artifacts/t09/`. Every report
 artifact needs a manifest with provenance/consent, license, exact byte size,
 and SHA-256. Never use `git add -f` to bypass the artifact policy.
 
+### T09 curated color and development-host performance evidence
+
+The coordinator-regenerated Trinh/Phong packages are intentionally `PARTIAL`:
+
+- color science accounts for all 50 frozen IDs: 11 digital contract and six
+  CVD cases are complete, while the 33 physical color-lighting cases remain
+  `NOT_RUN` until their exact assets are acquired;
+- the synthetic 11 x 3 lighting matrix, 121-cell confusion table, K=2
+  containment diagnostic, and CVD sanity rows are retained as supplemental
+  implementation evidence, not physical-camera accuracy;
+- four 15-second-warm-up plus 120-second performance observations remain
+  development-host evidence from Trinh's recorded machine, never demo-hardware
+  acceptance evidence;
+- seven ignored raw contributor artifacts have complete recorded manifests but
+  are absent in this checkout, so coordinator-side raw checksum verification is
+  explicitly incomplete. Tracked curated artifact bytes are verified.
+
+Regenerate the deterministic color result and the tracked performance/RAI
+consolidation from the committed observation record, then validate schema,
+metric registry, exact case coverage, and available checksums:
+
+```powershell
+conda run --name lens python scripts/t09_color_science_eval.py
+conda run --name lens python scripts/t09_benchmark_report.py
+conda run --name lens python scripts/t09_result_validation.py
+```
+
+The second command does not rerun a benchmark or claim new measurements. To
+collect a new raw benchmark on the eventual declared demo machine, use one
+frozen case at a time; raw JSON remains ignored under `artifacts/t09/`:
+
+```powershell
+conda run --name lens python scripts/t09_benchmark_performance.py --case PERF-WEBCAM-GUI-120
+conda run --name lens python scripts/t09_benchmark_performance.py --case PERF-WEBCAM-HEADLESS-120
+conda run --name lens python scripts/t09_benchmark_performance.py --case PERF-VIDEO-GUI-120 --video artifacts/t09/performance_responsible_ai/inputs/generated-360x240.avi
+conda run --name lens python scripts/t09_benchmark_performance.py --case PERF-VIDEO-HEADLESS-120 --video artifacts/t09/performance_responsible_ai/inputs/generated-360x240.avi
+```
+
+The manual ROI timing command is interactive and saves timings/hashes only,
+never selected geometry or image content:
+
+```powershell
+conda run --name lens python scripts/t09_responsible_ai_manual_roi.py
+```
+
+On a data-custodian checkout that contains every ignored artifact, require
+strict raw-byte verification with:
+
+```powershell
+conda run --name lens python scripts/t09_result_validation.py --require-untracked-artifacts
+```
+
 ## Verification
 
 These commands require no webcam, network access at runtime, model weights, or
