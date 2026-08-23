@@ -55,7 +55,7 @@ WIDTH = 360
 HEIGHT = 240
 FRAME_COUNT = 8
 COMMAND = "conda run --name lens python scripts/t09_end_to_end_eval.py"
-CONSENT_REF = "private-record-held-by-dong:t09-segmentation-consent-v1"
+CONSENT_REF = "private-record-held-by-data-custodian:t09-segmentation-consent-v1"
 PRIVATE_LICENSE = "LicenseRef-ChromaLens-T09-Private-Evaluation"
 
 
@@ -815,7 +815,7 @@ def _ignored_artifact(
             else "project_synthetic"
         ),
         creator_or_source=(
-            "Dong T09 consented capture custodian"
+            "T09 segmentation workstream data custodian"
             if private and not derived_from
             else "NASA public fixture through tests/samples/t02"
             if public and not derived_from

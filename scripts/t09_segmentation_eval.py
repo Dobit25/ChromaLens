@@ -43,7 +43,7 @@ ARTIFACT_DIR = ROOT / "artifacts/t09/segmentation"
 RATINGS_PATH = ARTIFACT_DIR / "manual_ratings.csv"
 REVIEW_WIDTH = 640
 REVIEW_HEIGHT = 480
-CONSENT_REF = "private-record-held-by-dong:t09-segmentation-consent-v1"
+CONSENT_REF = "private-record-held-by-data-custodian:t09-segmentation-consent-v1"
 PRIVATE_LICENSE = "LicenseRef-ChromaLens-T09-Private-Evaluation"
 COMMAND = "conda run --name lens python scripts/t09_segmentation_eval.py"
 
@@ -662,7 +662,7 @@ def build_package(observations: Sequence[Observation], ratings_path: Path) -> Pa
                     path=observation.source_path,
                     media_type=("video/mp4" if observation.source_path.suffix.lower() == ".mp4" else "image/jpeg"),
                     provenance_class="project_capture",
-                    creator="Dong T09 segmentation workstream data custodian",
+                    creator="T09 segmentation workstream data custodian",
                     personal=personal,
                 )
             )
@@ -674,7 +674,7 @@ def build_package(observations: Sequence[Observation], ratings_path: Path) -> Pa
                     path=observation.annotation_path,
                     media_type="image/png",
                     provenance_class="derived_artifact",
-                    creator="Dong T09 segmentation workstream annotation review",
+                    creator="T09 segmentation workstream annotation reviewer",
                     derived_from=([observation.input_artifact_id] if observation.input_artifact_id else ()),
                     personal=personal,
                 )
