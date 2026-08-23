@@ -1,49 +1,59 @@
 # T09 Performance and Responsible-AI Workstream
 
-Status: `PARTIAL`. Performance runs and the manual ROI observation are retained; demo-hardware acceptance, raw-artifact coordinator re-verification, external sensor latency, license closure, and user validation are incomplete.
+Status: `COMPLETE` for the T09 Definition of Done with explicit optional/unmeasured boundaries.
 
-Source: Trinh branch tip `b5da1c0e4975f3f4b07f08cec83bf0ada457bf2e`. Performance measurement commit `7bc76d0526b34e7e366fe0cef730dc86680f5ef3`; manual ROI commit `c0e3e7a759e6ffeb8b2b903583b8cf05927b8416`; responsible-AI audit commit `3bd976bb09bdc4605bb3149089d9c00d4c11f470`.
+The four performance runs were regenerated locally after the original contributor raw artifacts became unrecoverable. Lost bytes and old hashes are not cited as active evidence. Measurements remain development-host observations, never demo-hardware acceptance.
 
-## Claim boundary
+## Latency semantics
 
-All numbers are development-host observations for LENOVO 83JC, AMD64 Family 25 Model 68, 4 physical/8 logical cores, 15.69 GiB RAM, MediaPipe CPU. They are not generalized to the undeclared demo machine.
+- `source_read_to_render_ms`: OpenCV read return to renderer completion.
+- `source_read_to_display_submit_ms`: the same start to return from `cv2.imshow`; GUI only.
+- `sensor_to_photon_ms`: `NOT_MEASURED`; no synchronized external apparatus.
 
-- `source_read_to_render_ms`: capture-read return to renderer completion.
-- `source_read_to_display_submit_ms`: capture-read return to return from `cv2.imshow`; GUI only.
-- `sensor_to_photon_ms`: `NOT_MEASURED`; no external synchronized apparatus.
-
-## Performance observations
+## Fresh local performance observations
 
 | Case | FPS | Render p50/p95 ms | Display-submit p50/p95 ms | RSS start/end/peak MiB | Degraded rate | RSS growth |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| PERF-WEBCAM-GUI-120 | 18.497687789026372 | 62.0 / 156.0 | 62.0 / 156.0 | 187.12890625 / 178.34765625 / 218.8671875 | 0.935586 | FAIL |
-| PERF-WEBCAM-HEADLESS-120 | 21.25 | 47.0 / 125.0 | NOT_MEASURED | 191.671875 / 165.87109375 / 216.68359375 | 0.876078 | FAIL |
-| PERF-VIDEO-GUI-120 | 30.0 | 16.0 / 32.0 | 16.0 / 32.0 | 138.265625 / 120.1953125 / 148.99609375 | 0.983333 | PASS |
-| PERF-VIDEO-HEADLESS-120 | 48.95 | 16.0 / 32.0 | NOT_MEASURED | 131.2578125 / 116.23828125 / 151.30078125 | 0.983827 | FAIL |
+| PERF-WEBCAM-GUI-120 | 19.728 | 47.000 / 78.000 | 47.000 / 78.000 | 192.270 / 159.707 / 214.508 | 1.000000 | FAIL |
+| PERF-WEBCAM-HEADLESS-120 | 14.013 | 62.000 / 187.000 | NOT_MEASURED | 194.797 / 168.621 / 214.398 | 0.685493 | PASS |
+| PERF-VIDEO-GUI-120 | 15.944 | 47.000 / 78.000 | 47.000 / 78.000 | 133.859 / 112.230 / 139.570 | 1.000000 | PASS |
+| PERF-VIDEO-HEADLESS-120 | 24.169 | 47.000 / 63.000 | NOT_MEASURED | 130.598 / 114.293 / 139.039 | 1.000000 | PASS |
 
-Every render-latency continuous-growth flag was false. RSS growth was true in three of four runs and remains an open diagnostic failure.
+Host: LENOVO 83DV; 13th Gen Intel(R) Core(TM) i5-13450HX; 15.78 GiB RAM; backend `mediapipe-selfie-torso/cpu` on CPU.
 
 ## Manual/non-AI baseline
 
-Five public-fixture manual ROI trials had median completion time `3.016 s`. This measures human selection effort; it does not automatically locate garments in moving/unconstrained scenes. Fixed RGB thresholding also cannot determine garment location independently of background, illumination, pose, and material. AI is needed for automatic per-pixel localization; deterministic color science remains appropriate after localization.
+The unrecoverable manual ROI timing is `NOT_MEASURED`; no human action or elapsed time was simulated. The retained baseline explanation is sufficient for AI necessity: fixed RGB thresholds neither identify which pixels are garments nor handle background, illuminant, pose, and material changes. AI supplies automatic per-pixel localization; deterministic color science remains appropriate after localization.
 
-## Artifact integrity
+## Artifact integrity and supersession
 
-The machine result contains complete size/SHA-256/provenance manifests for the four raw benchmark JSON files, generated video, manual ROI JSON, and RAI audit JSON. Those ignored files were present for Trinh's report generation but are absent in this coordinator checkout. Their recorded hashes are preserved, not falsely reported as independently reverified. Tracked `report.md` and `performance_metrics.csv` are rehashed and tested from exact LF bytes.
+The active package cites only four newly generated raw benchmark JSON files, the new deterministic video, and tracked curated CSV/Markdown. Every available byte is rehashed. The seven old contributor artifacts are superseded and intentionally absent from the active manifest; their values are not used by this result.
 
-## Privacy, bias, environmental impact, and license gaps
+## Privacy, bias, environment, and licenses
 
-- Local/offline runtime; camera frames are neither saved nor uploaded by default.
-- No private/raw T09 media is tracked. Evaluation capture remains explicit opt-in.
-- The product is assistive and non-diagnostic; profile/severity are user selected.
-- Five public fixtures are not demographic validation. Coverage gaps include skin tone, body presentation, garment type/material/pattern, lighting, occlusion, camera, and display.
-- Pretrained MediaPipe CPU inference avoids training from scratch. FPS/RSS are reported; energy consumption is not measured.
-- License status is `GAPS_RECORDED`, not PASS. Open items: DaltonLens, MediaPipe, NumPy, OpenCV package evidence and deferred SCHP-ATR attribution/weights review.
-- User/accessibility validation is `NOT_MEASURED`; no participant is simulated.
+- Webcam frames were processed locally and neither saved nor uploaded; raw JSON contains metrics/environment only.
+- No private/raw artifact is tracked in Git. The generated video contains synthetic geometry and no person.
+- Profile and severity are user-selected settings, not diagnosis.
+- The evaluation convenience set does not establish demographic, garment, camera, or population accuracy.
+- No training was performed; pretrained MediaPipe CPU inference was reused. RSS is measured; energy is not.
+- User/accessibility validation is `NOT_MEASURED` and no participant is simulated.
 
-## Known failures
+### Attribution inventory
 
-1. Degraded-frame rates are high in every run.
-2. RSS continuous-growth diagnostic fails in three runs.
-3. The measured host is not declared demo hardware.
-4. Ignored raw bytes are unavailable for coordinator-side independent rehash.
+| Component | Version/status | License/evidence |
+| --- | --- | --- |
+| ChromaLens project | 0.1.0 | Apache-2.0; repository LICENSE |
+| mediapipe | 0.10.21 | Apache-2.0; model/backend attribution in models/README.md; metadata=Apache 2.0 |
+| daltonlens | 0.1.5 | MIT; bundled notice in assets/cvd/DALTONLENS-MIT-LICENSE.md; metadata=UNKNOWN |
+| numpy | 1.26.4 | BSD-3-Clause; installed distribution metadata/project license; metadata=Copyright (c) 2005-2023, NumPy Developers. |
+| opencv-contrib-python | 4.10.0.84 | Apache-2.0; installed distribution metadata/project license; metadata=Apache 2.0 |
+| SCHP-ATR | DEFERRED | Not active in T09; license/weights review required by T10 gate |
+
+SCHP is not active T09 runtime evidence. Its code/weights/license and OpenVINO deployment remain an explicit T10 gate rather than an inferred attribution pass.
+
+## Known failures and limitations
+
+1. Degraded-frame behavior remains visible and is reported per run.
+2. Any fired RSS continuous-growth diagnostic remains an open risk.
+3. The measured machine is development-only, not declared demo hardware.
+4. Target-user validation and sensor-to-photon latency are not measured.

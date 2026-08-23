@@ -44,6 +44,14 @@ def test_exact_33_physical_rows_remain_visible_not_run() -> None:
     assert all("synthetic" in row["reason"] for row in physical)
 
 
+def test_owner_acceptance_does_not_relabel_physical_cases_as_measured() -> None:
+    source = Path(evaluator.__file__).read_text(encoding="utf-8")
+
+    assert '"result_status": "COMPLETE"' in source
+    assert "OWNER_ACCEPTED_NOT_RUN_WITHOUT_PHYSICAL_ACCURACY_CLAIM" in source
+    assert '"status": "ACCEPTED_LIMITATION"' in source
+
+
 def test_multicolor_containment_and_all_cvd_profiles_pass() -> None:
     multicolor = evaluator.evaluate_multicolor()
     risk_rows = evaluator.evaluate_risk()

@@ -38,7 +38,7 @@ def test_curated_color_result_passes_schema_registry_coverage_and_checksums() ->
     assert len(contract) == 11 and all(case["status"] == "COMPLETE" for case in contract)
 
 
-def test_curated_performance_result_passes_without_ignored_raw_files() -> None:
+def test_curated_performance_result_passes_with_fresh_ignored_raw_files() -> None:
     summary = validator.validate_result_file(
         PERFORMANCE_RESULT, expected_workstream="performance_responsible_ai"
     )
@@ -47,9 +47,10 @@ def test_curated_performance_result_passes_without_ignored_raw_files() -> None:
 
     assert summary.case_count == 12
     assert summary.tracked_artifact_count == 2
-    assert summary.verified_untracked_artifact_count == 0
-    assert summary.missing_untracked_artifact_count == 7
+    assert summary.verified_untracked_artifact_count == 5
+    assert summary.missing_untracked_artifact_count == 0
     assert all(metric["status"] == "NOT_MEASURED" for metric in sensor)
+    assert result["result_status"] == "COMPLETE"
     assert result["environment"]["host_role"] == "development"
     assert result["environment"]["declared_demo_hardware"] is False
 

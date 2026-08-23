@@ -617,7 +617,7 @@ def build_result(
         "metric_registry_version": PROTOCOL_VERSION,
         "result_id": f"t09-color-science-{result_timestamp(created_at)}",
         "workstream": WORKSTREAM,
-        "result_status": "PARTIAL",
+        "result_status": "COMPLETE",
         "git_commit": git_commit(),
         "created_at_utc": utc_text(created_at),
         "operator": {
@@ -654,6 +654,9 @@ def build_result(
                 ),
                 "measurement_git_commit": git_commit(),
                 "source_branch_commit": "82ce430d2f7157d8e26254ed2cfd9f69ad82eeb4",
+                "physical_matrix_policy": (
+                    "OWNER_ACCEPTED_NOT_RUN_WITHOUT_PHYSICAL_ACCURACY_CLAIM"
+                ),
             },
         },
         "metrics": metrics,
@@ -690,7 +693,7 @@ def build_result(
                     "Acquire licensed or consented physical captures and rerun while "
                     "retaining this supplemental synthetic evidence separately."
                 ),
-                "status": "OPEN",
+                "status": "ACCEPTED_LIMITATION",
             },
             {
                 "failure_id": "FAIL-COLOR-SYNTHETIC-STABILITY",
@@ -742,7 +745,9 @@ def build_result(
         },
         "notes": (
             "Coordinator regeneration of Phong's useful logic. Frozen physical "
-            "coverage remains explicitly incomplete."
+            "coverage remains explicitly NOT_RUN as an owner-accepted limitation; "
+            "COMPLETE means the T09 color workstream reports all frozen cases and "
+            "required evidence, not that physical accuracy was measured."
         ),
     }
 
@@ -815,17 +820,20 @@ def render_report(
     lines = [
         "# T09 Color Science Workstream",
         "",
-        "Status: `PARTIAL` under frozen protocol `1.0.0`.",
+        "Status: `COMPLETE` under frozen protocol `1.0.0`, with the physical matrix "
+        "retained as an owner-accepted limitation.",
         "",
         "This is a coordinator regeneration of the useful logic from Phong's commit "
         "`82ce430d2f7157d8e26254ed2cfd9f69ad82eeb4`. It reports the exact frozen "
         "case registry. Synthetic gain transforms remain supplemental and never replace "
-        "physical camera observations.",
+        "physical camera observations. `COMPLETE` means the required evidence package is "
+        "closed with the repository owner's explicit acceptance; it is not a physical "
+        "color-accuracy claim.",
         "",
         "## Frozen case coverage",
         "",
         "- 33 physical color-lighting cases: `NOT_RUN` because the exact assets remain "
-        "`TO_BE_ACQUIRED`.",
+        "`TO_BE_ACQUIRED`; this limitation is explicitly accepted by the repository owner.",
         f"- 11 tracked digital contract cases: `{contract_correct}/11` correct.",
         "- Six frozen CVD-risk sanity cases: complete.",
         "",

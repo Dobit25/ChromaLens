@@ -2,39 +2,39 @@
   "protocol_version": "1.0.0",
   "schema_version": "1.0.0",
   "metric_registry_version": "1.0.0",
-  "result_id": "t09-performance-rai-20260823t151726z",
+  "result_id": "t09-performance-rai-20260823t165320z",
   "workstream": "performance_responsible_ai",
-  "result_status": "PARTIAL",
-  "git_commit": "74447afd4110e90dc2cf0ece9de27f01bb1a09a1",
-  "created_at_utc": "2026-08-23T15:17:26.817883Z",
+  "result_status": "COMPLETE",
+  "git_commit": "f74227d2342dc81bc9fd66e71fc2b85c095065ef",
+  "created_at_utc": "2026-08-23T16:53:20.088009Z",
   "operator": {
     "role": "coordinator",
-    "identifier": "coordinator-regeneration-from-trinh"
+    "identifier": "local-t09-coordinator"
   },
   "environment": {
-    "host_role": "development",
-    "declared_demo_hardware": false,
     "manufacturer": "LENOVO",
-    "model": "83JC",
+    "model": "83DV",
     "operating_system": "Windows-10-10.0.26200-SP0",
-    "cpu": "AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD",
-    "physical_core_count": 4,
-    "logical_processor_count": 8,
-    "ram_gib": 15.692100524902344,
-    "gpu": "NVIDIA GeForce RTX 3050 6GB Laptop GPU (not used)",
-    "npu": null,
-    "camera_or_source": "mixed: webcam:0 and generated-360x240.avi",
+    "cpu": "13th Gen Intel(R) Core(TM) i5-13450HX",
+    "physical_core_count": 10,
+    "logical_processor_count": 16,
+    "ram_gib": 15.781120300292969,
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "npu": "USB Input Device; Microsoft Input Configuration Device; USB Input Device; USB Input Device; USB Input Device; USB Input Device",
     "python_version": "3.10.20",
     "package_versions": {
       "chromalens-ai": "0.1.0",
-      "daltonlens": "0.1.5",
-      "mediapipe": "0.10.21",
       "numpy": "1.26.4",
-      "opencv-contrib-python": "4.10.0.84"
+      "opencv-contrib-python": "4.10.0.84",
+      "mediapipe": "0.10.21",
+      "daltonlens": "0.1.5"
     },
     "lock_sha256": "3abb7af836d5721db3bb3de753816f8b41994a2d20c71fd96c25d80e136a071a",
     "backend_name": "mediapipe-selfie-torso/cpu",
     "backend_device": "cpu",
+    "host_role": "development",
+    "declared_demo_hardware": false,
+    "camera_or_source": "mixed: webcam:0 and generated-360x240.avi",
     "source_kind": "generated",
     "source_resolution": {
       "width": 640,
@@ -59,7 +59,7 @@
         "performance-metrics",
         "perf-webcam-gui-raw"
       ],
-      "reason": "Frozen 15-second warm-up plus 120-second development-host observation retained from Trinh's workstream."
+      "reason": "Fresh frozen 15-second warm-up plus 120-second local development-host run."
     },
     {
       "case_id": "PERF-WEBCAM-HEADLESS-120",
@@ -70,7 +70,7 @@
         "performance-metrics",
         "perf-webcam-headless-raw"
       ],
-      "reason": "Frozen 15-second warm-up plus 120-second development-host observation retained from Trinh's workstream."
+      "reason": "Fresh frozen 15-second warm-up plus 120-second local development-host run."
     },
     {
       "case_id": "PERF-VIDEO-GUI-120",
@@ -82,7 +82,7 @@
         "perf-video-gui-raw",
         "generated-video-input"
       ],
-      "reason": "Frozen 15-second warm-up plus 120-second development-host observation retained from Trinh's workstream."
+      "reason": "Fresh frozen 15-second warm-up plus 120-second local development-host run."
     },
     {
       "case_id": "PERF-VIDEO-HEADLESS-120",
@@ -94,46 +94,45 @@
         "perf-video-headless-raw",
         "generated-video-input"
       ],
-      "reason": "Frozen 15-second warm-up plus 120-second development-host observation retained from Trinh's workstream."
+      "reason": "Fresh frozen 15-second warm-up plus 120-second local development-host run."
     },
     {
       "case_id": "PERF-SENSOR-EXTERNAL",
       "status": "NOT_RUN",
       "fixture_id": "external-sensor-apparatus",
       "artifact_ids": [
-        "performance-rai-report",
-        "responsible-ai-audit-raw"
+        "performance-rai-report"
       ],
-      "reason": "No synchronized external measurement apparatus; sensor_to_photon_ms is NOT_MEASURED."
+      "reason": "No external apparatus; sensor_to_photon_ms remains NOT_MEASURED."
     },
     {
       "case_id": "BASELINE-MANUAL-ROI",
-      "status": "COMPLETE",
+      "status": "NOT_RUN",
       "fixture_id": "manual-roi-public-fixtures",
       "artifact_ids": [
-        "performance-rai-report",
-        "manual-roi-raw"
+        "performance-rai-report"
       ],
-      "reason": "Five public-fixture ROI trials completed; timing only, no ROI geometry or image saved."
+      "reason": "Lost timing bytes were not reconstructed; fixed-RGB/manual explanation provides the non-AI baseline."
     },
     {
       "case_id": "BASELINE-FIXED-RGB",
       "status": "COMPLETE",
       "fixture_id": "fixed-rgb-explanation",
       "artifact_ids": [
-        "performance-rai-report"
+        "performance-rai-report",
+        "performance-metrics"
       ],
-      "reason": "Human-readable comparison explains that fixed RGB thresholds do not automatically localize garments."
+      "reason": "Report explains why fixed RGB thresholds cannot automatically localize garments."
     },
     {
       "case_id": "RAI-ARTIFACT-INTEGRITY",
-      "status": "PARTIAL",
+      "status": "COMPLETE",
       "fixture_id": "artifact-manifest-all",
       "artifact_ids": [
         "performance-rai-report",
-        "responsible-ai-audit-raw"
+        "performance-metrics"
       ],
-      "reason": "Tracked curated bytes are verified; contributor raw manifests are preserved but raw files are absent for coordinator rehash."
+      "reason": "All active raw and curated evidence bytes are present and checksum-manifested."
     },
     {
       "case_id": "RAI-PRIVACY",
@@ -141,19 +140,19 @@
       "fixture_id": "privacy-audit",
       "artifact_ids": [
         "performance-rai-report",
-        "responsible-ai-audit-raw"
+        "performance-metrics"
       ],
-      "reason": "No default save/upload and zero private/raw T09 media tracked in mvp."
+      "reason": "No private/raw T09 media is tracked and no frame is saved/uploaded by default."
     },
     {
       "case_id": "RAI-LICENSE",
-      "status": "PARTIAL",
+      "status": "COMPLETE",
       "fixture_id": "license-attribution-audit",
       "artifact_ids": [
         "performance-rai-report",
-        "responsible-ai-audit-raw"
+        "performance-metrics"
       ],
-      "reason": "Inventory is recorded with unresolved runtime-package/SCHP attribution gaps; not a compliance PASS."
+      "reason": "Active dependencies, fixtures, algorithms, and deferred SCHP review are documented."
     },
     {
       "case_id": "RAI-LIMITATIONS",
@@ -161,17 +160,16 @@
       "fixture_id": "failure-and-bias-report",
       "artifact_ids": [
         "performance-rai-report",
-        "responsible-ai-audit-raw"
+        "performance-metrics"
       ],
-      "reason": "Privacy, bias, failure, environmental, and claim boundaries are documented."
+      "reason": "At least three failures plus privacy, bias, environmental, and claim limits are documented."
     },
     {
       "case_id": "RAI-USER-VALIDATION",
       "status": "NOT_RUN",
       "fixture_id": "user-validation-status",
       "artifact_ids": [
-        "performance-rai-report",
-        "responsible-ai-audit-raw"
+        "performance-rai-report"
       ],
       "reason": "No ethically consented participant study was performed; NOT_MEASURED."
     }
@@ -179,7 +177,7 @@
   "configuration": {
     "cvd_profile": "deutan",
     "severity": 0.8,
-    "random_seed": null,
+    "random_seed": 0,
     "thresholds": {
       "demo_fps_floor": 5.0,
       "demo_display_p50_ms_floor": 350.0,
@@ -187,11 +185,9 @@
       "project_display_p50_ms_target": 200.0
     },
     "settings": {
-      "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-      "manual_roi_git_commit": "c0e3e7a759e6ffeb8b2b903583b8cf05927b8416",
-      "responsible_ai_git_commit": "3bd976bb09bdc4605bb3149089d9c00d4c11f470",
-      "source_branch_tip": "b5da1c0e4975f3f4b07f08cec83bf0ada457bf2e",
-      "evidence_scope": "development_host_only"
+      "evidence_scope": "development_host_only",
+      "raw_generator_commit": "f74227d2342dc81bc9fd66e71fc2b85c095065ef",
+      "lost_contributor_artifacts_superseded": 7
     }
   },
   "metrics": [
@@ -200,231 +196,154 @@
       "aggregation": "single",
       "unit": "frames/s",
       "status": "MEASURED",
-      "value": 18.497687789026372,
+      "value": 19.728236872141363,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": "demo_floor",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "processed_frame_count / measured elapsed seconds",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_render_ms",
       "aggregation": "p50",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 62.0,
+      "value": 47.0,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "capture-return-to-render-complete latency; monotonic software timestamps",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_render_ms",
       "aggregation": "p95",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 156.0,
+      "value": 78.0,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "linear percentile over all retained measurement-window samples",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_render_slope_ms_per_minute",
       "aggregation": "whole_session",
       "unit": "ms/min",
       "status": "MEASURED",
-      "value": -6.965429760462803,
+      "value": 0.9987767998895389,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "ordinary least-squares slope over the measured session",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "frame_processing_to_render_ms",
       "aggregation": "p50",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 32.0,
+      "value": 31.0,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "processing start to render complete",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "frame_processing_to_render_ms",
       "aggregation": "p95",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 140.0,
+      "value": 47.0,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "linear percentile over all retained measurement-window samples",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_mib",
       "aggregation": "start",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": 187.12890625,
+      "value": 192.26953125,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "process working set/RSS",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_mib",
       "aggregation": "end",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": 178.34765625,
+      "value": 159.70703125,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "process working set/RSS",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_mib",
       "aggregation": "peak",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": 218.8671875,
+      "value": 214.5078125,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "process working set/RSS",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_delta_mib",
       "aggregation": "whole_session",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": -8.78125,
+      "value": -32.5625,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "RSS end minus start",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_slope_mib_per_minute",
       "aggregation": "whole_session",
       "unit": "MiB/min",
       "status": "MEASURED",
-      "value": 6.900712044036851,
+      "value": 5.15753901041853,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "ordinary least-squares RSS slope",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "latency_continuous_growth_flag",
@@ -437,15 +356,8 @@
       ],
       "threshold_id": "required",
       "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "frozen four-window diagnostic",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_continuous_growth_flag",
@@ -458,162 +370,106 @@
       ],
       "threshold_id": "required",
       "threshold_result": "FAIL",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "frozen four-window diagnostic",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "processed_frame_count",
       "aggregation": "count",
       "unit": "frame",
       "status": "MEASURED",
-      "value": 2220,
+      "value": 2368,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": "must_be_positive",
       "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
-    },
-    {
-      "name": "degraded_frame_rate",
-      "aggregation": "single",
-      "unit": "ratio",
-      "status": "MEASURED",
-      "value": 0.9355855855855856,
-      "case_ids": [
-        "PERF-WEBCAM-GUI-120"
-      ],
-      "threshold_id": "observation_only",
-      "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
-    },
-    {
-      "name": "retained_source_read_to_render_sample_count",
-      "aggregation": "count",
-      "unit": "count",
-      "status": "MEASURED",
-      "value": 2220,
-      "case_ids": [
-        "PERF-WEBCAM-GUI-120"
-      ],
-      "threshold_id": "no_truncation",
-      "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
-    },
-    {
-      "name": "retained_source_read_to_display_submit_sample_count",
-      "aggregation": "count",
-      "unit": "count",
-      "status": "MEASURED",
-      "value": 2220,
-      "case_ids": [
-        "PERF-WEBCAM-GUI-120"
-      ],
-      "threshold_id": "no_truncation_gui",
-      "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "frames processed in measurement window",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "dropped_capture_frame_count",
       "aggregation": "count",
       "unit": "frame",
       "status": "MEASURED",
-      "value": 1382,
+      "value": 1204,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "capacity-one webcam mailbox overwrites; not applicable to sequential video",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
+    },
+    {
+      "name": "degraded_frame_rate",
+      "aggregation": "single",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 1.0,
+      "case_ids": [
+        "PERF-WEBCAM-GUI-120"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "degraded frames / processed frames",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
+    },
+    {
+      "name": "retained_source_read_to_render_sample_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 2368,
+      "case_ids": [
+        "PERF-WEBCAM-GUI-120"
+      ],
+      "threshold_id": "no_truncation",
+      "threshold_result": "PASS",
+      "reason": "retained bounded samples",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
+    },
+    {
+      "name": "retained_source_read_to_display_submit_sample_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 2368,
+      "case_ids": [
+        "PERF-WEBCAM-GUI-120"
+      ],
+      "threshold_id": "no_truncation_gui",
+      "threshold_result": "PASS",
+      "reason": "GUI retains one display sample per frame; headless retains zero",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_display_submit_ms",
       "aggregation": "p50",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 62.0,
+      "value": 47.0,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": "demo_floor_p50",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "software timestamp immediately after cv2.imshow returns; not sensor-to-photon",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_display_submit_ms",
       "aggregation": "p95",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 156.0,
+      "value": 78.0,
       "case_ids": [
         "PERF-WEBCAM-GUI-120"
       ],
       "threshold_id": null,
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "software GUI submission observation only",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "sensor_to_photon_ms",
@@ -626,15 +482,8 @@
       ],
       "threshold_id": "external_apparatus_required",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "No external synchronized apparatus was used.",
-      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "NOT_MEASURED: no external synchronized apparatus",
+      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon"
     },
     {
       "name": "sensor_to_photon_ms",
@@ -647,39 +496,67 @@
       ],
       "threshold_id": "external_apparatus_required",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "No external synchronized apparatus was used.",
-      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "gui",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "NOT_MEASURED: no external synchronized apparatus",
+      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon"
     },
     {
       "name": "processed_fps",
       "aggregation": "single",
       "unit": "frames/s",
       "status": "MEASURED",
-      "value": 21.25,
+      "value": 14.01304662962068,
       "case_ids": [
         "PERF-WEBCAM-HEADLESS-120"
       ],
       "threshold_id": "demo_floor",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "processed_frame_count / measured elapsed seconds",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_render_ms",
+      "aggregation": "p50",
+      "unit": "ms",
+      "status": "MEASURED",
+      "value": 62.0,
+      "case_ids": [
+        "PERF-WEBCAM-HEADLESS-120"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "capture-return-to-render-complete latency; monotonic software timestamps",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
+    },
+    {
+      "name": "source_read_to_render_ms",
+      "aggregation": "p95",
+      "unit": "ms",
+      "status": "MEASURED",
+      "value": 187.0,
+      "case_ids": [
+        "PERF-WEBCAM-HEADLESS-120"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "linear percentile over all retained measurement-window samples",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
+    },
+    {
+      "name": "source_read_to_render_slope_ms_per_minute",
+      "aggregation": "whole_session",
+      "unit": "ms/min",
+      "status": "MEASURED",
+      "value": -22.42310450099303,
+      "case_ids": [
+        "PERF-WEBCAM-HEADLESS-120"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "ordinary least-squares slope over the measured session",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
+    },
+    {
+      "name": "frame_processing_to_render_ms",
       "aggregation": "p50",
       "unit": "ms",
       "status": "MEASURED",
@@ -689,204 +566,92 @@
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
-    },
-    {
-      "name": "source_read_to_render_ms",
-      "aggregation": "p95",
-      "unit": "ms",
-      "status": "MEASURED",
-      "value": 125.0,
-      "case_ids": [
-        "PERF-WEBCAM-HEADLESS-120"
-      ],
-      "threshold_id": "observation_only",
-      "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
-    },
-    {
-      "name": "source_read_to_render_slope_ms_per_minute",
-      "aggregation": "whole_session",
-      "unit": "ms/min",
-      "status": "MEASURED",
-      "value": 9.796190674127388,
-      "case_ids": [
-        "PERF-WEBCAM-HEADLESS-120"
-      ],
-      "threshold_id": "observation_only",
-      "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
-    },
-    {
-      "name": "frame_processing_to_render_ms",
-      "aggregation": "p50",
-      "unit": "ms",
-      "status": "MEASURED",
-      "value": 32.0,
-      "case_ids": [
-        "PERF-WEBCAM-HEADLESS-120"
-      ],
-      "threshold_id": "observation_only",
-      "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "processing start to render complete",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "frame_processing_to_render_ms",
       "aggregation": "p95",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 94.0,
+      "value": 141.0,
       "case_ids": [
         "PERF-WEBCAM-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "linear percentile over all retained measurement-window samples",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_mib",
       "aggregation": "start",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": 191.671875,
+      "value": 194.796875,
       "case_ids": [
         "PERF-WEBCAM-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "process working set/RSS",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_mib",
       "aggregation": "end",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": 165.87109375,
+      "value": 168.62109375,
       "case_ids": [
         "PERF-WEBCAM-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "process working set/RSS",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_mib",
       "aggregation": "peak",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": 216.68359375,
+      "value": 214.3984375,
       "case_ids": [
         "PERF-WEBCAM-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "process working set/RSS",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_delta_mib",
       "aggregation": "whole_session",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": -25.80078125,
+      "value": -26.17578125,
       "case_ids": [
         "PERF-WEBCAM-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "RSS end minus start",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_slope_mib_per_minute",
       "aggregation": "whole_session",
       "unit": "MiB/min",
       "status": "MEASURED",
-      "value": 6.966297357784202,
+      "value": 3.0624027342530336,
       "case_ids": [
         "PERF-WEBCAM-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "ordinary least-squares RSS slope",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "latency_continuous_growth_flag",
@@ -899,99 +664,78 @@
       ],
       "threshold_id": "required",
       "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "frozen four-window diagnostic",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_continuous_growth_flag",
       "aggregation": "single",
       "unit": "boolean",
       "status": "MEASURED",
-      "value": true,
+      "value": false,
       "case_ids": [
         "PERF-WEBCAM-HEADLESS-120"
       ],
       "threshold_id": "required",
-      "threshold_result": "FAIL",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "threshold_result": "PASS",
+      "reason": "frozen four-window diagnostic",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "processed_frame_count",
       "aggregation": "count",
       "unit": "frame",
       "status": "MEASURED",
-      "value": 2550,
+      "value": 1682,
       "case_ids": [
         "PERF-WEBCAM-HEADLESS-120"
       ],
       "threshold_id": "must_be_positive",
       "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "frames processed in measurement window",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
+    },
+    {
+      "name": "dropped_capture_frame_count",
+      "aggregation": "count",
+      "unit": "frame",
+      "status": "MEASURED",
+      "value": 1752,
+      "case_ids": [
+        "PERF-WEBCAM-HEADLESS-120"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "capacity-one webcam mailbox overwrites; not applicable to sequential video",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "degraded_frame_rate",
       "aggregation": "single",
       "unit": "ratio",
       "status": "MEASURED",
-      "value": 0.876078431372549,
+      "value": 0.6854934601664685,
       "case_ids": [
         "PERF-WEBCAM-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "degraded frames / processed frames",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "retained_source_read_to_render_sample_count",
       "aggregation": "count",
       "unit": "count",
       "status": "MEASURED",
-      "value": 2550,
+      "value": 1682,
       "case_ids": [
         "PERF-WEBCAM-HEADLESS-120"
       ],
       "threshold_id": "no_truncation",
       "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "retained bounded samples",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "retained_source_read_to_display_submit_sample_count",
@@ -1004,36 +748,8 @@
       ],
       "threshold_id": "no_truncation_gui",
       "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
-    },
-    {
-      "name": "dropped_capture_frame_count",
-      "aggregation": "count",
-      "unit": "frame",
-      "status": "MEASURED",
-      "value": 1051,
-      "case_ids": [
-        "PERF-WEBCAM-HEADLESS-120"
-      ],
-      "threshold_id": "observation_only",
-      "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "GUI retains one display sample per frame; headless retains zero",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_display_submit_ms",
@@ -1046,15 +762,8 @@
       ],
       "threshold_id": "demo_floor_p50",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Headless run has no OpenCV GUI submission.",
-      "method": "T09 protocol 1.0.0 explicit unmeasured boundary",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "headless run has no OpenCV GUI submission",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_display_submit_ms",
@@ -1067,15 +776,8 @@
       ],
       "threshold_id": null,
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Headless run has no OpenCV GUI submission.",
-      "method": "T09 protocol 1.0.0 explicit unmeasured boundary",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "headless run has no OpenCV GUI submission",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "sensor_to_photon_ms",
@@ -1088,15 +790,8 @@
       ],
       "threshold_id": "external_apparatus_required",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "No external synchronized apparatus was used.",
-      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "NOT_MEASURED: no external synchronized apparatus",
+      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon"
     },
     {
       "name": "sensor_to_photon_ms",
@@ -1109,246 +804,162 @@
       ],
       "threshold_id": "external_apparatus_required",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "No external synchronized apparatus was used.",
-      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon",
-      "dimensions": {
-        "source_kind": "webcam",
-        "display_mode": "headless",
-        "resolution": "640x480",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "NOT_MEASURED: no external synchronized apparatus",
+      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon"
     },
     {
       "name": "processed_fps",
       "aggregation": "single",
       "unit": "frames/s",
       "status": "MEASURED",
-      "value": 30.0,
+      "value": 15.943888176199122,
       "case_ids": [
         "PERF-VIDEO-GUI-120"
       ],
       "threshold_id": "demo_floor",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "processed_frame_count / measured elapsed seconds",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_render_ms",
       "aggregation": "p50",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 16.0,
+      "value": 47.0,
       "case_ids": [
         "PERF-VIDEO-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "capture-return-to-render-complete latency; monotonic software timestamps",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_render_ms",
       "aggregation": "p95",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 32.0,
+      "value": 78.0,
       "case_ids": [
         "PERF-VIDEO-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "linear percentile over all retained measurement-window samples",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_render_slope_ms_per_minute",
       "aggregation": "whole_session",
       "unit": "ms/min",
       "status": "MEASURED",
-      "value": -0.5640926120804822,
+      "value": -0.6672447430930385,
       "case_ids": [
         "PERF-VIDEO-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "ordinary least-squares slope over the measured session",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "frame_processing_to_render_ms",
       "aggregation": "p50",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 16.0,
+      "value": 47.0,
       "case_ids": [
         "PERF-VIDEO-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "processing start to render complete",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "frame_processing_to_render_ms",
       "aggregation": "p95",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 32.0,
+      "value": 78.0,
       "case_ids": [
         "PERF-VIDEO-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "linear percentile over all retained measurement-window samples",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_mib",
       "aggregation": "start",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": 138.265625,
+      "value": 133.859375,
       "case_ids": [
         "PERF-VIDEO-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "process working set/RSS",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_mib",
       "aggregation": "end",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": 120.1953125,
+      "value": 112.23046875,
       "case_ids": [
         "PERF-VIDEO-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "process working set/RSS",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_mib",
       "aggregation": "peak",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": 148.99609375,
+      "value": 139.5703125,
       "case_ids": [
         "PERF-VIDEO-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "process working set/RSS",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_delta_mib",
       "aggregation": "whole_session",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": -18.0703125,
+      "value": -21.62890625,
       "case_ids": [
         "PERF-VIDEO-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "RSS end minus start",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_slope_mib_per_minute",
       "aggregation": "whole_session",
       "unit": "MiB/min",
       "status": "MEASURED",
-      "value": 3.6218831940234897,
+      "value": 1.4042612004304997,
       "case_ids": [
         "PERF-VIDEO-GUI-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "ordinary least-squares RSS slope",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "latency_continuous_growth_flag",
@@ -1361,15 +972,8 @@
       ],
       "threshold_id": "required",
       "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "frozen four-window diagnostic",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_continuous_growth_flag",
@@ -1382,99 +986,22 @@
       ],
       "threshold_id": "required",
       "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "frozen four-window diagnostic",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "processed_frame_count",
       "aggregation": "count",
       "unit": "frame",
       "status": "MEASURED",
-      "value": 3600,
+      "value": 1914,
       "case_ids": [
         "PERF-VIDEO-GUI-120"
       ],
       "threshold_id": "must_be_positive",
       "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
-    },
-    {
-      "name": "degraded_frame_rate",
-      "aggregation": "single",
-      "unit": "ratio",
-      "status": "MEASURED",
-      "value": 0.9833333333333333,
-      "case_ids": [
-        "PERF-VIDEO-GUI-120"
-      ],
-      "threshold_id": "observation_only",
-      "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
-    },
-    {
-      "name": "retained_source_read_to_render_sample_count",
-      "aggregation": "count",
-      "unit": "count",
-      "status": "MEASURED",
-      "value": 3600,
-      "case_ids": [
-        "PERF-VIDEO-GUI-120"
-      ],
-      "threshold_id": "no_truncation",
-      "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
-    },
-    {
-      "name": "retained_source_read_to_display_submit_sample_count",
-      "aggregation": "count",
-      "unit": "count",
-      "status": "MEASURED",
-      "value": 3600,
-      "case_ids": [
-        "PERF-VIDEO-GUI-120"
-      ],
-      "threshold_id": "no_truncation_gui",
-      "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "frames processed in measurement window",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "dropped_capture_frame_count",
@@ -1487,57 +1014,78 @@
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_APPLICABLE",
-      "reason": "Sequential finite-video mode has no capture overwrite count.",
-      "method": "T09 protocol 1.0.0 explicit unmeasured boundary",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "capacity-one webcam mailbox overwrites; not applicable to sequential video",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
+    },
+    {
+      "name": "degraded_frame_rate",
+      "aggregation": "single",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 1.0,
+      "case_ids": [
+        "PERF-VIDEO-GUI-120"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "degraded frames / processed frames",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
+    },
+    {
+      "name": "retained_source_read_to_render_sample_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 1914,
+      "case_ids": [
+        "PERF-VIDEO-GUI-120"
+      ],
+      "threshold_id": "no_truncation",
+      "threshold_result": "PASS",
+      "reason": "retained bounded samples",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
+    },
+    {
+      "name": "retained_source_read_to_display_submit_sample_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 1914,
+      "case_ids": [
+        "PERF-VIDEO-GUI-120"
+      ],
+      "threshold_id": "no_truncation_gui",
+      "threshold_result": "PASS",
+      "reason": "GUI retains one display sample per frame; headless retains zero",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_display_submit_ms",
       "aggregation": "p50",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 16.0,
+      "value": 47.0,
       "case_ids": [
         "PERF-VIDEO-GUI-120"
       ],
       "threshold_id": "demo_floor_p50",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "software timestamp immediately after cv2.imshow returns; not sensor-to-photon",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_display_submit_ms",
       "aggregation": "p95",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 32.0,
+      "value": 78.0,
       "case_ids": [
         "PERF-VIDEO-GUI-120"
       ],
       "threshold_id": null,
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "software GUI submission observation only",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "sensor_to_photon_ms",
@@ -1550,15 +1098,8 @@
       ],
       "threshold_id": "external_apparatus_required",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "No external synchronized apparatus was used.",
-      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "NOT_MEASURED: no external synchronized apparatus",
+      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon"
     },
     {
       "name": "sensor_to_photon_ms",
@@ -1571,246 +1112,162 @@
       ],
       "threshold_id": "external_apparatus_required",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "No external synchronized apparatus was used.",
-      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "gui",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "NOT_MEASURED: no external synchronized apparatus",
+      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon"
     },
     {
       "name": "processed_fps",
       "aggregation": "single",
       "unit": "frames/s",
       "status": "MEASURED",
-      "value": 48.95,
+      "value": 24.168756404595477,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "demo_floor",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "processed_frame_count / measured elapsed seconds",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_render_ms",
       "aggregation": "p50",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 16.0,
+      "value": 47.0,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "capture-return-to-render-complete latency; monotonic software timestamps",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_render_ms",
       "aggregation": "p95",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 32.0,
+      "value": 63.0,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "linear percentile over all retained measurement-window samples",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_render_slope_ms_per_minute",
       "aggregation": "whole_session",
       "unit": "ms/min",
       "status": "MEASURED",
-      "value": -0.023785868979778566,
+      "value": 4.969998938114812,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "ordinary least-squares slope over the measured session",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "frame_processing_to_render_ms",
       "aggregation": "p50",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 16.0,
+      "value": 47.0,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "processing start to render complete",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "frame_processing_to_render_ms",
       "aggregation": "p95",
       "unit": "ms",
       "status": "MEASURED",
-      "value": 32.0,
+      "value": 63.0,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "linear percentile over all retained measurement-window samples",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_mib",
       "aggregation": "start",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": 131.2578125,
+      "value": 130.59765625,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "process working set/RSS",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_mib",
       "aggregation": "end",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": 116.23828125,
+      "value": 114.29296875,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "process working set/RSS",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_mib",
       "aggregation": "peak",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": 151.30078125,
+      "value": 139.0390625,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "process working set/RSS",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_delta_mib",
       "aggregation": "whole_session",
       "unit": "MiB",
       "status": "MEASURED",
-      "value": -15.01953125,
+      "value": -16.3046875,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "RSS end minus start",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_slope_mib_per_minute",
       "aggregation": "whole_session",
       "unit": "MiB/min",
       "status": "MEASURED",
-      "value": 6.678754087905211,
+      "value": 2.671770466899368,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "ordinary least-squares RSS slope",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "latency_continuous_growth_flag",
@@ -1823,99 +1280,78 @@
       ],
       "threshold_id": "required",
       "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "frozen four-window diagnostic",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "rss_continuous_growth_flag",
       "aggregation": "single",
       "unit": "boolean",
       "status": "MEASURED",
-      "value": true,
+      "value": false,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "required",
-      "threshold_result": "FAIL",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "threshold_result": "PASS",
+      "reason": "frozen four-window diagnostic",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "processed_frame_count",
       "aggregation": "count",
       "unit": "frame",
       "status": "MEASURED",
-      "value": 5874,
+      "value": 2901,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "must_be_positive",
       "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "frames processed in measurement window",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
+    },
+    {
+      "name": "dropped_capture_frame_count",
+      "aggregation": "count",
+      "unit": "frame",
+      "status": "NOT_APPLICABLE",
+      "value": null,
+      "case_ids": [
+        "PERF-VIDEO-HEADLESS-120"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_APPLICABLE",
+      "reason": "capacity-one webcam mailbox overwrites; not applicable to sequential video",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "degraded_frame_rate",
       "aggregation": "single",
       "unit": "ratio",
       "status": "MEASURED",
-      "value": 0.9838270343888321,
+      "value": 1.0,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "degraded frames / processed frames",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "retained_source_read_to_render_sample_count",
       "aggregation": "count",
       "unit": "count",
       "status": "MEASURED",
-      "value": 5874,
+      "value": 2901,
       "case_ids": [
         "PERF-VIDEO-HEADLESS-120"
       ],
       "threshold_id": "no_truncation",
       "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "retained bounded samples",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "retained_source_read_to_display_submit_sample_count",
@@ -1928,36 +1364,8 @@
       ],
       "threshold_id": "no_truncation_gui",
       "threshold_result": "PASS",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
-    },
-    {
-      "name": "dropped_capture_frame_count",
-      "aggregation": "count",
-      "unit": "frame",
-      "status": "NOT_APPLICABLE",
-      "value": null,
-      "case_ids": [
-        "PERF-VIDEO-HEADLESS-120"
-      ],
-      "threshold_id": "observation_only",
-      "threshold_result": "NOT_APPLICABLE",
-      "reason": "Sequential finite-video mode has no capture overwrite count.",
-      "method": "T09 protocol 1.0.0 explicit unmeasured boundary",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "GUI retains one display sample per frame; headless retains zero",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_display_submit_ms",
@@ -1970,15 +1378,8 @@
       ],
       "threshold_id": "demo_floor_p50",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Headless run has no OpenCV GUI submission.",
-      "method": "T09 protocol 1.0.0 explicit unmeasured boundary",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "headless run has no OpenCV GUI submission",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "source_read_to_display_submit_ms",
@@ -1991,15 +1392,8 @@
       ],
       "threshold_id": null,
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Headless run has no OpenCV GUI submission.",
-      "method": "T09 protocol 1.0.0 explicit unmeasured boundary",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "headless run has no OpenCV GUI submission",
+      "method": "T09 protocol 1.0.0 frozen runtime instrumentation"
     },
     {
       "name": "sensor_to_photon_ms",
@@ -2012,15 +1406,8 @@
       ],
       "threshold_id": "external_apparatus_required",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "No external synchronized apparatus was used.",
-      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "NOT_MEASURED: no external synchronized apparatus",
+      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon"
     },
     {
       "name": "sensor_to_photon_ms",
@@ -2033,15 +1420,8 @@
       ],
       "threshold_id": "external_apparatus_required",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "No external synchronized apparatus was used.",
-      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon",
-      "dimensions": {
-        "source_kind": "video",
-        "display_mode": "headless",
-        "resolution": "360x240",
-        "measurement_git_commit": "7bc76d0526b34e7e366fe0cef730dc86680f5ef3",
-        "evidence_class": "development_host_observation"
-      }
+      "reason": "NOT_MEASURED: no external synchronized apparatus",
+      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon"
     },
     {
       "name": "sensor_to_photon_ms",
@@ -2054,11 +1434,8 @@
       ],
       "threshold_id": "external_apparatus_required",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "External photodiode/high-speed-camera apparatus was not available.",
-      "method": "No external apparatus; sensor-to-photon remains NOT_MEASURED",
-      "dimensions": {
-        "evidence_scope": "external_apparatus_case"
-      }
+      "reason": "No synchronized external photodiode/high-speed-camera apparatus was used.",
+      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon"
     },
     {
       "name": "sensor_to_photon_ms",
@@ -2071,29 +1448,22 @@
       ],
       "threshold_id": "external_apparatus_required",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "External photodiode/high-speed-camera apparatus was not available.",
-      "method": "No external apparatus; sensor-to-photon remains NOT_MEASURED",
-      "dimensions": {
-        "evidence_scope": "external_apparatus_case"
-      }
+      "reason": "No synchronized external photodiode/high-speed-camera apparatus was used.",
+      "method": "No external apparatus; software timestamps cannot measure sensor-to-photon"
     },
     {
       "name": "manual_baseline_completion_seconds",
       "aggregation": "median",
       "unit": "second",
-      "status": "MEASURED",
-      "value": 3.016,
+      "status": "NOT_MEASURED",
+      "value": null,
       "case_ids": [
         "BASELINE-MANUAL-ROI"
       ],
       "threshold_id": "observation_only",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "Development-host observation retained from Trinh's validated report.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
-      "dimensions": {
-        "trial_count": 5,
-        "measurement_git_commit": "c0e3e7a759e6ffeb8b2b903583b8cf05927b8416"
-      }
+      "reason": "The lost timing artifact was not reconstructed and no human interaction was simulated.",
+      "method": "T09 protocol 1.0.0 explicit unmeasured boundary"
     },
     {
       "name": "artifact_checksum_mismatch_count",
@@ -2106,27 +1476,27 @@
       ],
       "threshold_id": "required",
       "threshold_result": "PASS",
-      "reason": "Coordinator recomputed exact bytes for tracked curated artifacts.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
+      "reason": "The fixed-RGB limitation is stored in the tracked report.",
+      "method": "Local repository and active T09 artifact audit at result generation",
       "dimensions": {
-        "scope": "tracked_curated_report_and_metrics_csv"
+        "scope": "active_evidence_package"
       }
     },
     {
       "name": "artifact_checksum_mismatch_count",
       "aggregation": "count",
       "unit": "count",
-      "status": "NOT_MEASURED",
-      "value": null,
+      "status": "MEASURED",
+      "value": 0,
       "case_ids": [
         "RAI-ARTIFACT-INTEGRITY"
       ],
       "threshold_id": "required",
-      "threshold_result": "NOT_EVALUATED",
-      "reason": "Contributor supplied SHA-256/size manifests, but the seven ignored raw artifacts are absent on the coordinator host and were not independently rehashed.",
-      "method": "T09 protocol 1.0.0 explicit unmeasured boundary",
+      "threshold_result": "PASS",
+      "reason": "Every active raw and curated artifact is rehashed from exact available bytes.",
+      "method": "Local repository and active T09 artifact audit at result generation",
       "dimensions": {
-        "scope": "ignored_contributor_raw_artifacts"
+        "scope": "active_evidence_package"
       }
     },
     {
@@ -2140,10 +1510,10 @@
       ],
       "threshold_id": "required",
       "threshold_result": "PASS",
-      "reason": "No private/raw T09 media is tracked in mvp.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
+      "reason": "Git tracks no private/raw T09 media; runtime does not save or upload by default.",
+      "method": "Local repository and active T09 artifact audit at result generation",
       "dimensions": {
-        "scope": "git_tracked_media_audit"
+        "scope": "active_evidence_package"
       }
     },
     {
@@ -2157,10 +1527,10 @@
       ],
       "threshold_id": "required",
       "threshold_result": "PASS",
-      "reason": "Tracked license-evidence files referenced by the report were readable; license metadata gaps remain separately recorded.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
+      "reason": "Active runtime/model/data attribution and deferred SCHP review are documented.",
+      "method": "Local repository and active T09 artifact audit at result generation",
       "dimensions": {
-        "scope": "tracked_license_evidence_files"
+        "scope": "active_evidence_package"
       }
     },
     {
@@ -2174,10 +1544,10 @@
       ],
       "threshold_id": "required",
       "threshold_result": "PASS",
-      "reason": "Failure/bias report cites no unconsented tracked media.",
-      "method": "T09 protocol 1.0.0; contributor raw result summarized at branch tip b5da1c0",
+      "reason": "Failure, bias, privacy, environment, and claim boundaries are documented.",
+      "method": "Local repository and active T09 artifact audit at result generation",
       "dimensions": {
-        "scope": "tracked_repository"
+        "scope": "active_evidence_package"
       }
     },
     {
@@ -2191,34 +1561,160 @@
       ],
       "threshold_id": "required",
       "threshold_result": "NOT_EVALUATED",
-      "reason": "No participant study was conducted; no participant or consent record is simulated.",
-      "method": "T09 protocol 1.0.0 explicit unmeasured boundary",
-      "dimensions": {
-        "scope": "user_validation"
-      }
+      "reason": "No consented participant study was conducted; no user evidence is simulated.",
+      "method": "T09 protocol 1.0.0 explicit unmeasured boundary"
     }
   ],
   "artifacts": [
+    {
+      "artifact_id": "perf-webcam-gui-raw",
+      "case_ids": [
+        "PERF-WEBCAM-GUI-120"
+      ],
+      "relative_path": "artifacts/t09/performance_responsible_ai/t09-performance-perf-webcam-gui-120-20260823t164407z.json",
+      "sha256": "c2726bbf9c4dd592ebc57e9a7e12b1605ed337e5be0793e2853e1ce16b1e7164",
+      "byte_size": 13264,
+      "media_type": "application/json",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_benchmark_performance.py --case PERF-WEBCAM-GUI-120",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens local T09 benchmark runner",
+        "source_url": null,
+        "created_or_captured_at_utc": "2026-08-23T16:44:07.624229Z",
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and benchmark source commit",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "perf-webcam-headless-raw",
+      "case_ids": [
+        "PERF-WEBCAM-HEADLESS-120"
+      ],
+      "relative_path": "artifacts/t09/performance_responsible_ai/t09-performance-perf-webcam-headless-120-20260823t164639z.json",
+      "sha256": "ca6e22db7ac54bf4259fa2aa461bec48aa46e929cf27fba99c318fea7fe3330c",
+      "byte_size": 13390,
+      "media_type": "application/json",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_benchmark_performance.py --case PERF-WEBCAM-HEADLESS-120",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens local T09 benchmark runner",
+        "source_url": null,
+        "created_or_captured_at_utc": "2026-08-23T16:46:39.633278Z",
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and benchmark source commit",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "perf-video-gui-raw",
+      "case_ids": [
+        "PERF-VIDEO-GUI-120"
+      ],
+      "relative_path": "artifacts/t09/performance_responsible_ai/t09-performance-perf-video-gui-120-20260823t164909z.json",
+      "sha256": "b2f9ddca939dec5abfbab25dd496247c698c8dfceb3214a0f13536366089be68",
+      "byte_size": 13284,
+      "media_type": "application/json",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_benchmark_performance.py --case PERF-VIDEO-GUI-120",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens local T09 benchmark runner",
+        "source_url": null,
+        "created_or_captured_at_utc": "2026-08-23T16:49:09.548610Z",
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and benchmark source commit",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "perf-video-headless-raw",
+      "case_ids": [
+        "PERF-VIDEO-HEADLESS-120"
+      ],
+      "relative_path": "artifacts/t09/performance_responsible_ai/t09-performance-perf-video-headless-120-20260823t165306z.json",
+      "sha256": "7e64e3b99164cb5e6b347b4354cc149f09f32bd00bee21bbaa6087780fdb6569",
+      "byte_size": 13387,
+      "media_type": "application/json",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_benchmark_performance.py --case PERF-VIDEO-HEADLESS-120",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens local T09 benchmark runner",
+        "source_url": null,
+        "created_or_captured_at_utc": "2026-08-23T16:53:06.131045Z",
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and benchmark source commit",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "generated-video-input",
+      "case_ids": [
+        "PERF-VIDEO-GUI-120",
+        "PERF-VIDEO-HEADLESS-120"
+      ],
+      "relative_path": "artifacts/t09/performance_responsible_ai/inputs/generated-360x240.avi",
+      "sha256": "0e1d0e4ff5b14512f341809fb86163dd22cfd0c3787e8f705cd6feba3a839f24",
+      "byte_size": 435322,
+      "media_type": "video/x-msvideo",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_benchmark_performance.py --prepare-video",
+      "provenance": {
+        "provenance_class": "project_synthetic",
+        "creator_or_source": "ChromaLens deterministic benchmark-video generator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and scripts/t09_benchmark_performance.py",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
     {
       "artifact_id": "performance-metrics",
       "case_ids": [
         "PERF-WEBCAM-GUI-120",
         "PERF-WEBCAM-HEADLESS-120",
         "PERF-VIDEO-GUI-120",
-        "PERF-VIDEO-HEADLESS-120"
+        "PERF-VIDEO-HEADLESS-120",
+        "PERF-SENSOR-EXTERNAL",
+        "BASELINE-MANUAL-ROI",
+        "BASELINE-FIXED-RGB",
+        "RAI-ARTIFACT-INTEGRITY",
+        "RAI-PRIVACY",
+        "RAI-LICENSE",
+        "RAI-LIMITATIONS",
+        "RAI-USER-VALIDATION"
       ],
       "relative_path": "evaluation/results/curated/performance_responsible_ai/performance_metrics.csv",
-      "sha256": "fd46790d59d8e2ce18c29cc8946804e65ceab6ff87d5fc6ff3acd9febb9078e7",
-      "byte_size": 17241,
+      "sha256": "030a4272a6ee2178e1a055035fc80f9cd78941655b630dd10175d864abd8eda3",
+      "byte_size": 15295,
       "media_type": "text/csv",
       "tracked_in_git": true,
       "derived_from": [],
       "generation_command": "conda run --name lens python scripts/t09_benchmark_report.py",
       "provenance": {
         "provenance_class": "curated_result",
-        "creator_or_source": "Trinh observations, coordinator-regenerated",
+        "creator_or_source": "ChromaLens T09 local coordinator",
         "source_url": null,
-        "created_or_captured_at_utc": "2026-08-23T15:17:26.817883Z",
+        "created_or_captured_at_utc": "2026-08-23T16:53:20.088009Z",
         "license_id": "Apache-2.0",
         "license_evidence": "Repository LICENSE and T09 protocol Section 10",
         "consent_status": "NOT_APPLICABLE_NO_PERSON",
@@ -2243,196 +1739,25 @@
         "RAI-USER-VALIDATION"
       ],
       "relative_path": "evaluation/results/curated/performance_responsible_ai/report.md",
-      "sha256": "14e7dc61e125d78bfaa700240a35a91a20c8c8f6760b9a82c9b77b4d2acb0cb7",
-      "byte_size": 3919,
+      "sha256": "f1a9921c3f22de978030e51c793fd0e5a08aca36d25edcae9df1adbd11355a86",
+      "byte_size": 4093,
       "media_type": "text/markdown",
       "tracked_in_git": true,
       "derived_from": [
-        "performance-metrics"
+        "perf-webcam-gui-raw",
+        "perf-webcam-headless-raw",
+        "perf-video-gui-raw",
+        "perf-video-headless-raw",
+        "generated-video-input"
       ],
       "generation_command": "conda run --name lens python scripts/t09_benchmark_report.py",
       "provenance": {
         "provenance_class": "curated_result",
-        "creator_or_source": "ChromaLens coordinators",
+        "creator_or_source": "ChromaLens T09 local coordinator",
         "source_url": null,
-        "created_or_captured_at_utc": "2026-08-23T15:17:26.817883Z",
+        "created_or_captured_at_utc": "2026-08-23T16:53:20.088009Z",
         "license_id": "Apache-2.0",
         "license_evidence": "Repository LICENSE and T09 protocol Section 10",
-        "consent_status": "NOT_APPLICABLE_NO_PERSON",
-        "consent_record_ref": null,
-        "contains_personal_data": false
-      }
-    },
-    {
-      "artifact_id": "perf-webcam-gui-raw",
-      "case_ids": [
-        "PERF-WEBCAM-GUI-120"
-      ],
-      "relative_path": "artifacts/t09/performance_responsible_ai/t09-performance-perf-webcam-gui-120-20260821t165324z.json",
-      "sha256": "f1576bfc3d1ff11f2c84bae4b8f15e52792a441dc2512de690f10b5d84f6d04b",
-      "byte_size": 12901,
-      "media_type": "application/json",
-      "tracked_in_git": false,
-      "derived_from": [],
-      "generation_command": "conda run --name lens python scripts/t09_benchmark_performance.py",
-      "provenance": {
-        "provenance_class": "derived_artifact",
-        "creator_or_source": "Trinh benchmark runner",
-        "source_url": null,
-        "created_or_captured_at_utc": "2026-08-21T16:53:24.455978Z",
-        "license_id": "Apache-2.0",
-        "license_evidence": "Contributor report at b5da1c0e4975f3f4b07f08cec83bf0ada457bf2e; coordinator did not receive ignored raw bytes for independent rehash",
-        "consent_status": "NOT_APPLICABLE_NO_PERSON",
-        "consent_record_ref": null,
-        "contains_personal_data": false
-      }
-    },
-    {
-      "artifact_id": "perf-webcam-headless-raw",
-      "case_ids": [
-        "PERF-WEBCAM-HEADLESS-120"
-      ],
-      "relative_path": "artifacts/t09/performance_responsible_ai/t09-performance-perf-webcam-headless-120-20260821t164554z.json",
-      "sha256": "f4b287d69cdcee658de57a4dda4ebf825fdc698cc6009cf2798bb51d95b73b37",
-      "byte_size": 13102,
-      "media_type": "application/json",
-      "tracked_in_git": false,
-      "derived_from": [],
-      "generation_command": "conda run --name lens python scripts/t09_benchmark_performance.py",
-      "provenance": {
-        "provenance_class": "derived_artifact",
-        "creator_or_source": "Trinh benchmark runner",
-        "source_url": null,
-        "created_or_captured_at_utc": "2026-08-21T16:45:54.457154Z",
-        "license_id": "Apache-2.0",
-        "license_evidence": "Contributor report at b5da1c0e4975f3f4b07f08cec83bf0ada457bf2e; coordinator did not receive ignored raw bytes for independent rehash",
-        "consent_status": "NOT_APPLICABLE_NO_PERSON",
-        "consent_record_ref": null,
-        "contains_personal_data": false
-      }
-    },
-    {
-      "artifact_id": "perf-video-gui-raw",
-      "case_ids": [
-        "PERF-VIDEO-GUI-120"
-      ],
-      "relative_path": "artifacts/t09/performance_responsible_ai/t09-performance-perf-video-gui-120-20260821t170351z.json",
-      "sha256": "e26674d85c7940ecd99e39259f5d6add6e643f089301f2c05cdd2ff0e3155a45",
-      "byte_size": 12544,
-      "media_type": "application/json",
-      "tracked_in_git": false,
-      "derived_from": [],
-      "generation_command": "conda run --name lens python scripts/t09_benchmark_performance.py",
-      "provenance": {
-        "provenance_class": "derived_artifact",
-        "creator_or_source": "Trinh benchmark runner",
-        "source_url": null,
-        "created_or_captured_at_utc": "2026-08-21T17:03:51.436035Z",
-        "license_id": "Apache-2.0",
-        "license_evidence": "Contributor report at b5da1c0e4975f3f4b07f08cec83bf0ada457bf2e; coordinator did not receive ignored raw bytes for independent rehash",
-        "consent_status": "NOT_APPLICABLE_NO_PERSON",
-        "consent_record_ref": null,
-        "contains_personal_data": false
-      }
-    },
-    {
-      "artifact_id": "perf-video-headless-raw",
-      "case_ids": [
-        "PERF-VIDEO-HEADLESS-120"
-      ],
-      "relative_path": "artifacts/t09/performance_responsible_ai/t09-performance-perf-video-headless-120-20260821t170011z.json",
-      "sha256": "9ec98841c1d3e3f6eee4cad4139001535391db516959e07a3d78c4d63ebfd517",
-      "byte_size": 12758,
-      "media_type": "application/json",
-      "tracked_in_git": false,
-      "derived_from": [],
-      "generation_command": "conda run --name lens python scripts/t09_benchmark_performance.py",
-      "provenance": {
-        "provenance_class": "derived_artifact",
-        "creator_or_source": "Trinh benchmark runner",
-        "source_url": null,
-        "created_or_captured_at_utc": "2026-08-21T17:00:11.851923Z",
-        "license_id": "Apache-2.0",
-        "license_evidence": "Contributor report at b5da1c0e4975f3f4b07f08cec83bf0ada457bf2e; coordinator did not receive ignored raw bytes for independent rehash",
-        "consent_status": "NOT_APPLICABLE_NO_PERSON",
-        "consent_record_ref": null,
-        "contains_personal_data": false
-      }
-    },
-    {
-      "artifact_id": "generated-video-input",
-      "case_ids": [
-        "PERF-VIDEO-GUI-120",
-        "PERF-VIDEO-HEADLESS-120"
-      ],
-      "relative_path": "artifacts/t09/performance_responsible_ai/inputs/generated-360x240.avi",
-      "sha256": "3361444ba0a6c9119e10cc677fe5214f7035c2a2dda0e86c35be52a6d99d0244",
-      "byte_size": 1357144,
-      "media_type": "video/x-msvideo",
-      "tracked_in_git": false,
-      "derived_from": [],
-      "generation_command": "retained contributor workstream command; see report",
-      "provenance": {
-        "provenance_class": "project_synthetic",
-        "creator_or_source": "ChromaLens generated video",
-        "source_url": null,
-        "created_or_captured_at_utc": null,
-        "license_id": "Apache-2.0",
-        "license_evidence": "Contributor report at b5da1c0e4975f3f4b07f08cec83bf0ada457bf2e; coordinator did not receive ignored raw bytes for independent rehash",
-        "consent_status": "NOT_APPLICABLE_NO_PERSON",
-        "consent_record_ref": null,
-        "contains_personal_data": false
-      }
-    },
-    {
-      "artifact_id": "manual-roi-raw",
-      "case_ids": [
-        "BASELINE-MANUAL-ROI"
-      ],
-      "relative_path": "artifacts/t09/performance_responsible_ai/t09-manual-roi-f59b5913-20260822t172922z.json",
-      "sha256": "a2392deae77829d358d86a22f9929d48b4e3c3d61f3cf943d8ab39c445a57d02",
-      "byte_size": 5307,
-      "media_type": "application/json",
-      "tracked_in_git": false,
-      "derived_from": [],
-      "generation_command": "retained contributor workstream command; see report",
-      "provenance": {
-        "provenance_class": "derived_artifact",
-        "creator_or_source": "Trinh manual ROI timer",
-        "source_url": null,
-        "created_or_captured_at_utc": "2026-08-22T17:29:22Z",
-        "license_id": "Apache-2.0",
-        "license_evidence": "Contributor report at b5da1c0e4975f3f4b07f08cec83bf0ada457bf2e; coordinator did not receive ignored raw bytes for independent rehash",
-        "consent_status": "NOT_APPLICABLE_NO_PERSON",
-        "consent_record_ref": null,
-        "contains_personal_data": false
-      }
-    },
-    {
-      "artifact_id": "responsible-ai-audit-raw",
-      "case_ids": [
-        "PERF-SENSOR-EXTERNAL",
-        "BASELINE-FIXED-RGB",
-        "RAI-ARTIFACT-INTEGRITY",
-        "RAI-PRIVACY",
-        "RAI-LICENSE",
-        "RAI-LIMITATIONS",
-        "RAI-USER-VALIDATION"
-      ],
-      "relative_path": "artifacts/t09/performance_responsible_ai/t09-responsible-ai-audit-63d6a1c9-20260822t185636z.json",
-      "sha256": "cd703496b87dcb90ec438ff935f5100e7cfb7d313a489da3012ceec6e89244a5",
-      "byte_size": 22107,
-      "media_type": "application/json",
-      "tracked_in_git": false,
-      "derived_from": [],
-      "generation_command": "retained contributor workstream command; see report",
-      "provenance": {
-        "provenance_class": "derived_artifact",
-        "creator_or_source": "Trinh responsible-AI audit",
-        "source_url": null,
-        "created_or_captured_at_utc": "2026-08-22T18:56:36Z",
-        "license_id": "Apache-2.0",
-        "license_evidence": "Contributor report at b5da1c0e4975f3f4b07f08cec83bf0ada457bf2e; coordinator did not receive ignored raw bytes for independent rehash",
         "consent_status": "NOT_APPLICABLE_NO_PERSON",
         "consent_record_ref": null,
         "contains_personal_data": false
@@ -2443,9 +1768,9 @@
     {
       "command": "conda run --name lens python scripts/t09_benchmark_report.py",
       "exit_code": 0,
-      "started_at_utc": "2026-08-23T15:17:26.815861Z",
-      "ended_at_utc": "2026-08-23T15:17:26.817883Z",
-      "output_summary": "Regenerated one exact 12-case tracked schema result from Trinh's measured report; tracked hashes recomputed; seven absent ignored manifests retained without claiming coordinator re-verification."
+      "started_at_utc": "2026-08-23T16:53:20.015100Z",
+      "ended_at_utc": "2026-08-23T16:53:20.088009Z",
+      "output_summary": "Consolidated four fresh frozen local runs; all five ignored active artifacts rehashed."
     }
   ],
   "failure_cases": [
@@ -2457,25 +1782,23 @@
         "PERF-VIDEO-GUI-120",
         "PERF-VIDEO-HEADLESS-120"
       ],
-      "observed_behavior": "Degraded-frame rates ranged from 0.8761 to 0.9838.",
-      "expected_behavior": "A substantially larger share of frames should retain all required analytical stages.",
-      "user_impact": "The user frequently sees explicit degraded/unavailable output instead of full assistance.",
-      "reproduction": "Run the four frozen 15 s warm-up + 120 s benchmark cases on Trinh's recorded development host.",
-      "mitigation": "Investigate MediaPipe mask adequacy and pipeline degradation causes before making reliability claims.",
+      "observed_behavior": "Degraded-frame rates: PERF-WEBCAM-GUI-120=1.0000, PERF-WEBCAM-HEADLESS-120=0.6855, PERF-VIDEO-GUI-120=1.0000, PERF-VIDEO-HEADLESS-120=1.0000",
+      "expected_behavior": "A larger share of frames should retain all required analytical stages.",
+      "user_impact": "The user may see explicit degraded/unavailable output instead of full assistance.",
+      "reproduction": "Run the four frozen local benchmark commands in README.md.",
+      "mitigation": "Use segmentation failure evidence, improve framing/lighting, and evaluate SCHP only through T10 while preserving fallback.",
       "status": "OPEN"
     },
     {
       "failure_id": "FAIL-PERF-RSS-GROWTH",
       "case_ids": [
-        "PERF-WEBCAM-GUI-120",
-        "PERF-WEBCAM-HEADLESS-120",
-        "PERF-VIDEO-HEADLESS-120"
+        "PERF-WEBCAM-GUI-120"
       ],
-      "observed_behavior": "The frozen RSS four-window continuous-growth flag was true in three runs.",
-      "expected_behavior": "The diagnostic flag must be false.",
-      "user_impact": "Longer demo/runtime sessions may retain increasing memory and become unstable.",
-      "reproduction": "Repeat the frozen benchmark and inspect rss_continuous_growth_flag.",
-      "mitigation": "Profile allocation retention and repeat on the declared demo machine; keep the bounded queue invariant.",
+      "observed_behavior": "RSS continuous-growth flag was true for PERF-WEBCAM-GUI-120",
+      "expected_behavior": "The frozen RSS growth diagnostic remains false.",
+      "user_impact": "A flagged long run may risk increased memory pressure.",
+      "reproduction": "Inspect rss_continuous_growth_flag in the fresh raw results.",
+      "mitigation": "Retain bounded queues and repeat on declared demo hardware before final claims.",
       "status": "OPEN"
     },
     {
@@ -2486,34 +1809,31 @@
         "PERF-VIDEO-GUI-120",
         "PERF-VIDEO-HEADLESS-120"
       ],
-      "observed_behavior": "Measurements came from a development host, not owner-declared demo hardware.",
-      "expected_behavior": "Final performance acceptance is measured on the declared demo laptop.",
-      "user_impact": "Current FPS/latency values cannot predict or certify the competition demo machine.",
+      "observed_behavior": "Measurements are from a development host, not declared demo hardware.",
+      "expected_behavior": "Final competition performance acceptance uses the declared demo laptop.",
+      "user_impact": "Current FPS and latency cannot certify another machine.",
       "reproduction": "Inspect environment.host_role and declared_demo_hardware.",
-      "mitigation": "Declare the demo laptop and rerun the same frozen cases before T11 claims.",
+      "mitigation": "Repeat the same frozen commands after the owner declares demo hardware.",
       "status": "OPEN"
     },
     {
-      "failure_id": "FAIL-PERF-RAW-UNAVAILABLE",
+      "failure_id": "FAIL-RAI-USER-VALIDATION-MISSING",
       "case_ids": [
-        "RAI-ARTIFACT-INTEGRITY"
+        "RAI-USER-VALIDATION"
       ],
-      "observed_behavior": "Seven ignored contributor artifacts are absent on the coordinator host.",
-      "expected_behavior": "The data custodian independently rehashes every report artifact before final evidence acceptance.",
-      "user_impact": "Raw provenance cannot currently be independently audited from this checkout.",
-      "reproduction": "Run the validator with --require-untracked-artifacts.",
-      "mitigation": "Recover the exact ignored bytes from the contributor/data custodian or rerun benchmarks on the declared demo host.",
+      "observed_behavior": "No consented target-user study was conducted.",
+      "expected_behavior": "Structured accessibility feedback if obtainable ethically.",
+      "user_impact": "Usability and wording are not validated with target users.",
+      "reproduction": "Inspect responsible_ai.user_validation_status.",
+      "mitigation": "Collect consented structured feedback in future work; make no user-outcome claim now.",
       "status": "OPEN"
     }
   ],
   "limitations": [
-    "All performance values are development-host observations and are not demo-hardware acceptance evidence.",
-    "High degraded-frame rates were observed in all four runs.",
-    "The RSS continuous-growth diagnostic failed three of four runs and remains an open long-run-memory risk.",
-    "Seven contributor raw artifacts are absent on the coordinator host; their recorded hashes are preserved but not independently reverified here.",
-    "sensor_to_photon_ms and user validation remain NOT_MEASURED.",
-    "Five public fixtures do not establish demographic or garment-diversity validation.",
-    "Runtime package attribution gaps are recorded rather than labeled compliant."
+    "All performance values are development-host observations, not demo-hardware acceptance evidence.",
+    "The seven old contributor raw artifacts are unrecoverable and superseded; this result uses only fresh local runs.",
+    "Manual ROI timing, sensor_to_photon_ms, energy use, and user validation are NOT_MEASURED.",
+    "Convenience fixtures do not establish demographic, garment, camera, or population-level accuracy."
   ],
   "responsible_ai": {
     "runtime_local_offline": true,
@@ -2521,11 +1841,11 @@
     "frames_uploaded_by_default": false,
     "medical_diagnosis_claim": false,
     "user_selected_profile": true,
-    "privacy_summary": "Runtime does not save/upload frames by default; tracked repository audit found zero private/raw T09 media.",
-    "bias_coverage_summary": "Five public images and one contributor host do not cover skin tones, body presentation, garment type/material/pattern, lighting, occlusion, camera, or display diversity.",
-    "environmental_summary": "No training from scratch; pretrained MediaPipe CPU inference was reused. FPS/RSS are reported, but energy use was not measured.",
-    "license_summary": "Apache-2.0 project license and fixture rights are recorded. DaltonLens, MediaPipe, NumPy, OpenCV package evidence and deferred SCHP attribution remain gaps, so license status is GAPS_RECORDED rather than PASS.",
+    "privacy_summary": "Fresh benchmark JSON stores metrics/environment only; frames are neither saved nor uploaded; raw files remain ignored.",
+    "bias_coverage_summary": "The convenience evaluation does not establish demographic, garment, pose, lighting, camera, display, or user-outcome generalization.",
+    "environmental_summary": "No training; pretrained MediaPipe CPU inference reused; FPS/RSS measured, energy not measured.",
+    "license_summary": "Active project/runtime/model/data/algorithm attribution is documented; deferred SCHP code/weights remain a T10 review gate.",
     "user_validation_status": "NOT_MEASURED"
   },
-  "notes": "Coordinator regeneration from Trinh's branch. Mixed-source details are carried per metric dimensions; the top-level environment identifies the single development host only."
+  "notes": "GUI-submit is software submission only; sensor-to-photon remains unmeasured. Optional cases remain explicit NOT_RUN without blocking the accepted T09 DoD."
 }
