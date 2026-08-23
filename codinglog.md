@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-23 22:59 +07:00
+Last updated: 2026-08-23 23:25 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -40,12 +40,13 @@ This table is intentionally empty until an agent starts the plan.
 | T06 | Selective recolor, outline, and score overlay | `DONE` | Codex | 2026-08-20 13:02 +07:00 | 2026-08-20 13:10 +07:00 | T06 start and completion entries below |
 | T07 | Rule-based color matching | `DONE` | Codex | 2026-08-20 16:02 +07:00 | 2026-08-20 16:11 +07:00 | T07 start and completion entries below |
 | T08 | End-to-end live pipeline and controls | `DONE` | Codex | 2026-08-20 16:24 +07:00 | 2026-08-20 16:58 +07:00 | T08 start and completion entries below |
-| T09 | Evaluation, responsible AI, and evidence package | `IN_PROGRESS` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-23 22:19 +07:00 | Gate 0 plus validated Trinh/Phong curated packages below; segmentation, end-to-end, physical color, and final summary remain incomplete |
+| T09 | Evaluation, responsible AI, and evidence package | `PARTIAL` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-23 23:25 +07:00 | All executable coordinator work is validated; 33 frozen physical color/lighting cases remain `NOT_RUN` because compliant assets do not exist |
 
 ## 3. Active blockers
 
 | Blocker ID | Related task | Description | Impact | Required decision/action | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- |
+| BLK-001 | T09 | Frozen 11 colors x 3 physical-lighting assets are absent; synthetic lighting cannot replace physical captures. | T09 cannot truthfully become `DONE`, so T10 must not start under the task dependency gate. | Acquire/capture 33 exact registry cases with consent/provenance/license, run the frozen evaluator, and regenerate/validate the color package. | Repository owner | `OPEN` |
 
 ## 4. Decision index
 
@@ -3049,6 +3050,151 @@ never added with `git add -f`.
 Materialize and checksum Dong's consented media only below the ignored
 segmentation artifact namespace, then implement and run the corrected
 MediaPipe evaluation.
+
+---
+
+### `2026-08-23 23:23 +07:00` - `T09` `Coordinator executable work complete; physical matrix blocked`
+
+**Status:** `PARTIAL` - segmentation and end-to-end are complete and validated;
+the frozen physical 11 x 3 color/lighting input set does not exist, so T09 is
+not reported as `DONE`.
+**Owner/agent:** Repository owner + Codex (coordinators)
+**Plan reference:** `plan.md#t09--evaluation-responsible-ai-and-evidence-package`
+
+#### Outcome
+
+- Materialized only Dong's owner-confirmed consented 15 inputs and three
+  annotations from `origin/eval/t09-segmentation-dong` below ignored
+  `artifacts/t09/segmentation/`. No collaborator commit, SCHP code, dependency
+  change, raw media, or coding-log edit was merged.
+- Ran the locked real `mediapipe-selfie-torso/cpu` backend on every frozen
+  segmentation case. All 20 rows are `COMPLETE` evaluation coverage; nine are
+  manually adequate (rating >=2), for an observed adequate rate of `0.45`.
+  Annotated IoU observations are `0.382858` (plain upper), `0.370076` (plain
+  lower), and `0.881396` (multicolor upper). These are observations, not a
+  population-accuracy claim or calibrated pass threshold.
+- Ran every frozen end-to-end case. All 10 are `COMPLETE` evaluation coverage;
+  the current-frame mismatch invariant and pre-overlay recolor containment
+  invariant both recorded zero. The static eight-frame sequence recorded zero
+  target switches. The consented moving sequence processed 292 frames, had 31
+  degraded frames (`0.106164`), and recorded 218 target switches. Movement has
+  no frozen zero-switch threshold, so that value is reported as an
+  observation rather than passed or hidden.
+- Saved controlled source, corrected frame, cluster map, risk mask, pre-overlay
+  assistive output, final overlay, segmentation reviews, video contact sheets,
+  and raw inputs only below ignored `artifacts/t09/`. Every cited available byte
+  has provenance/consent/license, byte-size, and SHA-256 manifest fields.
+- Added a cross-workstream summary. Frozen coverage is 92 cases: 55
+  `COMPLETE`, two `PARTIAL`, and 35 `NOT_RUN`. The two complete workstreams are
+  segmentation and end to end; color and performance/responsible AI remain
+  `PARTIAL`.
+- Retained the imported Trinh development-host values and exact latency names.
+  Seven original raw performance/RAI artifacts are not present on this
+  checkout or in the contributor branch tree; their manifests remain explicit
+  and non-strict tracked-byte validation passes. They were not fabricated.
+
+#### Files changed in this completion pass
+
+| Path | Purpose |
+| --- | --- |
+| `scripts/t09_evaluation_common.py` | Extended ignored-artifact manifests with explicit consent/source/personal-data fields. |
+| `scripts/t09_segmentation_eval.py` | Real MediaPipe 20-case runner, normalization, IoU, review/rating flow, manifests, CSV/Markdown/JSON generation. |
+| `scripts/t09_end_to_end_eval.py` | Ten-case integration evaluator with real MediaPipe cases, deterministic contract cases, intermediate visuals, temporal/containment/stale metrics, and manifests. |
+| `tests/evaluation/test_t09_segmentation_eval.py` | Raw/model-independent normalization, IoU, registry, and rating-contract tests. |
+| `tests/evaluation/test_t09_end_to_end_eval.py` | Raw/model-independent registry, switch, containment, and fixture-contract tests. |
+| `tests/evaluation/test_t09_curated_results.py` | Schema/case/checksum/result-commit tests for segmentation and end-to-end packages that pass with or without ignored artifacts. |
+| `evaluation/results/curated/segmentation/**` | Tracked 20-case CSV/Markdown/JSON evidence. |
+| `evaluation/results/curated/end_to_end/**` | Tracked 10-case CSV/Markdown/JSON evidence. |
+| `evaluation/results/curated/summary.md` | Human-readable 92-case cross-workstream coverage, claims, gaps, and exact completion action. |
+| `README.md`, `evaluation/results/README.md` | Reproduction commands, current status, artifact policy, and summary link. |
+| `codinglog.md` | Start, execution evidence, failures/repairs, blocker, and final honest task status. |
+
+#### Commands and observed results
+
+```text
+D:\Coding\Anaconda\envs\lens\python.exe scripts/t09_segmentation_eval.py --prepare-review
+D:\Coding\Anaconda\envs\lens\python.exe scripts/t09_segmentation_eval.py
+D:\Coding\Anaconda\envs\lens\python.exe scripts/t09_end_to_end_eval.py
+D:\Coding\Anaconda\envs\lens\python.exe scripts/t09_result_validation.py
+D:\Coding\Anaconda\envs\lens\python.exe scripts/t09_result_validation.py --require-untracked-artifacts evaluation/results/curated/segmentation/result.json evaluation/results/curated/end_to_end/result.json
+D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q
+D:\Coding\Anaconda\envs\lens\python.exe -m pip check
+D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --help
+D:\Coding\Anaconda\envs\lens\python.exe -m compileall -q src scripts tests
+git diff --check
+git ls-files -- artifacts/t09
+git check-ignore -v artifacts/t09/segmentation/inputs/plain-upper.jpg artifacts/t09/end_to_end/inputs/moving.mp4 artifacts/t09/end_to_end/reviews/moving-temporal-contact.png
+git check-attr text eol -- evaluation/results/curated/segmentation/result.json evaluation/results/curated/end_to_end/result.json evaluation/results/curated/summary.md
+```
+
+| Check | Result |
+| --- | --- |
+| Segmentation review preparation | PASS, exit 0: 20 exact cases inferred; 292 slow-motion and 113 fast-motion frames decoded; ignored rating template/review sheet written. |
+| Segmentation generator/strict validation | PASS, exit 0: 20 cases, 26 metrics, two tracked artifacts and 39/39 ignored artifacts verified. |
+| End-to-end generator/strict validation | PASS, exit 0: 10 cases, 18 metrics, two tracked artifacts and 20/20 ignored artifacts verified. |
+| All four curated result packages | PASS, exit 0: schema, metric registry, exact case coverage, references, and every available checksum valid; seven performance/RAI raw artifacts explicitly unavailable. |
+| Full repository suite | PASS, exit 0: 238 passed in 3.11 s. |
+| Approved runtime/dependencies | PASS: Python 3.10.20 in `lens`; `pip check` reports no broken requirements. |
+| CLI/compile | PASS, exit 0: hardware-independent help and complete source/script/test compile. |
+| Git/artifact policy | PASS: diff check clean; zero tracked `artifacts/t09/`, secret/weight/video/binary probes; curated files use only CSV/JSON/Markdown <=1 MiB; raw probes are ignored. |
+| Curated byte policy | PASS: new result JSON and summary paths report `text: set`, `eol: lf`. |
+
+#### Failures and smallest repairs
+
+- Two early focused pytest commands exited 4 because the gate file was called
+  with nonexistent paths under `tests/evaluation/`; the actual file is
+  `tests/test_t09_gate.py`. No code change was made for an invocation error;
+  the corrected focused run passed 11 tests, and the final full run passed 238.
+- The first strict segmentation validation invocation exited 2 because it used
+  unsupported `--expected-workstream` CLI arguments. The Python validation API
+  supports that argument, but the CLI does not; the corrected documented CLI
+  passed without weakening validation.
+- The first curated-result test run had two failures because new tests assumed
+  ignored artifacts must be absent. Assertions were changed to require
+  `verified + unavailable == manifest count`, so the tests are raw-independent
+  on both the coordinator checkout and CI. The rerun passed 17 tests.
+- The controlled unavailable-backend case emits an expected logged traceback
+  while returning exit 0; the result confirms the exception became an explicit
+  unavailable stage and no mask/inference was fabricated.
+
+#### Result provenance and commits
+
+| Package | Result ID source commit | Status |
+| --- | --- | --- |
+| Color science | `432b835339283fbcef8168d5680c21737b410339` | `PARTIAL` |
+| Segmentation | `50cbc199c92cf1cbc62e6f2b87a731d4af9b852e` | `COMPLETE` |
+| End to end | `50cbc199c92cf1cbc62e6f2b87a731d4af9b852e` | `COMPLETE` |
+| Performance/responsible AI | `74447afd4110e90dc2cf0ece9de27f01bb1a09a1` | `PARTIAL` |
+
+Implementation commits created before final evidence packaging:
+
+- `21079cac62008a47fe6ed2671919718b93d2419b` - real MediaPipe segmentation evaluator and tests;
+- `caff2279ad05b5414eed1b21a5fdc2b92047c062` - end-to-end evaluator and tests;
+- `50cbc199c92cf1cbc62e6f2b87a731d4af9b852e` - removed the data custodian's identity from machine-readable manifests before final regeneration.
+
+#### Definition of Done assessment
+
+- [x] Protocol declares data, environment fields, resolution, thresholds,
+  procedures, metric names/units/formulae, and claim boundaries.
+- [x] Machine-readable JSON plus human-readable CSV/Markdown results are saved
+  for all four workstreams and validate against protocol 1.0.0.
+- [x] Performance observations name backend/device/host/resolution and are not
+  generalized to demo hardware or sensor-to-photon latency.
+- [x] More than three concrete failures, user impact, reproduction, and
+  mitigations are documented.
+- [x] No unconsented footage is committed; all raw/private media is ignored and
+  available coordinator artifacts pass exact-byte SHA-256 verification.
+- [ ] The frozen minimum physical 11 colors x 3 lighting matrix has no assets;
+  33 cases remain `NOT_RUN`. Therefore the evaluation task cannot be called
+  100% complete or `DONE`.
+
+#### Exact next action
+
+Do not start T10 yet. Acquire/capture the 33 exact physical color/lighting
+assets with documented consent/provenance/license, rerun and regenerate the
+color-science package, recover or rerun the seven raw performance/RAI
+artifacts, then repeat strict validation/full tests. Only after that evidence
+passes may T09 change to `DONE`; the next plan task will then be T10.
 
 ---
 

@@ -1,0 +1,1136 @@
+{
+  "protocol_version": "1.0.0",
+  "schema_version": "1.0.0",
+  "metric_registry_version": "1.0.0",
+  "result_id": "t09-end-to-end-20260823t162520z",
+  "workstream": "end_to_end",
+  "result_status": "COMPLETE",
+  "git_commit": "50cbc199c92cf1cbc62e6f2b87a731d4af9b852e",
+  "created_at_utc": "2026-08-23T16:25:20.047889Z",
+  "operator": {
+    "role": "coordinator",
+    "identifier": "t09-coordinator"
+  },
+  "environment": {
+    "host_role": "development",
+    "declared_demo_hardware": false,
+    "manufacturer": "LENOVO",
+    "model": "83DV",
+    "operating_system": "Windows-10-10.0.26200-SP0",
+    "cpu": "13th Gen Intel(R) Core(TM) i5-13450HX",
+    "physical_core_count": 10,
+    "logical_processor_count": 16,
+    "ram_gib": 15.781120300292969,
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "npu": "USB Input Device; Microsoft Input Configuration Device; USB Input Device; USB Input Device; USB Input Device; USB Input Device",
+    "camera_or_source": "generated fixtures, NASA astronaut fixture, and consented moving video",
+    "python_version": "3.10.20",
+    "package_versions": {
+      "chromalens-ai": "0.1.0",
+      "numpy": "1.26.4",
+      "opencv-contrib-python": "4.10.0.84",
+      "mediapipe": "0.10.21",
+      "daltonlens": "0.1.5"
+    },
+    "lock_sha256": "3abb7af836d5721db3bb3de753816f8b41994a2d20c71fd96c25d80e136a071a",
+    "backend_name": "controlled-contract plus mediapipe-selfie-torso",
+    "backend_device": "cpu",
+    "source_kind": "generated",
+    "source_resolution": {
+      "width": 360,
+      "height": 240
+    },
+    "render_resolution": {
+      "width": 360,
+      "height": 240
+    },
+    "display_mode": "headless",
+    "warmup_seconds": 0.0,
+    "measurement_seconds": 0.0,
+    "external_measurement_apparatus": null
+  },
+  "cases": [
+    {
+      "case_id": "E2E-CONTROLLED-MULTICOLOR",
+      "status": "COMPLETE",
+      "fixture_id": "synth-multicolor",
+      "artifact_ids": [
+        "e2e-input-controlled",
+        "e2e-review-controlled-multicolor-original",
+        "e2e-review-controlled-multicolor-corrected",
+        "e2e-review-controlled-multicolor-clusters",
+        "e2e-review-controlled-multicolor-risk-mask",
+        "e2e-review-controlled-multicolor-assistive",
+        "e2e-review-controlled-multicolor-final",
+        "end-to-end-metrics",
+        "end-to-end-report"
+      ],
+      "reason": "deterministic T02-T07 success path executed and rendered"
+    },
+    {
+      "case_id": "E2E-REAL-PUBLIC",
+      "status": "COMPLETE",
+      "fixture_id": "t02-astronaut",
+      "artifact_ids": [
+        "e2e-review-real-public",
+        "end-to-end-metrics",
+        "end-to-end-report"
+      ],
+      "reason": "locked MediaPipe backend executed on the licensed public fixture"
+    },
+    {
+      "case_id": "E2E-SINGLE-COLOR",
+      "status": "COMPLETE",
+      "fixture_id": "synth-single-color",
+      "artifact_ids": [
+        "e2e-input-single",
+        "e2e-review-single",
+        "end-to-end-metrics",
+        "end-to-end-report"
+      ],
+      "reason": "single-color input produced explicit unavailable relational risk"
+    },
+    {
+      "case_id": "E2E-NO-PERSON",
+      "status": "COMPLETE",
+      "fixture_id": "no-person-generated",
+      "artifact_ids": [
+        "e2e-input-no-person",
+        "e2e-review-no-person",
+        "end-to-end-metrics",
+        "end-to-end-report"
+      ],
+      "reason": "negative case cleared dependent stages without fabricating a garment"
+    },
+    {
+      "case_id": "E2E-BACKEND-UNAVAILABLE",
+      "status": "COMPLETE",
+      "fixture_id": "missing-mediapipe-simulated",
+      "artifact_ids": [
+        "e2e-input-controlled",
+        "e2e-review-backend-unavailable",
+        "end-to-end-metrics",
+        "end-to-end-report"
+      ],
+      "reason": "controlled exception was surfaced and no inference output was fabricated"
+    },
+    {
+      "case_id": "E2E-RECOLOR-DISABLED",
+      "status": "COMPLETE",
+      "fixture_id": "recolor-off",
+      "artifact_ids": [
+        "e2e-input-controlled",
+        "e2e-review-recolor-disabled",
+        "end-to-end-metrics",
+        "end-to-end-report"
+      ],
+      "reason": "recolor control disabled only the assistive transform"
+    },
+    {
+      "case_id": "E2E-STATIC-TEMPORAL",
+      "status": "COMPLETE",
+      "fixture_id": "static-multicolor",
+      "artifact_ids": [
+        "e2e-input-static",
+        "e2e-review-static",
+        "end-to-end-metrics",
+        "end-to-end-report"
+      ],
+      "reason": "all eight decoded static frames retained an assistive target"
+    },
+    {
+      "case_id": "E2E-MOVING-TEMPORAL",
+      "status": "COMPLETE",
+      "fixture_id": "moving-consented",
+      "artifact_ids": [
+        "e2e-input-moving",
+        "e2e-review-moving",
+        "end-to-end-metrics",
+        "end-to-end-report"
+      ],
+      "reason": "all decoded consented video frames ran through locked MediaPipe and T03-T07"
+    },
+    {
+      "case_id": "E2E-STALE-REJECTION",
+      "status": "COMPLETE",
+      "fixture_id": "stale-analysis-synthetic",
+      "artifact_ids": [
+        "e2e-input-controlled",
+        "e2e-review-stale",
+        "end-to-end-metrics",
+        "end-to-end-report"
+      ],
+      "reason": "one synthetic stale result was rejected before rendering"
+    },
+    {
+      "case_id": "E2E-RECOLOR-CONTAINMENT",
+      "status": "COMPLETE",
+      "fixture_id": "synth-risk-mask",
+      "artifact_ids": [
+        "e2e-input-controlled",
+        "e2e-review-containment",
+        "end-to-end-metrics",
+        "end-to-end-report"
+      ],
+      "reason": "pre-overlay assistive bytes were compared outside the exact hard recolor mask"
+    }
+  ],
+  "configuration": {
+    "cvd_profile": "deutan",
+    "severity": 0.8,
+    "thresholds": {
+      "recolor_containment_outside_pixels": 0,
+      "static_target_switches": 0,
+      "analysis_frame_id_mismatches": 0
+    },
+    "random_seed": 0,
+    "settings": {
+      "normalized_width": 360,
+      "normalized_height": 240,
+      "static_frame_count": 8,
+      "moving_frames_processed": 292
+    }
+  },
+  "metrics": [
+    {
+      "name": "analysis_frame_id_mismatch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "E2E-CONTROLLED-MULTICOLOR"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "only results whose analysis_frame_id equals current frame_id were retained",
+      "method": "count of mismatched result IDs allowed to reach evidence rendering",
+      "dimensions": {
+        "processed_frames": 1
+      }
+    },
+    {
+      "name": "outside_recolor_mask_changed_pixel_count",
+      "aggregation": "count",
+      "unit": "pixel",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "E2E-CONTROLLED-MULTICOLOR"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "comparison occurs before outline and text overlay",
+      "method": "count any-channel byte changes outside AssistiveRecolorResult.recolor_mask"
+    },
+    {
+      "name": "analysis_frame_id_mismatch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "E2E-REAL-PUBLIC"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "only results whose analysis_frame_id equals current frame_id were retained",
+      "method": "count of mismatched result IDs allowed to reach evidence rendering",
+      "dimensions": {
+        "processed_frames": 1
+      }
+    },
+    {
+      "name": "degraded_frame_rate",
+      "aggregation": "single",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 0.0,
+      "case_ids": [
+        "E2E-REAL-PUBLIC"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "0/1 frames had a degraded or unavailable required stage",
+      "method": "degraded frame count / processed frame count"
+    },
+    {
+      "name": "analysis_frame_id_mismatch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "E2E-SINGLE-COLOR"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "only results whose analysis_frame_id equals current frame_id were retained",
+      "method": "count of mismatched result IDs allowed to reach evidence rendering",
+      "dimensions": {
+        "processed_frames": 1
+      }
+    },
+    {
+      "name": "analysis_frame_id_mismatch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "E2E-NO-PERSON"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "only results whose analysis_frame_id equals current frame_id were retained",
+      "method": "count of mismatched result IDs allowed to reach evidence rendering",
+      "dimensions": {
+        "processed_frames": 1
+      }
+    },
+    {
+      "name": "degraded_frame_rate",
+      "aggregation": "single",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 1.0,
+      "case_ids": [
+        "E2E-NO-PERSON"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "1/1 frames had a degraded or unavailable required stage",
+      "method": "degraded frame count / processed frame count"
+    },
+    {
+      "name": "analysis_frame_id_mismatch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "E2E-BACKEND-UNAVAILABLE"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "only results whose analysis_frame_id equals current frame_id were retained",
+      "method": "count of mismatched result IDs allowed to reach evidence rendering",
+      "dimensions": {
+        "processed_frames": 1
+      }
+    },
+    {
+      "name": "analysis_frame_id_mismatch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "E2E-RECOLOR-DISABLED"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "only results whose analysis_frame_id equals current frame_id were retained",
+      "method": "count of mismatched result IDs allowed to reach evidence rendering",
+      "dimensions": {
+        "processed_frames": 1
+      }
+    },
+    {
+      "name": "outside_recolor_mask_changed_pixel_count",
+      "aggregation": "count",
+      "unit": "pixel",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "E2E-RECOLOR-DISABLED"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "comparison occurs before outline and text overlay",
+      "method": "count any-channel byte changes outside AssistiveRecolorResult.recolor_mask"
+    },
+    {
+      "name": "analysis_frame_id_mismatch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "E2E-STATIC-TEMPORAL"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "only results whose analysis_frame_id equals current frame_id were retained",
+      "method": "count of mismatched result IDs allowed to reach evidence rendering",
+      "dimensions": {
+        "processed_frames": 8
+      }
+    },
+    {
+      "name": "temporal_assistive_color_switch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "E2E-STATIC-TEMPORAL"
+      ],
+      "threshold_id": "static_required",
+      "threshold_result": "PASS",
+      "reason": "frozen zero-switch invariant for the static sequence",
+      "method": "count changes between consecutive available assistive target RGB values"
+    },
+    {
+      "name": "analysis_frame_id_mismatch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "E2E-MOVING-TEMPORAL"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "only results whose analysis_frame_id equals current frame_id were retained",
+      "method": "count of mismatched result IDs allowed to reach evidence rendering",
+      "dimensions": {
+        "processed_frames": 292
+      }
+    },
+    {
+      "name": "degraded_frame_rate",
+      "aggregation": "single",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 0.10616438356164383,
+      "case_ids": [
+        "E2E-MOVING-TEMPORAL"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "31/292 frames had a degraded or unavailable required stage",
+      "method": "degraded frame count / processed frame count"
+    },
+    {
+      "name": "temporal_assistive_color_switch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 218,
+      "case_ids": [
+        "E2E-MOVING-TEMPORAL"
+      ],
+      "threshold_id": "static_required",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "moving sequence is observation-only; static threshold is not applied",
+      "method": "count changes between consecutive available assistive target RGB values"
+    },
+    {
+      "name": "analysis_frame_id_mismatch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "E2E-STALE-REJECTION"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "only results whose analysis_frame_id equals current frame_id were retained",
+      "method": "count of mismatched result IDs allowed to reach evidence rendering",
+      "dimensions": {
+        "processed_frames": 1
+      }
+    },
+    {
+      "name": "analysis_frame_id_mismatch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "E2E-RECOLOR-CONTAINMENT"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "only results whose analysis_frame_id equals current frame_id were retained",
+      "method": "count of mismatched result IDs allowed to reach evidence rendering",
+      "dimensions": {
+        "processed_frames": 1
+      }
+    },
+    {
+      "name": "outside_recolor_mask_changed_pixel_count",
+      "aggregation": "count",
+      "unit": "pixel",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "E2E-RECOLOR-CONTAINMENT"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "comparison occurs before outline and text overlay",
+      "method": "count any-channel byte changes outside AssistiveRecolorResult.recolor_mask"
+    }
+  ],
+  "artifacts": [
+    {
+      "artifact_id": "e2e-input-controlled",
+      "case_ids": [
+        "E2E-CONTROLLED-MULTICOLOR",
+        "E2E-BACKEND-UNAVAILABLE",
+        "E2E-RECOLOR-DISABLED",
+        "E2E-STALE-REJECTION",
+        "E2E-RECOLOR-CONTAINMENT"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/inputs/controlled-multicolor.png",
+      "sha256": "ac0e96067a492f6a3c02bd619f703a5c4eedde93b927687604843af7da21538c",
+      "byte_size": 2311,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "project_synthetic",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-input-single",
+      "case_ids": [
+        "E2E-SINGLE-COLOR"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/inputs/single-color.png",
+      "sha256": "ddcbe42622e3d1dac4ed145d311604cc669462ebabe8f85a3609f9db33f32c67",
+      "byte_size": 1829,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "project_synthetic",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-input-no-person",
+      "case_ids": [
+        "E2E-NO-PERSON"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/inputs/no-person.png",
+      "sha256": "a341ca87f845ac29ebd6c2e6ead1ec657abba70f72da8093600984f4d3796b78",
+      "byte_size": 31619,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "project_synthetic",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-input-static",
+      "case_ids": [
+        "E2E-STATIC-TEMPORAL"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/inputs/static-multicolor.avi",
+      "sha256": "e3983c283d8413d0972299da3b1296896cedc022bd6a04fc9c0de14c6eb6ab71",
+      "byte_size": 21078,
+      "media_type": "video/x-msvideo",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "project_synthetic",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-input-moving",
+      "case_ids": [
+        "E2E-MOVING-TEMPORAL"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/inputs/moving.mp4",
+      "sha256": "1b008fa20de0b09b82df22b4d38754098bcc34e0b8feed868df0353f3342aeca",
+      "byte_size": 4928432,
+      "media_type": "video/mp4",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong holds the private consent record; bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "e2e-review-controlled-multicolor-original",
+      "case_ids": [
+        "E2E-CONTROLLED-MULTICOLOR"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/controlled-multicolor-original.png",
+      "sha256": "ac0e96067a492f6a3c02bd619f703a5c4eedde93b927687604843af7da21538c",
+      "byte_size": 2311,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "e2e-input-controlled"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-review-controlled-multicolor-corrected",
+      "case_ids": [
+        "E2E-CONTROLLED-MULTICOLOR"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/controlled-multicolor-corrected.png",
+      "sha256": "ac0e96067a492f6a3c02bd619f703a5c4eedde93b927687604843af7da21538c",
+      "byte_size": 2311,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "e2e-input-controlled"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-review-controlled-multicolor-clusters",
+      "case_ids": [
+        "E2E-CONTROLLED-MULTICOLOR"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/controlled-multicolor-clusters.png",
+      "sha256": "23af3e81341dd07ba18d2d679fc49ef9483550498905e36e3045bee0305bcd8e",
+      "byte_size": 1962,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "e2e-input-controlled"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-review-controlled-multicolor-risk-mask",
+      "case_ids": [
+        "E2E-CONTROLLED-MULTICOLOR"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/controlled-multicolor-risk-mask.png",
+      "sha256": "bcb68e2d36c44d74474a461fb45d1349ce487d2920d6f23d3f028a166e11ddb9",
+      "byte_size": 1363,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "e2e-input-controlled"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-review-controlled-multicolor-assistive",
+      "case_ids": [
+        "E2E-CONTROLLED-MULTICOLOR"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/controlled-multicolor-assistive.png",
+      "sha256": "4026057154806d61e472e49f5220f82080071587302df90ef955cb1369a0063f",
+      "byte_size": 4118,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "e2e-input-controlled"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-review-controlled-multicolor-final",
+      "case_ids": [
+        "E2E-CONTROLLED-MULTICOLOR"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/controlled-multicolor-final.png",
+      "sha256": "96d36613fa5959811fbbffba80f37450f551a7b86e399f8f4d5a7ca54aad327a",
+      "byte_size": 60470,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "e2e-input-controlled"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-review-real-public",
+      "case_ids": [
+        "E2E-REAL-PUBLIC"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/real-public-mediapipe.png",
+      "sha256": "7486cb7ded344e99bf4cd55318654adc8b04e705c19690b896bdcd8442e28bba",
+      "byte_size": 77458,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "public_fixture",
+        "creator_or_source": "NASA public fixture through tests/samples/t02",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-NASA-PublicDomain",
+        "license_evidence": "tests/samples/t02/README.md rights record",
+        "consent_status": "PUBLIC_LICENSED",
+        "consent_record_ref": null,
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "e2e-review-single",
+      "case_ids": [
+        "E2E-SINGLE-COLOR"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/single-color-degraded.png",
+      "sha256": "086d837dcc43db36bb618f77a88e0a701b43fc907f0e316afe4b15160b539ff2",
+      "byte_size": 72967,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "e2e-input-single"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-review-no-person",
+      "case_ids": [
+        "E2E-NO-PERSON"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/no-person-degraded.png",
+      "sha256": "916cd7fa2d3abe5e5f2b4664a91c80d7a1cedc2a17a062a3572d4cba151cfd56",
+      "byte_size": 80163,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "e2e-input-no-person"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-review-backend-unavailable",
+      "case_ids": [
+        "E2E-BACKEND-UNAVAILABLE"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/backend-unavailable.png",
+      "sha256": "5ba921a171ed155f275f69c5e78391e2c56f27b048e23963d42ca9642f1a68f7",
+      "byte_size": 68438,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "e2e-input-controlled"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-review-recolor-disabled",
+      "case_ids": [
+        "E2E-RECOLOR-DISABLED"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/recolor-disabled.png",
+      "sha256": "0b673f1779522dceea53a196d13604d72f06c06acdd81c5758b3d9972406a3f2",
+      "byte_size": 60511,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "e2e-input-controlled"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-review-static",
+      "case_ids": [
+        "E2E-STATIC-TEMPORAL"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/static-temporal-final.png",
+      "sha256": "40fd9be29e74905d7e5adf8d5a2c2185dbcd7466a560e47fe14779c065cdbe92",
+      "byte_size": 61150,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "e2e-input-static"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-review-moving",
+      "case_ids": [
+        "E2E-MOVING-TEMPORAL"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/moving-temporal-contact.png",
+      "sha256": "b3537143432d299d660aaaddf2049e7022874d49a108ac78bf3529e34c5445a2",
+      "byte_size": 760934,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "e2e-input-moving"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong holds the private consent record; bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "e2e-review-stale",
+      "case_ids": [
+        "E2E-STALE-REJECTION"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/stale-current-frame.png",
+      "sha256": "cc96e956bd43faf6201e8f818d14daf2b92a1388a25df38aa8d33356b71aab91",
+      "byte_size": 60070,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "e2e-input-controlled"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "e2e-review-containment",
+      "case_ids": [
+        "E2E-RECOLOR-CONTAINMENT"
+      ],
+      "relative_path": "artifacts/t09/end_to_end/reviews/recolor-containment.png",
+      "sha256": "aac04b92c428561aac80af13dfb0557557c519f8a2e28bc2e1fb5837898999bc",
+      "byte_size": 60296,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "e2e-input-controlled"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 end-to-end evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "end-to-end-metrics",
+      "case_ids": [
+        "E2E-CONTROLLED-MULTICOLOR",
+        "E2E-REAL-PUBLIC",
+        "E2E-SINGLE-COLOR",
+        "E2E-NO-PERSON",
+        "E2E-BACKEND-UNAVAILABLE",
+        "E2E-RECOLOR-DISABLED",
+        "E2E-STATIC-TEMPORAL",
+        "E2E-MOVING-TEMPORAL",
+        "E2E-STALE-REJECTION",
+        "E2E-RECOLOR-CONTAINMENT"
+      ],
+      "relative_path": "evaluation/results/curated/end_to_end/end_to_end_metrics.csv",
+      "sha256": "69ec2817ee481d366e926ed2af36e64fe4c70d5a429ec6b8f0dfa2c17d9afa26",
+      "byte_size": 2994,
+      "media_type": "text/csv",
+      "tracked_in_git": true,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "curated_result",
+        "creator_or_source": "ChromaLens T09 coordinators",
+        "source_url": null,
+        "created_or_captured_at_utc": "2026-08-23T16:25:20.018991Z",
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and T09 protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "end-to-end-report",
+      "case_ids": [
+        "E2E-CONTROLLED-MULTICOLOR",
+        "E2E-REAL-PUBLIC",
+        "E2E-SINGLE-COLOR",
+        "E2E-NO-PERSON",
+        "E2E-BACKEND-UNAVAILABLE",
+        "E2E-RECOLOR-DISABLED",
+        "E2E-STATIC-TEMPORAL",
+        "E2E-MOVING-TEMPORAL",
+        "E2E-STALE-REJECTION",
+        "E2E-RECOLOR-CONTAINMENT"
+      ],
+      "relative_path": "evaluation/results/curated/end_to_end/report.md",
+      "sha256": "49b6ab0ffe594cb93876678bf8965128bd43872cc7394e38e2d6ad6405fbc874",
+      "byte_size": 3357,
+      "media_type": "text/markdown",
+      "tracked_in_git": true,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "provenance": {
+        "provenance_class": "curated_result",
+        "creator_or_source": "ChromaLens T09 coordinators",
+        "source_url": null,
+        "created_or_captured_at_utc": "2026-08-23T16:25:20.018991Z",
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and T09 protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    }
+  ],
+  "commands": [
+    {
+      "command": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "exit_code": 0,
+      "started_at_utc": "2026-08-23T16:25:20.018991Z",
+      "ended_at_utc": "2026-08-23T16:25:20.047889Z",
+      "output_summary": "10/10 frozen end-to-end cases evaluated"
+    }
+  ],
+  "failure_cases": [
+    {
+      "failure_id": "FAIL-E2E-SINGLE-COLOR",
+      "case_ids": [
+        "E2E-SINGLE-COLOR"
+      ],
+      "observed_behavior": "Only one retained original color; relational risk and recolor are unavailable",
+      "expected_behavior": "Do not fabricate relational risk without a comparison color",
+      "user_impact": "Assistive recolor is unavailable for this frame",
+      "reproduction": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "mitigation": "Explain the comparison requirement and keep the original view",
+      "status": "OPEN"
+    },
+    {
+      "failure_id": "FAIL-E2E-NO-PERSON",
+      "case_ids": [
+        "E2E-NO-PERSON"
+      ],
+      "observed_behavior": "No current garment region and all dependent stages are cleared",
+      "expected_behavior": "No stale garment inference may be presented",
+      "user_impact": "Color assistance is unavailable until a person is visible",
+      "reproduction": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "mitigation": "Show degraded state and request reframing",
+      "status": "OPEN"
+    },
+    {
+      "failure_id": "FAIL-E2E-BACKEND-UNAVAILABLE",
+      "case_ids": [
+        "E2E-BACKEND-UNAVAILABLE"
+      ],
+      "observed_behavior": "Controlled segmentation exception is surfaced as unavailable",
+      "expected_behavior": "Fail visibly without fabricated inference",
+      "user_impact": "Garment analysis is unavailable",
+      "reproduction": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "mitigation": "Expose backend status and preserve a documented fallback/error path",
+      "status": "OPEN"
+    },
+    {
+      "failure_id": "FAIL-E2E-MOVING-DEGRADED",
+      "case_ids": [
+        "E2E-MOVING-TEMPORAL"
+      ],
+      "observed_behavior": "31 moving frames had a degraded stage",
+      "expected_behavior": "Stable garment analysis across the declared moving sequence",
+      "user_impact": "Overlay availability or selected assistive color can be unstable",
+      "reproduction": "conda run --name lens python scripts/t09_end_to_end_eval.py",
+      "mitigation": "Use newest-frame handling, expose degradation, and compare SCHP only through T10",
+      "status": "OPEN"
+    }
+  ],
+  "limitations": [
+    "Controlled Segmenter cases prove deterministic contracts, not AI segmentation quality.",
+    "The real MediaPipe cases are development-machine observations on two convenience sources.",
+    "Moving-target switch count is not interpreted as a static stability pass threshold.",
+    "No sensor-to-photon or declared demo-hardware performance claim is made here."
+  ],
+  "responsible_ai": {
+    "runtime_local_offline": true,
+    "frames_saved_by_default": false,
+    "frames_uploaded_by_default": false,
+    "medical_diagnosis_claim": false,
+    "user_selected_profile": true,
+    "privacy_summary": "Evaluation saving was explicit; consented moving media and all visual derivatives remain ignored and untracked.",
+    "bias_coverage_summary": "Synthetic contracts and two convenience sources do not establish demographic, garment, pose, or camera generalization.",
+    "environmental_summary": "No model training occurred; pretrained MediaPipe CPU inference and deterministic contract doubles were reused.",
+    "license_summary": "Repository code/artifacts are Apache-2.0; NASA fixture rights are documented; private moving media is not redistributed.",
+    "user_validation_status": "NOT_MEASURED"
+  },
+  "notes": "All invariant comparisons use pre-overlay pixels. Rendered images are visual evidence only."
+}

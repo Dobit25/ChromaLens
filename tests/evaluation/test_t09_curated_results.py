@@ -15,6 +15,8 @@ PERFORMANCE_RESULT = (
     ROOT
     / "evaluation/results/curated/performance_responsible_ai/result.json"
 )
+SEGMENTATION_RESULT = ROOT / "evaluation/results/curated/segmentation/result.json"
+END_TO_END_RESULT = ROOT / "evaluation/results/curated/end_to_end/result.json"
 
 
 def payload(path: Path) -> dict[str, object]:
@@ -52,7 +54,70 @@ def test_curated_performance_result_passes_without_ignored_raw_files() -> None:
     assert result["environment"]["declared_demo_hardware"] is False
 
 
-@pytest.mark.parametrize("path", [COLOR_RESULT, PERFORMANCE_RESULT])
+def test_curated_segmentation_result_covers_twenty_real_backend_cases() -> None:
+    summary = validator.validate_result_file(
+        SEGMENTATION_RESULT, expected_workstream="segmentation"
+    )
+    result = payload(SEGMENTATION_RESULT)
+    ratings = [
+        metric
+        for metric in result["metrics"]
+        if metric["name"] == "segmentation_adequacy_rating"
+    ]
+    ious = [
+        metric
+        for metric in result["metrics"]
+        if metric["name"] == "segmentation_iou"
+    ]
+
+    assert summary.case_count == 20
+    assert summary.tracked_artifact_count == 2
+    assert (
+        summary.verified_untracked_artifact_count
+        + summary.missing_untracked_artifact_count
+        == 39
+    )
+    assert len(ratings) == 20
+    assert sum(metric["value"] >= 2 for metric in ratings) == 9
+    assert len(ious) == 3
+    assert result["environment"]["backend_name"] == "mediapipe-selfie-torso"
+
+
+def test_curated_end_to_end_result_covers_invariants_and_real_video() -> None:
+    summary = validator.validate_result_file(
+        END_TO_END_RESULT, expected_workstream="end_to_end"
+    )
+    result = payload(END_TO_END_RESULT)
+    invariants = [
+        metric
+        for metric in result["metrics"]
+        if metric["name"]
+        in {
+            "analysis_frame_id_mismatch_count",
+            "outside_recolor_mask_changed_pixel_count",
+        }
+    ]
+    moving = next(
+        case for case in result["cases"] if case["case_id"] == "E2E-MOVING-TEMPORAL"
+    )
+
+    assert summary.case_count == 10
+    assert summary.tracked_artifact_count == 2
+    assert (
+        summary.verified_untracked_artifact_count
+        + summary.missing_untracked_artifact_count
+        == 20
+    )
+    assert all(metric["value"] == 0 for metric in invariants)
+    assert all(metric["threshold_result"] == "PASS" for metric in invariants)
+    assert moving["status"] == "COMPLETE"
+    assert result["environment"]["declared_demo_hardware"] is False
+
+
+@pytest.mark.parametrize(
+    "path",
+    [COLOR_RESULT, PERFORMANCE_RESULT, SEGMENTATION_RESULT, END_TO_END_RESULT],
+)
 def test_result_names_the_existing_code_commit_that_generated_it(path: Path) -> None:
     commit = str(payload(path)["git_commit"])
 

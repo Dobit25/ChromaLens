@@ -23,3 +23,8 @@ policy.
 
 The directories may not exist until a workstream writes a real result. Empty
 placeholder result files are not evidence.
+
+The coordinator-owned
+[`curated/summary.md`](curated/summary.md) reports cross-workstream coverage
+and remaining gaps. It never converts `NOT_RUN` or `NOT_MEASURED` rows into a
+success claim.

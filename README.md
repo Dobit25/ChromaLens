@@ -482,7 +482,9 @@ stability source is generated and contains no private camera image.
 
 ## T09 evaluation Gate 0
 
-T09 is `IN_PROGRESS`. Before results are produced, Gate 0 freezes protocol
+T09 is `PARTIAL`: Gate 0 and every currently executable coordinator case are
+complete, but the frozen 33-case physical color/lighting matrix has no source
+assets and remains `NOT_RUN`. Gate 0 freezes protocol
 version `1.0.0` in these coordinator-owned files:
 
 - [`evaluation/protocol.md`](evaluation/protocol.md): procedure, hardware and
@@ -530,8 +532,10 @@ arrays, and bulk evidence stay below ignored `artifacts/t09/`. Every report
 artifact needs a manifest with provenance/consent, license, exact byte size,
 and SHA-256. Never use `git add -f` to bypass the artifact policy.
 
-### T09 curated color and development-host performance evidence
+### T09 curated evidence
 
+The cross-workstream status and exact remaining completion action are in
+[`evaluation/results/curated/summary.md`](evaluation/results/curated/summary.md).
 The coordinator-regenerated Trinh/Phong packages are intentionally `PARTIAL`:
 
 - color science accounts for all 50 frozen IDs: 11 digital contract and six
@@ -557,7 +561,30 @@ conda run --name lens python scripts/t09_benchmark_report.py
 conda run --name lens python scripts/t09_result_validation.py
 ```
 
-The second command does not rerun a benchmark or claim new measurements. To
+The segmentation evaluator requires Dong's consented inputs and annotations
+to be materialized below ignored `artifacts/t09/segmentation/`. It runs the
+exact 20-case registry with the locked default MediaPipe backend. First create
+review artifacts and fill the ignored 0-3 rating CSV; then generate and
+strictly validate the curated package:
+
+```powershell
+conda run --name lens python scripts/t09_segmentation_eval.py --prepare-review
+conda run --name lens python scripts/t09_segmentation_eval.py
+conda run --name lens python scripts/t09_result_validation.py --require-untracked-artifacts evaluation/results/curated/segmentation/result.json
+```
+
+The coordinator end-to-end evaluator runs all 10 frozen integration cases,
+including locked MediaPipe on the licensed public fixture and the consented
+moving sequence. It saves six controlled intermediate views plus failure and
+temporal reviews only below ignored `artifacts/t09/end_to_end/`:
+
+```powershell
+conda run --name lens python scripts/t09_end_to_end_eval.py
+conda run --name lens python scripts/t09_result_validation.py --require-untracked-artifacts evaluation/results/curated/end_to_end/result.json
+```
+
+The `t09_benchmark_report.py` command does not rerun a benchmark or claim new
+measurements. To
 collect a new raw benchmark on the eventual declared demo machine, use one
 frozen case at a time; raw JSON remains ignored under `artifacts/t09/`:
 

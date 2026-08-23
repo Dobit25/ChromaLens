@@ -1,0 +1,19 @@
+case_id,metric,aggregation,unit,status,value,threshold_id,threshold_result,reason
+E2E-CONTROLLED-MULTICOLOR,analysis_frame_id_mismatch_count,count,count,MEASURED,0,required,PASS,only results whose analysis_frame_id equals current frame_id were retained
+E2E-CONTROLLED-MULTICOLOR,outside_recolor_mask_changed_pixel_count,count,pixel,MEASURED,0,required,PASS,comparison occurs before outline and text overlay
+E2E-REAL-PUBLIC,analysis_frame_id_mismatch_count,count,count,MEASURED,0,required,PASS,only results whose analysis_frame_id equals current frame_id were retained
+E2E-REAL-PUBLIC,degraded_frame_rate,single,ratio,MEASURED,0.0,observation_only,NOT_EVALUATED,0/1 frames had a degraded or unavailable required stage
+E2E-SINGLE-COLOR,analysis_frame_id_mismatch_count,count,count,MEASURED,0,required,PASS,only results whose analysis_frame_id equals current frame_id were retained
+E2E-NO-PERSON,analysis_frame_id_mismatch_count,count,count,MEASURED,0,required,PASS,only results whose analysis_frame_id equals current frame_id were retained
+E2E-NO-PERSON,degraded_frame_rate,single,ratio,MEASURED,1.0,observation_only,NOT_EVALUATED,1/1 frames had a degraded or unavailable required stage
+E2E-BACKEND-UNAVAILABLE,analysis_frame_id_mismatch_count,count,count,MEASURED,0,required,PASS,only results whose analysis_frame_id equals current frame_id were retained
+E2E-RECOLOR-DISABLED,analysis_frame_id_mismatch_count,count,count,MEASURED,0,required,PASS,only results whose analysis_frame_id equals current frame_id were retained
+E2E-RECOLOR-DISABLED,outside_recolor_mask_changed_pixel_count,count,pixel,MEASURED,0,required,PASS,comparison occurs before outline and text overlay
+E2E-STATIC-TEMPORAL,analysis_frame_id_mismatch_count,count,count,MEASURED,0,required,PASS,only results whose analysis_frame_id equals current frame_id were retained
+E2E-STATIC-TEMPORAL,temporal_assistive_color_switch_count,count,count,MEASURED,0,static_required,PASS,frozen zero-switch invariant for the static sequence
+E2E-MOVING-TEMPORAL,analysis_frame_id_mismatch_count,count,count,MEASURED,0,required,PASS,only results whose analysis_frame_id equals current frame_id were retained
+E2E-MOVING-TEMPORAL,degraded_frame_rate,single,ratio,MEASURED,0.10616438356164383,observation_only,NOT_EVALUATED,31/292 frames had a degraded or unavailable required stage
+E2E-MOVING-TEMPORAL,temporal_assistive_color_switch_count,count,count,MEASURED,218,static_required,NOT_EVALUATED,moving sequence is observation-only; static threshold is not applied
+E2E-STALE-REJECTION,analysis_frame_id_mismatch_count,count,count,MEASURED,0,required,PASS,only results whose analysis_frame_id equals current frame_id were retained
+E2E-RECOLOR-CONTAINMENT,analysis_frame_id_mismatch_count,count,count,MEASURED,0,required,PASS,only results whose analysis_frame_id equals current frame_id were retained
+E2E-RECOLOR-CONTAINMENT,outside_recolor_mask_changed_pixel_count,count,pixel,MEASURED,0,required,PASS,comparison occurs before outline and text overlay

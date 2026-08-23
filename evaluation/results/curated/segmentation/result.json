@@ -1,0 +1,1995 @@
+{
+  "protocol_version": "1.0.0",
+  "schema_version": "1.0.0",
+  "metric_registry_version": "1.0.0",
+  "result_id": "t09-segmentation-20260823t162505z",
+  "workstream": "segmentation",
+  "result_status": "COMPLETE",
+  "git_commit": "50cbc199c92cf1cbc62e6f2b87a731d4af9b852e",
+  "created_at_utc": "2026-08-23T16:25:05.559073Z",
+  "operator": {
+    "role": "segmentation_evaluator",
+    "identifier": "coordinator-assisted-manual-review"
+  },
+  "environment": {
+    "host_role": "development",
+    "declared_demo_hardware": false,
+    "manufacturer": "LENOVO",
+    "model": "83DV",
+    "operating_system": "Windows-10-10.0.26200-SP0",
+    "cpu": "13th Gen Intel(R) Core(TM) i5-13450HX",
+    "physical_core_count": 10,
+    "logical_processor_count": 16,
+    "ram_gib": 15.781120300292969,
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "npu": "USB Input Device; Microsoft Input Configuration Device; USB Input Device; USB Input Device; USB Input Device; USB Input Device",
+    "camera_or_source": "five licensed public fixtures plus 15 consented local inputs; decoded video frames",
+    "python_version": "3.10.20",
+    "package_versions": {
+      "chromalens-ai": "0.1.0",
+      "numpy": "1.26.4",
+      "opencv-contrib-python": "4.10.0.84",
+      "mediapipe": "0.10.21",
+      "daltonlens": "0.1.5"
+    },
+    "lock_sha256": "3abb7af836d5721db3bb3de753816f8b41994a2d20c71fd96c25d80e136a071a",
+    "backend_name": "mediapipe-selfie-torso",
+    "backend_device": "cpu",
+    "source_kind": "image",
+    "source_resolution": {
+      "width": 640,
+      "height": 480
+    },
+    "render_resolution": {
+      "width": 640,
+      "height": 480
+    },
+    "display_mode": "headless",
+    "warmup_seconds": 0.0,
+    "measurement_seconds": 0.0,
+    "external_measurement_apparatus": null
+  },
+  "cases": [
+    {
+      "case_id": "SEG-PUB-ASTRONAUT",
+      "status": "COMPLETE",
+      "fixture_id": "t02-astronaut",
+      "artifact_ids": [
+        "seg-review-seg-pub-astronaut",
+        "segmentation-metrics",
+        "segmentation-report"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-PUB-CC0-WOMAN",
+      "status": "COMPLETE",
+      "fixture_id": "t02-cc0-woman",
+      "artifact_ids": [
+        "seg-review-seg-pub-cc0-woman",
+        "segmentation-metrics",
+        "segmentation-report"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-PUB-LOC-LINCOLN",
+      "status": "COMPLETE",
+      "fixture_id": "t02-loc-lincoln",
+      "artifact_ids": [
+        "seg-review-seg-pub-loc-lincoln",
+        "segmentation-metrics",
+        "segmentation-report"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-PUB-LOC-MAN",
+      "status": "COMPLETE",
+      "fixture_id": "t02-loc-man",
+      "artifact_ids": [
+        "seg-review-seg-pub-loc-man",
+        "segmentation-metrics",
+        "segmentation-report"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-PUB-NASA-SHEPARD",
+      "status": "COMPLETE",
+      "fixture_id": "t02-nasa-shepard",
+      "artifact_ids": [
+        "seg-review-seg-pub-nasa-shepard",
+        "segmentation-metrics",
+        "segmentation-report"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-ANN-PLAIN-UPPER",
+      "status": "COMPLETE",
+      "fixture_id": "plain-upper-annotated",
+      "artifact_ids": [
+        "seg-review-seg-ann-plain-upper",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-ann-plain-upper",
+        "seg-annotation-seg-ann-plain-upper"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-ANN-PLAIN-LOWER",
+      "status": "COMPLETE",
+      "fixture_id": "plain-lower-annotated",
+      "artifact_ids": [
+        "seg-review-seg-ann-plain-lower",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-ann-plain-lower",
+        "seg-annotation-seg-ann-plain-lower"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-ANN-MULTICOLOR-UPPER",
+      "status": "COMPLETE",
+      "fixture_id": "multicolor-upper-annotated",
+      "artifact_ids": [
+        "seg-review-seg-ann-multicolor-upper",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-ann-multicolor-upper",
+        "seg-annotation-seg-ann-multicolor-upper"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-MULTICOLOR-DRESS",
+      "status": "COMPLETE",
+      "fixture_id": "multicolor-dress",
+      "artifact_ids": [
+        "seg-review-seg-multicolor-dress",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-multicolor-dress"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-LOW-LIGHT",
+      "status": "COMPLETE",
+      "fixture_id": "low-light-person",
+      "artifact_ids": [
+        "seg-review-seg-low-light",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-low-light"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-WARM-LIGHT",
+      "status": "COMPLETE",
+      "fixture_id": "warm-light-person",
+      "artifact_ids": [
+        "seg-review-seg-warm-light",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-warm-light"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-MOTION-SLOW",
+      "status": "COMPLETE",
+      "fixture_id": "moving-person-slow",
+      "artifact_ids": [
+        "seg-review-seg-motion-slow",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-motion-slow"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-MOTION-FAST",
+      "status": "COMPLETE",
+      "fixture_id": "moving-person-fast",
+      "artifact_ids": [
+        "seg-review-seg-motion-fast",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-motion-fast"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-OCCLUSION",
+      "status": "COMPLETE",
+      "fixture_id": "arms-occlude-garment",
+      "artifact_ids": [
+        "seg-review-seg-occlusion",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-occlusion"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-CARRIED-OBJECT",
+      "status": "COMPLETE",
+      "fixture_id": "carried-object",
+      "artifact_ids": [
+        "seg-review-seg-carried-object",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-carried-object"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-SIMILAR-BACKGROUND",
+      "status": "COMPLETE",
+      "fixture_id": "similar-background",
+      "artifact_ids": [
+        "seg-review-seg-similar-background",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-similar-background"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-POSE-SEATED",
+      "status": "COMPLETE",
+      "fixture_id": "seated-unusual-pose",
+      "artifact_ids": [
+        "seg-review-seg-pose-seated",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-pose-seated"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-CLOSE-CROP",
+      "status": "COMPLETE",
+      "fixture_id": "close-camera-crop",
+      "artifact_ids": [
+        "seg-review-seg-close-crop",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-close-crop"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-MULTI-PERSON",
+      "status": "COMPLETE",
+      "fixture_id": "multiple-people",
+      "artifact_ids": [
+        "seg-review-seg-multi-person",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-multi-person"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    },
+    {
+      "case_id": "SEG-NO-PERSON",
+      "status": "COMPLETE",
+      "fixture_id": "no-person-scene",
+      "artifact_ids": [
+        "seg-review-seg-no-person",
+        "segmentation-metrics",
+        "segmentation-report",
+        "seg-input-seg-no-person"
+      ],
+      "reason": "real locked MediaPipe inference plus recorded manual review"
+    }
+  ],
+  "configuration": {
+    "cvd_profile": "not_applicable",
+    "severity": null,
+    "thresholds": {
+      "adequate_case_rating": 2
+    },
+    "random_seed": null,
+    "settings": {
+      "review_width": 640,
+      "review_height": 480,
+      "resize_mode": "aspect-preserving-letterbox",
+      "video_review_sample_count": 9
+    }
+  },
+  "metrics": [
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 3,
+      "case_ids": [
+        "SEG-PUB-ASTRONAUT"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "Upper garment is well covered with only small boundary spill.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 1,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "SEG-PUB-CC0-WOMAN"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "No target mask was returned.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 0,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "SEG-PUB-LOC-LINCOLN"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "No target mask was returned.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 0,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "SEG-PUB-LOC-MAN"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "No target mask was returned.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 0,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "SEG-PUB-NASA-SHEPARD"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "Only a thin non-garment strip was retained.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 1,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 2,
+      "case_ids": [
+        "SEG-ANN-PLAIN-UPPER"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "Upper garment is usable but hair and torso-boundary error remain.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 1,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_iou",
+      "aggregation": "single",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 0.38285820410437366,
+      "case_ids": [
+        "SEG-ANN-PLAIN-UPPER"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "IoU is observation-only; no calibrated pass threshold is authorized",
+      "method": "intersection pixels / union pixels after identical 640x480 letterbox"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-ANN-PLAIN-LOWER"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "Upper-body contamination blocks reliable lower-garment color use.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 1,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_iou",
+      "aggregation": "single",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 0.37007592035524994,
+      "case_ids": [
+        "SEG-ANN-PLAIN-LOWER"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "IoU is observation-only; no calibrated pass threshold is authorized",
+      "method": "intersection pixels / union pixels after identical 640x480 letterbox"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 3,
+      "case_ids": [
+        "SEG-ANN-MULTICOLOR-UPPER"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "The patterned upper garment is well covered with minor edge error.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 1,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_iou",
+      "aggregation": "single",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 0.8813956000432074,
+      "case_ids": [
+        "SEG-ANN-MULTICOLOR-UPPER"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "IoU is observation-only; no calibrated pass threshold is authorized",
+      "method": "intersection pixels / union pixels after identical 640x480 letterbox"
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 2,
+      "case_ids": [
+        "SEG-MULTICOLOR-DRESS"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "Dress torso is usable but lower-garment coverage is incomplete.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 1,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 2,
+      "case_ids": [
+        "SEG-LOW-LIGHT"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "Main garment remains usable despite boundary loss in dim lighting.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 1,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-WARM-LIGHT"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "Held certificate and adjacent regions contaminate the garment mask.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 1,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 2,
+      "case_ids": [
+        "SEG-MOTION-SLOW"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "Most sampled frames are usable but startup and distant frames lose coverage.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 292,
+        "nonempty_frames": 291,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-MOTION-FAST"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "Motion causes severe vegetation and trailing-background contamination.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 113,
+        "nonempty_frames": 113,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-OCCLUSION"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "Occluding laptop and nearby people contaminate the retained region.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 1,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-CARRIED-OBJECT"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "The carried certificate is included and blocks reliable clothing color use.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 1,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 2,
+      "case_ids": [
+        "SEG-SIMILAR-BACKGROUND"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "The visible upper garment remains usable with limited edge error.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 1,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 2,
+      "case_ids": [
+        "SEG-POSE-SEATED"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "Seated upper garment is usable despite lower-body omission.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 1,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-CLOSE-CROP"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "Large foreground object and crop contamination dominate the retained mask.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 1,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 1,
+      "case_ids": [
+        "SEG-MULTI-PERSON"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "FAIL",
+      "reason": "People and held object are merged so garment ownership is ambiguous.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 1,
+        "expected_empty": false
+      }
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "aggregation": "single",
+      "unit": "rating_0_3",
+      "status": "MEASURED",
+      "value": 3,
+      "case_ids": [
+        "SEG-NO-PERSON"
+      ],
+      "threshold_id": "adequate_case",
+      "threshold_result": "PASS",
+      "reason": "Correctly returned no garment mask for the negative scene.",
+      "method": "manual review of exact MediaPipe overlay/contact sheet using protocol 0-3 rubric",
+      "dimensions": {
+        "processed_frames": 1,
+        "nonempty_frames": 0,
+        "expected_empty": true
+      }
+    },
+    {
+      "name": "segmentation_adequate_rate",
+      "aggregation": "overall",
+      "unit": "ratio",
+      "status": "MEASURED",
+      "value": 0.45,
+      "case_ids": [
+        "SEG-PUB-ASTRONAUT",
+        "SEG-PUB-CC0-WOMAN",
+        "SEG-PUB-LOC-LINCOLN",
+        "SEG-PUB-LOC-MAN",
+        "SEG-PUB-NASA-SHEPARD",
+        "SEG-ANN-PLAIN-UPPER",
+        "SEG-ANN-PLAIN-LOWER",
+        "SEG-ANN-MULTICOLOR-UPPER",
+        "SEG-MULTICOLOR-DRESS",
+        "SEG-LOW-LIGHT",
+        "SEG-WARM-LIGHT",
+        "SEG-MOTION-SLOW",
+        "SEG-MOTION-FAST",
+        "SEG-OCCLUSION",
+        "SEG-CARRIED-OBJECT",
+        "SEG-SIMILAR-BACKGROUND",
+        "SEG-POSE-SEATED",
+        "SEG-CLOSE-CROP",
+        "SEG-MULTI-PERSON",
+        "SEG-NO-PERSON"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "9/20 exact frozen cases rated >=2",
+      "method": "adequate ratings / all 20 evaluated cases"
+    },
+    {
+      "name": "artifact_checksum_mismatch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "SEG-PUB-ASTRONAUT",
+        "SEG-PUB-CC0-WOMAN",
+        "SEG-PUB-LOC-LINCOLN",
+        "SEG-PUB-LOC-MAN",
+        "SEG-PUB-NASA-SHEPARD",
+        "SEG-ANN-PLAIN-UPPER",
+        "SEG-ANN-PLAIN-LOWER",
+        "SEG-ANN-MULTICOLOR-UPPER",
+        "SEG-MULTICOLOR-DRESS",
+        "SEG-LOW-LIGHT",
+        "SEG-WARM-LIGHT",
+        "SEG-MOTION-SLOW",
+        "SEG-MOTION-FAST",
+        "SEG-OCCLUSION",
+        "SEG-CARRIED-OBJECT",
+        "SEG-SIMILAR-BACKGROUND",
+        "SEG-POSE-SEATED",
+        "SEG-CLOSE-CROP",
+        "SEG-MULTI-PERSON",
+        "SEG-NO-PERSON"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "all locally available input, annotation, and review bytes were rehashed",
+      "method": "SHA-256 over exact bytes"
+    },
+    {
+      "name": "unconsented_tracked_media_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "MEASURED",
+      "value": 0,
+      "case_ids": [
+        "SEG-PUB-ASTRONAUT",
+        "SEG-PUB-CC0-WOMAN",
+        "SEG-PUB-LOC-LINCOLN",
+        "SEG-PUB-LOC-MAN",
+        "SEG-PUB-NASA-SHEPARD",
+        "SEG-ANN-PLAIN-UPPER",
+        "SEG-ANN-PLAIN-LOWER",
+        "SEG-ANN-MULTICOLOR-UPPER",
+        "SEG-MULTICOLOR-DRESS",
+        "SEG-LOW-LIGHT",
+        "SEG-WARM-LIGHT",
+        "SEG-MOTION-SLOW",
+        "SEG-MOTION-FAST",
+        "SEG-OCCLUSION",
+        "SEG-CARRIED-OBJECT",
+        "SEG-SIMILAR-BACKGROUND",
+        "SEG-POSE-SEATED",
+        "SEG-CLOSE-CROP",
+        "SEG-MULTI-PERSON",
+        "SEG-NO-PERSON"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "raw/private segmentation media and derived visual reviews remain ignored",
+      "method": "git ls-files plus manifest consent audit"
+    }
+  ],
+  "artifacts": [
+    {
+      "artifact_id": "seg-review-seg-pub-astronaut",
+      "case_ids": [
+        "SEG-PUB-ASTRONAUT"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-PUB-ASTRONAUT.png",
+      "sha256": "c128cc9ef08d0d14e897401a504e2e4049f4f1ffe1959663d68b750110aa5ecb",
+      "byte_size": 358525,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-PublicFixture-AsDocumented",
+        "license_evidence": "tests/samples/t02/README.md source and rights record",
+        "consent_status": "PUBLIC_LICENSED",
+        "consent_record_ref": null,
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-pub-cc0-woman",
+      "case_ids": [
+        "SEG-PUB-CC0-WOMAN"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-PUB-CC0-WOMAN.png",
+      "sha256": "3314cf0c7fe653f26d45adbf50c12f4b18b918d3b9c91887d98f313d1984036f",
+      "byte_size": 359241,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-PublicFixture-AsDocumented",
+        "license_evidence": "tests/samples/t02/README.md source and rights record",
+        "consent_status": "PUBLIC_LICENSED",
+        "consent_record_ref": null,
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-pub-loc-lincoln",
+      "case_ids": [
+        "SEG-PUB-LOC-LINCOLN"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-PUB-LOC-LINCOLN.png",
+      "sha256": "e9f5476821c0b19af153feaca40ca534ebec9235ba284b4af6b1e1e610797bde",
+      "byte_size": 295008,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-PublicFixture-AsDocumented",
+        "license_evidence": "tests/samples/t02/README.md source and rights record",
+        "consent_status": "PUBLIC_LICENSED",
+        "consent_record_ref": null,
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-pub-loc-man",
+      "case_ids": [
+        "SEG-PUB-LOC-MAN"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-PUB-LOC-MAN.png",
+      "sha256": "7c26e7aef5b6ba0530e71fe9ad4efc64592d9ac93d7c2a85fad95e9ab39fb4b3",
+      "byte_size": 310470,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-PublicFixture-AsDocumented",
+        "license_evidence": "tests/samples/t02/README.md source and rights record",
+        "consent_status": "PUBLIC_LICENSED",
+        "consent_record_ref": null,
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-pub-nasa-shepard",
+      "case_ids": [
+        "SEG-PUB-NASA-SHEPARD"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-PUB-NASA-SHEPARD.png",
+      "sha256": "dbd4b80e4198cd3efcb608f61c2e820c9b1ef9346089facf2ecfcba40018a898",
+      "byte_size": 324142,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-PublicFixture-AsDocumented",
+        "license_evidence": "tests/samples/t02/README.md source and rights record",
+        "consent_status": "PUBLIC_LICENSED",
+        "consent_record_ref": null,
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-ann-plain-upper",
+      "case_ids": [
+        "SEG-ANN-PLAIN-UPPER"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/plain-upper.jpg",
+      "sha256": "7af175a5cb6e2a2ebeb9657a81d08c5adb62853d2750f67316518f76bfb889b6",
+      "byte_size": 364758,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-annotation-seg-ann-plain-upper",
+      "case_ids": [
+        "SEG-ANN-PLAIN-UPPER"
+      ],
+      "relative_path": "artifacts/t09/segmentation/annotations/SEG-ANN-PLAIN-UPPER.png",
+      "sha256": "b1d7a50df7e6463ae824c893380feebd71fcdca9dfedea23dad4424f1ce086d7",
+      "byte_size": 10311,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-ann-plain-upper"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "T09 segmentation workstream annotation reviewer",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-ann-plain-upper",
+      "case_ids": [
+        "SEG-ANN-PLAIN-UPPER"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-ANN-PLAIN-UPPER.png",
+      "sha256": "e715477ead1fb93957a98551b63bfb3113724270c7f640eceb844807859875c8",
+      "byte_size": 247296,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-ann-plain-upper"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-ann-plain-lower",
+      "case_ids": [
+        "SEG-ANN-PLAIN-LOWER"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/plain-lower.jpg",
+      "sha256": "762149d962718eeeaf603c22ffdf3910a7e7cbbba7c2e126e9d694da47d9ac3f",
+      "byte_size": 3256298,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-annotation-seg-ann-plain-lower",
+      "case_ids": [
+        "SEG-ANN-PLAIN-LOWER"
+      ],
+      "relative_path": "artifacts/t09/segmentation/annotations/SEG-ANN-PLAIN-LOWER.png",
+      "sha256": "6bdccb627ada45327b0c9e8eb18c431d72c98be553e3b8b7dc874ec31408188f",
+      "byte_size": 21840,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-ann-plain-lower"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "T09 segmentation workstream annotation reviewer",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-ann-plain-lower",
+      "case_ids": [
+        "SEG-ANN-PLAIN-LOWER"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-ANN-PLAIN-LOWER.png",
+      "sha256": "4094d568ba4cd41e33915f58ce3fb988a66aa2c40094f83d5533019ab84169e3",
+      "byte_size": 363209,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-ann-plain-lower"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-ann-multicolor-upper",
+      "case_ids": [
+        "SEG-ANN-MULTICOLOR-UPPER"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/multicolor-upper.jpg",
+      "sha256": "b0d8ef7f7d0530013ae30fb9f5fa9d875b2864cebe3d7bb3e72a4ede8aa30e12",
+      "byte_size": 2194722,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-annotation-seg-ann-multicolor-upper",
+      "case_ids": [
+        "SEG-ANN-MULTICOLOR-UPPER"
+      ],
+      "relative_path": "artifacts/t09/segmentation/annotations/SEG-ANN-MULTICOLOR-UPPER.png",
+      "sha256": "37fe1f98c36eb921b2b999433002edea55463958c8048ab4694442eff42b5ce4",
+      "byte_size": 21620,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-ann-multicolor-upper"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "T09 segmentation workstream annotation reviewer",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-ann-multicolor-upper",
+      "case_ids": [
+        "SEG-ANN-MULTICOLOR-UPPER"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-ANN-MULTICOLOR-UPPER.png",
+      "sha256": "25aa1c38d139b13b661dba171c48e5d6b530699a9f82f8c0273a6c3c24731c98",
+      "byte_size": 461720,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-ann-multicolor-upper"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-multicolor-dress",
+      "case_ids": [
+        "SEG-MULTICOLOR-DRESS"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/multicolor-dress.jpg",
+      "sha256": "f9d6cc7ea44cf26ce081b1ddd9a676f6b399e13f47c8ac14024c07c5053be097",
+      "byte_size": 5663335,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-multicolor-dress",
+      "case_ids": [
+        "SEG-MULTICOLOR-DRESS"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-MULTICOLOR-DRESS.png",
+      "sha256": "2f8877e7346f53a1fdd3efde0d3139b6bd093c526392bf37cb3ed08f14811498",
+      "byte_size": 354724,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-multicolor-dress"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-low-light",
+      "case_ids": [
+        "SEG-LOW-LIGHT"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/low-light.jpg",
+      "sha256": "b1c96a3c7ee5a8c07a11762607acd2eaf188dfb186ab0315548876900f0baf2f",
+      "byte_size": 2215789,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-low-light",
+      "case_ids": [
+        "SEG-LOW-LIGHT"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-LOW-LIGHT.png",
+      "sha256": "51182f318f4a4e3de73b8daafc3c40d0c39f337141c1f83e64ea2bfbfb2e9d2b",
+      "byte_size": 302134,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-low-light"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-warm-light",
+      "case_ids": [
+        "SEG-WARM-LIGHT"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/warm-light.jpg",
+      "sha256": "121d2183fe69e6f821d0149c38c5a4337ff147c25fe2785bddcdf68199978d0b",
+      "byte_size": 2865213,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-warm-light",
+      "case_ids": [
+        "SEG-WARM-LIGHT"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-WARM-LIGHT.png",
+      "sha256": "9df2e7df306556c6c5ac79d61fc4f356fc5fd3e9a3db5154b2cb08eda1320845",
+      "byte_size": 264045,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-warm-light"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-motion-slow",
+      "case_ids": [
+        "SEG-MOTION-SLOW"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/motion-slow.mp4",
+      "sha256": "1b008fa20de0b09b82df22b4d38754098bcc34e0b8feed868df0353f3342aeca",
+      "byte_size": 4928432,
+      "media_type": "video/mp4",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-motion-slow",
+      "case_ids": [
+        "SEG-MOTION-SLOW"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-MOTION-SLOW.png",
+      "sha256": "0d2b50d9bb5795543bdffe1d62c559a3687f6dbaf73ac236e291ff034cfcfc53",
+      "byte_size": 699222,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-motion-slow"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-motion-fast",
+      "case_ids": [
+        "SEG-MOTION-FAST"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/motion-fast.mp4",
+      "sha256": "3f8ba89cf4220f204f02a7e3175164a57fef9b9ea6b90ac466a4b37c972153e3",
+      "byte_size": 7214948,
+      "media_type": "video/mp4",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-motion-fast",
+      "case_ids": [
+        "SEG-MOTION-FAST"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-MOTION-FAST.png",
+      "sha256": "2b6ea3537bafc3decde50e64431ab9b5f7f98386d4201c01947a2ce8883f13ce",
+      "byte_size": 1169516,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-motion-fast"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-occlusion",
+      "case_ids": [
+        "SEG-OCCLUSION"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/occlusion.jpg",
+      "sha256": "edda002910205394fd8902e5fb5a4e689d45ccd2454c32c0bb1ed8d1e8ba77f5",
+      "byte_size": 2545888,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-occlusion",
+      "case_ids": [
+        "SEG-OCCLUSION"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-OCCLUSION.png",
+      "sha256": "108524112f1dbe923d4361f3717616f563548cb239dd7e250dd8591997e5727d",
+      "byte_size": 299662,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-occlusion"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-carried-object",
+      "case_ids": [
+        "SEG-CARRIED-OBJECT"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/carried-object.jpg",
+      "sha256": "c0895289003c38432661b93de3da919ce816312d180c2f329a271e981eb9b49f",
+      "byte_size": 2853222,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-carried-object",
+      "case_ids": [
+        "SEG-CARRIED-OBJECT"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-CARRIED-OBJECT.png",
+      "sha256": "77ead30417ad002e8f3cdb7a0192269aca40b2c0ebddaac1a5ffbce60d30738a",
+      "byte_size": 281841,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-carried-object"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-similar-background",
+      "case_ids": [
+        "SEG-SIMILAR-BACKGROUND"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/similar-background.jpg",
+      "sha256": "ee8828398395d293bfa0d8ed39f2255165b2fae4b3191b300901c3c8667a752f",
+      "byte_size": 4041744,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-similar-background",
+      "case_ids": [
+        "SEG-SIMILAR-BACKGROUND"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-SIMILAR-BACKGROUND.png",
+      "sha256": "d6a686084c916d4319c31163be6d4c015a0fff6c4dfb81fdb19bc16eb74d8d91",
+      "byte_size": 316617,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-similar-background"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-pose-seated",
+      "case_ids": [
+        "SEG-POSE-SEATED"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/pose-seated.jpg",
+      "sha256": "c442a43df28cb89c8cb9faae56ea48003163a48c49f4abbd536f9c01f8c52aa5",
+      "byte_size": 3283840,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-pose-seated",
+      "case_ids": [
+        "SEG-POSE-SEATED"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-POSE-SEATED.png",
+      "sha256": "1266c2bef85e8177de9cdce025ccaaccea121fe05bf194da1c54666acf2cf09f",
+      "byte_size": 330263,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-pose-seated"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-close-crop",
+      "case_ids": [
+        "SEG-CLOSE-CROP"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/close-crop.jpg",
+      "sha256": "7efea760a442e5d97b466343dd0428e87d4a63d8643f7ee8d98c83712003ff2c",
+      "byte_size": 3107133,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-close-crop",
+      "case_ids": [
+        "SEG-CLOSE-CROP"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-CLOSE-CROP.png",
+      "sha256": "272eb981697e2cf6b429db34ebf9ff9e7390f3dc51a9e473a9618461a19f9be3",
+      "byte_size": 299125,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-close-crop"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-multi-person",
+      "case_ids": [
+        "SEG-MULTI-PERSON"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/multi-person.jpg",
+      "sha256": "da30fe62c4cc7bc473fb7440437466e9becff10ef56a4b2cdaf26a261758090d",
+      "byte_size": 1698005,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-multi-person",
+      "case_ids": [
+        "SEG-MULTI-PERSON"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-MULTI-PERSON.png",
+      "sha256": "ccb4df82b147ebc4c901ca65b652111b89462906823396c87982146084764451",
+      "byte_size": 328481,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-multi-person"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "seg-input-seg-no-person",
+      "case_ids": [
+        "SEG-NO-PERSON"
+      ],
+      "relative_path": "artifacts/t09/segmentation/inputs/no-person.jpg",
+      "sha256": "8a1302bf7ae268143a6ea94ff4058e83f025c19c82333086765f3f1699b1250c",
+      "byte_size": 2914629,
+      "media_type": "image/jpeg",
+      "tracked_in_git": false,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "project_capture",
+        "creator_or_source": "T09 segmentation workstream data custodian",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "seg-review-seg-no-person",
+      "case_ids": [
+        "SEG-NO-PERSON"
+      ],
+      "relative_path": "artifacts/t09/segmentation/reviews/SEG-NO-PERSON.png",
+      "sha256": "258330c885001861cdffe37eb1d48f59264608cb49144288f9e51715734c0ec3",
+      "byte_size": 314166,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-input-seg-no-person"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "segmentation-review-sheet",
+      "case_ids": [
+        "SEG-PUB-ASTRONAUT",
+        "SEG-PUB-CC0-WOMAN",
+        "SEG-PUB-LOC-LINCOLN",
+        "SEG-PUB-LOC-MAN",
+        "SEG-PUB-NASA-SHEPARD",
+        "SEG-ANN-PLAIN-UPPER",
+        "SEG-ANN-PLAIN-LOWER",
+        "SEG-ANN-MULTICOLOR-UPPER",
+        "SEG-MULTICOLOR-DRESS",
+        "SEG-LOW-LIGHT",
+        "SEG-WARM-LIGHT",
+        "SEG-MOTION-SLOW",
+        "SEG-MOTION-FAST",
+        "SEG-OCCLUSION",
+        "SEG-CARRIED-OBJECT",
+        "SEG-SIMILAR-BACKGROUND",
+        "SEG-POSE-SEATED",
+        "SEG-CLOSE-CROP",
+        "SEG-MULTI-PERSON",
+        "SEG-NO-PERSON"
+      ],
+      "relative_path": "artifacts/t09/segmentation/segmentation_review_sheet.png",
+      "sha256": "de0ecd865541b5205edd8ada527e807a8b2ff0afb83c8f00c815e427dcdcd441",
+      "byte_size": 1556768,
+      "media_type": "image/png",
+      "tracked_in_git": false,
+      "derived_from": [
+        "seg-review-seg-pub-astronaut",
+        "seg-review-seg-pub-cc0-woman",
+        "seg-review-seg-pub-loc-lincoln",
+        "seg-review-seg-pub-loc-man",
+        "seg-review-seg-pub-nasa-shepard",
+        "seg-review-seg-ann-plain-upper",
+        "seg-review-seg-ann-plain-lower",
+        "seg-review-seg-ann-multicolor-upper",
+        "seg-review-seg-multicolor-dress",
+        "seg-review-seg-low-light",
+        "seg-review-seg-warm-light",
+        "seg-review-seg-motion-slow",
+        "seg-review-seg-motion-fast",
+        "seg-review-seg-occlusion",
+        "seg-review-seg-carried-object",
+        "seg-review-seg-similar-background",
+        "seg-review-seg-pose-seated",
+        "seg-review-seg-close-crop",
+        "seg-review-seg-multi-person",
+        "seg-review-seg-no-person"
+      ],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "derived_artifact",
+        "creator_or_source": "ChromaLens T09 MediaPipe evaluator",
+        "source_url": null,
+        "created_or_captured_at_utc": null,
+        "license_id": "LicenseRef-ChromaLens-T09-Private-Evaluation",
+        "license_evidence": "Repository-owner attestation: Dong data custodian holds the private consent record; raw bytes remain untracked",
+        "consent_status": "EXPLICIT_WRITTEN_CONSENT_PRIVATE_RECORD",
+        "consent_record_ref": "private-record-held-by-data-custodian:t09-segmentation-consent-v1",
+        "contains_personal_data": true
+      }
+    },
+    {
+      "artifact_id": "segmentation-metrics",
+      "case_ids": [
+        "SEG-PUB-ASTRONAUT",
+        "SEG-PUB-CC0-WOMAN",
+        "SEG-PUB-LOC-LINCOLN",
+        "SEG-PUB-LOC-MAN",
+        "SEG-PUB-NASA-SHEPARD",
+        "SEG-ANN-PLAIN-UPPER",
+        "SEG-ANN-PLAIN-LOWER",
+        "SEG-ANN-MULTICOLOR-UPPER",
+        "SEG-MULTICOLOR-DRESS",
+        "SEG-LOW-LIGHT",
+        "SEG-WARM-LIGHT",
+        "SEG-MOTION-SLOW",
+        "SEG-MOTION-FAST",
+        "SEG-OCCLUSION",
+        "SEG-CARRIED-OBJECT",
+        "SEG-SIMILAR-BACKGROUND",
+        "SEG-POSE-SEATED",
+        "SEG-CLOSE-CROP",
+        "SEG-MULTI-PERSON",
+        "SEG-NO-PERSON"
+      ],
+      "relative_path": "evaluation/results/curated/segmentation/segmentation_metrics.csv",
+      "sha256": "ca6aeda243d7e6fd686b10a9cf3e5766a414cf08ac064424cd0f243462aebc4b",
+      "byte_size": 4398,
+      "media_type": "text/csv",
+      "tracked_in_git": true,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "curated_result",
+        "creator_or_source": "ChromaLens T09 coordinators",
+        "source_url": null,
+        "created_or_captured_at_utc": "2026-08-23T16:25:05.334637Z",
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and T09 protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    },
+    {
+      "artifact_id": "segmentation-report",
+      "case_ids": [
+        "SEG-PUB-ASTRONAUT",
+        "SEG-PUB-CC0-WOMAN",
+        "SEG-PUB-LOC-LINCOLN",
+        "SEG-PUB-LOC-MAN",
+        "SEG-PUB-NASA-SHEPARD",
+        "SEG-ANN-PLAIN-UPPER",
+        "SEG-ANN-PLAIN-LOWER",
+        "SEG-ANN-MULTICOLOR-UPPER",
+        "SEG-MULTICOLOR-DRESS",
+        "SEG-LOW-LIGHT",
+        "SEG-WARM-LIGHT",
+        "SEG-MOTION-SLOW",
+        "SEG-MOTION-FAST",
+        "SEG-OCCLUSION",
+        "SEG-CARRIED-OBJECT",
+        "SEG-SIMILAR-BACKGROUND",
+        "SEG-POSE-SEATED",
+        "SEG-CLOSE-CROP",
+        "SEG-MULTI-PERSON",
+        "SEG-NO-PERSON"
+      ],
+      "relative_path": "evaluation/results/curated/segmentation/report.md",
+      "sha256": "0127c5195af73e0d308e759b5689102ad586c7de032557979c52b97b21bcef12",
+      "byte_size": 5053,
+      "media_type": "text/markdown",
+      "tracked_in_git": true,
+      "derived_from": [],
+      "generation_command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "provenance": {
+        "provenance_class": "curated_result",
+        "creator_or_source": "ChromaLens T09 coordinators",
+        "source_url": null,
+        "created_or_captured_at_utc": "2026-08-23T16:25:05.334637Z",
+        "license_id": "Apache-2.0",
+        "license_evidence": "Repository LICENSE and T09 protocol Section 10",
+        "consent_status": "NOT_APPLICABLE_NO_PERSON",
+        "consent_record_ref": null,
+        "contains_personal_data": false
+      }
+    }
+  ],
+  "commands": [
+    {
+      "command": "conda run --name lens python scripts/t09_segmentation_eval.py",
+      "exit_code": 0,
+      "started_at_utc": "2026-08-23T16:25:05.334637Z",
+      "ended_at_utc": "2026-08-23T16:25:05.559073Z",
+      "output_summary": "20/20 cases evaluated; 9/20 rated adequate"
+    }
+  ],
+  "failure_cases": [
+    {
+      "failure_id": "FAIL-SEG-001",
+      "case_ids": [
+        "SEG-PUB-CC0-WOMAN"
+      ],
+      "observed_behavior": "Manual adequacy rating 0/3: No target mask was returned.",
+      "expected_behavior": "A garment-localized mask adequate for reliable downstream color use, or a correct explicit empty result for the negative case",
+      "user_impact": "Mask contamination or omission can alter color analysis or make assistance unavailable",
+      "reproduction": "Run conda run --name lens python scripts/t09_segmentation_eval.py and inspect artifacts/t09/segmentation/reviews/SEG-PUB-CC0-WOMAN.png",
+      "mitigation": "Show degraded state, request reframing/better lighting, and compare a semantic SCHP candidate only through T10 while preserving fallback",
+      "status": "OPEN"
+    },
+    {
+      "failure_id": "FAIL-SEG-002",
+      "case_ids": [
+        "SEG-PUB-LOC-LINCOLN"
+      ],
+      "observed_behavior": "Manual adequacy rating 0/3: No target mask was returned.",
+      "expected_behavior": "A garment-localized mask adequate for reliable downstream color use, or a correct explicit empty result for the negative case",
+      "user_impact": "Mask contamination or omission can alter color analysis or make assistance unavailable",
+      "reproduction": "Run conda run --name lens python scripts/t09_segmentation_eval.py and inspect artifacts/t09/segmentation/reviews/SEG-PUB-LOC-LINCOLN.png",
+      "mitigation": "Show degraded state, request reframing/better lighting, and compare a semantic SCHP candidate only through T10 while preserving fallback",
+      "status": "OPEN"
+    },
+    {
+      "failure_id": "FAIL-SEG-003",
+      "case_ids": [
+        "SEG-PUB-LOC-MAN"
+      ],
+      "observed_behavior": "Manual adequacy rating 0/3: No target mask was returned.",
+      "expected_behavior": "A garment-localized mask adequate for reliable downstream color use, or a correct explicit empty result for the negative case",
+      "user_impact": "Mask contamination or omission can alter color analysis or make assistance unavailable",
+      "reproduction": "Run conda run --name lens python scripts/t09_segmentation_eval.py and inspect artifacts/t09/segmentation/reviews/SEG-PUB-LOC-MAN.png",
+      "mitigation": "Show degraded state, request reframing/better lighting, and compare a semantic SCHP candidate only through T10 while preserving fallback",
+      "status": "OPEN"
+    }
+  ],
+  "limitations": [
+    "MediaPipe Selfie Segmentation plus torso cleanup is not semantic garment parsing.",
+    "The 20-case convenience set and one manual review do not establish calibrated or population accuracy.",
+    "Letterboxing, camera processing, clothing presentation, occlusion, and lighting can change observed masks.",
+    "Mean retained foreground score is a MediaPipe-derived heuristic, not calibrated garment confidence."
+  ],
+  "responsible_ai": {
+    "runtime_local_offline": true,
+    "frames_saved_by_default": false,
+    "frames_uploaded_by_default": false,
+    "medical_diagnosis_claim": false,
+    "user_selected_profile": true,
+    "privacy_summary": "Evaluation saving was explicit; raw personal media, derived reviews, and consent records remain ignored and untracked.",
+    "bias_coverage_summary": "Twenty convenience cases include several clothing/pose/lighting failures but do not cover demographic or body-presentation diversity sufficiently.",
+    "environmental_summary": "A pretrained MediaPipe CPU backend was reused with no training; segmentation quality was evaluated before optional SCHP/OpenVINO work.",
+    "license_summary": "MediaPipe is Apache-2.0; five public fixtures retain documented rights; private captures use the owner-confirmed consent/license reference and are not redistributed in Git.",
+    "user_validation_status": "NOT_MEASURED"
+  },
+  "notes": "source_kind=image denotes the normalized frame unit passed to inference; two source assets were decoded videos and are identified per case/manifest."
+}
