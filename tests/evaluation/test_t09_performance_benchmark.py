@@ -104,4 +104,3 @@ def test_looping_video_rewinds_without_opening_a_webcam(tmp_path: Path) -> None:
     assert all(packet is not None for packet in packets)
     assert [packet.frame_id for packet in packets if packet is not None] == [0, 1, 2]
     assert source.resolution == (32, 24)
-

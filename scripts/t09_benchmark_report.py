@@ -4,7 +4,11 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
+import sys
 from typing import Any, Mapping, Sequence
+
+if str(Path(__file__).resolve().parents[1]) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scripts.t09_evaluation_common import (
     PROTOCOL_VERSION,
@@ -551,4 +555,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

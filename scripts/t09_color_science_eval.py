@@ -5,7 +5,11 @@ from __future__ import annotations
 import csv
 from datetime import datetime
 from pathlib import Path
+import sys
 from typing import Any, Mapping, Sequence
+
+if str(Path(__file__).resolve().parents[1]) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import cv2
 import numpy as np

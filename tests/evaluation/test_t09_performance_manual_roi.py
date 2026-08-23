@@ -33,4 +33,3 @@ def test_cancelled_or_nonpositive_trial_fails_closed() -> None:
         assert "cancelled" in str(error)
     else:  # pragma: no cover
         raise AssertionError("cancelled selection must fail")
-

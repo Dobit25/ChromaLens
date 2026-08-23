@@ -25,4 +25,3 @@ def test_registry_and_frozen_case_files_are_loaded_without_optional_dependency()
     assert len(cases) == 92
     assert len({row["case_id"] for row in cases}) == 92
     assert len(registry["metrics"]) == 32
-

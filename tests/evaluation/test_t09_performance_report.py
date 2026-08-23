@@ -58,4 +58,3 @@ def test_manual_roi_privacy_bias_license_and_failures_remain_explicit() -> None:
     assert "GAPS_RECORDED" in text
     assert "sensor_to_photon_ms" in text and "NOT_MEASURED" in text
     assert len(report.failure_cases()) >= 3
-

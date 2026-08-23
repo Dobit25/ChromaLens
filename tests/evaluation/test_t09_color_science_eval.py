@@ -68,4 +68,3 @@ def test_color_environment_is_collected_not_hard_coded() -> None:
     assert "collect_environment(" in source
     assert "83DV" not in source
     assert "13th Gen Intel Core i5-13450HX" not in source
-

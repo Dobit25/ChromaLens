@@ -298,4 +298,3 @@ def require_lens_interpreter() -> None:
     executable = Path(sys.executable).as_posix().lower()
     if "/envs/lens/" not in executable:
         raise RuntimeError(f"expected conda environment lens, got {sys.executable}")
-
