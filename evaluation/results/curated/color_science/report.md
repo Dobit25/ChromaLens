@@ -1,12 +1,12 @@
 # T09 Color Science Workstream
 
-Status: `PARTIAL` under frozen protocol `1.0.0`.
+Status: `COMPLETE` under frozen protocol `1.0.0`, with the physical matrix retained as an owner-accepted limitation.
 
-This is a coordinator regeneration of the useful logic from Phong's commit `82ce430d2f7157d8e26254ed2cfd9f69ad82eeb4`. It reports the exact frozen case registry. Synthetic gain transforms remain supplemental and never replace physical camera observations.
+This is a coordinator regeneration of the useful logic from Phong's commit `82ce430d2f7157d8e26254ed2cfd9f69ad82eeb4`. It reports the exact frozen case registry. Synthetic gain transforms remain supplemental and never replace physical camera observations. `COMPLETE` means the required evidence package is closed with the repository owner's explicit acceptance; it is not a physical color-accuracy claim.
 
 ## Frozen case coverage
 
-- 33 physical color-lighting cases: `NOT_RUN` because the exact assets remain `TO_BE_ACQUIRED`.
+- 33 physical color-lighting cases: `NOT_RUN` because the exact assets remain `TO_BE_ACQUIRED`; this limitation is explicitly accepted by the repository owner.
 - 11 tracked digital contract cases: `11/11` correct.
 - Six frozen CVD-risk sanity cases: complete.
 

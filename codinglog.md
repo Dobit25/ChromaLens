@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-23 23:36 +07:00
+Last updated: 2026-08-24 00:00 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -40,7 +40,7 @@ This table is intentionally empty until an agent starts the plan.
 | T06 | Selective recolor, outline, and score overlay | `DONE` | Codex | 2026-08-20 13:02 +07:00 | 2026-08-20 13:10 +07:00 | T06 start and completion entries below |
 | T07 | Rule-based color matching | `DONE` | Codex | 2026-08-20 16:02 +07:00 | 2026-08-20 16:11 +07:00 | T07 start and completion entries below |
 | T08 | End-to-end live pipeline and controls | `DONE` | Codex | 2026-08-20 16:24 +07:00 | 2026-08-20 16:58 +07:00 | T08 start and completion entries below |
-| T09 | Evaluation, responsible AI, and evidence package | `IN_PROGRESS` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-23 23:36 +07:00 | Owner accepted the absent physical matrix as a declared limitation; local regeneration of lost performance/RAI evidence is in progress |
+| T09 | Evaluation, responsible AI, and evidence package | `DONE` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-24 00:00 +07:00 | T09 completion entry: strict validation of all four workstreams, 241-test full suite, accepted physical limitation, and fresh performance evidence |
 
 ## 3. Active blockers
 
@@ -65,6 +65,7 @@ Use this section only for implementation decisions that affect later tasks. Deta
 | DEC-009 | 2026-08-20 | Generate matching guidance only from T04 `ColorCluster` Lab/RGB through a strictly validated project-authored CIELCH rule table; treat priority and optional CVD separation as heuristics, never confidence or objective fashion truth. | T07, T08, T09 | T07 completion entry |
 | DEC-010 | 2026-08-20 | Compose T02-T07 through one typed current-frame pipeline; use a capacity-one newest-frame mailbox for webcam and sequential consumption for finite video. Temporal mask history is intersected with the current mask, and missing stages clear/skip dependent state instead of reusing stale analysis. | T08, T09, T11 | T08 completion entry |
 | DEC-011 | 2026-08-20 | Freeze T09 protocol/schema/metric/case contracts at version 1.0.0; distinguish render-complete, GUI-submit, and externally measured latency; track only curated text results and assign disjoint workstream namespaces. | T09, T10, T11 | T09 Gate 0 completion entry |
+| DEC-012 | 2026-08-23 | Close T09 with all 33 physical color cases still honestly `NOT_RUN` as an owner-accepted limitation; supersede seven unrecoverable contributor artifacts with four fresh raw benchmark runs plus one deterministic video, never reconstructed values. | T09, T10, T11 | T09 completion entry |
 
 ## 5. Chronological entries
 
@@ -3246,6 +3247,111 @@ passes may T09 change to `DONE`; the next plan task will then be T10.
 
 Implement and test the local benchmark-video/consolidation path, commit the
 generator baseline, then execute the four full-duration sessions.
+
+---
+
+### `2026-08-24 00:00 +07:00` - `T09` `Evaluation, responsible AI, and evidence package complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Plan reference:** `plan.md#t09--evaluation-responsible-ai-and-evidence-package`
+
+#### Outcome and accepted boundary
+
+- The four T09 workstreams now have schema-valid machine-readable JSON and
+  human-readable Markdown/CSV evidence under
+  `evaluation/results/curated/`.
+- The repository owner accepted completion without the 33 physical
+  color/lighting captures. Those exact rows remain `NOT_RUN`, the limitation
+  is `ACCEPTED`, synthetic lighting remains supplemental, and no
+  physical-camera color-accuracy claim is permitted.
+- The seven unrecoverable contributor artifacts were not fabricated. They are
+  absent from the active manifest and superseded by four fresh raw benchmark
+  JSON files plus one deterministic no-person video. All five ignored
+  artifacts are present and checksum-verified in this checkout.
+- Manual ROI completion time, user validation, energy use, and
+  `sensor_to_photon_ms` remain `NOT_MEASURED`/`NOT_RUN`. The fixed-RGB/manual
+  procedure and AI-necessity explanation satisfy the non-AI baseline
+  requirement without simulating human interaction.
+- Hardware is still declared `development`, not official demo hardware.
+
+#### Reproducible performance evidence
+
+Environment: `lens`, Python 3.10.20, Lenovo 83DV, Intel Core i5-13450HX,
+15.78 GiB RAM, MediaPipe `mediapipe-selfie-torso/cpu`, development host.
+Each case used a 15-second warm-up and 120-second measured interval.
+
+| Frozen case | Source/mode | Processed FPS | `source_read_to_render_ms` p50/p95 | `source_read_to_display_submit_ms` p50/p95 |
+| --- | --- | ---: | ---: | ---: |
+| `PERF-WEBCAM-GUI-120` | webcam 640x480 / GUI | 19.73 | 47/78 ms | 47/78 ms |
+| `PERF-WEBCAM-HEADLESS-120` | webcam 640x480 / headless | 14.01 | 62/187 ms | `NOT_MEASURED` |
+| `PERF-VIDEO-GUI-120` | generated 360x240 / GUI | 15.94 | 47/78 ms | 47/78 ms |
+| `PERF-VIDEO-HEADLESS-120` | generated 360x240 / headless | 24.17 | 47/63 ms | `NOT_MEASURED` |
+
+`sensor_to_photon_ms` is `NOT_MEASURED` for every case because no external
+synchronized apparatus was used. Peak RSS was 214.51, 214.40, 139.57, and
+139.04 MiB respectively. The four-window continuous-growth diagnostic fired
+only for webcam GUI; it remains an open development-host risk rather than a
+memory-leak conclusion.
+
+#### Commands and observed outcomes
+
+| Command | Exit/result |
+| --- | --- |
+| `D:\Coding\Anaconda\envs\lens\python.exe scripts/t09_benchmark_performance.py --prepare-video` | exit 0; generated ignored 360x240 MJPG video, 435,322 bytes |
+| `...python.exe scripts/t09_benchmark_performance.py --case PERF-WEBCAM-GUI-120` | exit 0; raw result `COMPLETE` |
+| `...python.exe scripts/t09_benchmark_performance.py --case PERF-WEBCAM-HEADLESS-120` | exit 0; raw result `COMPLETE` |
+| `...python.exe scripts/t09_benchmark_performance.py --case PERF-VIDEO-GUI-120 --video artifacts/t09/performance_responsible_ai/inputs/generated-360x240.avi` | exit 0; raw result `COMPLETE` |
+| `...python.exe scripts/t09_benchmark_performance.py --case PERF-VIDEO-HEADLESS-120 --video artifacts/t09/performance_responsible_ai/inputs/generated-360x240.avi` | exit 0; raw result `COMPLETE` |
+| `...python.exe scripts/t09_benchmark_report.py --raw-generator-commit f74227d2342dc81bc9fd66e71fc2b85c095065ef` | exit 0; 12 cases, 97 metrics; result generated from the exact four raw files |
+| `...python.exe scripts/t09_color_science_eval.py` | exit 0; 50 cases, 30 metrics; result generated at commit `9e90b2fda9a1d5b05d4dd7310c1ff214d103a40b` |
+| `...python.exe scripts/t09_result_validation.py --require-untracked-artifacts` | exit 0; all four results pass; 11 tracked and 64 ignored artifacts verified, zero unavailable |
+| `...python.exe -m pytest -q` | exit 0; final run `241 passed in 4.83s` |
+| `...python.exe -m chromalens --help` | exit 0 |
+| `...python.exe -m pip check` | exit 0; no broken requirements |
+| `...python.exe -m compileall -q src scripts tests` | exit 0 |
+| `git diff --check` | exit 0 |
+| `...python.exe -m pytest tests/test_repository_hygiene.py -q` | exit 4; operator used a nonexistent path; no test ran |
+| `...python.exe -m pytest tests/test_t09_gate.py -q` | exit 0; `7 passed in 0.13s`, correcting the path above |
+| CI-equivalent forbidden-artifact/size PowerShell gate | exit 0; 125 tracked files, maximum curated file 79,022 bytes |
+
+The initial `--help` probes of the two legacy generator scripts executed them
+because they had no parser; this was recorded at task start. The report script
+now has real `--help` behavior. Every affected curated result was deliberately
+regenerated afterward and strict-validated.
+
+#### Definition of Done evidence
+
+- [x] `evaluation/protocol.md` declares data, development hardware contract,
+  source/render resolution, thresholds, units, latency semantics, and procedure.
+- [x] Machine-readable and human-readable results are saved for color,
+  segmentation, end-to-end, performance, responsible AI, failures, and the
+  cross-workstream summary.
+- [x] Performance names `mediapipe-selfie-torso/cpu`, records the exact host and
+  resolutions, and restricts all claims to a development machine.
+- [x] At least three concrete failure examples and mitigations are documented;
+  current packages include color stability/physical coverage, segmentation
+  adequacy, moving-sequence degradation/switching, performance degradation,
+  RSS diagnostic, undeclared demo hardware, and missing user validation.
+- [x] No unconsented personal footage is committed. Raw/derived media stays
+  below ignored `artifacts/t09/`; consented segmentation media is referenced
+  by non-identifying provenance and checksum manifests only.
+- [x] The frozen 92-case registry is fully accounted for: 56 `COMPLETE`, zero
+  `PARTIAL`, and 36 explicit `NOT_RUN` rows accepted within the claim boundary.
+- [x] Color naming, available IoU/adequacy, CVD sanity, FPS, latency p50/p95,
+  RSS trend, representative artifacts, privacy, bias, limitations, failures,
+  environmental notes, licenses, attribution, and a non-AI baseline are saved.
+- [x] Strict artifact validation and the full automated suite pass in the
+  approved isolated Python 3.10 `lens` environment.
+
+#### Commits and exact next task
+
+- Raw benchmark generator baseline: `f74227d2342dc81bc9fd66e71fc2b85c095065ef`.
+- Fresh performance evidence/color acceptance commit:
+  `9e90b2fda9a1d5b05d4dd7310c1ff214d103a40b`.
+- Reproducible raw-provenance selector commit:
+  `5c9fd863519f7687a3b01006de840509074325e8`.
+- Exact next task: `T10 — SCHP/OpenVINO optimization gate`. T10 has not started.
 
 ---
 

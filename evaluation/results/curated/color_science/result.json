@@ -2,11 +2,11 @@
   "protocol_version": "1.0.0",
   "schema_version": "1.0.0",
   "metric_registry_version": "1.0.0",
-  "result_id": "t09-color-science-20260823t151615z",
+  "result_id": "t09-color-science-20260823t165509z",
   "workstream": "color_science",
-  "result_status": "PARTIAL",
-  "git_commit": "432b835339283fbcef8168d5680c21737b410339",
-  "created_at_utc": "2026-08-23T15:16:15.494544Z",
+  "result_status": "COMPLETE",
+  "git_commit": "9e90b2fda9a1d5b05d4dd7310c1ff214d103a40b",
+  "created_at_utc": "2026-08-23T16:55:09.651822Z",
   "operator": {
     "role": "color_evaluator",
     "identifier": "coordinator-regeneration-from-phong"
@@ -585,8 +585,9 @@
     "settings": {
       "synthetic_frame_size": "128x128",
       "lighting_gains_rgb": "daylight=1.00,1.00,1.00;neutral_indoor=0.95,1.00,1.05;warm_low=1.15,0.85,0.65",
-      "measurement_git_commit": "432b835339283fbcef8168d5680c21737b410339",
-      "source_branch_commit": "82ce430d2f7157d8e26254ed2cfd9f69ad82eeb4"
+      "measurement_git_commit": "9e90b2fda9a1d5b05d4dd7310c1ff214d103a40b",
+      "source_branch_commit": "82ce430d2f7157d8e26254ed2cfd9f69ad82eeb4",
+      "physical_matrix_policy": "OWNER_ACCEPTED_NOT_RUN_WITHOUT_PHYSICAL_ACCURACY_CLAIM"
     }
   },
   "metrics": [
@@ -1377,7 +1378,7 @@
         "provenance_class": "curated_result",
         "creator_or_source": "ChromaLens coordinator color evaluator",
         "source_url": null,
-        "created_or_captured_at_utc": "2026-08-23T15:16:15.494544Z",
+        "created_or_captured_at_utc": "2026-08-23T16:55:09.651822Z",
         "license_id": "Apache-2.0",
         "license_evidence": "Repository LICENSE and T09 protocol Section 10",
         "consent_status": "NOT_APPLICABLE_NO_PERSON",
@@ -1411,7 +1412,7 @@
         "provenance_class": "curated_result",
         "creator_or_source": "Phong logic, coordinator-regenerated",
         "source_url": null,
-        "created_or_captured_at_utc": "2026-08-23T15:16:15.494544Z",
+        "created_or_captured_at_utc": "2026-08-23T16:55:09.651822Z",
         "license_id": "Apache-2.0",
         "license_evidence": "Repository LICENSE and T09 protocol Section 10",
         "consent_status": "NOT_APPLICABLE_NO_PERSON",
@@ -1447,7 +1448,7 @@
         "provenance_class": "curated_result",
         "creator_or_source": "Phong logic, coordinator-regenerated",
         "source_url": null,
-        "created_or_captured_at_utc": "2026-08-23T15:16:15.494544Z",
+        "created_or_captured_at_utc": "2026-08-23T16:55:09.651822Z",
         "license_id": "Apache-2.0",
         "license_evidence": "Repository LICENSE and T09 protocol Section 10",
         "consent_status": "NOT_APPLICABLE_NO_PERSON",
@@ -1476,7 +1477,7 @@
         "provenance_class": "curated_result",
         "creator_or_source": "Phong logic, coordinator-regenerated",
         "source_url": null,
-        "created_or_captured_at_utc": "2026-08-23T15:16:15.494544Z",
+        "created_or_captured_at_utc": "2026-08-23T16:55:09.651822Z",
         "license_id": "Apache-2.0",
         "license_evidence": "Repository LICENSE and T09 protocol Section 10",
         "consent_status": "NOT_APPLICABLE_NO_PERSON",
@@ -1539,8 +1540,8 @@
         "CVD-TRITAN-CONTROL"
       ],
       "relative_path": "evaluation/results/curated/color_science/report.md",
-      "sha256": "eb3fde91d98bee8c166fb816d31f7344b2535cf4fefbb2b3eb54e1f90ae40548",
-      "byte_size": 2098,
+      "sha256": "64b48aff8df98c70efa8c57ed7321a4d471ec4d7bb8373c82a97c802f527e427",
+      "byte_size": 2379,
       "media_type": "text/markdown",
       "tracked_in_git": true,
       "derived_from": [
@@ -1554,7 +1555,7 @@
         "provenance_class": "curated_result",
         "creator_or_source": "ChromaLens coordinators",
         "source_url": null,
-        "created_or_captured_at_utc": "2026-08-23T15:16:15.494544Z",
+        "created_or_captured_at_utc": "2026-08-23T16:55:09.651822Z",
         "license_id": "Apache-2.0",
         "license_evidence": "Repository LICENSE and T09 protocol Section 10",
         "consent_status": "NOT_APPLICABLE_NO_PERSON",
@@ -1567,8 +1568,8 @@
     {
       "command": "conda run --name lens python scripts/t09_color_science_eval.py",
       "exit_code": 0,
-      "started_at_utc": "2026-08-23T15:16:15.297795Z",
-      "ended_at_utc": "2026-08-23T15:16:15.494544Z",
+      "started_at_utc": "2026-08-23T16:55:09.400854Z",
+      "ended_at_utc": "2026-08-23T16:55:09.651822Z",
       "output_summary": "Generated exact frozen 50-case coverage, 11 digital contract rows, 33 supplemental lighting rows, 121 confusion cells, six CVD rows, and five tracked artifact manifests."
     }
   ],
@@ -1615,7 +1616,7 @@
       "user_impact": "No camera color-name accuracy, lighting stability, or population performance claim can be made.",
       "reproduction": "conda run --name lens python scripts/t09_color_science_eval.py",
       "mitigation": "Acquire licensed or consented physical captures and rerun while retaining this supplemental synthetic evidence separately.",
-      "status": "OPEN"
+      "status": "ACCEPTED_LIMITATION"
     },
     {
       "failure_id": "FAIL-COLOR-SYNTHETIC-STABILITY",
@@ -1659,5 +1660,5 @@
     "license_summary": "Generated evidence is Apache-2.0; existing repository attribution documents OpenCV, DaltonLens/Machado, and color anchors.",
     "user_validation_status": "NOT_MEASURED"
   },
-  "notes": "Coordinator regeneration of Phong's useful logic. Frozen physical coverage remains explicitly incomplete."
+  "notes": "Coordinator regeneration of Phong's useful logic. Frozen physical coverage remains explicitly NOT_RUN as an owner-accepted limitation; COMPLETE means the T09 color workstream reports all frozen cases and required evidence, not that physical accuracy was measured."
 }

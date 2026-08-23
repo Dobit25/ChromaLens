@@ -2,11 +2,11 @@
   "protocol_version": "1.0.0",
   "schema_version": "1.0.0",
   "metric_registry_version": "1.0.0",
-  "result_id": "t09-performance-rai-20260823t165320z",
+  "result_id": "t09-performance-rai-20260823t165713z",
   "workstream": "performance_responsible_ai",
   "result_status": "COMPLETE",
-  "git_commit": "f74227d2342dc81bc9fd66e71fc2b85c095065ef",
-  "created_at_utc": "2026-08-23T16:53:20.088009Z",
+  "git_commit": "5c9fd863519f7687a3b01006de840509074325e8",
+  "created_at_utc": "2026-08-23T16:57:13.460273Z",
   "operator": {
     "role": "coordinator",
     "identifier": "local-t09-coordinator"
@@ -1709,12 +1709,12 @@
       "media_type": "text/csv",
       "tracked_in_git": true,
       "derived_from": [],
-      "generation_command": "conda run --name lens python scripts/t09_benchmark_report.py",
+      "generation_command": "conda run --name lens python scripts/t09_benchmark_report.py --raw-generator-commit f74227d2342dc81bc9fd66e71fc2b85c095065ef",
       "provenance": {
         "provenance_class": "curated_result",
         "creator_or_source": "ChromaLens T09 local coordinator",
         "source_url": null,
-        "created_or_captured_at_utc": "2026-08-23T16:53:20.088009Z",
+        "created_or_captured_at_utc": "2026-08-23T16:57:13.460273Z",
         "license_id": "Apache-2.0",
         "license_evidence": "Repository LICENSE and T09 protocol Section 10",
         "consent_status": "NOT_APPLICABLE_NO_PERSON",
@@ -1750,12 +1750,12 @@
         "perf-video-headless-raw",
         "generated-video-input"
       ],
-      "generation_command": "conda run --name lens python scripts/t09_benchmark_report.py",
+      "generation_command": "conda run --name lens python scripts/t09_benchmark_report.py --raw-generator-commit f74227d2342dc81bc9fd66e71fc2b85c095065ef",
       "provenance": {
         "provenance_class": "curated_result",
         "creator_or_source": "ChromaLens T09 local coordinator",
         "source_url": null,
-        "created_or_captured_at_utc": "2026-08-23T16:53:20.088009Z",
+        "created_or_captured_at_utc": "2026-08-23T16:57:13.460273Z",
         "license_id": "Apache-2.0",
         "license_evidence": "Repository LICENSE and T09 protocol Section 10",
         "consent_status": "NOT_APPLICABLE_NO_PERSON",
@@ -1766,10 +1766,10 @@
   ],
   "commands": [
     {
-      "command": "conda run --name lens python scripts/t09_benchmark_report.py",
+      "command": "conda run --name lens python scripts/t09_benchmark_report.py --raw-generator-commit f74227d2342dc81bc9fd66e71fc2b85c095065ef",
       "exit_code": 0,
-      "started_at_utc": "2026-08-23T16:53:20.015100Z",
-      "ended_at_utc": "2026-08-23T16:53:20.088009Z",
+      "started_at_utc": "2026-08-23T16:57:13.428261Z",
+      "ended_at_utc": "2026-08-23T16:57:13.460273Z",
       "output_summary": "Consolidated four fresh frozen local runs; all five ignored active artifacts rehashed."
     }
   ],

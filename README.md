@@ -480,12 +480,12 @@ All generated output is under ignored `artifacts/t08-pipeline/`. The real
 backend visual uses the repository's licensed/public-domain T02 fixture; the
 stability source is generated and contains no private camera image.
 
-## T09 evaluation Gate 0
+## T09 evaluation and evidence
 
-T09 is `PARTIAL`: Gate 0 and every currently executable coordinator case are
-complete, but the frozen 33-case physical color/lighting matrix has no source
-assets and remains `NOT_RUN`. Gate 0 freezes protocol
-version `1.0.0` in these coordinator-owned files:
+T09 is `DONE` under frozen protocol version `1.0.0`. The owner accepted the
+absent 33-case physical color/lighting matrix as a declared limitation: every
+physical row remains `NOT_RUN`, synthetic evidence is not relabeled, and no
+physical-camera color-accuracy claim is made. The evaluation contract is:
 
 - [`evaluation/protocol.md`](evaluation/protocol.md): procedure, hardware and
   resolution declarations, units, formulae, thresholds, latency semantics,
@@ -534,31 +534,31 @@ and SHA-256. Never use `git add -f` to bypass the artifact policy.
 
 ### T09 curated evidence
 
-The cross-workstream status and exact remaining completion action are in
+The cross-workstream status and claim boundaries are in
 [`evaluation/results/curated/summary.md`](evaluation/results/curated/summary.md).
-The coordinator-regenerated Trinh/Phong packages are intentionally `PARTIAL`:
+The coordinator-regenerated packages are complete as evidence packages while
+retaining unmeasured rows explicitly:
 
 - color science accounts for all 50 frozen IDs: 11 digital contract and six
   CVD cases are complete, while the 33 physical color-lighting cases remain
-  `NOT_RUN` until their exact assets are acquired;
+  `NOT_RUN` under the owner-accepted limitation;
 - the synthetic 11 x 3 lighting matrix, 121-cell confusion table, K=2
   containment diagnostic, and CVD sanity rows are retained as supplemental
   implementation evidence, not physical-camera accuracy;
-- four 15-second-warm-up plus 120-second performance observations remain
-  development-host evidence from Trinh's recorded machine, never demo-hardware
-  acceptance evidence;
-- seven ignored raw contributor artifacts have complete recorded manifests but
-  are absent in this checkout, so coordinator-side raw checksum verification is
-  explicitly incomplete. Tracked curated artifact bytes are verified.
+- four new 15-second-warm-up plus 120-second performance observations are
+  development-host evidence, never demo-hardware acceptance evidence;
+- seven unrecoverable contributor artifacts are superseded by four new raw
+  JSON files and one deterministic generated video. Their active manifests,
+  provenance, licenses, byte sizes, and SHA-256 hashes validate strictly.
 
-Regenerate the deterministic color result and the tracked performance/RAI
-consolidation from the committed observation record, then validate schema,
-metric registry, exact case coverage, and available checksums:
+Regenerate the deterministic color result and reproduce the tracked
+performance/RAI consolidation from the exact raw-generator commit, then
+strictly validate schema, metric registry, case coverage, and checksums:
 
 ```powershell
 conda run --name lens python scripts/t09_color_science_eval.py
-conda run --name lens python scripts/t09_benchmark_report.py
-conda run --name lens python scripts/t09_result_validation.py
+conda run --name lens python scripts/t09_benchmark_report.py --raw-generator-commit f74227d2342dc81bc9fd66e71fc2b85c095065ef
+conda run --name lens python scripts/t09_result_validation.py --require-untracked-artifacts
 ```
 
 The segmentation evaluator requires Dong's consented inputs and annotations
@@ -583,12 +583,14 @@ conda run --name lens python scripts/t09_end_to_end_eval.py
 conda run --name lens python scripts/t09_result_validation.py --require-untracked-artifacts evaluation/results/curated/end_to_end/result.json
 ```
 
-The `t09_benchmark_report.py` command does not rerun a benchmark or claim new
-measurements. To
-collect a new raw benchmark on the eventual declared demo machine, use one
+The `t09_benchmark_report.py` command only consolidates raw observations; it
+does not rerun or claim new measurements. Generate its deterministic no-person
+video, then collect a new raw benchmark on the eventual declared demo machine
+one
 frozen case at a time; raw JSON remains ignored under `artifacts/t09/`:
 
 ```powershell
+conda run --name lens python scripts/t09_benchmark_performance.py --prepare-video
 conda run --name lens python scripts/t09_benchmark_performance.py --case PERF-WEBCAM-GUI-120
 conda run --name lens python scripts/t09_benchmark_performance.py --case PERF-WEBCAM-HEADLESS-120
 conda run --name lens python scripts/t09_benchmark_performance.py --case PERF-VIDEO-GUI-120 --video artifacts/t09/performance_responsible_ai/inputs/generated-360x240.avi

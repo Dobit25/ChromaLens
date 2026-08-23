@@ -36,6 +36,11 @@ def test_curated_color_result_passes_schema_registry_coverage_and_checksums() ->
     assert summary.missing_untracked_artifact_count == 0
     assert len(physical) == 33 and all(case["status"] == "NOT_RUN" for case in physical)
     assert len(contract) == 11 and all(case["status"] == "COMPLETE" for case in contract)
+    assert result["result_status"] == "COMPLETE"
+    assert (
+        result["configuration"]["settings"]["physical_matrix_policy"]
+        == "OWNER_ACCEPTED_NOT_RUN_WITHOUT_PHYSICAL_ACCURACY_CLAIM"
+    )
 
 
 def test_curated_performance_result_passes_with_fresh_ignored_raw_files() -> None:
