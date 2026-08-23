@@ -42,6 +42,7 @@ from scripts.t09_evaluation_common import (
 
 WORKSTREAM = "performance_responsible_ai"
 OUTPUT_DIR = ROOT / "artifacts/t09/performance_responsible_ai"
+DEFAULT_VIDEO_PATH = OUTPUT_DIR / "inputs/generated-360x240.avi"
 LOCK_PATH = ROOT / "requirements/segment-mediapipe-py310-win64.lock"
 DEFAULT_WARMUP_SECONDS = 15.0
 DEFAULT_MEASUREMENT_SECONDS = 120.0
@@ -308,7 +309,13 @@ def boolean_threshold(value: bool | None, required: bool) -> str:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--case", required=True, choices=tuple(CASES))
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument("--case", choices=tuple(CASES))
+    action.add_argument(
+        "--prepare-video",
+        action="store_true",
+        help="write the deterministic private-free 360x240 benchmark video",
+    )
     parser.add_argument("--video", type=Path, help="required for frozen video cases")
     parser.add_argument("--camera-index", type=int, default=0)
     parser.add_argument("--warmup-seconds", type=float, default=DEFAULT_WARMUP_SECONDS)
@@ -318,6 +325,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.prepare_video:
+        if args.video is not None:
+            raise SystemExit("--video cannot be combined with --prepare-video")
+        path = generate_benchmark_video(DEFAULT_VIDEO_PATH)
+        print(f"Wrote ignored generated video {path.relative_to(ROOT)}")
+        return 0
+    assert args.case is not None
     case = CASES[args.case]
     if args.warmup_seconds < 0 or args.measurement_seconds <= 0:
         raise SystemExit("warmup must be non-negative and measurement must be positive")
@@ -389,6 +403,66 @@ def main(argv: Sequence[str] | None = None) -> int:
     write_json_lf(output, payload)
     print(f"Wrote ignored raw result {output.relative_to(ROOT)}")
     return 0 if official else 2
+
+
+def generated_benchmark_frame(frame_id: int, *, frame_count: int = 120) -> np.ndarray:
+    """Return one deterministic synthetic frame with no person or private data."""
+
+    if frame_id < 0 or frame_count <= 0 or frame_id >= frame_count:
+        raise ValueError("frame_id must be inside the positive frame_count")
+    height, width = 240, 360
+    x = np.linspace(45, 125, width, dtype=np.uint8)
+    frame = np.dstack(
+        (
+            np.tile(x, (height, 1)),
+            np.tile(np.flip(x), (height, 1)),
+            np.full((height, width), 90, dtype=np.uint8),
+        )
+    )
+    phase = frame_id / max(1, frame_count - 1)
+    x0 = 55 + round(80 * phase)
+    x1 = x0 + 190
+    y0, y1 = 55, 195
+    split = x0 + 118
+    frame[y0:y1, x0:split] = (30, 30, 210)
+    frame[y0:y1, split:x1] = (20, 130, 130)
+    cv2.rectangle(frame, (x0, y0), (x1 - 1, y1 - 1), (245, 245, 245), 2)
+    return frame
+
+
+def generate_benchmark_video(
+    path: Path = DEFAULT_VIDEO_PATH,
+    *,
+    frame_count: int = 120,
+    fps: float = 30.0,
+) -> Path:
+    """Write the frozen-size synthetic looping source used by both video cases."""
+
+    if frame_count <= 0 or not np.isfinite(fps) or fps <= 0:
+        raise ValueError("frame_count and fps must be positive")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    writer = cv2.VideoWriter(
+        str(path), cv2.VideoWriter_fourcc(*"MJPG"), fps, (360, 240)
+    )
+    if not writer.isOpened():
+        raise RuntimeError(f"could not create benchmark video: {path}")
+    try:
+        for frame_id in range(frame_count):
+            writer.write(generated_benchmark_frame(frame_id, frame_count=frame_count))
+    finally:
+        writer.release()
+    capture = cv2.VideoCapture(str(path))
+    try:
+        if (
+            not capture.isOpened()
+            or int(capture.get(cv2.CAP_PROP_FRAME_WIDTH)) != 360
+            or int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT)) != 240
+            or int(capture.get(cv2.CAP_PROP_FRAME_COUNT)) != frame_count
+        ):
+            raise RuntimeError("generated benchmark video failed decode/shape validation")
+    finally:
+        capture.release()
+    return path
 
 
 if __name__ == "__main__":

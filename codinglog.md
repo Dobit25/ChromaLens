@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-23 23:25 +07:00
+Last updated: 2026-08-23 23:36 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -40,13 +40,13 @@ This table is intentionally empty until an agent starts the plan.
 | T06 | Selective recolor, outline, and score overlay | `DONE` | Codex | 2026-08-20 13:02 +07:00 | 2026-08-20 13:10 +07:00 | T06 start and completion entries below |
 | T07 | Rule-based color matching | `DONE` | Codex | 2026-08-20 16:02 +07:00 | 2026-08-20 16:11 +07:00 | T07 start and completion entries below |
 | T08 | End-to-end live pipeline and controls | `DONE` | Codex | 2026-08-20 16:24 +07:00 | 2026-08-20 16:58 +07:00 | T08 start and completion entries below |
-| T09 | Evaluation, responsible AI, and evidence package | `PARTIAL` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-23 23:25 +07:00 | All executable coordinator work is validated; 33 frozen physical color/lighting cases remain `NOT_RUN` because compliant assets do not exist |
+| T09 | Evaluation, responsible AI, and evidence package | `IN_PROGRESS` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-23 23:36 +07:00 | Owner accepted the absent physical matrix as a declared limitation; local regeneration of lost performance/RAI evidence is in progress |
 
 ## 3. Active blockers
 
 | Blocker ID | Related task | Description | Impact | Required decision/action | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| BLK-001 | T09 | Frozen 11 colors x 3 physical-lighting assets are absent; synthetic lighting cannot replace physical captures. | T09 cannot truthfully become `DONE`, so T10 must not start under the task dependency gate. | Acquire/capture 33 exact registry cases with consent/provenance/license, run the frozen evaluator, and regenerate/validate the color package. | Repository owner | `OPEN` |
+| BLK-001 | T09 | Frozen 11 colors x 3 physical-lighting assets are absent; synthetic lighting cannot replace physical captures. | Accepted as an explicit evaluation limitation; physical rows remain `NOT_RUN` and no accuracy claim is allowed. | No T09 acquisition required unless the owner later reopens this limitation. | Repository owner | `ACCEPTED` |
 
 ## 4. Decision index
 
@@ -3195,6 +3195,57 @@ assets with documented consent/provenance/license, rerun and regenerate the
 color-science package, recover or rerun the seven raw performance/RAI
 artifacts, then repeat strict validation/full tests. Only after that evidence
 passes may T09 change to `DONE`; the next plan task will then be T10.
+
+---
+
+### `2026-08-23 23:36 +07:00` - `T09` `Owner acceptance and evidence regeneration started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Plan reference:** `plan.md#t09--evaluation-responsible-ai-and-evidence-package`
+
+#### Owner decisions
+
+- The missing 33 physical color/lighting cases are accepted as a declared
+  limitation. Their exact rows remain `NOT_RUN`; synthetic cases are not
+  relabeled as physical and no physical-camera accuracy claim is made.
+- The seven lost Trinh raw artifacts cannot be recovered. The owner requested
+  the most suitable replacement rather than retaining unverifiable artifact
+  dependencies.
+- Regenerate the color result, strict-validate all applicable evidence, and run
+  the full test suite.
+
+#### Smallest evidence-integrity solution
+
+- Do not fabricate the seven original bytes and do not preserve them as active
+  artifacts merely to retain historical hashes.
+- Generate a new deterministic 360x240 benchmark video and rerun all four
+  frozen performance sessions on the current development machine: 15-second
+  warm-up plus 120-second measurement, GUI/headless, webcam/generated video.
+- Consolidate performance metrics directly from the four new raw JSON files;
+  rehash those files and the generated video into the new result manifest.
+- Replace the lost manual-ROI timing with an explicit `NOT_MEASURED` row. Keep
+  the fixed-RGB/manual explanation as the plan-required non-AI baseline; do not
+  simulate human interaction.
+- Regenerate the responsible-AI audit from tracked repository state and the
+  active artifact manifest. Remove lost raw JSON references from the active
+  evidence package while documenting the supersession decision.
+- Preserve development-host and latency semantics: no demo-hardware claim and
+  `sensor_to_photon_ms = NOT_MEASURED`.
+
+#### Baseline evidence
+
+| Check | Result |
+| --- | --- |
+| Branch/worktree | `mvp`; two curated result JSON files changed because the report/color generators do not implement `--help` and executed when probed; they will be regenerated deliberately before commit |
+| Approved environment | Python 3.10.20 `lens` only |
+| Camera probe | PASS: camera index 0 opened, returned one 640x480 frame, and was released; no frame saved |
+| Raw recovery | Confirmed unavailable in the contributor branch tree and coordinator checkout |
+
+#### Next action
+
+Implement and test the local benchmark-video/consolidation path, commit the
+generator baseline, then execute the four full-duration sessions.
 
 ---
 

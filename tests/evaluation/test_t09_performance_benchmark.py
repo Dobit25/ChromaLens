@@ -104,3 +104,25 @@ def test_looping_video_rewinds_without_opening_a_webcam(tmp_path: Path) -> None:
     assert all(packet is not None for packet in packets)
     assert [packet.frame_id for packet in packets if packet is not None] == [0, 1, 2]
     assert source.resolution == (32, 24)
+
+
+def test_generated_benchmark_video_is_private_free_and_exact_size(
+    tmp_path: Path,
+) -> None:
+    path = benchmark.generate_benchmark_video(
+        tmp_path / "generated.avi", frame_count=5, fps=10.0
+    )
+    capture = cv2.VideoCapture(str(path))
+    try:
+        frames = []
+        while True:
+            ok, frame = capture.read()
+            if not ok:
+                break
+            frames.append(frame)
+    finally:
+        capture.release()
+
+    assert len(frames) == 5
+    assert all(frame.shape == (240, 360, 3) for frame in frames)
+    assert not np.array_equal(frames[0], frames[-1])

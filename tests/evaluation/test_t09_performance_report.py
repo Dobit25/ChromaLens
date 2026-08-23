@@ -1,60 +1,69 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from scripts import t09_benchmark_report as report
 
 
-def metrics_named(name: str) -> list[dict[str, object]]:
-    return [item for item in report.observation_metrics() if item["name"] == name]
+def raw_evidence() -> tuple[report.RawEvidence, ...]:
+    return tuple(
+        report.RawEvidence(case_id, Path(f"{case_id}.json"), {})
+        for case_id in report.PERFORMANCE_CASE_IDS
+    )
 
 
-def test_development_observations_preserve_frozen_latency_boundaries() -> None:
-    metrics = report.observation_metrics()
-    render = [item for item in metrics if item["name"] == "source_read_to_render_ms"]
-    display = [item for item in metrics if item["name"] == "source_read_to_display_submit_ms"]
-    sensor = [item for item in metrics if item["name"] == "sensor_to_photon_ms"]
-
-    assert len(render) == 8
-    assert len(display) == 8
-    assert len(sensor) == 10
-    assert all(item["status"] == "NOT_MEASURED" for item in sensor)
-    assert all(item["threshold_result"] == "NOT_EVALUATED" for item in metrics_named("processed_fps"))
-    assert all(item["dimensions"]["evidence_class"] == "development_host_observation" for item in render)
-
-
-def test_report_covers_exact_12_frozen_cases_with_honest_partial_statuses() -> None:
-    cases = report.build_cases()
+def test_report_covers_exact_twelve_cases_with_optional_boundaries() -> None:
+    cases = report.build_cases(raw_evidence())
     frozen = report.load_cases(report.WORKSTREAM)
     statuses = {item["case_id"]: item["status"] for item in cases}
 
     assert len(cases) == 12
-    assert {item["case_id"] for item in cases} == {row["case_id"] for row in frozen}
+    assert {item["case_id"] for item in cases} == {
+        row["case_id"] for row in frozen
+    }
+    assert all(statuses[case_id] == "COMPLETE" for case_id in report.PERFORMANCE_CASE_IDS)
     assert statuses["PERF-SENSOR-EXTERNAL"] == "NOT_RUN"
-    assert statuses["RAI-ARTIFACT-INTEGRITY"] == "PARTIAL"
-    assert statuses["RAI-LICENSE"] == "PARTIAL"
+    assert statuses["BASELINE-MANUAL-ROI"] == "NOT_RUN"
+    assert statuses["RAI-ARTIFACT-INTEGRITY"] == "COMPLETE"
+    assert statuses["RAI-LICENSE"] == "COMPLETE"
     assert statuses["RAI-USER-VALIDATION"] == "NOT_RUN"
 
 
-def test_manifest_is_complete_but_does_not_require_ignored_bytes_in_tests() -> None:
-    assert len(report.RAW_MANIFESTS) == 7
-    assert {item[0] for item in report.RAW_MANIFESTS} == {
+def test_unrecoverable_manual_timing_and_sensor_latency_are_not_fabricated() -> None:
+    metrics = report.responsible_ai_metrics()
+    manual = next(
+        item
+        for item in metrics
+        if item["name"] == "manual_baseline_completion_seconds"
+    )
+    sensor = [item for item in metrics if item["name"] == "sensor_to_photon_ms"]
+
+    assert manual["status"] == "NOT_MEASURED" and manual["value"] is None
+    assert "not reconstructed" in manual["reason"]
+    assert len(sensor) == 2
+    assert all(item["status"] == "NOT_MEASURED" for item in sensor)
+    assert all("external" in item["method"].lower() for item in sensor)
+
+
+def test_active_raw_manifest_has_only_fresh_reproducible_artifacts() -> None:
+    assert set(report.RAW_ARTIFACT_IDS) == set(report.PERFORMANCE_CASE_IDS)
+    assert set(report.RAW_ARTIFACT_IDS.values()) == {
         "perf-webcam-gui-raw",
         "perf-webcam-headless-raw",
         "perf-video-gui-raw",
         "perf-video-headless-raw",
-        "generated-video-input",
-        "manual-roi-raw",
-        "responsible-ai-audit-raw",
     }
-    assert all(len(item[3]) == 64 and item[4] > 0 for item in report.RAW_MANIFESTS)
+    assert "manual-roi-raw" not in report.RAW_ARTIFACT_IDS.values()
+    assert "responsible-ai-audit-raw" not in report.RAW_ARTIFACT_IDS.values()
 
 
-def test_manual_roi_privacy_bias_license_and_failures_remain_explicit() -> None:
-    text = report.render_report()
+def test_license_inventory_records_active_and_deferred_components() -> None:
+    inventory = report.license_inventory()
+    components = {row[0]: row for row in inventory}
 
-    assert "3.016 s" in text
-    assert "not automatically locate garments" in text
-    assert "neither saved nor uploaded" in text
-    assert "not demographic validation" in text
-    assert "GAPS_RECORDED" in text
-    assert "sensor_to_photon_ms" in text and "NOT_MEASURED" in text
-    assert len(report.failure_cases()) >= 3
+    assert components["ChromaLens project"][2].startswith("Apache-2.0")
+    assert "mediapipe" in components
+    assert "daltonlens" in components
+    assert "opencv-contrib-python" in components
+    assert components["SCHP-ATR"][1] == "DEFERRED"
+    assert "T10" in components["SCHP-ATR"][2]
