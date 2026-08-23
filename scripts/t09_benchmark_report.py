@@ -188,17 +188,17 @@ def observation_metrics() -> list[dict[str, Any]]:
             ("rss_slope_mib_per_minute", "whole_session", "MiB/min", observation["rss_slope"], "observation_only", "NOT_EVALUATED"),
             ("latency_continuous_growth_flag", "single", "boolean", observation["latency_growth"], "required", "PASS" if not observation["latency_growth"] else "FAIL"),
             ("rss_continuous_growth_flag", "single", "boolean", observation["rss_growth"], "required", "PASS" if not observation["rss_growth"] else "FAIL"),
-            ("processed_frame_count", "count", "frame", observation["frames"], "report_coverage", "NOT_EVALUATED"),
-            ("degraded_frame_rate", "overall", "ratio", observation["degraded_rate"], "observation_only", "NOT_EVALUATED"),
-            ("retained_source_read_to_render_sample_count", "count", "count", observation["retained_render"], "untruncated_required", "PASS" if observation["retained_render"] == observation["frames"] else "FAIL"),
-            ("retained_source_read_to_display_submit_sample_count", "count", "count", observation["retained_display"], "gui_equals_processed_headless_zero", "PASS" if (observation["retained_display"] == observation["frames"] if observation["mode"] == "gui" else observation["retained_display"] == 0) else "FAIL"),
+            ("processed_frame_count", "count", "frame", observation["frames"], "must_be_positive", "PASS" if observation["frames"] > 0 else "FAIL"),
+            ("degraded_frame_rate", "single", "ratio", observation["degraded_rate"], "observation_only", "NOT_EVALUATED"),
+            ("retained_source_read_to_render_sample_count", "count", "count", observation["retained_render"], "no_truncation", "PASS" if observation["retained_render"] == observation["frames"] else "FAIL"),
+            ("retained_source_read_to_display_submit_sample_count", "count", "count", observation["retained_display"], "no_truncation_gui", "PASS" if (observation["retained_display"] == observation["frames"] if observation["mode"] == "gui" else observation["retained_display"] == 0) else "FAIL"),
         )
         for name, aggregation, unit, value, threshold_id, threshold_result in values:
             metrics.append(metric(name, aggregation, unit, value, [case_id], threshold_id, threshold_result, dimensions))
         if observation["source_kind"] == "webcam":
-            metrics.append(metric("dropped_capture_frame_count", "count", "frame", observation["dropped"], [case_id], "report_coverage", "NOT_EVALUATED", dimensions))
+            metrics.append(metric("dropped_capture_frame_count", "count", "frame", observation["dropped"], [case_id], "observation_only", "NOT_EVALUATED", dimensions))
         else:
-            metrics.append(unmeasured("dropped_capture_frame_count", "count", "frame", [case_id], "report_coverage", "Sequential finite-video mode has no capture overwrite count.", dimensions, status="NOT_APPLICABLE"))
+            metrics.append(unmeasured("dropped_capture_frame_count", "count", "frame", [case_id], "observation_only", "Sequential finite-video mode has no capture overwrite count.", dimensions, status="NOT_APPLICABLE"))
         if observation["mode"] == "gui":
             metrics.extend(
                 [
