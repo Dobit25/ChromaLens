@@ -57,6 +57,15 @@ def test_active_raw_manifest_has_only_fresh_reproducible_artifacts() -> None:
     assert "responsible-ai-audit-raw" not in report.RAW_ARTIFACT_IDS.values()
 
 
+def test_report_cli_can_pin_the_exact_raw_generator_commit() -> None:
+    expected = "f74227d2342dc81bc9fd66e71fc2b85c095065ef"
+    args = report.build_parser().parse_args(
+        ["--raw-generator-commit", expected]
+    )
+
+    assert args.raw_generator_commit == expected
+
+
 def test_license_inventory_records_active_and_deferred_components() -> None:
     inventory = report.license_inventory()
     components = {row[0]: row for row in inventory}

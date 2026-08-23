@@ -571,12 +571,18 @@ def render_report(raw: Sequence[RawEvidence]) -> str:
     return "\n".join(lines)
 
 
-def generate_package(output_dir: Path = OUTPUT_DIR) -> Path:
+def generate_package(
+    output_dir: Path = OUTPUT_DIR, *, raw_generator_commit: str | None = None
+) -> Path:
     if output_dir.resolve() != OUTPUT_DIR.resolve():
         raise ValueError(f"output must remain in {OUTPUT_DIR}")
     require_lens_interpreter()
     started = utc_now()
-    raw = discover_raw_evidence()
+    raw = discover_raw_evidence(expected_commit=raw_generator_commit)
+    selected_raw_commit = str(raw[0].payload["git_commit"])
+    generation_command = (
+        f"{COMMAND} --raw-generator-commit {selected_raw_commit}"
+    )
     metrics = [metric for item in raw for metric in item.payload["metrics"]]
     metrics.extend(responsible_ai_metrics())
     metrics_path = output_dir / "performance_metrics.csv"
@@ -609,7 +615,7 @@ def generate_package(output_dir: Path = OUTPUT_DIR) -> Path:
                 artifact_id="performance-metrics",
                 case_ids=frozen_ids,
                 media_type="text/csv",
-                generation_command=COMMAND,
+                generation_command=generation_command,
                 created_at=finished,
                 creator="ChromaLens T09 local coordinator",
             ),
@@ -618,7 +624,7 @@ def generate_package(output_dir: Path = OUTPUT_DIR) -> Path:
                 artifact_id="performance-rai-report",
                 case_ids=frozen_ids,
                 media_type="text/markdown",
-                generation_command=COMMAND,
+                generation_command=generation_command,
                 created_at=finished,
                 creator="ChromaLens T09 local coordinator",
                 derived_from=tuple(
@@ -652,7 +658,7 @@ def generate_package(output_dir: Path = OUTPUT_DIR) -> Path:
             },
             "settings": {
                 "evidence_scope": "development_host_only",
-                "raw_generator_commit": git_commit(),
+                "raw_generator_commit": selected_raw_commit,
                 "lost_contributor_artifacts_superseded": 7,
             },
         },
@@ -660,7 +666,7 @@ def generate_package(output_dir: Path = OUTPUT_DIR) -> Path:
         "artifacts": artifacts,
         "commands": [
             {
-                "command": COMMAND,
+                "command": generation_command,
                 "exit_code": 0,
                 "started_at_utc": utc_text(started),
                 "ended_at_utc": utc_text(finished),
@@ -694,12 +700,20 @@ def generate_package(output_dir: Path = OUTPUT_DIR) -> Path:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    return argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--raw-generator-commit",
+        help=(
+            "Exact commit recorded by all four raw benchmark files. Defaults to "
+            "the current HEAD; use the recorded commit to reproduce a committed report."
+        ),
+    )
+    return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    build_parser().parse_args(argv)
-    generate_package()
+    args = build_parser().parse_args(argv)
+    generate_package(raw_generator_commit=args.raw_generator_commit)
     return 0
 
 
