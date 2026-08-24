@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-24 00:00 +07:00
+Last updated: 2026-08-24 13:38 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -3352,6 +3352,37 @@ regenerated afterward and strict-validated.
 - Reproducible raw-provenance selector commit:
   `5c9fd863519f7687a3b01006de840509074325e8`.
 - Exact next task: `T10 — SCHP/OpenVINO optimization gate`. T10 has not started.
+
+---
+
+### `2026-08-24 13:38 +07:00` - `T09-CI` `Clean-checkout raw-artifact test correction`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Affected commit:** `6f426028d6169fbb85f15415e2a5b1513d9f80ab`
+
+#### Diagnosis
+
+- GitHub Actions run `32653809770` installed both locked environments, then
+  failed only at `Run tests` in the Python 3.10 base job and `Run real-backend
+  and full test gates` in the MediaPipe job.
+- The Conda messages shown as annotations are warnings, not the failure.
+- `test_curated_performance_result_passes_with_fresh_ignored_raw_files`
+  asserted that all five ignored performance artifacts were present. That
+  passed on the data-custodian checkout but necessarily failed in a fresh CI
+  clone because `.gitignore` correctly excludes `artifacts/t09/`.
+- This contradicted the validator contract: tracked curated bytes are always
+  required, ignored raw bytes are verified when present, and only the explicit
+  `--require-untracked-artifacts` custodian gate requires them.
+
+#### Smallest correction
+
+- Keep the active artifact manifests and strict custodian validation unchanged.
+- Make the curated-result automated test explicitly simulate a clean checkout:
+  tracked artifacts must verify, while all five ignored paths must be reported
+  as available-to-a-custodian but absent from CI (`0 verified`, `5 missing`).
+- Run the same full base and locked MediaPipe gates locally, push an atomic fix,
+  and verify the replacement GitHub Actions run before closing this entry.
 
 ---
 
