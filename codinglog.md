@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-24 17:36 +07:00
+Last updated: 2026-08-24 17:40 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -3607,13 +3607,16 @@ the pushed annotated tag `t09-baseline-v1`.
 - `git diff --check`: exit 0. `pip show torch onnx openvino` returned the
   expected package-not-found status, confirming the rejected experiment did
   not modify the installed runtime closure.
+- T10 gate record commit
+  `b3bc2630c5537ce19489780d407d0ed0eb638925` was pushed to `origin/mvp`.
+  GitHub Actions run `32717693707` completed `success`: both `Locked Python
+  3.10 base` and `Locked MediaPipe 0.10.21 backend` passed.
 
 #### Exact next action
 
-Run the unchanged baseline verification gates. If green, commit this auditable
-T10 rejection/defer record and proceed to `T11 - Competition handoff support`;
-do not retry model acquisition before submission without a new owner decision
-and a locally available checksum-verified checkpoint.
+Proceed to `T11 - Competition handoff support`. Do not retry model acquisition
+before submission without a new owner decision and a locally available
+checksum-verified checkpoint.
 
 ---
 
