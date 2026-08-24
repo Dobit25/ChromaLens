@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-24 13:50 +07:00
+Last updated: 2026-08-24 17:36 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -41,6 +41,7 @@ This table is intentionally empty until an agent starts the plan.
 | T07 | Rule-based color matching | `DONE` | Codex | 2026-08-20 16:02 +07:00 | 2026-08-20 16:11 +07:00 | T07 start and completion entries below |
 | T08 | End-to-end live pipeline and controls | `DONE` | Codex | 2026-08-20 16:24 +07:00 | 2026-08-20 16:58 +07:00 | T08 start and completion entries below |
 | T09 | Evaluation, responsible AI, and evidence package | `DONE` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-24 00:00 +07:00 | T09 completion entry: strict validation of all four workstreams, 241-test full suite, accepted physical limitation, and fresh performance evidence |
+| T10 | SCHP/OpenVINO optimization gate | `DEFERRED` | Repository owner + Codex | 2026-08-24 16:02 +07:00 | 2026-08-24 17:26 +07:00 | Gate rejected after bounded checkpoint acquisition failed; no conversion/benchmark claim, dependencies unchanged, MediaPipe baseline retained |
 
 ## 3. Active blockers
 
@@ -3440,6 +3441,179 @@ regenerated afterward and strict-validated.
 
 No dependency, result measurement, model, dataset, or MVP-scope change was
 made. T09 remains `DONE`; the exact next plan task remains T10.
+
+---
+
+### `2026-08-24 16:02 +07:00` - `T10` `SCHP/OpenVINO optimization gate started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Plan reference:** `plan.md#t10--schpopenvino-optimization-gate`
+
+#### Dependencies and owner authorization
+
+- T08 baseline and T09 protocol/evidence are `DONE`; final T09 CI is green.
+- The owner explicitly requested T10 on 2026-08-24. This authorizes the
+  isolated optional experiment despite the calendar cut line, but does not
+  authorize changing the default MediaPipe backend, broad dependency upgrades,
+  INT8 quantization, or deleting the fallback.
+- Known-good pre-optimization commit
+  `dc19e9d8116c9f1225729e81ce1aefe9090bfbfa` is preserved and pushed as
+  annotated tag `t09-baseline-v1`.
+
+#### Baseline audit
+
+- Approved interpreter: `D:\Coding\Anaconda\envs\lens\python.exe`, Python
+  3.10.20. No other Python environment will be used.
+- `torch`, `torchvision`, `onnx`, `openvino`, `openvino-genai`, and
+  `onnxruntime` are not installed at task start. No SCHP/ATR/OpenVINO weight or
+  binary exists below the ignored model/artifact roots.
+- Host: Lenovo 83DV; Intel Core i5-13450HX, 10 physical/16 logical cores,
+  15.78 GiB RAM; approximately 55.71 GiB free on drive D. This remains a
+  development machine, not declared competition demo hardware.
+- The old collaborator SCHP branch is unavailable remotely. Historical code
+  was intentionally removed because it loaded with `strict=False`, fabricated
+  confidence `1.0`, changed upstream geometry, and lacked locked dependencies,
+  checkpoint tests, checksum, or fixed-sample comparison.
+- Current `SCHPSegmenter` is a typed fail-fast placeholder and is not on the
+  default executable path. MediaPipe remains the verified baseline.
+
+#### Smallest T10 implementation
+
+1. Verify official SCHP source/license/checkpoint and supported PyTorch → ONNX
+   → OpenVINO path; record exact versions and hashes.
+2. Add one isolated, fully locked optional T10 dependency closure in `lens`.
+3. Implement SCHP-ATR preprocessing, class mapping, aligned postprocessing, and
+   OpenVINO runtime behind the existing `Segmenter` contract; preserve
+   fail-fast errors and the MediaPipe default/fallback.
+4. Use a fixed licensed T09/T02 sample set to compare masks and benchmark
+   startup, p50/p95 latency, FPS, precision, device, and reliability.
+5. Accept optimization only if output remains adequate and runtime is reliable;
+   otherwise record `DEFERRED`/rejection honestly and retain the baseline.
+
+#### Next action
+
+Resolve official model/dependency compatibility and license/checkpoint access
+before downloading or installing anything.
+
+---
+
+### `2026-08-24 17:26 +07:00` - `T10` `Optimization gate rejected; baseline retained`
+
+**Status:** `DEFERRED` - the optional optimization was not accepted
+**Owner/agent:** Repository owner + Codex
+**Plan reference:** `plan.md#t10--schpopenvino-optimization-gate`
+
+#### Verified source and compatibility facts
+
+- Official source was pinned to upstream commit
+  `eb84c432cc697f494d99662a05f2335eb2f26095`. Twenty-nine required source
+  files were fetched by exact Git blob identity into ignored
+  `artifacts/t10/`; the upstream MIT `LICENSE` has SHA-256
+  `4b6f33d1127bad303130ad839fd79541e4390c43a4c4de3e9ebbdd90978df941`.
+- The official README's ATR Google Drive ID is
+  `1ruJg4lqR_jgQPj-9K0PP-L2vJERYOxLP`; expected filename is
+  `exp-schp-201908301523-atr.pth`. Fixed mirror records consistently identify
+  size `267445237` bytes and SHA-256
+  `e9d7c91ce3b4e7133df56b599fc817b533e3439c5e8d282a59126d2fda339a2a`.
+  Upstream does not publish that checksum, and it does not state a separate
+  checkpoint license. The source-code MIT license is not treated as proof that
+  the weights may be redistributed.
+- Upstream ATR inference uses 18 classes, 512x512 affine preprocessing,
+  direct BGR tensor ordering, mean `[0.406, 0.456, 0.485]`, standard deviation
+  `[0.225, 0.224, 0.229]`, final fusion logits, and inverse-affine restoration.
+  Garment IDs remain 4/5/6/7. Upstream checkpoint loading is strict after
+  removing the `module.` prefix.
+- `pip install --dry-run torch==2.5.1 onnx==1.17.0
+  openvino==2025.4.1` returned exit 0 in `lens` and found cp310 Win64 wheels.
+  These are candidate experiment versions only. No project dependency or lock
+  was changed and none of these packages was installed.
+
+#### Bounded acquisition evidence
+
+- Official Google Drive `curl --fail --location --max-time 900`: exit 28,
+  surfaced as command exit 124 after `902.3 s`; `27655753/267445237` bytes
+  received at approximately 30 KiB/s.
+- Resume from fixed Hugging Face commit
+  `soonyau/visconet@1860d084351717c9d575ebc558598c841766b1a9`:
+  curl exit 18 after `666.5 s`; the combined partial reached `35053342` bytes.
+  The mirror advertises the expected size and SHA-256 above, but a partial
+  object was never treated as verified model evidence.
+- Windows BITS returned `TransientError` with no active network connection and
+  transferred zero bytes; the scoped BITS job was removed.
+- Sixteen concurrent byte-range transfers were bounded by `1204.1 s`; each
+  expected approximately 16 MiB but produced only 0 to 4.8 MiB. The outer
+  timeout left child curl processes, which were identified by exact start time
+  and executable and stopped; the subsequent count was zero.
+- `git-lfs 3.7.1` cloned the fixed mirror metadata but its model pull also
+  exceeded `1204.1 s`; the worktree remained a 134-byte pointer. The exact
+  `git`/`git-lfs` process IDs were inspected and stopped, with zero remaining.
+- All partial weights, source snapshots, and transport artifacts remain below
+  ignored `models/schp/` or `artifacts/t10/`. `git status --short` exposed none
+  of them, and no binary or model weight was staged.
+
+#### Decision against T10 acceptance
+
+The optimization is rejected on this development host and deferred rather
+than reported as complete. A complete checksum-verified checkpoint is a
+prerequisite for strict PyTorch loading; therefore PyTorch-to-ONNX conversion,
+OpenVINO inference, fixed-sample mask comparison, startup reliability, and
+performance measurements were all **NOT RUN**. Implementing a runtime against
+unverified bytes or reporting projected performance would violate the plan's
+evidence rules.
+
+The working `mediapipe-selfie-torso/cpu` backend, its locks, and the CLI default
+remain unchanged. The fail-fast `SCHPSegmenter` placeholder remains outside
+the default executable path and cannot pretend inference succeeded. Known-good
+commit `dc19e9d8116c9f1225729e81ce1aefe9090bfbfa` remains recoverable through
+the pushed annotated tag `t09-baseline-v1`.
+
+#### T10 Definition of Done assessment
+
+- [ ] Conversion commands and installed versions: **NOT RUN**; only candidate
+  versions were dry-resolved because no verified checkpoint was available.
+- [ ] Fixed-sample baseline/OpenVINO mask comparison: **NOT RUN**.
+- [ ] p50/p95 latency, FPS, precision, and exact Intel-device benchmark:
+  **NOT RUN**; no OpenVINO backend existed to measure.
+- [x] Optimization acceptance was withheld because output adequacy and
+  startup/runtime reliability could not be established.
+- [x] The time-boxed failure is recorded honestly and the working baseline is
+  retained exactly as required by the T10 failure path in `plan.md`.
+
+#### Baseline verification after the rejected gate
+
+- `D:\Coding\Anaconda\envs\lens\python.exe -m pip check`: exit 0, `No
+  broken requirements found`.
+- `D:\Coding\Anaconda\envs\lens\python.exe -m chromalens --help`: exit 0;
+  no camera, model, or special hardware opened.
+- `D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q`: exit 0,
+  `242 passed in 12.15s`.
+- `D:\Coding\Anaconda\envs\lens\python.exe -m pytest -q
+  tests/integration/test_t02_segmentation_integration.py`: exit 0,
+  `8 passed in 1.32s` with the real locked MediaPipe backend.
+- `D:\Coding\Anaconda\envs\lens\python.exe
+  scripts/t09_result_validation.py --require-untracked-artifacts`: exit 0;
+  all four curated packages passed, with 11 tracked and 64 ignored artifacts
+  verified and zero ignored artifacts unavailable.
+- The exact three CI `pip-compile` lock commands were rerun. Base and lock-tool
+  generation passed immediately. The first MediaPipe resolution attempt hit a
+  transient PyPI response that returned no matching protobuf distribution;
+  `pip index versions protobuf` immediately confirmed the required 4.25.9
+  release, and one unchanged-command retry passed. `git diff --exit-code` then
+  confirmed all three generated locks are byte-identical to the committed
+  locks. No constraint or version was changed to obtain the pass.
+- The local CI artifact policy passed for all 125 tracked files: no environment,
+  cache, model/weight extension, or file over 5 MiB is tracked.
+- `git diff --check`: exit 0. `pip show torch onnx openvino` returned the
+  expected package-not-found status, confirming the rejected experiment did
+  not modify the installed runtime closure.
+
+#### Exact next action
+
+Run the unchanged baseline verification gates. If green, commit this auditable
+T10 rejection/defer record and proceed to `T11 - Competition handoff support`;
+do not retry model acquisition before submission without a new owner decision
+and a locally available checksum-verified checkpoint.
 
 ---
 

@@ -41,12 +41,14 @@ conda run --name lens python -m pip install --no-build-isolation --no-deps --edi
 |---|---|
 | Backend | `schp-atr` (`SCHPSegmenter`) |
 | Model | SCHP trained on ATR dataset (~18 garment/body classes) |
-| Source | https://github.com/GoGoDuck912/Self-Correction-Human-Parsing |
-| License | MIT — see upstream repository |
+| Source | https://github.com/GoGoDuck912/Self-Correction-Human-Parsing at `eb84c432cc697f494d99662a05f2335eb2f26095` |
+| Source-code license | MIT — upstream `LICENSE` SHA-256 `4b6f33d1127bad303130ad839fd79541e4390c43a4c4de3e9ebbdd90978df941` |
+| Checkpoint license | **Not separately stated by the official download page; unresolved for redistribution** |
 | Reported accuracy | mIoU ≈ 82.29% on ATR test set (author benchmark, not validated here) |
-| Expected path | To be assigned only if T10 approves the backend |
-| File size | Not verified locally |
-| Status | **DEFERRED TO T10** by the T02 four-hour decision gate; no runtime or weights installed |
+| Expected ignored path | `models/schp/exp-schp-201908301523-atr.pth` |
+| Expected file size | `267445237` bytes (mirror metadata; official transfer did not complete) |
+| Expected SHA-256 | `e9d7c91ce3b4e7133df56b599fc817b533e3439c5e8d282a59126d2fda339a2a` (three independent fixed mirror records; not published by upstream) |
+| Status | **T10 GATE REJECTED / DEFERRED** on 2026-08-24; no verified complete checkpoint, runtime, conversion, or benchmark |
 
 ### T10 re-evaluation procedure (only when approved by integration owner)
 
@@ -60,6 +62,31 @@ conda run --name lens python -m pip install --no-build-isolation --no-deps --edi
    before placing it at an approved ignored path.
 5. Validate preprocessing, output geometry, class mapping, and masks against
    the frozen T09 samples before implementing a selectable backend.
+
+### T10 gate outcome (2026-08-24)
+
+The official ATR link resolved to a `267445237`-byte Google Drive object, but
+the development host received only `27655753` bytes in 15 minutes. A resumed
+fixed-commit Hugging Face mirror transfer reached only `35053342` total bytes
+before failing. Sixteen independent byte ranges and a `git-lfs 3.7.1` pull
+also failed their 20-minute bounds. Partial bytes remain ignored and are not
+a checkpoint or evidence of a working backend.
+
+Compatibility resolution, without installation, found Windows/Python 3.10
+wheels for candidate versions `torch==2.5.1`, `onnx==1.17.0`, and
+`openvino==2025.4.1`. They were deliberately not added to `pyproject.toml`, a
+lock file, or `lens`: without a checksum-verified checkpoint, conversion and
+real inference could not be run, so adding roughly scoped optional runtime
+dependencies would not satisfy any T10 acceptance criterion.
+
+The upstream ATR contract was nevertheless verified as 18 classes, 512x512
+input, affine whole-frame preprocessing, BGR tensor normalization with mean
+`[0.406, 0.456, 0.485]` and standard deviation
+`[0.225, 0.224, 0.229]`, followed by inverse-affine logits. Any future retry
+must load all checkpoint keys strictly, preserve activated BatchNorm behavior,
+compare PyTorch and OpenVINO class maps, and repeat the fixed-sample benchmark.
+The current `SCHPSegmenter` therefore remains a fail-fast placeholder and
+MediaPipe remains the default working backend.
 
 ### ATR class index
 

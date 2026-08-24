@@ -5,7 +5,11 @@ clothing. **T01** (webcam/video preview), the locked **T02** MediaPipe torso-
 mask baseline, **T03** lighting correction, **T04** original-color
 extraction/naming, **T05** CVD simulation/relational risk, **T06** selective
 assistive recoloring/overlay, **T07** rule-based color matching, and **T08**
-end-to-end live composition/controls are complete.
+end-to-end live composition/controls are complete. **T09** evaluation is also
+complete within its explicitly accepted evidence limitations. The optional
+**T10** SCHP/OpenVINO gate was attempted and rejected/deferred because a
+checksum-verifiable ATR checkpoint could not be acquired reliably within the
+time box; the working MediaPipe baseline is unchanged.
 
 The MVP is assistive software, not a medical diagnosis tool. The user selects
 their CVD profile and severity.
@@ -627,6 +631,18 @@ The console entry point is equivalent:
 conda run --name lens chromalens --help
 ```
 
+## T10 SCHP/OpenVINO gate outcome
+
+T10 did not produce or accept an optimized backend. The official SCHP source
+was pinned and audited, candidate Python 3.10/Windows dependency versions were
+resolved without installation, and three bounded checkpoint-transfer methods
+were attempted. None produced the complete expected 267,445,237-byte object,
+so no model was loaded, no conversion was claimed, and no OpenVINO benchmark
+was fabricated. `SCHPSegmenter` remains an explicit fail-fast optional
+placeholder; the CLI default still constructs the locked MediaPipe backend.
+Exact provenance, expected checksum, failure evidence, and retry requirements
+are recorded in [`models/README.md`](models/README.md) and `codinglog.md`.
+
 The T01/T08 suites generate short MJPG/AVI files under pytest's temporary directory
 and deletes them with the test workspace. It does not commit or download sample
 media and verifies that video mode never opens a webcam.
@@ -668,8 +684,10 @@ media and verifies that video mode never opens a webcam.
   garment classes. T02 combines it with face exclusion and vertical cleanup to
   approximate a torso/upper-clothes mask. Hands, carried objects, or background
   attached to the person silhouette can remain.
-- SCHP-ATR was not validated within the T02 time box and is explicitly
-  `DEFERRED` to T10; its dependencies and weights are not installed.
+- SCHP-ATR was not validated in T02. Its T10 retry was rejected/deferred after
+  the complete checkpoint could not be acquired reliably inside bounded
+  official/mirror/range/LFS attempts. PyTorch, ONNX, and OpenVINO were not
+  installed; no SCHP/OpenVINO performance or mask-equivalence claim exists.
 - Face detection and the upper-body cutoff (`upper_body_ratio=0.80`) are
   heuristics and can clip clothing or retain non-clothing pixels, especially
   with occlusion, multiple people, unusual poses, or an undetected face.
