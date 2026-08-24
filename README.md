@@ -6,12 +6,13 @@ mask baseline, **T03** lighting correction, **T04** original-color
 extraction/naming, **T05** CVD simulation/relational risk, **T06** selective
 assistive recoloring/overlay, **T07** rule-based color matching, and **T08**
 end-to-end live composition/controls are complete. **T09** evaluation is also
-complete within its explicitly accepted evidence limitations. The optional
-**T10** SCHP/OpenVINO gate was attempted and rejected/deferred because a
-checksum-verifiable ATR checkpoint could not be acquired reliably within the
-time box; the working MediaPipe baseline is unchanged. **T11** packages the
-competition handoff, reproducible offline fallback, claims, credits, and demo
-shot list without changing the core runtime.
+complete within its explicitly accepted evidence limitations. The repository
+owner later reopened **T10**: the exact ATR checkpoint was acquired and
+verified, a strict-load semantic SCHP backend was implemented, and an FP32
+OpenVINO CPU conversion passed fixed-fixture equivalence gates. SCHP-ATR is now
+the primary demo backend; the locked MediaPipe baseline remains an explicit
+fallback. **T11** packages the competition handoff, reproducible offline
+fallback, claims, credits, and demo shot list.
 
 The MVP is assistive software, not a medical diagnosis tool. The user selects
 their CVD profile and severity.
@@ -34,16 +35,18 @@ From the repository root:
 
 ```powershell
 conda create --name lens --file requirements/conda-win-64.lock
-conda run --name lens python -m pip install --require-hashes --requirement requirements/py310-win64.lock
-conda run --name lens python -m pip install --no-build-isolation --no-deps --editable ".[dev]"
+conda run --name lens python -m pip install --require-hashes --requirement requirements/segment-schp-py310-win64.lock
+conda run --name lens python -m pip install --no-build-isolation --no-deps --editable ".[dev,segment-mediapipe,segment-schp]"
 ```
 
 The explicit Conda lock pins every bootstrap artifact, build, URL, and MD5,
 including Python 3.10.20 and pip 26.1.2. `environment.yml` is the concise,
 human-readable declaration of the supported interpreter and bootstrap tools.
-The hashed pip lock pins every currently approved base/development Python
-package and transitive dependency. The final command installs only the local
-ChromaLens package; dependency resolution is deliberately disabled.
+The combined hashed demo lock pins every approved base/development package,
+the MediaPipe fallback, and the PyTorch/OpenVINO SCHP toolchain. The final
+command installs only the local ChromaLens package; dependency resolution is
+deliberately disabled. Model weights and generated IR are verified separately
+and remain outside Git.
 
 If `lens` already exists and matches the Conda lock, re-run the two pip
 commands to apply the committed lock. Recreate the environment if Python,
@@ -59,7 +62,8 @@ conda run --name lens python -m pytest -q
 ```
 
 For a teammate starting from a fresh clone, the three install commands above
-are the canonical setup. After verification, the one-command live demo is:
+are the canonical package setup. Stage and export the ignored ATR model using
+the T10 procedure below before the primary one-command live demo:
 
 ```powershell
 conda run --name lens python -m chromalens --webcam
@@ -90,6 +94,7 @@ conda run --name lens python -m pip install --editable ".[lock]"
 conda run --name lens pip-compile pyproject.toml --extra dev --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/py310-win64.lock
 conda run --name lens pip-compile pyproject.toml --extra lock --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/lock-tools-py310-win64.lock
 conda run --name lens pip-compile pyproject.toml --extra dev --extra segment-mediapipe --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/segment-mediapipe-py310-win64.lock
+conda run --name lens pip-compile pyproject.toml --extra dev --extra segment-mediapipe --extra segment-schp --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/segment-schp-py310-win64.lock
 conda list --explicit --md5 --name lens
 ```
 
@@ -403,9 +408,11 @@ contract, and limitations are documented in
 
 ## End-to-end webcam/video pipeline (T08)
 
-The full default source path uses the locked MediaPipe CPU backend and composes
-T02-T07 for every displayed frame. Install the locked MediaPipe closure shown
-under **Garment segmentation (T02)** before using these commands.
+The full default source path uses semantic `schp-atr` on CPU, prefers its
+verified OpenVINO IR, and composes T02-T07 for every displayed frame. Install
+the combined lock and prepare the ignored model assets under **T10
+SCHP/OpenVINO gate outcome** before using these commands. The earlier
+MediaPipe person-derived torso backend remains selectable explicitly.
 
 Launch the webcam demo using the default camera index:
 
@@ -424,6 +431,14 @@ without opening a camera:
 
 ```powershell
 conda run --name lens python -m chromalens --video C:\path\to\sample.mp4
+```
+
+Select a runtime or the fallback explicitly when diagnosing a venue machine:
+
+```powershell
+conda run --name lens python -m chromalens --webcam --schp-runtime openvino
+conda run --name lens python -m chromalens --webcam --schp-runtime pytorch
+conda run --name lens python -m chromalens --webcam --backend mediapipe-selfie-torso
 ```
 
 Press `q`, Escape, or close the window to exit. Automated/headless checks can
@@ -490,7 +505,7 @@ conda run --name lens python -m chromalens --video C:\path\to\sample.mp4 --previ
 ```
 
 No command saves or uploads camera frames by default. Source-open failures,
-missing MediaPipe installation, and live read failures return actionable,
+missing backend dependencies/assets, and live read failures return actionable,
 non-zero exits. Generate reviewable T08 fixture views, a local sample AVI, and
 optional two-minute bounded-runtime metrics offline with:
 
@@ -694,15 +709,37 @@ conda run --name lens chromalens --help
 
 ## T10 SCHP/OpenVINO gate outcome
 
-T10 did not produce or accept an optimized backend. The official SCHP source
-was pinned and audited, candidate Python 3.10/Windows dependency versions were
-resolved without installation, and three bounded checkpoint-transfer methods
-were attempted. None produced the complete expected 267,445,237-byte object,
-so no model was loaded, no conversion was claimed, and no OpenVINO benchmark
-was fabricated. `SCHPSegmenter` remains an explicit fail-fast optional
-placeholder; the CLI default still constructs the locked MediaPipe backend.
-Exact provenance, expected checksum, failure evidence, and retry requirements
-are recorded in [`models/README.md`](models/README.md) and `codinglog.md`.
+The owner reopened T10 after the preserved `t11-demo-v1` baseline. Place the
+ATR checkpoint linked by the official SCHP README at
+`models/schp/exp-schp-201908301523-atr.pth`; it must be exactly `267445237`
+bytes with SHA-256
+`e9d7c91ce3b4e7133df56b599fc817b533e3439c5e8d282a59126d2fda339a2a`.
+That object identity comes from fixed mirror metadata because upstream does
+not publish a checksum, and the checkpoint has no separately stated
+redistribution license. Do not commit or redistribute it.
+
+Verify and export a checksummed FP32 OpenVINO IR:
+
+```powershell
+conda run --name lens powershell -NoProfile -Command "(Get-Item 'models/schp/exp-schp-201908301523-atr.pth').Length; (Get-FileHash -Algorithm SHA256 'models/schp/exp-schp-201908301523-atr.pth').Hash.ToLowerInvariant()"
+conda run --name lens python scripts/t10_export_schp_openvino.py
+conda run --name lens python -m pytest -q tests/integration/test_t10_schp_integration.py
+```
+
+The exporter strict-loads every checkpoint key into the pinned MIT SCHP graph,
+uses a portable activated-BatchNorm implementation, converts with
+`torch==2.5.1` and `openvino==2025.4.1`, and writes `.xml`, `.bin`, and a
+checksum/provenance manifest under ignored `models/schp/openvino/`. `auto`
+prefers that verified IR and falls back only to the SCHP PyTorch runtime, never
+silently to MediaPipe. Missing or altered assets fail with an actionable exit;
+use the explicit `--backend mediapipe-selfie-torso` fallback when needed.
+
+On the current development Intel Core i5-13450HX, the accepted FP32 OpenVINO
+conversion matched PyTorch garment masks on all five fixed public fixtures
+(per-class IoU at least `0.999`) and reduced model/runtime cost, but a 20-frame
+640x480 full-pipeline headless observation was still only `0.89 FPS`, with
+render-complete latency p50/p95 `1195.00/1411.65 ms`. This is development-host
+evidence, not sensor-to-photon latency or an official demo-laptop benchmark.
 
 The T01/T08 suites generate short MJPG/AVI files under pytest's temporary directory
 and deletes them with the test workspace. It does not commit or download sample
@@ -745,10 +782,12 @@ media and verifies that video mode never opens a webcam.
   garment classes. T02 combines it with face exclusion and vertical cleanup to
   approximate a torso/upper-clothes mask. Hands, carried objects, or background
   attached to the person silhouette can remain.
-- SCHP-ATR was not validated in T02. Its T10 retry was rejected/deferred after
-  the complete checkpoint could not be acquired reliably inside bounded
-  official/mirror/range/LFS attempts. PyTorch, ONNX, and OpenVINO were not
-  installed; no SCHP/OpenVINO performance or mask-equivalence claim exists.
+- SCHP-ATR is semantic parsing and improves class specificity, but its
+  512x512 ResNet-101 graph is materially slower than the MediaPipe fallback on
+  this development CPU. The checkpoint's separate redistribution license is
+  unstated, so every demo machine needs an owner-reviewed ignored local copy.
+  The five-fixture equivalence gate proves conversion fidelity, not broad
+  segmentation accuracy or superiority on all scenes.
 - Face detection and the upper-body cutoff (`upper_body_ratio=0.80`) are
   heuristics and can clip clothing or retain non-clothing pixels, especially
   with occlusion, multiple people, unusual poses, or an undetected face.

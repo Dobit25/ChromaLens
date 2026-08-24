@@ -168,6 +168,33 @@ def build_parser() -> argparse.ArgumentParser:
         help="run the T01 capture preview without loading a segmentation backend",
     )
     parser.add_argument(
+        "--backend",
+        choices=("schp-atr", "mediapipe-selfie-torso"),
+        default="schp-atr",
+        help=(
+            "segmentation backend (default: schp-atr; MediaPipe remains an "
+            "explicit fallback)"
+        ),
+    )
+    parser.add_argument(
+        "--schp-runtime",
+        choices=("auto", "openvino", "pytorch"),
+        default="auto",
+        help="SCHP runtime; auto prefers a verified OpenVINO IR (default: auto)",
+    )
+    parser.add_argument(
+        "--schp-checkpoint",
+        type=Path,
+        default=Path("models/schp/exp-schp-201908301523-atr.pth"),
+        help="ignored ATR checkpoint path used by the SCHP integrity gate",
+    )
+    parser.add_argument(
+        "--schp-openvino-model",
+        type=Path,
+        default=Path("models/schp/openvino/schp-atr-512.xml"),
+        help="ignored checksummed OpenVINO SCHP IR path",
+    )
+    parser.add_argument(
         "--profile",
         choices=tuple(profile.value for profile in CVDProfile),
         default=CVDProfile.DEUTAN.value,
@@ -263,9 +290,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         # Lazy construction keeps --help and the explicit capture-only path
         # independent of model packages and special hardware.
-        from chromalens.segmentation.mediapipe_backend import MediaPipeSegmenter
-
-        pipeline = ChromaLensPipeline(MediaPipeSegmenter(), stream_id=source.name)
+        pipeline = ChromaLensPipeline(_build_segmenter(args), stream_id=source.name)
         controls = RuntimeControls(
             profile=CVDProfile(args.profile),
             severity=args.severity,
@@ -307,6 +332,28 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     print(_pipeline_summary(result))
     return 0
+
+
+def _build_segmenter(args: argparse.Namespace):
+    """Construct only the explicitly selected backend after argument parsing."""
+
+    if args.backend == "mediapipe-selfie-torso":
+        from chromalens.segmentation.mediapipe_backend import MediaPipeSegmenter
+
+        return MediaPipeSegmenter()
+
+    from chromalens.segmentation.schp_backend import (
+        SCHPSegmenter,
+        SCHPSegmenterConfig,
+    )
+
+    return SCHPSegmenter(
+        SCHPSegmenterConfig(
+            checkpoint_path=args.schp_checkpoint,
+            openvino_model_path=args.schp_openvino_model,
+            runtime=args.schp_runtime,
+        )
+    )
 
 
 def run_pipeline_session(

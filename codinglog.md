@@ -41,7 +41,7 @@ This table is intentionally empty until an agent starts the plan.
 | T07 | Rule-based color matching | `DONE` | Codex | 2026-08-20 16:02 +07:00 | 2026-08-20 16:11 +07:00 | T07 start and completion entries below |
 | T08 | End-to-end live pipeline and controls | `DONE` | Codex | 2026-08-20 16:24 +07:00 | 2026-08-20 16:58 +07:00 | T08 start and completion entries below |
 | T09 | Evaluation, responsible AI, and evidence package | `DONE` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-24 00:00 +07:00 | T09 completion entry: strict validation of all four workstreams, 241-test full suite, accepted physical limitation, and fresh performance evidence |
-| T10 | SCHP/OpenVINO optimization gate | `DEFERRED` | Repository owner + Codex | 2026-08-24 16:02 +07:00 | 2026-08-24 17:26 +07:00 | Gate rejected after bounded checkpoint acquisition failed; no conversion/benchmark claim, dependencies unchanged, MediaPipe baseline retained |
+| T10 | SCHP/OpenVINO optimization gate | `DONE` | Repository owner + Codex | 2026-08-24 23:18 +07:00 | 2026-08-24 23:56 +07:00 | Owner-reopened gate accepted: verified ATR strict load, FP32 OpenVINO equivalence, SCHP default, explicit MediaPipe fallback, combined hashed lock and 258-test suite |
 | T11 | Competition handoff support | `DONE` | Repository owner + Codex | 2026-08-24 20:56 +07:00 | 2026-08-24 21:16 +07:00 | T11 completion entry: clean wheel install, 248-test suite, real-backend fallback/screenshots, claims/credits/shot-list handoff |
 
 ## 3. Active blockers
@@ -69,6 +69,7 @@ Use this section only for implementation decisions that affect later tasks. Deta
 | DEC-011 | 2026-08-20 | Freeze T09 protocol/schema/metric/case contracts at version 1.0.0; distinguish render-complete, GUI-submit, and externally measured latency; track only curated text results and assign disjoint workstream namespaces. | T09, T10, T11 | T09 Gate 0 completion entry |
 | DEC-012 | 2026-08-23 | Close T09 with all 33 physical color cases still honestly `NOT_RUN` as an owner-accepted limitation; supersede seven unrecoverable contributor artifacts with four fresh raw benchmark runs plus one deterministic video, never reconstructed values. | T09, T10, T11 | T09 completion entry |
 | DEC-013 | 2026-08-24 | Ship the T07 matching CSV as byte-identical package data and resolve it beside the installed module, while retaining the root audit copy and an equality test. | T07, T08, T11 packaging | T11 completion entry |
+| DEC-014 | 2026-08-24 | After owner reopen, promote verified SCHP-ATR at upstream 512 input as the primary demo backend, prefer checksummed FP32 OpenVINO, preserve explicit MediaPipe fallback, and reject faster 256/384 variants because class/mask fidelity degraded. | T10, T11 demo/handoff | T10 owner-reopened completion entry |
 
 ## 5. Chronological entries
 
@@ -3791,6 +3792,213 @@ remains independently recoverable as `t09-baseline-v1`.
 
 No next implementation task remains in `plan.md`. The repository owner must
 perform the checked human submission actions in `docs/competition-handoff.md`.
+
+---
+
+### `2026-08-24 23:18 +07:00` - `T10` `Optimization gate reopened by owner`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Plan reference:** `plan.md#t10--schpopenvino-optimization-gate`
+
+#### Owner decision and preserved baseline
+
+- The repository owner explicitly reopened the optional T10 gate after T11 and
+  requested that verified SCHP-ATR become the primary demo backend.
+- Work starts from clean, synchronized `mvp` commit
+  `25c6c8ee4ec082438bea05519ecf93e2ed245345`. Annotated tag
+  `t11-demo-v1` preserves the accepted MediaPipe handoff and is not moved.
+- MediaPipe remains an explicit fallback. SCHP will become the CLI default only
+  after strict checkpoint loading, real inference, fixed-fixture comparison,
+  startup reliability, performance measurement, and the full regression suite
+  pass. A label change or fabricated mask is not an acceptable implementation.
+
+#### Checkpoint acquisition correction
+
+- The earlier 35,053,342-byte partial was resumed through the Git-LFS batch API
+  for fixed mirror `saftle/exp-schp-201908301523-atr.pth`.
+- The completed ignored object is exactly 267,445,237 bytes and has SHA-256
+  `e9d7c91ce3b4e7133df56b599fc817b533e3439c5e8d282a59126d2fda339a2a`,
+  matching the previously frozen LFS object identity. This resolves the prior
+  acquisition blocker but does not establish separate redistribution rights;
+  the weight remains ignored and must not be committed.
+- Upstream source remains pinned to
+  `eb84c432cc697f494d99662a05f2335eb2f26095` under ignored T10 artifacts.
+  Its custom InPlaceABN implementation is not assumed compatible with current
+  Windows CPU PyTorch; a state-dict-compatible pure-PyTorch inference path must
+  be verified before export.
+
+#### Smallest implementation for the reopened gate
+
+1. Lock and install the minimal Python 3.10 SCHP experiment/runtime closure in
+   the approved `lens` environment only.
+2. Implement strict ATR loading and upstream-equivalent preprocessing,
+   inference, inverse geometry, and garment labels 4/5/6/7 behind the existing
+   `Segmenter` interface.
+3. Preserve an explicit MediaPipe selector, promote SCHP only if real output is
+   adequate and startup/runtime is reliable, and keep `--help` hardware/model
+   independent.
+4. Compare masks on the frozen licensed fixtures, measure latency/FPS/precision
+   and exact Intel CPU device, run the full suite, then document the accepted or
+   rejected decision honestly.
+
+#### Checks completed at reopen
+
+- `D:\Coding\Anaconda\envs\lens\python.exe --version`: exit 0, Python
+  3.10.20.
+- `D:\Coding\Anaconda\envs\lens\python.exe -m pip check`: exit 0, no
+  broken requirements.
+- `git status --short --branch`: clean `mvp` synchronized with `origin/mvp`
+  before this log edit.
+- Checkpoint resume/checksum command: exit 0; exact size and SHA-256 above.
+
+#### Definition-of-Done state
+
+- [ ] Conversion commands and versions documented.
+- [ ] Fixed sample set compares the saved MediaPipe baseline and SCHP/OpenVINO
+  masks.
+- [ ] Benchmark reports p50/p95 latency, FPS, precision, and exact Intel device.
+- [ ] Output adequacy and startup/runtime reliability justify promotion; if not,
+  retain the tagged MediaPipe baseline and record rejection.
+
+#### Exact next action
+
+Lock the minimal PyTorch CPU dependency, prove strict SCHP checkpoint loading,
+and run one real licensed-fixture inference before changing the CLI selector.
+
+---
+
+### `2026-08-24 23:56 +07:00` - `T10` `Owner-reopened SCHP/OpenVINO gate accepted`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Plan reference:** `plan.md#t10--schpopenvino-optimization-gate`
+
+#### User-visible outcome
+
+- `schp-atr` is now the default CLI model family. `auto` prefers a verified
+  OpenVINO IR; `--schp-runtime pytorch` retains the strict reference path and
+  `--backend mediapipe-selfie-torso` is the explicit known-good fallback.
+- The default real video command reported
+  `schp-atr/openvino/CPU (13th Gen Intel(R) Core(TM) i5-13450HX)`, processed
+  20/20 640x480 frames, and recorded zero degraded frames. Missing, partial,
+  hash-mismatched, or unmanifested model assets fail with actionable errors;
+  no automatic model-family fallback or fabricated inference exists.
+- `--help` and `--preview-only` remain independent of camera-model assets and
+  optional imports.
+
+#### Verified model and conversion
+
+- The ignored ATR checkpoint is exactly 267,445,237 bytes with SHA-256
+  `e9d7c91ce3b4e7133df56b599fc817b533e3439c5e8d282a59126d2fda339a2a`.
+  Source remains pinned to upstream MIT commit
+  `eb84c432cc697f494d99662a05f2335eb2f26095`. The checkpoint has no separately
+  stated redistribution license and remains external to Git.
+- The portable graph preserves upstream parameter/buffer names while replacing
+  the historical custom C++/CUDA InPlaceABNSync extension with PyTorch
+  BatchNorm plus the same activation. `strict=True` loaded every checkpoint
+  key; upstream 18-class, BGR mean/std, 512 affine input, fusion-logit
+  interpolation, inverse geometry, and garment IDs 4/5/6/7 are preserved.
+- `scripts/t10_export_schp_openvino.py` converts directly from PyTorch to an
+  FP32 OpenVINO IR and writes ignored XML/BIN/manifest integrity records.
+  Direct conversion succeeded after uninstalling the unnecessary experimental
+  ONNX package, so ONNX is deliberately absent from the final runtime lock.
+- Five fixed public/licensed fixtures returned semantic upper-clothes, pants,
+  dress, and skirt regions. OpenVINO and PyTorch returned identical class sets;
+  every per-class mask IoU was at least 0.999 (four fixture results exactly
+  1.000000, one upper-clothes result 0.999998).
+- Input-size experiments at 256 and 384 were rejected: several classes were
+  lost or changed and retained-class IoU fell as low as 0/0.121 against the
+  512 reference. The accepted default stays at upstream 512 despite lower FPS.
+
+#### Dependency and collaboration gate
+
+- Final direct optional pins are `torch==2.5.1` and
+  `openvino==2025.4.1`; the existing `mediapipe==0.10.21` fallback remains.
+  `requirements/segment-schp-py310-win64.lock` is a combined hashed closure for
+  base, dev, MediaPipe, and SCHP, including the compatible
+  `protobuf==4.25.9` resolution.
+- The combined lock regenerated byte-identically at SHA-256
+  `41328817860bfa1116a47ee0dfb044f5f25773541edcbe21e74b3b58c4acdb86`.
+  Base, lock-tool, and MediaPipe locks also regenerated byte-identically.
+- CI now has a third Windows/Python 3.10 job that installs the combined lock,
+  verifies exact Torch/OpenVINO/MediaPipe versions, checks lock freshness, runs
+  the portable model graph without weights, and runs the full suite. Real
+  checkpoint tests skip in CI because the license-restricted ignored asset is
+  not redistributed; local real-weight evidence is recorded separately.
+
+#### Measurements and reliability
+
+All values below are development-host observations on Lenovo 83DV, Intel Core
+i5-13450HX, 15.78 GiB RAM; precision is FP32 and device is OpenVINO `CPU`.
+They are not official demo-hardware or sensor-to-photon claims.
+
+| Evidence | Result |
+| --- | --- |
+| Fixed five-fixture segmentation-only SCHP/OpenVINO | p50/p95 969.86/1544.22 ms; reciprocal mean rate 1.00 FPS |
+| Fixed five-fixture MediaPipe historical baseline rerun | p50/p95 21.62/191.95 ms; reciprocal mean rate 15.44 FPS |
+| Default 20-frame 640x480 full pipeline, headless | 0.89 FPS; `source_read_to_render_ms` p50/p95 1195.00/1411.65; zero degraded; `sensor_to_photon_ms=NOT_MEASURED` |
+| Three independent OpenVINO startup/inference cycles | 3/3 succeeded with the same 105,983-pixel upper-clothes mask; startup 739.08-1676.30 ms |
+| Explicit MediaPipe fallback, 3 frames | exit 0; backend named `mediapipe-selfie-torso/cpu`; zero degraded |
+
+The SCHP promotion is accepted for semantic garment-class functionality,
+conversion fidelity, integrity, and repeatable startup, not for speed or broad
+accuracy superiority. MediaPipe remains the venue-reliability fallback.
+
+#### Files changed
+
+- Runtime/model: `src/chromalens/segmentation/schp_model.py`,
+  `schp_backend.py`, segmentation exports, `src/chromalens/app.py`, and
+  `scripts/t10_export_schp_openvino.py`.
+- Reproducibility/CI: `pyproject.toml`, the combined SCHP lock,
+  `requirements/README.md`, and `.github/workflows/ci.yml`.
+- Tests: T10 unit/integration suites and the objective T09 CI-job-count
+  assertion repair (all checkout jobs must retain full history).
+- Handoff/evidence: root/model READMEs, third-party notices,
+  `docs/t10-schp-openvino.md`, architecture, competition handoff, demo shot
+  list, submission JSON, and this log.
+
+#### Commands and observed results
+
+| Command/check | Observed result |
+| --- | --- |
+| Git-LFS CDN resume plus size/SHA-256 assertion | exit 0; exact checkpoint identity above |
+| `...python.exe -m pip install --only-binary=:all: torch==2.5.1` | exit 0; installed only in `lens` |
+| `...python.exe -m pip install --only-binary=:all: onnx==1.17.0 openvino==2025.4.1` | exit 0 for experiment; ONNX later removed after direct conversion proved it unnecessary |
+| Diagnostic strict checkpoint load and 64x64 inference | exit 0; all keys matched, finite 18-class output |
+| `...python.exe scripts/t10_export_schp_openvino.py` after ONNX removal | exit 0; deterministic 266,625,604-byte BIN and 372,967-byte XML plus valid manifest |
+| `...python.exe -m pytest -q tests/unit/test_t10_schp.py tests/test_t00_smoke.py` | exit 0; 13 passed |
+| `...python.exe -m pytest -q tests/integration/test_t10_schp_integration.py` | exit 0; 2 real-weight tests passed |
+| First full `...python.exe -m pytest -q` | exit 1; 257 passed/1 failed because a T09 test hard-coded exactly two CI checkout jobs |
+| Full suite after preserving the assertion's provenance intent for every job | exit 0; 258 passed in 48.94 s |
+| `...python.exe -m chromalens --help`; editable install; `pip check` | exit 0; no camera/model opened for help and no broken requirements |
+| Default SCHP video command, 20 frames | exit 0; real OpenVINO backend and measurements above |
+| Explicit MediaPipe fallback video command, 3 frames | exit 0; real fallback and measurements above |
+| Four exact `piptools compile` checks | exit 0; all existing locks plus new combined lock byte-identical |
+| `git check-ignore` for PTH/XML/BIN/manifest | exit 0; all model artifacts ignored; none tracked |
+
+#### Definition of Done
+
+- [x] Conversion commands and versions are documented in README, model docs,
+  source-controlled exporter, combined lock, and T10 acceptance record.
+- [x] A fixed five-fixture set compares the saved MediaPipe baseline with SCHP
+  masks and separately gates OpenVINO against strict PyTorch reference masks.
+- [x] Benchmark reports p50/p95 latency, FPS/rate, FP32 precision, exact Intel
+  CPU, resolution/conditions, and claim boundaries.
+- [x] Output adequacy and startup/runtime reliability passed the scoped gate;
+  lower-resolution conversions were rejected rather than promoted.
+- [x] The original backend remains selectable and the known-good
+  `t11-demo-v1` tag remains unchanged.
+
+#### Remaining limitations and exact next action
+
+- The default 512 SCHP pipeline is visibly slower than MediaPipe on this
+  development CPU. Do not describe it as real-time or globally more accurate.
+- The owner must retain the ignored checkpoint/IR on the demo machine and
+  comply with the unresolved checkpoint redistribution boundary.
+- No implementation task remains after T11. Run the README SCHP asset/export
+  verification on the actual demo laptop, rehearse the explicit MediaPipe
+  fallback, record the two-minute evidence-bounded demo, and submit.
 
 ---
 

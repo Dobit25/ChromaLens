@@ -213,3 +213,66 @@ jobs:
         run: |
           python -m pytest -q tests/integration/test_t02_segmentation_integration.py
           python -m pytest -q
+
+  verify-schp-contract:
+    name: Locked SCHP/OpenVINO contract
+    runs-on: windows-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up exact Conda environment
+        uses: conda-incubator/setup-miniconda@8ee1f361103df19b6f8c8655fd3967a8ecb162d5 # v4
+        with:
+          auto-update-conda: false
+          activate-environment: lens
+          environment-file: requirements/conda-win-64.lock
+
+      - name: Install hashed combined demo dependency closure
+        shell: pwsh
+        run: >-
+          python -m pip install
+          --disable-pip-version-check
+          --require-hashes
+          --requirement requirements/segment-schp-py310-win64.lock
+
+      - name: Install hashed lock-generation tooling
+        shell: pwsh
+        run: >-
+          python -m pip install
+          --disable-pip-version-check
+          --require-hashes
+          --requirement requirements/lock-tools-py310-win64.lock
+
+      - name: Verify combined demo lock is current
+        shell: pwsh
+        run: |
+          $env:CUSTOM_COMPILE_COMMAND = 'conda run --name lens pip-compile pyproject.toml --extra dev --extra segment-mediapipe --extra segment-schp --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/segment-schp-py310-win64.lock'
+          python -m piptools compile pyproject.toml --extra dev --extra segment-mediapipe --extra segment-schp --generate-hashes --allow-unsafe --resolver backtracking --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file requirements/segment-schp-py310-win64.lock
+          git diff --exit-code -- requirements/segment-schp-py310-win64.lock
+
+      - name: Install ChromaLens without dependency resolution
+        shell: pwsh
+        run: >-
+          python -m pip install
+          --disable-pip-version-check
+          --no-build-isolation
+          --no-deps
+          --editable ".[dev,segment-mediapipe,segment-schp]"
+
+      - name: Verify exact optional runtime and hardware-independent CLI
+        shell: pwsh
+        run: |
+          python -m pip check
+          python -c "import mediapipe, openvino, torch; assert mediapipe.__version__ == '0.10.21'; assert openvino.__version__.startswith('2025.4.1'); assert torch.__version__.startswith('2.5.1'); print('SCHP/OpenVINO dependency contract verified')"
+          python -m chromalens --help
+
+      - name: Run portable SCHP contract and full regression suite
+        shell: pwsh
+        run: |
+          python -m pytest -q tests/unit/test_t10_schp.py
+          python -m pytest -q

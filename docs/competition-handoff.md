@@ -16,8 +16,9 @@ the form.
 ## Evidence-backed benchmark summary
 
 These are observations on development host `LENOVO 83DV`, Intel Core
-i5-13450HX, 15.78 GiB RAM, locked `mediapipe-selfie-torso/cpu`. They are not
-official demo-hardware acceptance results.
+i5-13450HX, 15.78 GiB RAM, locked `mediapipe-selfie-torso/cpu`. They are the
+frozen T09 baseline, not current SCHP results or official demo-hardware
+acceptance results.
 
 | Run | Processed FPS | Read-return to render p50/p95 | Read-return to display-submit p50/p95 |
 | --- | ---: | ---: | ---: |
@@ -31,6 +32,13 @@ apparatus was used. The webcam GUI RSS continuous-growth diagnostic failed in
 that run, and degraded-frame rates were recorded rather than hidden. Exact
 conditions and values are in
 `evaluation/results/curated/performance_responsible_ai/`.
+
+After the owner reopened T10, one 20-frame 640x480 headless full-pipeline run
+with `schp-atr/openvino/CPU (13th Gen Intel(R) Core(TM) i5-13450HX)` measured
+`0.89 FPS` and render-complete p50/p95 `1195.00/1411.65 ms`. Five fixed public
+fixtures had per-class OpenVINO-versus-PyTorch mask IoU at least `0.999`. These
+are development-host conversion/operation observations, not proof that SCHP is
+universally more accurate, and still not sensor-to-photon measurement.
 
 Evaluation also records 20/20 segmentation cases with manual adequacy 9/20,
 three annotated IoUs, 10/10 end-to-end contract cases, 11/11 deterministic
@@ -54,14 +62,15 @@ Avoid these unsupported statements:
 - physical-camera colour accuracy or population/demographic accuracy;
 - sensor-to-photon, camera exposure-to-display, or official demo-hardware
   performance;
-- semantic garment parsing, calibrated confidence, or universal fashion
-  advice;
-- an active SCHP, ONNX, OpenVINO, optimized, or quantized backend.
+- calibrated confidence, universal fashion advice, broad SCHP accuracy, or
+  superiority beyond the fixed conversion/operation evidence;
+- quantized inference or official demo-hardware SCHP performance.
 
 ## Known limitations to disclose
 
-- MediaPipe returns a person silhouette adapted by torso heuristics, so it can
-  miss garments or include hands, objects, other people, and background.
+- SCHP provides semantic garment classes but remains sensitive to pose, scale,
+  occlusion, and domain shift. MediaPipe fallback is a coarser person silhouette
+  adapted by torso heuristics and can include hands, objects, or background.
 - Gray-world correction can fail under mixed light or strongly coloured
   scenes; the physical 11-by-3 lighting set was not acquired.
 - Colour names, CVD risk, recolour choice, and matching rules are explainable
@@ -70,8 +79,9 @@ Avoid these unsupported statements:
   latency are not measured.
 - One development-host RSS trend diagnostic failed; venue camera/display and
   official demo-hardware behavior remain to be checked.
-- SCHP/OpenVINO is deferred because no complete checksum-verified checkpoint
-  was acquired; MediaPipe remains the only accepted backend.
+- SCHP/OpenVINO is active but slower than MediaPipe on this development CPU;
+  its external checkpoint has no separately stated redistribution license and
+  must remain an owner-reviewed ignored local asset.
 
 ## Official requirement and owner checklist
 

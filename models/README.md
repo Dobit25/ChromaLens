@@ -46,47 +46,53 @@ conda run --name lens python -m pip install --no-build-isolation --no-deps --edi
 | Checkpoint license | **Not separately stated by the official download page; unresolved for redistribution** |
 | Reported accuracy | mIoU ≈ 82.29% on ATR test set (author benchmark, not validated here) |
 | Expected ignored path | `models/schp/exp-schp-201908301523-atr.pth` |
-| Expected file size | `267445237` bytes (mirror metadata; official transfer did not complete) |
+| Expected file size | `267445237` bytes (verified local object and mirror metadata) |
 | Expected SHA-256 | `e9d7c91ce3b4e7133df56b599fc817b533e3439c5e8d282a59126d2fda339a2a` (three independent fixed mirror records; not published by upstream) |
-| Status | **T10 GATE REJECTED / DEFERRED** on 2026-08-24; no verified complete checkpoint, runtime, conversion, or benchmark |
+| Status | **T10 ACCEPTED after owner reopen** on 2026-08-24; SCHP is primary, OpenVINO is preferred, MediaPipe is explicit fallback |
 
-### T10 re-evaluation procedure (only when approved by integration owner)
+### Setup after owner approval
 
-1. Confirm that T08 and the T09 protocol are complete and obtain integration-
-   owner approval before downloading or adding PyTorch.
-2. Use the ATR checkpoint linked from the
+1. Install the combined hashed collaboration closure:
+   `requirements/segment-schp-py310-win64.lock`, then install the editable
+   package with extras `dev,segment-mediapipe,segment-schp` and `--no-deps`.
+2. Obtain the ATR checkpoint linked from the
    [official upstream README](https://github.com/GoGoDuck912/Self-Correction-Human-Parsing#simple-out-of-box-extractor).
    Upstream distributes it through Google Drive, not GitHub Releases.
-3. Review and lock a Python 3.10/Windows-compatible PyTorch closure separately.
-4. Record the downloaded checkpoint's exact filename, byte size, and SHA-256
-   before placing it at an approved ignored path.
-5. Validate preprocessing, output geometry, class mapping, and masks against
-   the frozen T09 samples before implementing a selectable backend.
+3. Place it at `models/schp/exp-schp-201908301523-atr.pth`; confirm the exact
+   size and SHA-256 in the table above. A mismatch fails fast and must never be
+   bypassed.
+4. Run `python scripts/t10_export_schp_openvino.py`. The command strict-loads
+   all checkpoint keys and creates ignored `.xml`, `.bin`, and
+   `.manifest.json` files under `models/schp/openvino/`.
+5. Run `python -m pytest -q tests/integration/test_t10_schp_integration.py`,
+   then launch the default demo. Use `--backend mediapipe-selfie-torso` only as
+   the explicit fallback.
 
-### T10 gate outcome (2026-08-24)
+### T10 accepted gate evidence (2026-08-24)
 
-The official ATR link resolved to a `267445237`-byte Google Drive object, but
-the development host received only `27655753` bytes in 15 minutes. A resumed
-fixed-commit Hugging Face mirror transfer reached only `35053342` total bytes
-before failing. Sixteen independent byte ranges and a `git-lfs 3.7.1` pull
-also failed their 20-minute bounds. Partial bytes remain ignored and are not
-a checkpoint or evidence of a working backend.
+The earlier transfer failure was resolved by resuming the frozen Git-LFS object
+through its CDN. The final local file is exactly `267445237` bytes and matches
+SHA-256 `e9d7...9a2a`. The hash is a transport/object integrity record from
+fixed mirrors, not an upstream-published checksum and not proof of checkpoint
+redistribution rights. The checkpoint and derived IR remain ignored.
 
-Compatibility resolution, without installation, found Windows/Python 3.10
-wheels for candidate versions `torch==2.5.1`, `onnx==1.17.0`, and
-`openvino==2025.4.1`. They were deliberately not added to `pyproject.toml`, a
-lock file, or `lens`: without a checksum-verified checkpoint, conversion and
-real inference could not be run, so adding roughly scoped optional runtime
-dependencies would not satisfy any T10 acceptance criterion.
+The approved Windows/Python 3.10 closure pins `torch==2.5.1` and
+`openvino==2025.4.1` together with the existing MediaPipe fallback. Direct
+PyTorch-to-OpenVINO conversion made an intermediate ONNX package unnecessary. The
+portable graph is adapted from pinned MIT upstream source and replaces only
+the historical custom InPlaceABNSync extension with state-dict-compatible
+PyTorch BatchNorm plus the same activation. Strict loading reports every key
+matched.
 
-The upstream ATR contract was nevertheless verified as 18 classes, 512x512
-input, affine whole-frame preprocessing, BGR tensor normalization with mean
+The runtime preserves the upstream ATR contract: 18 classes, 512x512 input,
+affine whole-frame preprocessing, BGR tensor normalization with mean
 `[0.406, 0.456, 0.485]` and standard deviation
-`[0.225, 0.224, 0.229]`, followed by inverse-affine logits. Any future retry
-must load all checkpoint keys strictly, preserve activated BatchNorm behavior,
-compare PyTorch and OpenVINO class maps, and repeat the fixed-sample benchmark.
-The current `SCHPSegmenter` therefore remains a fail-fast placeholder and
-MediaPipe remains the default working backend.
+`[0.225, 0.224, 0.229]`, fusion-logit interpolation, and inverse-affine logits.
+On five fixed licensed/public fixtures, FP32 OpenVINO and PyTorch per-class
+garment masks have IoU at least `0.999`. The current development Intel Core
+i5-13450HX full pipeline remains slow at about `0.91 FPS` in one 20-frame
+640x480 headless observation; this conversion-fidelity gate is not a broad
+accuracy or official demo-hardware claim.
 
 ### ATR class index
 

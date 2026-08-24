@@ -1,14 +1,15 @@
 # ChromaLens MVP architecture
 
 This diagram is both the source and the rendered GitHub architecture graphic.
-It describes the default T08/T11 MediaPipe CPU path; the deferred SCHP
-placeholder is deliberately outside the executable path.
+It describes the current SCHP-ATR/OpenVINO CPU demo path. The locked MediaPipe
+person-derived torso baseline remains an explicit runtime fallback.
 
 ```mermaid
 flowchart LR
     A[Webcam or local video<br/>OpenCV BGR] --> B[FrameSource<br/>frame ID + monotonic timestamp]
     B -->|webcam: capacity-one newest frame| C
-    B -->|video: ordered frames| C[MediaPipe person-derived<br/>torso mask on CPU]
+    B -->|video: ordered frames| C[SCHP-ATR semantic garments<br/>OpenVINO FP32 on Intel CPU]
+    C0[Explicit fallback<br/>MediaPipe person-derived torso] -. selectable .-> C
     C --> D[Gray-world correction<br/>+ lighting quality]
     D --> E[Original garment colour<br/>median or deterministic K=2]
     E --> F[11-name mapping<br/>+ colour margin]
