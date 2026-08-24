@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-24 13:45 +07:00
+Last updated: 2026-08-24 13:50 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -3415,6 +3415,31 @@ regenerated afterward and strict-validated.
   curated result hash or measurement.
 - Re-run local gates, push the workflow-only correction, and require both
   replacement jobs to pass before marking T09-CI `DONE`.
+
+---
+
+### `2026-08-24 13:50 +07:00` - `T09-CI` `GitHub Actions recovery complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Fix commits:** `bed19b890c68ac9e79edc59fe591641881a9a42f`,
+`5b6fdc1579c421645bc2ff7aba0219803bc47948`
+
+#### Verified outcome
+
+- Local targeted curated/Gate tests: `17 passed in 0.67s`.
+- Local locked MediaPipe integration: `8 passed in 1.42s`.
+- Local full suite after the workflow regression test: `242 passed in 4.58s`.
+- Strict T09 custodian validation remained green: 11 tracked and 64 ignored
+  artifacts verified, zero unavailable.
+- `pip check` and `git diff --check`: exit 0.
+- GitHub Actions replacement run `32698695852` completed `success`:
+  - `Locked Python 3.10 base`: `success` at 2026-08-24T06:49:02Z;
+  - `Locked MediaPipe 0.10.21 backend`: `success` at
+    2026-08-24T06:49:06Z.
+
+No dependency, result measurement, model, dataset, or MVP-scope change was
+made. T09 remains `DONE`; the exact next plan task remains T10.
 
 ---
 
