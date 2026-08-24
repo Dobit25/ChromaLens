@@ -1,0 +1,6 @@
+rule_id,source_kind,harmony,priority,min_source_lightness,max_source_lightness,hue_offset_degrees,lightness_strategy,chroma_scale,reason_vi,provenance
+neutral-contrast,neutral,neutral,400,0,100,0,neutral-contrast,0,"Tạo tương phản sáng tối rõ ràng với màu trung tính gốc.",ChromaLens project-authored CIELCH guidance heuristic v1
+chromatic-neutral,chromatic,neutral,400,0,100,0,neutral-contrast,0,"Phối thêm màu trung tính tương phản để giữ trọng tâm ở màu gốc.",ChromaLens project-authored CIELCH guidance heuristic v1
+chromatic-analogous,chromatic,analogous,300,0,100,30,preserve,0.85,"Dịch sắc độ một khoảng nhỏ để tạo quan hệ màu tương cận.",ChromaLens project-authored CIELCH guidance heuristic v1
+chromatic-complementary,chromatic,complementary,250,0,100,180,preserve,0.85,"Dịch sắc độ nửa vòng màu để tạo quan hệ màu bổ túc.",ChromaLens project-authored CIELCH guidance heuristic v1
+chromatic-tone,chromatic,tone,200,0,100,0,contrast-tone,0.70,"Giữ họ sắc độ và thay đổi độ sáng để tạo tương phản theo tông.",ChromaLens project-authored CIELCH guidance heuristic v1

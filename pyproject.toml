@@ -38,6 +38,9 @@ chromalens = "chromalens.app:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+chromalens = ["data/suggestions.csv"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"

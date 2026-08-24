@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0.0",
+  "project_name": "ChromaLens AI",
+  "project_name_word_count": 2,
+  "description_language": "English",
+  "description": "ChromaLens AI is a local laptop prototype that helps people explore clothing colours under a user-selected colour-vision profile. A MediaPipe AI backend estimates a person-derived torso region; deterministic stages then correct global lighting, extract and name original garment colours, estimate relational colour-confusion risk, selectively recolour only risky masked pixels, and offer rule-based matching suggestions. The interface keeps original colour, assistive display colour, lighting quality, mask confidence, and risk separate, and it never diagnoses a medical condition. Processing stays offline by default and camera frames are neither saved nor uploaded. Evaluation on the current development machine documents latency, segmentation failures, bias, privacy, and accepted evidence gaps. Physical-camera colour accuracy, target-user validation, sensor-to-photon latency, and SCHP/OpenVINO performance are not claimed.",
+  "description_word_limit": 150,
+  "video": {
+    "target_duration_seconds": 120,
+    "shots": [
+      {"start_second": 0, "end_second": 10, "topic": "User problem and non-diagnostic scope"},
+      {"start_second": 10, "end_second": 22, "topic": "Local solution and user-selected profile/severity"},
+      {"start_second": 22, "end_second": 40, "topic": "Live original and mask views"},
+      {"start_second": 40, "end_second": 58, "topic": "Lighting correction and original colour extraction"},
+      {"start_second": 58, "end_second": 76, "topic": "Relational CVD risk and selective assistive recolour"},
+      {"start_second": 76, "end_second": 88, "topic": "Rule-based matching from original corrected colour"},
+      {"start_second": 88, "end_second": 101, "topic": "AI necessity and segmentation failure boundary"},
+      {"start_second": 101, "end_second": 113, "topic": "Development-host metrics and responsible AI"},
+      {"start_second": 113, "end_second": 120, "topic": "Potential impact and honest next validation"}
+    ]
+  },
+  "official_requirements": {
+    "public_event_page_checked_on": "2026-08-24",
+    "project_name_max_words": 10,
+    "description_max_words": 150,
+    "video_duration_seconds": 120,
+    "team_max_members": 3,
+    "minimum_age": 18,
+    "currently_enrolled_required": true,
+    "signed_consent_required": true,
+    "submission_deadline": "2026-08-25",
+    "live_form_status": "OWNER_MUST_VERIFY_FORM_RETURNED_HTTP_401"
+  },
+  "claims": [
+    {
+      "claim": "The default application runs the T02-T07 pipeline locally with MediaPipe on CPU.",
+      "evidence": ["src/chromalens/app.py", "src/chromalens/pipeline.py", "src/chromalens/segmentation/mediapipe_backend.py"]
+    },
+    {
+      "claim": "Webcam capture uses a capacity-one newest-frame mailbox; finite video remains sequential.",
+      "evidence": ["src/chromalens/app.py", "tests/unit/test_t08_tracking_metrics.py", "tests/integration/test_t08_pipeline.py"]
+    },
+    {
+      "claim": "Original corrected colour remains separate from the assistive display colour and drives matching.",
+      "evidence": ["src/chromalens/pipeline.py", "tests/integration/test_t07_original_color_contract.py", "tests/integration/test_t08_pipeline.py"]
+    },
+    {
+      "claim": "Development-host performance and latency semantics are measured without a sensor-to-photon claim.",
+      "evidence": ["evaluation/protocol.md", "evaluation/results/curated/performance_responsible_ai/report.md", "evaluation/results/curated/performance_responsible_ai/result.json"]
+    },
+    {
+      "claim": "The evaluation records known segmentation failures and accepted missing physical-lighting evidence.",
+      "evidence": ["evaluation/results/curated/segmentation/report.md", "evaluation/results/curated/color_science/report.md", "evaluation/results/curated/summary.md"]
+    },
+    {
+      "claim": "Camera frames are not saved or uploaded by default.",
+      "evidence": ["src/chromalens/app.py", "evaluation/results/curated/performance_responsible_ai/report.md", "README.md"]
+    },
+    {
+      "claim": "SCHP/OpenVINO was not accepted and is not the default path.",
+      "evidence": ["models/README.md", "src/chromalens/segmentation/schp_backend.py", "codinglog.md"]
+    }
+  ]
+}

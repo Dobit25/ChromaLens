@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-24 17:40 +07:00
+Last updated: 2026-08-24 21:16 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -42,6 +42,7 @@ This table is intentionally empty until an agent starts the plan.
 | T08 | End-to-end live pipeline and controls | `DONE` | Codex | 2026-08-20 16:24 +07:00 | 2026-08-20 16:58 +07:00 | T08 start and completion entries below |
 | T09 | Evaluation, responsible AI, and evidence package | `DONE` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-24 00:00 +07:00 | T09 completion entry: strict validation of all four workstreams, 241-test full suite, accepted physical limitation, and fresh performance evidence |
 | T10 | SCHP/OpenVINO optimization gate | `DEFERRED` | Repository owner + Codex | 2026-08-24 16:02 +07:00 | 2026-08-24 17:26 +07:00 | Gate rejected after bounded checkpoint acquisition failed; no conversion/benchmark claim, dependencies unchanged, MediaPipe baseline retained |
+| T11 | Competition handoff support | `DONE` | Repository owner + Codex | 2026-08-24 20:56 +07:00 | 2026-08-24 21:16 +07:00 | T11 completion entry: clean wheel install, 248-test suite, real-backend fallback/screenshots, claims/credits/shot-list handoff |
 
 ## 3. Active blockers
 
@@ -67,6 +68,7 @@ Use this section only for implementation decisions that affect later tasks. Deta
 | DEC-010 | 2026-08-20 | Compose T02-T07 through one typed current-frame pipeline; use a capacity-one newest-frame mailbox for webcam and sequential consumption for finite video. Temporal mask history is intersected with the current mask, and missing stages clear/skip dependent state instead of reusing stale analysis. | T08, T09, T11 | T08 completion entry |
 | DEC-011 | 2026-08-20 | Freeze T09 protocol/schema/metric/case contracts at version 1.0.0; distinguish render-complete, GUI-submit, and externally measured latency; track only curated text results and assign disjoint workstream namespaces. | T09, T10, T11 | T09 Gate 0 completion entry |
 | DEC-012 | 2026-08-23 | Close T09 with all 33 physical color cases still honestly `NOT_RUN` as an owner-accepted limitation; supersede seven unrecoverable contributor artifacts with four fresh raw benchmark runs plus one deterministic video, never reconstructed values. | T09, T10, T11 | T09 completion entry |
+| DEC-013 | 2026-08-24 | Ship the T07 matching CSV as byte-identical package data and resolve it beside the installed module, while retaining the root audit copy and an equality test. | T07, T08, T11 packaging | T11 completion entry |
 
 ## 5. Chronological entries
 
@@ -3620,18 +3622,190 @@ checksum-verified checkpoint.
 
 ---
 
+### `2026-08-24 20:56 +07:00` - `T11` `Competition handoff support started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Plan reference:** `plan.md#t11--competition-handoff-support`
+
+#### Dependency and baseline audit
+
+- Required dependency T09 is `DONE`. Optional T10 is honestly `DEFERRED` and
+  does not block T11; the locked MediaPipe baseline remains the executable
+  default.
+- Work starts from clean, synchronized `mvp` commit
+  `0b27a5e116f267df1f25e08499017db7cc4ad7a7`. The known-good pre-T10
+  evaluation baseline is annotated tag `t09-baseline-v1`, dereferencing to
+  `dc19e9d8116c9f1225729e81ce1aefe9090bfbfa`.
+- T11 is evidence and handoff only. No new core feature, dependency, model,
+  threshold, evaluation claim, or MVP scope change is authorized.
+
+#### Smallest implementation for the Definition of Done
+
+1. Finalize one-path installation, webcam, and reproducible offline-video
+   instructions in README, then verify them using only the approved Python
+   3.10 `lens` interpreter and a clean target installation.
+2. Add a source-controlled architecture graphic, submission copy and
+   claim-to-evidence table, benchmark summary, licenses/credits, limitations,
+   owner checklist, and a timed two-minute shot list.
+3. Generate the ignored fallback video and representative screenshots from
+   licensed/public repository fixtures through the real locked MediaPipe
+   pipeline; save provenance, byte size, and SHA-256 in an ignored manifest.
+4. Run the full automated and artifact-policy gates. Schedule no core
+   implementation for 25 August.
+
+#### Official requirement check at task start
+
+- The live SHTP-IC event page confirms: students aged 18 or older and currently
+  enrolled, teams of at most three, project name at most 10 words, project
+  description at most 150 words, a two-minute video/vlog, signed consent, and
+  deadline 25 August 2026.
+- The linked Google Form returned HTTP 401 from this machine. Exact fields and
+  any video criteria visible only after form access are therefore **NOT
+  VERIFIED** and will remain an explicit repository-owner checklist item; no
+  inaccessible form requirement will be fabricated.
+
+#### Next action
+
+Create the traceable handoff documents and reproducible ignored demo package,
+then verify a clean-target install and every repository gate.
+
+---
+
+### `2026-08-24 21:16 +07:00` - `T11` `Competition handoff support complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Plan reference:** `plan.md#t11--competition-handoff-support`
+
+#### User-visible outcome
+
+- README now gives one canonical locked install path, one-command webcam run,
+  and a two-command camera-free fallback path.
+- The handoff contains a rendered Mermaid architecture source, a locked
+  118-word English description and two-word project name, an exactly
+  contiguous 120-second shot registry, timed narration/action sheet,
+  benchmark and limitation summary, claim-to-evidence paths, official links,
+  owner submission checklist, and third-party notices.
+- `scripts/t11_prepare_handoff.py` uses no network or webcam. It verifies the
+  public NASA fixture checksum, derives a visibly engineered deutan risk case,
+  runs the real locked MediaPipe CPU pipeline, renders all five views, creates
+  a 15-second 640x480 MJPG/AVI fallback, and records source/transformation,
+  consent status, license, byte sizes, and SHA-256 under ignored
+  `artifacts/t11-handoff/`.
+- The final ignored evidence manifest reports one aligned mask, two original
+  corrected clusters, `medium` relational risk, assistive recolour applied,
+  zero degraded reasons, and five screenshots. The fallback video is
+  6,123,002 bytes with SHA-256
+  `27fffc79a0c9a7b0c73e6d6973d24e70f194ac26af71ce5900b7fd2841533066`.
+
+#### Clean-install defect found and corrected
+
+The first wheel-only full suite found a real packaging defect: 18 T07/T08
+tests failed because `RuleBasedMatcher` resolved `assets/suggestions.csv`
+outside the installed package. The smallest T11 repair added a byte-identical
+`chromalens/data/suggestions.csv` package resource, declared it in setuptools,
+resolved the default beside the installed module, and added a byte-equality
+test against the retained root audit source. No rule, threshold, dependency,
+or runtime behavior changed.
+
+A second isolated `--target` install was built from scratch using only
+`D:\Coding\Anaconda\envs\lens\python.exe` (Python 3.10.20). The fixed wheel
+SHA-256 was
+`5c9247816f31de0c2888f84ebe6f734af51ed7fbed5da9982653f079d3842647`;
+the installed matcher loaded five rules from
+`site-packages/chromalens/data/suggestions.csv`. `python -S` excluded the
+active environment's site initialization while `PYTHONPATH` selected only the
+isolated target. This did not create or use another Python environment.
+
+#### Files changed
+
+| Path | Change |
+| --- | --- |
+| `README.md` | Canonical run/fallback commands and T11 handoff index/boundaries. |
+| `docs/submission.json` | Machine-readable name, description, requirements, 120-second shots, and allowed claims. |
+| `docs/architecture.md` | Mermaid pipeline architecture and safety boundaries. |
+| `docs/demo-shot-list.md` | Timed two-minute script and recording/fallback/duration procedure. |
+| `docs/competition-handoff.md` | Benchmark, claim, limitation, official-requirement, and owner checklist handoff. |
+| `THIRD_PARTY_NOTICES.md` | Runtime/model/fixture/algorithm credits, licenses, and deferred gaps. |
+| `scripts/t11_prepare_handoff.py` | Reproducible ignored fallback, screenshots, provenance, and checksum manifest. |
+| `tests/test_t11_handoff.py` | Submission limits, shot timing, claims, fixture rights/hash, and camera-free generator tests. |
+| `pyproject.toml`, `src/chromalens/matching.py`, `src/chromalens/data/suggestions.csv`, `tests/unit/test_t07_matching.py` | Minimal clean-wheel T07 asset repair and regression guard. |
+| `codinglog.md` | T11 start, failure/repair, commands, evidence, DoD, and handoff status. |
+
+#### Commands and observed results
+
+| Command/check | Observed result |
+| --- | --- |
+| `...python.exe -m pytest -q tests/test_t11_handoff.py` (first run) | exit 1; 4 passed, 1 failed because the test used a case-sensitive rights phrase. Test assertion corrected without weakening the checksum/right check. |
+| Same T11 test after correction | exit 0; initially 5 passed, finally 6 passed after explicit engineered-BGR boundary coverage. |
+| `...python.exe scripts/t11_prepare_handoff.py` | exit 0; 180-frame video, five real-backend views, manifest/checksums, no camera/network/private media. |
+| `...python.exe -m chromalens --video artifacts\\t11-handoff\\fallback_mediapipe.avi --no-display` | exit 0; 180/180 frames, `end_of_video`, 640x480, 48.16 s local execution, 3.74 processed FPS, zero dropped/degraded. This is a T11 operational observation, not a T09 benchmark. |
+| First clean target locked install/build and `python -S -m chromalens --help` | exit 0; Python 3.10.20 and exact locked runtime imported from the isolated target. |
+| First clean-target `python -S -m pytest -q` | exit 1; 18 failed, 229 passed; exposed missing packaged matching CSV. |
+| Fixed clean target install/build/import | exit 0; wheel built/installed, five matching rules loaded from installed package data, MediaPipe 0.10.21, OpenCV 4.10.0, NumPy 1.26.4. |
+| Fixed clean-target `python -S -m pytest -q` | exit 0; final rerun 248 passed in 2.84 s. |
+| Fixed installed package `python -S -m chromalens --video ... --no-display --max-frames 3` | exit 0; real MediaPipe, three frames, no degraded frame. |
+| `...python.exe --version`; `...python.exe -m pip check`; exact-version assertion | exit 0; Python 3.10.20, no broken requirements, approved NumPy/OpenCV/DaltonLens/MediaPipe/pytest/setuptools/wheel versions. |
+| `...python.exe scripts/t09_result_validation.py --require-untracked-artifacts` | exit 0; all four curated packages passed; 11 tracked and 64 ignored T09 artifacts verified, none unavailable. |
+| Three exact CI `piptools compile` commands plus lock-only `git diff --exit-code` | exit 0; all three lock files byte-identical; no dependency version changed. |
+| Final `...python.exe -m pytest -q` | exit 0; 248 passed in 2.84 s. |
+| CI-equivalent tracked-file policy, `git check-ignore`, `git diff --check` | exit 0; 125 pre-T11 tracked files inspected, no forbidden/oversized/generated binary; T11 artifact root ignored; patch whitespace valid. |
+
+#### Definition of Done
+
+- [x] An unfamiliar teammate can install/run from README: exact hashed locks,
+  wheel build/install, isolated imports, CLI help, full tests, and an installed
+  real-backend video run were executed with Python 3.10.20.
+- [x] Known offline fallback: reproducible licensed/public engineered AVI ran
+  all 180 frames to clean EOF with real MediaPipe and no webcam/network.
+- [x] Submission claims trace to code, measured results, or cited sources:
+  machine-readable claim paths are test-validated; benchmark wording retains
+  development-host and `sensor_to_photon_ms=NOT_MEASURED` boundaries.
+- [x] No core implementation remains scheduled for 25 August. Remaining work
+  is owner-controlled form access, consent custody, final recording/export,
+  declared-laptop dry run, and submission only.
+
+#### Remaining human actions and limitations
+
+- The public competition requirements were verified, but the linked Google
+  Form returned HTTP 401. The owner must sign in and confirm every form-only
+  field/video criterion; this inaccessible detail was not fabricated.
+- Signed consent and the final 120-second export are private submission items
+  and are intentionally not stored in Git. The owner must verify eligibility,
+  team size, consent, asset rights, final duration, readability, and receipt.
+- The fallback is a declared engineered sanity case on a public image. It
+  proves an offline executable path, not physical color accuracy, target-user
+  benefit, or official demo-hardware performance.
+- The current Lenovo remains development hardware. T09 physical-lighting,
+  target-user, energy, and sensor-to-photon omissions remain visible; T10
+  remains `DEFERRED` and MediaPipe remains the only accepted backend.
+
+#### Known-good handoff
+
+The T11 commit containing this entry is the competition-demo candidate and is
+identified by annotated tag `t11-demo-v1`. The prior evaluation baseline
+remains independently recoverable as `t09-baseline-v1`.
+
+#### Exact next action
+
+No next implementation task remains in `plan.md`. The repository owner must
+perform the checked human submission actions in `docs/competition-handoff.md`.
+
+---
+
 ## 6. Final handoff checklist
 
 Complete this only after all P0 work is finished.
 
-- [ ] Summary table matches the actual repository.
-- [ ] Every P0 task has a `DONE` entry and evidence.
-- [ ] All `BLOCKED`, `PARTIAL`, and `DEFERRED` items are visible.
-- [ ] Install and run commands were tested in a clean/declarable environment.
-- [ ] Automated tests and current result are recorded.
-- [ ] Performance values include hardware, resolution, backend, and conditions.
-- [ ] Evaluation set/protocol and limitations are recorded.
-- [ ] Model/data/code sources and licenses are recorded.
-- [ ] Privacy and responsible-AI behavior are recorded.
-- [ ] A known-good demo version/commit is identified.
-- [ ] The next human action for competition submission is stated.
+- [x] Summary table matches the actual repository.
+- [x] Every P0 task has a `DONE` entry and evidence.
+- [x] All `BLOCKED`, `PARTIAL`, and `DEFERRED` items are visible.
+- [x] Install and run commands were tested in a clean/declarable environment.
+- [x] Automated tests and current result are recorded.
+- [x] Performance values include hardware, resolution, backend, and conditions.
+- [x] Evaluation set/protocol and limitations are recorded.
+- [x] Model/data/code sources and licenses are recorded.
+- [x] Privacy and responsible-AI behavior are recorded.
+- [x] A known-good demo version/commit is identified.
+- [x] The next human action for competition submission is stated.

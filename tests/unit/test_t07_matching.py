@@ -68,6 +68,9 @@ def test_cielch_rejects_invalid_values(invalid: tuple[float, float, float]) -> N
 
 def test_committed_rule_table_has_required_schema_provenance_and_coverage() -> None:
     rules = load_matching_rules()
+    assert Path("assets/suggestions.csv").read_bytes() == Path(
+        "src/chromalens/data/suggestions.csv"
+    ).read_bytes()
 
     assert len(rules) == 5
     assert len({rule.rule_id for rule in rules}) == len(rules)

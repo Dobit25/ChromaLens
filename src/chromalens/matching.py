@@ -55,9 +55,7 @@ SUGGESTION_COLUMNS: tuple[str, ...] = (
     "provenance",
 )
 
-_DEFAULT_RULES_PATH = (
-    Path(__file__).resolve().parents[2] / "assets" / "suggestions.csv"
-)
+_DEFAULT_RULES_PATH = Path(__file__).resolve().parent / "data" / "suggestions.csv"
 
 
 class MatchingRulesError(ValueError):

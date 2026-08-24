@@ -9,7 +9,9 @@ end-to-end live composition/controls are complete. **T09** evaluation is also
 complete within its explicitly accepted evidence limitations. The optional
 **T10** SCHP/OpenVINO gate was attempted and rejected/deferred because a
 checksum-verifiable ATR checkpoint could not be acquired reliably within the
-time box; the working MediaPipe baseline is unchanged.
+time box; the working MediaPipe baseline is unchanged. **T11** packages the
+competition handoff, reproducible offline fallback, claims, credits, and demo
+shot list without changing the core runtime.
 
 The MVP is assistive software, not a medical diagnosis tool. The user selects
 their CVD profile and severity.
@@ -55,6 +57,24 @@ conda run --name lens python -m pip check
 conda run --name lens python -m chromalens --help
 conda run --name lens python -m pytest -q
 ```
+
+For a teammate starting from a fresh clone, the three install commands above
+are the canonical setup. After verification, the one-command live demo is:
+
+```powershell
+conda run --name lens python -m chromalens --webcam
+```
+
+If the venue camera or lighting is unreliable, generate and run the licensed
+offline fallback without a network or webcam:
+
+```powershell
+conda run --name lens python scripts/t11_prepare_handoff.py
+conda run --name lens python -m chromalens --video artifacts/t11-handoff/fallback_mediapipe.avi
+```
+
+The generated video, screenshots, and checksum/provenance manifest remain
+under ignored `artifacts/t11-handoff/`; they must not be forced into Git.
 
 ## Dependency change policy
 
@@ -615,6 +635,47 @@ strict raw-byte verification with:
 conda run --name lens python scripts/t09_result_validation.py --require-untracked-artifacts
 ```
 
+## T11 competition handoff
+
+The final handoff sources are intentionally small and reviewable:
+
+- [`docs/competition-handoff.md`](docs/competition-handoff.md): submission
+  copy, measured benchmark summary, claim boundaries, known limitations, live
+  form/consent checklist, and exact remaining human actions;
+- [`docs/submission.json`](docs/submission.json): locked project name,
+  description, public limits, 120-second shot registry, and claim-to-evidence
+  paths;
+- [`docs/architecture.md`](docs/architecture.md): Mermaid architecture graphic
+  and its source;
+- [`docs/demo-shot-list.md`](docs/demo-shot-list.md): timed two-minute script,
+  recording procedure, fallback command, and final-duration check;
+- [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md): default runtime,
+  algorithms, public fixtures, credits, licenses, and deferred-asset gaps.
+
+Prepare the ignored demo package through the real locked MediaPipe backend:
+
+```powershell
+conda run --name lens python scripts/t11_prepare_handoff.py
+```
+
+The command verifies the public NASA fixture checksum, overlays declared BGR
+patches derived from the frozen T05 deutan red/olive sanity pair and adjusted
+so the complete pipeline exercises risk/recolour, writes a 15-second 640x480
+MJPG/AVI fallback, renders all five pipeline views, and writes actual byte
+sizes and SHA-256 values to
+`artifacts/t11-handoff/manifest.json`. It does
+not download a model, open a webcam, or use private footage. The visibly
+engineered fallback exercises risk/recolour through real MediaPipe inference;
+it is operational safety input, not evaluation or physical colour-accuracy
+evidence.
+
+The public competition page was checked on 24 August 2026. The linked live
+Google Form returned HTTP 401 from this development machine, so the owner must
+sign in and verify any form-only fields/video criteria before submission. This
+human confirmation, signed-consent custody, final video export review, and a
+dry run on the actual venue laptop are the only scheduled 25 August actions;
+no core implementation remains scheduled.
+
 ## Verification
 
 These commands require no webcam, network access at runtime, model weights, or
@@ -711,16 +772,16 @@ media and verifies that video mode never opens a webcam.
 - T07's CIELCH geometry and five-row project-authored table are simple
   guidance. They do not model culture, material, occasion, trend, or individual
   taste; their wording and usefulness require T09 user testing.
-- T08 development measurements are not an official hardware benchmark. The
-  current live path runs all analytical modules on every consumed frame and
-  can drop capture frames under load. T09 must declare hardware, footage,
-  conditions, accuracy protocol, and acceptance thresholds before competition
-  performance/quality claims.
+- T08/T09 development measurements are not an official hardware benchmark.
+  The current live path runs all analytical modules on every consumed frame
+  and can drop capture frames under load. T09 declares its development host,
+  footage, conditions, protocol, thresholds, failures, and unmeasured cases;
+  those observations cannot be generalized to the eventual demo laptop.
 - Model weights, datasets, generated artifacts, and private footage are not
   included. See `models/README.md` for download policy.
 
 ## License
 
 ChromaLens AI is licensed under the Apache License 2.0. Third-party model,
-dataset, algorithm, and code attribution will be documented as each component
-is integrated.
+fixture, algorithm, and code attribution is consolidated in
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
