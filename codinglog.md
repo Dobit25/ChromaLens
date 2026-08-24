@@ -3976,6 +3976,8 @@ accuracy superiority. MediaPipe remains the venue-reliability fallback.
 | Explicit MediaPipe fallback video command, 3 frames | exit 0; real fallback and measurements above |
 | Four exact `piptools compile` checks | exit 0; all existing locks plus new combined lock byte-identical |
 | `git check-ignore` for PTH/XML/BIN/manifest | exit 0; all model artifacts ignored; none tracked |
+| `...python.exe -m pip install --require-hashes -r requirements/segment-schp-py310-win64.lock` | exit 0; every combined demo dependency already satisfied at its locked version in `lens` |
+| GitHub Actions run `32754359078` on implementation commit `a3ddbaa88fc7cba3fcc5a12a89938fb069822767` | `success`; `Locked Python 3.10 base`, `Locked MediaPipe 0.10.21 backend`, and `Locked SCHP/OpenVINO contract` all completed successfully |
 
 #### Definition of Done
 
@@ -3999,6 +4001,15 @@ accuracy superiority. MediaPipe remains the venue-reliability fallback.
 - No implementation task remains after T11. Run the README SCHP asset/export
   verification on the actual demo laptop, rehearse the explicit MediaPipe
   fallback, record the two-minute evidence-bounded demo, and submit.
+
+#### Version control and cloud gate
+
+- SCHP implementation commit:
+  `a3ddbaa88fc7cba3fcc5a12a89938fb069822767`
+  (`feat: promote SCHP OpenVINO demo backend`).
+- The commit was pushed to `origin/mvp`; GitHub Actions run
+  `32754359078` completed `success` for all three locked jobs. The prior
+  annotated `t11-demo-v1` MediaPipe recovery point remains unchanged.
 
 ---
 
