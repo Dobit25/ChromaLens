@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-24 13:38 +07:00
+Last updated: 2026-08-24 13:45 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -3383,6 +3383,38 @@ regenerated afterward and strict-validated.
   as available-to-a-custodian but absent from CI (`0 verified`, `5 missing`).
 - Run the same full base and locked MediaPipe gates locally, push an atomic fix,
   and verify the replacement GitHub Actions run before closing this entry.
+
+---
+
+### `2026-08-24 13:45 +07:00` - `T09-CI` `Shallow-checkout provenance correction`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Failed replacement run:** `32698259732`
+
+#### Correction to the first diagnosis
+
+- The raw-artifact test correction in `bed19b890c68ac9e79edc59fe591641881a9a42f`
+  was necessary and passes in a clean worktree, but it was not the final CI
+  failure.
+- Authenticated job logs show exactly four remaining failures, all from
+  `test_result_names_the_existing_code_commit_that_generated_it`.
+- GitHub Actions checked out only depth one by default, so the result-provenance
+  commits `9e90b2f`, `5c9fd86`, and `50cbc19` were valid remote ancestors but
+  absent from the runner's shallow object database. `git cat-file` therefore
+  returned 128 for all four curated results.
+- A full-history local worktree passed all 241 tests; the environment and
+  result JSON were not corrupt.
+
+#### Smallest production correction
+
+- Set `fetch-depth: 0` on the already SHA-pinned `actions/checkout` step in
+  both jobs. This makes the evidence-provenance test meaningful in CI and
+  preserves the stronger assertion that every result names an actual commit.
+- Do not weaken the test to a 40-character string check and do not alter any
+  curated result hash or measurement.
+- Re-run local gates, push the workflow-only correction, and require both
+  replacement jobs to pass before marking T09-CI `DONE`.
 
 ---
 

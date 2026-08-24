@@ -203,6 +203,13 @@ def test_artifact_and_ownership_policy_separates_curated_text_from_raw_media() -
         assert f"evaluation/results/curated/{workstream}/**" in ownership
 
 
+def test_ci_fetches_result_provenance_commits_for_both_locked_jobs() -> None:
+    workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+
+    assert workflow.count("actions/checkout@") == 2
+    assert workflow.count("fetch-depth: 0") == 2
+
+
 def test_protocol_freeze_does_not_pretend_missing_assets_or_demo_hardware_exist() -> None:
     protocol = (ROOT / "evaluation/protocol.md").read_text(encoding="utf-8")
     normalized_protocol = " ".join(protocol.split())
