@@ -211,6 +211,7 @@ def compose_presentation(
     *,
     mode: PresentationMode = PresentationMode.PRODUCT,
     theme: PresentationTheme = PresentationTheme.DARK,
+    camera_cover_enabled: bool = False,
     style: PresentationStyle | None = None,
 ) -> ColorFrame:
     """Paste an unchanged camera view and draw all UI outside its rectangle."""
@@ -220,6 +221,8 @@ def compose_presentation(
         raise TypeError("mode must be a PresentationMode")
     if not isinstance(theme, PresentationTheme):
         raise TypeError("theme must be a PresentationTheme")
+    if not isinstance(camera_cover_enabled, bool):
+        raise TypeError("camera_cover_enabled must be boolean")
     active = style or style_for_theme(theme)
     height, width = camera_bgr.shape[:2]
     layout = layout_for_camera(width, height, style=active)
@@ -247,13 +250,68 @@ def compose_presentation(
 
     pil_image = Image.fromarray(cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(pil_image)
+    if camera_cover_enabled:
+        _draw_camera_cover(draw, layout, theme)
     _draw_header(draw, layout, data, mode, active)
     if mode is PresentationMode.PRODUCT:
         _draw_product_panel(draw, layout, data, active)
     else:
         _draw_diagnostic_panel(draw, layout, data, active)
-    _draw_footer(draw, layout, data, mode, active)
+    _draw_footer(
+        draw,
+        layout,
+        data,
+        mode,
+        camera_cover_enabled,
+        active,
+    )
     return cv2.cvtColor(np.asarray(pil_image), cv2.COLOR_RGB2BGR).copy()
+
+
+def _draw_camera_cover(
+    draw: ImageDraw.ImageDraw,
+    layout: PresentationLayout,
+    theme: PresentationTheme,
+) -> None:
+    """Hide only displayed camera pixels behind a centered ChromaLens mark."""
+
+    x0, y0, x1, y1 = layout.camera_rect
+    if theme is PresentationTheme.DARK:
+        cover_rgb = (245, 247, 250)
+        text_rgb = (16, 22, 28)
+        icon_rgb = (0, 127, 158)
+    else:
+        cover_rgb = (11, 16, 20)
+        text_rgb = (245, 247, 250)
+        icon_rgb = (94, 231, 255)
+    draw.rectangle((x0, y0, x1 - 1, y1 - 1), fill=cover_rgb)
+
+    width = x1 - x0
+    height = y1 - y0
+    font_size = int(np.clip(round(width * 0.06), 24, 42))
+    font = _font(font_size, bold=True)
+    title = "ChromaLens AI"
+    icon_radius = max(8, round(font_size * 0.32))
+    gap = max(10, round(font_size * 0.32))
+    total_width = icon_radius * 2 + gap + int(font.getlength(title))
+    icon_x = x0 + max(12, (width - total_width) // 2 + icon_radius)
+    center_y = y0 + height // 2
+    draw.polygon(
+        (
+            (icon_x, center_y - icon_radius),
+            (icon_x + icon_radius, center_y),
+            (icon_x, center_y + icon_radius),
+            (icon_x - icon_radius, center_y),
+        ),
+        fill=icon_rgb,
+    )
+    draw.text(
+        (icon_x + icon_radius + gap, center_y),
+        title,
+        font=font,
+        fill=text_rgb,
+        anchor="lm",
+    )
 
 
 def build_product_copy(
@@ -598,6 +656,7 @@ def _draw_footer(
     layout: PresentationLayout,
     data: PresentationData,
     mode: PresentationMode,
+    camera_cover_enabled: bool,
     style: PresentationStyle,
 ) -> None:
     _, y0, x1, _ = layout.footer_rect
@@ -605,7 +664,14 @@ def _draw_footer(
     if mode is PresentationMode.PRODUCT:
         detected = data.original_color_label is not None
         statuses = (
-            ("CAMERA HOẠT ĐỘNG", style.success_bgr),
+            (
+                "HIỂN THỊ ĐÃ CHE"
+                if camera_cover_enabled
+                else "CAMERA HOẠT ĐỘNG",
+                style.primary_bgr
+                if camera_cover_enabled
+                else style.success_bgr,
+            ),
             (
                 "AI SẴN SÀNG" if detected else "ĐANG PHÂN TÍCH",
                 style.success_bgr if detected else style.warning_bgr,
@@ -654,14 +720,18 @@ def _draw_footer(
         _single_line_in_region(
             draw,
             (midpoint, y0 + 38, x1 - style.outer_padding_px, y0 + 60),
-            "T: Nền  ·  U: Kỹ thuật  ·  P: Hồ sơ  ·  V: Góc nhìn  ·  Q: Thoát",
+            "C: Che camera  ·  T: Nền  ·  U: Kỹ thuật  ·  P: Hồ sơ  ·  Q: Thoát",
             12,
             style.chrome_muted_text_bgr,
         )
         return
     else:
-        left = f"Nguồn: {data.source_name} | Hỗ trợ={support} | view={data.view_name}"
-        keys = "T theme | U product/diagnostic | P profile | [/] severity | R recolor | V/1-5 view | Q quit"
+        cover = "on" if camera_cover_enabled else "off"
+        left = (
+            f"Nguồn: {data.source_name} | Hỗ trợ={support} | "
+            f"view={data.view_name} | cover={cover}"
+        )
+        keys = "C cover | T theme | U product/diagnostic | P profile | [/] severity | R recolor | V/1-5 view | Q quit"
         _text(
             draw,
             (style.outer_padding_px, y0 + 10),

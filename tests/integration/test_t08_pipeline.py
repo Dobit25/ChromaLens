@@ -260,6 +260,12 @@ def test_runtime_controls_are_reversible_and_create_snapshots() -> None:
     assert controls.theme is PresentationTheme.LIGHT
     assert controls.apply_key(ord("t"))
     assert controls.theme is PresentationTheme.DARK
+    assert not controls.camera_cover_enabled
+    assert controls.apply_key(ord("c"))
+    assert controls.camera_cover_enabled
+    assert controls.display_state(dropped_capture_frames=0).camera_cover_enabled
+    assert controls.apply_key(ord("c"))
+    assert not controls.camera_cover_enabled
     assert not controls.apply_key(ord("x"))
 
 
@@ -280,6 +286,8 @@ def test_cli_rejects_non_finite_duration_and_severity() -> None:
         parser.parse_args(["--webcam", "--theme", "unsupported"])
     assert parser.parse_args(["--webcam"]).ui_mode == "product"
     assert parser.parse_args(["--webcam"]).theme == "dark"
+    assert not parser.parse_args(["--webcam"]).camera_cover
+    assert parser.parse_args(["--webcam", "--camera-cover"]).camera_cover
 
 
 def test_local_video_runs_the_same_pipeline_to_clean_eof(tmp_path: Path) -> None:

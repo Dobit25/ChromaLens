@@ -92,6 +92,7 @@ class PipelineDisplayState:
     view: PipelineView
     ui_mode: PresentationMode = PresentationMode.PRODUCT
     theme: PresentationTheme = PresentationTheme.DARK
+    camera_cover_enabled: bool = False
     dropped_capture_frames: int = 0
 
     def __post_init__(self) -> None:
@@ -107,6 +108,8 @@ class PipelineDisplayState:
             raise TypeError("ui_mode must be a PresentationMode")
         if not isinstance(self.theme, PresentationTheme):
             raise TypeError("theme must be a PresentationTheme")
+        if not isinstance(self.camera_cover_enabled, bool):
+            raise TypeError("camera_cover_enabled must be boolean")
         if self.dropped_capture_frames < 0:
             raise ValueError("dropped_capture_frames must be non-negative")
 
@@ -521,6 +524,7 @@ def render_pipeline_view(
         presentation_data,
         mode=display_state.ui_mode,
         theme=display_state.theme,
+        camera_cover_enabled=display_state.camera_cover_enabled,
     )
 
 

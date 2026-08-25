@@ -207,3 +207,46 @@ def test_theme_palettes_invert_cards_with_strong_text_contrast(
         assert _relative_luminance(style.card_bgr) < _relative_luminance(
             style.background_bgr
         )
+
+
+@pytest.mark.parametrize(
+    ("theme", "cover_bgr", "text_bgr"),
+    [
+        (PresentationTheme.DARK, (250, 247, 245), (28, 22, 16)),
+        (PresentationTheme.LIGHT, (20, 16, 11), (250, 247, 245)),
+    ],
+)
+def test_camera_cover_is_theme_inverted_and_hides_only_displayed_viewport(
+    theme: PresentationTheme,
+    cover_bgr: tuple[int, int, int],
+    text_bgr: tuple[int, int, int],
+) -> None:
+    rng = np.random.default_rng(2026)
+    camera = rng.integers(0, 256, size=(240, 320, 3), dtype=np.uint8)
+    snapshot = camera.copy()
+
+    rendered = compose_presentation(
+        camera,
+        _data(),
+        theme=theme,
+        camera_cover_enabled=True,
+    )
+    layout = layout_for_camera(320, 240)
+    x0, y0, x1, y1 = layout.camera_rect
+    covered = rendered[y0:y1, x0:x1]
+    cover_color = np.asarray(cover_bgr, dtype=np.uint8)
+    background_fraction = float(np.mean(np.all(covered == cover_color, axis=2)))
+
+    assert np.array_equal(camera, snapshot)
+    assert not np.array_equal(covered, camera)
+    assert background_fraction > 0.90
+    assert _contrast_ratio(cover_bgr, text_bgr) >= 7.0
+
+
+def test_camera_cover_rejects_non_boolean_state() -> None:
+    with pytest.raises(TypeError, match="camera_cover_enabled"):
+        compose_presentation(
+            np.zeros((120, 160, 3), dtype=np.uint8),
+            _data(),
+            camera_cover_enabled=1,
+        )

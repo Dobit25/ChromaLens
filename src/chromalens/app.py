@@ -73,6 +73,7 @@ class RuntimeControls:
     view: PipelineView = PipelineView.ASSISTIVE
     ui_mode: PresentationMode = PresentationMode.PRODUCT
     theme: PresentationTheme = PresentationTheme.DARK
+    camera_cover_enabled: bool = False
     severity_step: float = 0.1
 
     def __post_init__(self) -> None:
@@ -88,6 +89,8 @@ class RuntimeControls:
             raise TypeError("ui_mode must be a PresentationMode")
         if not isinstance(self.theme, PresentationTheme):
             raise TypeError("theme must be a PresentationTheme")
+        if not isinstance(self.camera_cover_enabled, bool):
+            raise TypeError("camera_cover_enabled must be boolean")
         if not 0.0 < self.severity_step <= 1.0:
             raise ValueError("severity_step must be within (0, 1]")
 
@@ -111,6 +114,7 @@ class RuntimeControls:
             view=self.view,
             ui_mode=self.ui_mode,
             theme=self.theme,
+            camera_cover_enabled=self.camera_cover_enabled,
             dropped_capture_frames=dropped_capture_frames,
         )
 
@@ -141,6 +145,8 @@ class RuntimeControls:
                 if self.theme is PresentationTheme.DARK
                 else PresentationTheme.DARK
             )
+        elif key == ord("c"):
+            self.camera_cover_enabled = not self.camera_cover_enabled
         elif ord("1") <= key <= ord("5"):
             self.view = tuple(PipelineView)[key - ord("1")]
         else:
@@ -265,6 +271,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="presentation color theme (default: dark; press t to toggle)",
     )
     parser.add_argument(
+        "--camera-cover",
+        action="store_true",
+        help=(
+            "start with a theme-inverted ChromaLens cover over the displayed "
+            "camera viewport (press c to toggle)"
+        ),
+    )
+    parser.add_argument(
         "--camera-index",
         type=_non_negative_int,
         default=0,
@@ -358,6 +372,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             view=PipelineView(args.view),
             ui_mode=PresentationMode(args.ui_mode),
             theme=PresentationTheme(args.theme),
+            camera_cover_enabled=args.camera_cover,
         )
         result = run_pipeline_session(
             source,

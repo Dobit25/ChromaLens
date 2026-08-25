@@ -456,6 +456,19 @@ text. Light theme uses a near-white shell with dark-grey information cards and
 light card text. Header/footer text has a separate palette so both themes keep
 strong contrast without changing camera, mask, colour, risk, or recolor data.
 
+Optionally start with the displayed camera viewport covered, or press `c` at
+runtime. The cover is white with dark ChromaLens branding in Dark theme and
+black with light branding in Light theme:
+
+```powershell
+conda run --name lens python -m chromalens --webcam --camera-cover
+```
+
+This is a display/privacy cover only: local capture and analysis continue
+underneath so removing the cover restores the current result immediately. It
+does not pause the camera, inference worker, or metrics and must not be
+described as a camera hardware privacy switch.
+
 The Product UI shows only the named garment colour and swatch, a textual colour
 confidence, an actionable distinguishability state, lighting guidance, matching
 guidance, the selected CVD profile, and whether assistive recoloring is active.
@@ -512,6 +525,7 @@ medical diagnosis:
 - `p`: cycle `protan` / `deutan` / `tritan`.
 - `[` and `]`: decrease/increase severity by 0.1 within `[0, 1]`.
 - `r`: enable or disable assistive recoloring without disabling analysis.
+- `c`: cover or reveal only the displayed camera viewport.
 - `t`: switch the presentation palette between `dark` and `light`.
 - `u`: switch the presentation shell between `product` and `diagnostic`.
 - `v`: cycle views; keys `1`-`5` select `assistive`, `original`, `mask`,
