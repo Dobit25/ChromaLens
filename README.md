@@ -408,8 +408,12 @@ contract, and limitations are documented in
 
 ## End-to-end webcam/video pipeline (T08)
 
-The full default source path uses semantic `schp-atr` on CPU, prefers its
-verified OpenVINO IR, and composes T02-T07 for every displayed frame. Install
+The full default source path uses semantic `schp-atr` on CPU and prefers its
+verified OpenVINO IR. For a webcam, one bounded worker produces authoritative
+SCHP keyframes while optical flow aligns the newest accepted masks with current
+display frames; T03-T07 then operate on those current-frame-aligned masks.
+Finite videos remain synchronous and run SCHP on every ordered frame so saved
+evaluation semantics do not change. Install
 the combined lock and prepare the ignored model assets under **T10
 SCHP/OpenVINO gate outcome** before using these commands. The earlier
 MediaPipe person-derived torso backend remains selectable explicitly.
@@ -419,6 +423,52 @@ Launch the webcam demo using the default camera index:
 ```powershell
 conda run --name lens python -m chromalens --webcam
 ```
+
+The default `--ui-mode product` opens the user-facing Vietnamese presentation.
+The camera viewport contains only the camera image, assistive recolor, and
+garment outline. The header, result cards, and controls are composed on a
+larger canvas outside that viewport, so status text never obscures the garment.
+The camera pixels are not resized by the presentation layer and retain their
+original aspect ratio.
+
+For development, benchmark review, or a technical judging walkthrough, switch
+to the separate presentation mode without changing the analytical pipeline:
+
+```powershell
+conda run --name lens python -m chromalens --webcam --ui-mode diagnostic
+```
+
+Choose the high-contrast background/card theme at launch, or press `t` while
+the window is open:
+
+```powershell
+conda run --name lens python -m chromalens --webcam --theme dark
+conda run --name lens python -m chromalens --webcam --theme light
+```
+
+Dark theme uses a dark shell with near-white information cards and dark card
+text. Light theme uses a near-white shell with dark-grey information cards and
+light card text. Header/footer text has a separate palette so both themes keep
+strong contrast without changing camera, mask, colour, risk, or recolor data.
+
+The Product UI shows only the named garment colour and swatch, a textual colour
+confidence, an actionable distinguishability state, lighting guidance, matching
+guidance, the selected CVD profile, and whether assistive recoloring is active.
+Its cyan camera frame establishes the live image as the focal point; the main
+colour card receives the strongest accent, secondary cards use quieter
+surfaces, and the footer groups camera/AI/detection/assistance into a textual
+status bar. Cards are informational and deliberately do not imitate clickable
+controls.
+The Diagnostic UI additionally shows backend/device, pipeline and SCHP
+inference FPS, keyframe/propagation state, pre-render frame age, capture and
+inference drops, raw RGB/margin, mask confidence, risk score, frame ID, and the
+current degraded reason. Status is always expressed in text and card shapes;
+colour is never the only carrier of meaning.
+
+The webcam command requests the measured demo mode `480x360`; OpenCV/camera
+drivers may select the nearest supported mode (the development camera returned
+`640x360`). This changes only capture/output cost: SCHP preprocessing remains
+the verified 512x512 graph.
 
 Request a capture resolution or choose another camera when required:
 
@@ -437,6 +487,7 @@ Select a runtime or the fallback explicitly when diagnosing a venue machine:
 
 ```powershell
 conda run --name lens python -m chromalens --webcam --schp-runtime openvino
+conda run --name lens python -m chromalens --webcam --schp-runtime openvino --schp-live-mode sync
 conda run --name lens python -m chromalens --webcam --schp-runtime pytorch
 conda run --name lens python -m chromalens --webcam --backend mediapipe-selfie-torso
 ```
@@ -456,24 +507,35 @@ medical diagnosis:
 - `p`: cycle `protan` / `deutan` / `tritan`.
 - `[` and `]`: decrease/increase severity by 0.1 within `[0, 1]`.
 - `r`: enable or disable assistive recoloring without disabling analysis.
+- `t`: switch the presentation palette between `dark` and `light`.
+- `u`: switch the presentation shell between `product` and `diagnostic`.
 - `v`: cycle views; keys `1`-`5` select `assistive`, `original`, `mask`,
   `risk`, and `diagnostic` directly.
 
 The equivalent initial values are available as CLI flags, for example:
 
 ```powershell
-conda run --name lens python -m chromalens --webcam --profile protan --severity 0.8 --disable-recolor --view original
+conda run --name lens python -m chromalens --webcam --profile protan --severity 0.8 --disable-recolor --view original --ui-mode product
 ```
 
-The overlay keeps original corrected color/margin, heuristic mask confidence,
+`--view` selects the camera content while `--ui-mode` selects the surrounding
+presentation. They are intentionally independent: for example, the analytical
+risk view can still be presented inside the uncluttered Product shell.
+
+The external Diagnostic panel separately reports pipeline FPS, SCHP inference FPS, mask source
+(`inferred`, `propagated`, `stale`, or `unavailable`), keyframe ID, mask age,
+and capacity-one inference overwrites. This must not be described as SCHP
+running at the display rate. A propagated mask is cleared after its configured
+age limit or when flow validation fails. The panel also keeps original corrected color/margin, heuristic mask confidence,
 CVD risk, and lighting quality as separate fields. Matching uses only the T04
 original corrected cluster; the assistive display color never feeds analysis.
 Every output is tied to the displayed `frame_id`. A missing or failed stage is
 shown as `degraded`/`unavailable` for that current frame; prior masks, colors,
 risks, or recolors are not presented as current results.
 
-Live webcam capture uses an exact capacity-one mailbox: inference takes the
-newest frame and counts overwritten stale frames instead of building latency.
+Live webcam capture and live SCHP scheduling each use an exact capacity-one
+mailbox: capture and inference take the newest frame and count overwritten
+stale frames instead of building latency.
 Finite videos run sequentially through the same pipeline so evaluation frames
 are not skipped. Runtime metrics use bounded buffers (10,000 samples per
 latency series and at most 10,000 RSS samples). The T09-frozen names are:
@@ -741,6 +803,30 @@ conversion matched PyTorch garment masks on all five fixed public fixtures
 render-complete latency p50/p95 `1195.00/1411.65 ms`. This is development-host
 evidence, not sensor-to-photon latency or an official demo-laptop benchmark.
 
+The owner-approved asynchronous corrective pass retained FP32/512 SCHP as the
+authoritative parser and measured a 15-second 640x480 webcam headless run after
+a 3-second warm-up at `11.82` pipeline FPS, `2.21` SCHP keyframes/second,
+source-read-to-render p50/p95 `110.00/171.15 ms`, and processing-to-render
+p50/p95 `78.00/110.00 ms`. These are development-machine software timings;
+GUI-submit and sensor-to-photon were not measured in that run. The speedup also
+includes a deterministic bounded K-means fit whose final cluster assignment
+still covers every valid garment pixel.
+
+Two production GUI runs requesting `480x360` (actual camera mode `640x360`)
+measured `10.75` and `13.75` pipeline FPS. The final default-command run
+reported GUI-submit p50/p95 `110.00/156.00 ms` over an 8-second window after
+3 seconds of warm-up. An explicit `320x240` request
+measured `18.71` FPS and p50/p95 `32.00/63.00 ms`; it is available as a venue
+fallback, not the default quality setting. Sensor-to-photon remains unmeasured.
+
+Two local NNCF 3.2.0 INT8 post-training quantization experiments were rejected.
+They improved fixed-fixture mean runtime by `1.65x` (performance preset) and
+`1.57x` (mixed preset), but both lost the `skirt` class on `nasa_shepard` and
+had minimum per-class IoU `0.0`; their manifests remain ignored and marked
+`REJECTED`. Runtime manifest validation refuses an INT8 artifact unless its
+acceptance decision is `ACCEPTED`. NNCF and its temporary packages were removed
+after the experiment, so the locked production dependency closure is unchanged.
+
 The T01/T08 suites generate short MJPG/AVI files under pytest's temporary directory
 and deletes them with the test workspace. It does not commit or download sample
 media and verifies that video mode never opens a webcam.
@@ -806,8 +892,11 @@ media and verifies that video mode never opens a webcam.
 - T06's candidate score, risk activation, feathering, and hysteresis defaults
   are explainable but uncalibrated. Gamut clipping can slightly shift L*, and
   mask/cluster errors directly limit containment quality. The OpenCV tag
-  transliterates accented Vietnamese because its bundled Hershey font is
-  ASCII-only.
+  used by the standalone T06 evidence renderer transliterates accented
+  Vietnamese because its bundled Hershey font is ASCII-only. The main T08
+  Product/Diagnostic presentation uses locked Pillow and an available system
+  Unicode font (with Pillow's embedded fallback), so its Vietnamese UI retains
+  accents without redistributing an operating-system font.
 - T07's CIELCH geometry and five-row project-authored table are simple
   guidance. They do not model culture, material, occasion, trend, or individual
   taste; their wording and usefulness require T09 user testing.

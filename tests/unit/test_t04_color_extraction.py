@@ -127,6 +127,35 @@ def test_small_kmeans_cluster_is_filtered_without_inflating_ratio() -> None:
     assert 0.90 < clusters[0].ratio < 1.0
 
 
+def test_bounded_kmeans_fit_preserves_large_two_color_contract() -> None:
+    rgb = np.full((240, 320, 3), (210, 40, 40), dtype=np.uint8)
+    mask = np.ones((240, 320), dtype=np.bool_)
+    rgb[:, 200:] = (30, 80, 220)
+    packet = _packet(rgb)
+    region = GarmentRegion(None, "upper-clothes", mask)
+
+    bounded = DominantColorExtractor().extract(
+        packet,
+        region,
+        mode=ColorExtractionMode.KMEANS_2,
+    )
+    reference = DominantColorExtractor(
+        ColorExtractionConfig(kmeans_max_fit_pixels=None)
+    ).extract(packet, region, mode=ColorExtractionMode.KMEANS_2)
+
+    assert [cluster.original_name for cluster in bounded] == ["red", "blue"]
+    assert [cluster.original_name for cluster in bounded] == [
+        cluster.original_name for cluster in reference
+    ]
+    assert [cluster.ratio for cluster in bounded] == pytest.approx(
+        [cluster.ratio for cluster in reference],
+        abs=1e-6,
+    )
+    for actual, expected in zip(bounded, reference):
+        np.testing.assert_array_equal(actual.submask, expected.submask)
+        np.testing.assert_allclose(actual.lab, expected.lab, atol=1e-5)
+
+
 def test_missing_corrected_frame_and_too_few_pixels_fail_actionably() -> None:
     original = np.zeros((8, 8, 3), dtype=np.uint8)
     packet = FramePacket(0, 1, original)
@@ -166,6 +195,8 @@ def test_confidence_map_validation_is_explicit() -> None:
         {"minimum_cluster_ratio": 0.0},
         {"kmeans_seed": -1},
         {"kmeans_tolerance": 0.0},
+        {"kmeans_max_fit_pixels": 1},
+        {"kmeans_full_refinement_iterations": -1},
     ],
 )
 def test_invalid_configuration_fails_fast(config_kwargs: dict[str, float]) -> None:

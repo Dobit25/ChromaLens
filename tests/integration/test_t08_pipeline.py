@@ -21,10 +21,16 @@ from chromalens.pipeline import (
     PipelineStage,
     StageStatus,
 )
+from chromalens.presentation import (
+    PresentationMode,
+    PresentationTheme,
+    layout_for_camera,
+)
 from chromalens.renderer import (
     PipelineDisplayState,
     PipelineView,
     PreviewMetricsTracker,
+    render_pipeline_camera_view,
     render_pipeline_view,
 )
 from chromalens.segmentation.base import Segmenter
@@ -129,19 +135,24 @@ def test_all_views_render_current_frame_on_copies() -> None:
     )
 
     for view in PipelineView:
+        state = PipelineDisplayState(
+            profile=CVDProfile.DEUTAN,
+            severity=1.0,
+            recolor_enabled=True,
+            view=view,
+            dropped_capture_frames=2,
+        )
+        camera_view = render_pipeline_camera_view(result, display_state=state)
         rendered = render_pipeline_view(
             result,
             source_name="test:views",
             telemetry=telemetry,
-            display_state=PipelineDisplayState(
-                profile=CVDProfile.DEUTAN,
-                severity=1.0,
-                recolor_enabled=True,
-                view=view,
-                dropped_capture_frames=2,
-            ),
+            display_state=state,
         )
-        assert rendered.shape == result.packet.original_bgr.shape
+        layout = layout_for_camera(240, 160)
+        x0, y0, x1, y1 = layout.camera_rect
+        assert rendered.shape == (layout.canvas_height, layout.canvas_width, 3)
+        assert np.array_equal(rendered[y0:y1, x0:x1], camera_view)
         assert rendered.dtype == np.uint8
         assert not np.shares_memory(rendered, result.packet.original_bgr)
 
@@ -160,7 +171,7 @@ def test_default_assistive_view_receives_separate_mask_confidence() -> None:
         view=PipelineView.ASSISTIVE,
     )
 
-    with patch("chromalens.renderer.render_assistive_overlay") as renderer:
+    with patch("chromalens.renderer.compose_presentation") as renderer:
         renderer.return_value = result.assistive_bgr
         render_pipeline_view(
             result,
@@ -169,9 +180,15 @@ def test_default_assistive_view_receives_separate_mask_confidence() -> None:
             display_state=state,
         )
 
-    overlay_data = renderer.call_args.args[2]
-    assert overlay_data.mask_confidence == pytest.approx(0.82)
-    assert overlay_data.degraded_reason is None
+    presentation_data = renderer.call_args.args[1]
+    assert presentation_data.original_color_label is not None
+    assert presentation_data.color_margin == pytest.approx(
+        result.primary_cluster.color_margin
+    )
+    assert any(
+        "Mask confidence: 0.820 heuristic" in line
+        for line in presentation_data.diagnostic_lines
+    )
 
 
 def test_disabled_recolor_is_explicit_and_leaves_analytical_result_original() -> None:
@@ -233,6 +250,16 @@ def test_runtime_controls_are_reversible_and_create_snapshots() -> None:
     assert not controls.settings.recolor_enabled
     assert controls.apply_key(ord("5"))
     assert controls.view is PipelineView.DIAGNOSTIC
+    assert controls.ui_mode is PresentationMode.PRODUCT
+    assert controls.apply_key(ord("u"))
+    assert controls.ui_mode is PresentationMode.DIAGNOSTIC
+    assert controls.apply_key(ord("u"))
+    assert controls.ui_mode is PresentationMode.PRODUCT
+    assert controls.theme is PresentationTheme.DARK
+    assert controls.apply_key(ord("t"))
+    assert controls.theme is PresentationTheme.LIGHT
+    assert controls.apply_key(ord("t"))
+    assert controls.theme is PresentationTheme.DARK
     assert not controls.apply_key(ord("x"))
 
 
@@ -247,6 +274,12 @@ def test_cli_rejects_non_finite_duration_and_severity() -> None:
         parser.parse_args(["--webcam", "--metrics-warmup-seconds", "nan"])
     with pytest.raises(SystemExit):
         parser.parse_args(["--webcam", "--metrics-warmup-seconds", "-1"])
+    with pytest.raises(SystemExit):
+        parser.parse_args(["--webcam", "--ui-mode", "unsupported"])
+    with pytest.raises(SystemExit):
+        parser.parse_args(["--webcam", "--theme", "unsupported"])
+    assert parser.parse_args(["--webcam"]).ui_mode == "product"
+    assert parser.parse_args(["--webcam"]).theme == "dark"
 
 
 def test_local_video_runs_the_same_pipeline_to_clean_eof(tmp_path: Path) -> None:

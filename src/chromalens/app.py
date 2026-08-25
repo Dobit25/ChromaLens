@@ -26,6 +26,7 @@ from chromalens.config import CVDProfile
 from chromalens.contracts import ColorFrame, FramePacket
 from chromalens.metrics import RuntimeMetricsSnapshot, RuntimeMetricsTracker
 from chromalens.pipeline import ChromaLensPipeline, PipelineSettings
+from chromalens.presentation import PresentationMode, PresentationTheme
 from chromalens.renderer import (
     PipelineDisplayState,
     PipelineView,
@@ -35,6 +36,7 @@ from chromalens.renderer import (
     render_preview,
 )
 from chromalens.segmentation.base import SegmenterUnavailableError
+from chromalens.segmentation.base import SegmentationFrameTelemetry
 
 
 class RenderFunction(Protocol):
@@ -69,6 +71,8 @@ class RuntimeControls:
     severity: float = 1.0
     recolor_enabled: bool = True
     view: PipelineView = PipelineView.ASSISTIVE
+    ui_mode: PresentationMode = PresentationMode.PRODUCT
+    theme: PresentationTheme = PresentationTheme.DARK
     severity_step: float = 0.1
 
     def __post_init__(self) -> None:
@@ -80,6 +84,10 @@ class RuntimeControls:
             raise TypeError("recolor_enabled must be boolean")
         if not isinstance(self.view, PipelineView):
             raise TypeError("view must be a PipelineView")
+        if not isinstance(self.ui_mode, PresentationMode):
+            raise TypeError("ui_mode must be a PresentationMode")
+        if not isinstance(self.theme, PresentationTheme):
+            raise TypeError("theme must be a PresentationTheme")
         if not 0.0 < self.severity_step <= 1.0:
             raise ValueError("severity_step must be within (0, 1]")
 
@@ -101,6 +109,8 @@ class RuntimeControls:
             severity=self.severity,
             recolor_enabled=self.recolor_enabled,
             view=self.view,
+            ui_mode=self.ui_mode,
+            theme=self.theme,
             dropped_capture_frames=dropped_capture_frames,
         )
 
@@ -119,6 +129,18 @@ class RuntimeControls:
         elif key == ord("v"):
             views = tuple(PipelineView)
             self.view = views[(views.index(self.view) + 1) % len(views)]
+        elif key == ord("u"):
+            self.ui_mode = (
+                PresentationMode.DIAGNOSTIC
+                if self.ui_mode is PresentationMode.PRODUCT
+                else PresentationMode.PRODUCT
+            )
+        elif key == ord("t"):
+            self.theme = (
+                PresentationTheme.LIGHT
+                if self.theme is PresentationTheme.DARK
+                else PresentationTheme.DARK
+            )
         elif ord("1") <= key <= ord("5"):
             self.view = tuple(PipelineView)[key - ord("1")]
         else:
@@ -137,6 +159,7 @@ class PipelineSessionResult:
     resolution: tuple[int, int] | None
     backend_name: str
     metrics: RuntimeMetricsSnapshot
+    segmentation_telemetry: SegmentationFrameTelemetry | None = None
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -183,6 +206,15 @@ def build_parser() -> argparse.ArgumentParser:
         help="SCHP runtime; auto prefers a verified OpenVINO IR (default: auto)",
     )
     parser.add_argument(
+        "--schp-live-mode",
+        choices=("async", "sync"),
+        default="async",
+        help=(
+            "webcam SCHP scheduling: bounded keyframes plus optical flow or "
+            "synchronous per-frame inference (default: async; video stays sync)"
+        ),
+    )
+    parser.add_argument(
         "--schp-checkpoint",
         type=Path,
         default=Path("models/schp/exp-schp-201908301523-atr.pth"),
@@ -218,13 +250,38 @@ def build_parser() -> argparse.ArgumentParser:
         help="initial display view (default: assistive)",
     )
     parser.add_argument(
+        "--ui-mode",
+        choices=tuple(mode.value for mode in PresentationMode),
+        default=PresentationMode.PRODUCT.value,
+        help=(
+            "presentation shell: user-facing product or technical diagnostic "
+            "(default: product; press u to toggle)"
+        ),
+    )
+    parser.add_argument(
+        "--theme",
+        choices=tuple(theme.value for theme in PresentationTheme),
+        default=PresentationTheme.DARK.value,
+        help="presentation color theme (default: dark; press t to toggle)",
+    )
+    parser.add_argument(
         "--camera-index",
         type=_non_negative_int,
         default=0,
         help="OpenCV webcam index used with --webcam (default: 0)",
     )
-    parser.add_argument("--width", type=_positive_int, help="requested webcam width")
-    parser.add_argument("--height", type=_positive_int, help="requested webcam height")
+    parser.add_argument(
+        "--width",
+        type=_positive_int,
+        default=480,
+        help="requested webcam width (default: 480; driver may choose nearest mode)",
+    )
+    parser.add_argument(
+        "--height",
+        type=_positive_int,
+        default=360,
+        help="requested webcam height (default: 360; driver may choose nearest mode)",
+    )
     parser.add_argument(
         "--max-frames",
         type=_positive_int,
@@ -254,7 +311,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--window-title",
-        default="ChromaLens AI - T08 Live Pipeline",
+        default="ChromaLens AI",
         help="OpenCV window title",
     )
     return parser
@@ -290,12 +347,17 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         # Lazy construction keeps --help and the explicit capture-only path
         # independent of model packages and special hardware.
-        pipeline = ChromaLensPipeline(_build_segmenter(args), stream_id=source.name)
+        pipeline = ChromaLensPipeline(
+            _build_segmenter(args, live_source=source.is_live),
+            stream_id=source.name,
+        )
         controls = RuntimeControls(
             profile=CVDProfile(args.profile),
             severity=args.severity,
             recolor_enabled=not args.disable_recolor,
             view=PipelineView(args.view),
+            ui_mode=PresentationMode(args.ui_mode),
+            theme=PresentationTheme(args.theme),
         )
         result = run_pipeline_session(
             source,
@@ -334,7 +396,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     return 0
 
 
-def _build_segmenter(args: argparse.Namespace):
+def _build_segmenter(args: argparse.Namespace, *, live_source: bool = False):
     """Construct only the explicitly selected backend after argument parsing."""
 
     if args.backend == "mediapipe-selfie-torso":
@@ -347,13 +409,18 @@ def _build_segmenter(args: argparse.Namespace):
         SCHPSegmenterConfig,
     )
 
-    return SCHPSegmenter(
+    segmenter = SCHPSegmenter(
         SCHPSegmenterConfig(
             checkpoint_path=args.schp_checkpoint,
             openvino_model_path=args.schp_openvino_model,
             runtime=args.schp_runtime,
         )
     )
+    if live_source and args.schp_live_mode == "async":
+        from chromalens.segmentation.async_keyframes import AsyncKeyframeSegmenter
+
+        return AsyncKeyframeSegmenter(segmenter)
+    return segmenter
 
 
 def run_pipeline_session(
@@ -365,7 +432,7 @@ def run_pipeline_session(
     max_frames: int | None = None,
     duration_seconds: float | None = None,
     metrics_warmup_seconds: float = 0.0,
-    window_title: str = "ChromaLens AI - T08 Live Pipeline",
+    window_title: str = "ChromaLens AI",
 ) -> PipelineSessionResult:
     """Run the same analytical pipeline for a latest-frame webcam or video."""
 
@@ -523,6 +590,7 @@ def run_pipeline_session(
         resolution=source.resolution,
         backend_name=pipeline.backend_name,
         metrics=metrics,
+        segmentation_telemetry=pipeline.segmentation_telemetry,
     )
 
 
@@ -633,6 +701,20 @@ def _pipeline_summary(result: PipelineSessionResult) -> str:
         if result.resolution is None
         else f"{result.resolution[0]}x{result.resolution[1]}"
     )
+    segmentation = result.segmentation_telemetry
+    segmentation_summary = (
+        "segmentation_mode=synchronous schp_inference_fps=unavailable "
+        "mask_source=current-frame mask_age_ms=0.00 "
+        "segmentation_queue_dropped=0"
+        if segmentation is None
+        else (
+            f"segmentation_mode=async schp_inference_fps="
+            f"{_optional_number(segmentation.inference_fps)} "
+            f"mask_source={segmentation.mask_source.value} "
+            f"mask_age_ms={_optional_number(segmentation.mask_age_ms)} "
+            f"segmentation_queue_dropped={segmentation.dropped_pending_frames}"
+        )
+    )
     return (
         f"Pipeline complete: source={result.source_name} backend={result.backend_name} "
         f"frames={result.frames_processed} resolution={resolution} "
@@ -669,7 +751,8 @@ def _pipeline_summary(result: PipelineSessionResult) -> str:
         f"render_samples={metrics.retained_source_read_to_render_samples} "
         f"display_submit_samples="
         f"{metrics.retained_source_read_to_display_submit_samples} "
-        f"dropped={metrics.dropped_capture_frames} degraded={metrics.degraded_frames}"
+        f"dropped={metrics.dropped_capture_frames} degraded={metrics.degraded_frames} "
+        f"{segmentation_summary}"
     )
 
 

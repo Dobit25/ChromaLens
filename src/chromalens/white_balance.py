@@ -210,8 +210,8 @@ class GrayWorldWhiteBalancer:
         )
 
         corrected_bgr = np.clip(
-            original_bgr.astype(np.float64)
-            * applied_gains.reshape((1, 1, 3)),
+            original_bgr.astype(np.float32)
+            * applied_gains.astype(np.float32).reshape((1, 1, 3)),
             0.0,
             255.0,
         ).astype(np.uint8)

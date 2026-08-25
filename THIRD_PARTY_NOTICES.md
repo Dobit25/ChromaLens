@@ -9,6 +9,7 @@ and hashes.
 | --- | --- | --- | --- |
 | NumPy | `1.26.4` | Arrays and numerical operations | BSD-3-Clause; NumPy Developers; installed wheel includes its transitive binary notices. |
 | OpenCV contrib Python | `4.10.0.84` | Camera/video, colour conversion, morphology, display | Apache-2.0; OpenCV contributors. |
+| Pillow | `12.3.0` | Unicode text measurement and rendering in the Product/Diagnostic presentation shell | MIT-CMU; Pillow contributors. ChromaLens does not redistribute the operating-system fonts selected at runtime. |
 | MediaPipe | `0.10.21` | Selfie Segmentation and Face Detection model/runtime | Apache-2.0; MediaPipe Authors/Google LLC; bundled model assets. See `models/README.md`. |
 | SCHP source graph | upstream commit `eb84c432cc697f494d99662a05f2335eb2f26095` | Primary ATR semantic human/garment parsing graph | MIT; Peike Li. ChromaLens uses a portable activated-BatchNorm inference adaptation; see `models/README.md`. |
 | SCHP ATR checkpoint | SHA-256 `e9d7c91ce3b4e7133df56b599fc817b533e3439c5e8d282a59126d2fda339a2a` | External primary-demo model weights | Checkpoint redistribution license is not separately stated upstream. The owner-reviewed local object and derived IR are ignored and are not redistributed by this repository. |

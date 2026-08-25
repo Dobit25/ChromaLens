@@ -59,6 +59,8 @@ class ColorExtractionConfig:
     kmeans_seed: int = 17
     kmeans_max_iterations: int = 30
     kmeans_tolerance: float = 1e-3
+    kmeans_max_fit_pixels: int | None = 4_096
+    kmeans_full_refinement_iterations: int = 1
     naming_temperature: float = 20.0
 
     def __post_init__(self) -> None:
@@ -82,6 +84,10 @@ class ColorExtractionConfig:
             raise ValueError("kmeans_seed must be non-negative")
         if self.kmeans_max_iterations <= 0:
             raise ValueError("kmeans_max_iterations must be positive")
+        if self.kmeans_max_fit_pixels is not None and self.kmeans_max_fit_pixels < 2:
+            raise ValueError("kmeans_max_fit_pixels must be at least 2 or None")
+        if self.kmeans_full_refinement_iterations < 0:
+            raise ValueError("kmeans_full_refinement_iterations must be non-negative")
         if not np.isfinite(self.kmeans_tolerance) or self.kmeans_tolerance <= 0.0:
             raise ValueError("kmeans_tolerance must be positive and finite")
         if not np.isfinite(self.naming_temperature) or self.naming_temperature <= 0.0:
@@ -133,7 +139,16 @@ class DominantColorExtractor:
                 "mask/lighting or lower a documented threshold."
             )
 
-        lab_image = rgb_image_to_cielab(corrected_rgb)
+        rows, columns = np.nonzero(valid_mask)
+        y0, y1 = int(rows.min()), int(rows.max()) + 1
+        x0, x1 = int(columns.min()), int(columns.max()) + 1
+        # OpenCV's conversion is pixel-local. Restricting it to the valid-mask
+        # bounding box preserves every converted value while avoiding work on
+        # unrelated background surrounding a garment.
+        lab_image = np.empty((*valid_mask.shape, 3), dtype=np.float32)
+        lab_image[y0:y1, x0:x1] = rgb_image_to_cielab(
+            corrected_rgb[y0:y1, x0:x1]
+        )
         if mode is ColorExtractionMode.MEDIAN:
             representative = np.median(lab_image[valid_mask], axis=0)
             return (
@@ -154,7 +169,7 @@ class DominantColorExtractor:
         valid_mask: BinaryMask,
     ) -> tuple[ColorCluster, ...]:
         pixels = lab_image[valid_mask].astype(np.float64)
-        if np.unique(pixels, axis=0).shape[0] < 2:
+        if not np.any(pixels != pixels[0]):
             representative = np.median(pixels, axis=0)
             return (
                 _build_cluster(
@@ -250,37 +265,88 @@ def _deterministic_kmeans_two(
     pixels: NDArray[np.float64],
     config: ColorExtractionConfig,
 ) -> tuple[NDArray[np.int64], NDArray[np.float64]]:
-    rng = np.random.default_rng(config.kmeans_seed)
-    first_index = int(rng.integers(0, pixels.shape[0]))
-    first_center = pixels[first_index]
-    squared_distances = np.sum((pixels - first_center) ** 2, axis=1)
-    probabilities = squared_distances / float(np.sum(squared_distances))
-    second_index = int(rng.choice(pixels.shape[0], p=probabilities))
-    centers = np.stack((first_center, pixels[second_index])).astype(np.float64)
+    fit_pixels = pixels
+    if (
+        config.kmeans_max_fit_pixels is not None
+        and pixels.shape[0] > config.kmeans_max_fit_pixels
+    ):
+        sampling_rng = np.random.default_rng(config.kmeans_seed)
+        sample_indices = np.sort(
+            sampling_rng.choice(
+                pixels.shape[0],
+                size=config.kmeans_max_fit_pixels,
+                replace=False,
+            )
+        )
+        fit_pixels = pixels[sample_indices]
 
-    labels = np.zeros(pixels.shape[0], dtype=np.int64)
+    rng = np.random.default_rng(config.kmeans_seed)
+    first_index = int(rng.integers(0, fit_pixels.shape[0]))
+    first_center = fit_pixels[first_index]
+    squared_distances = np.sum((fit_pixels - first_center) ** 2, axis=1)
+    distance_sum = float(np.sum(squared_distances))
+    if distance_sum <= 0.0:
+        different = np.flatnonzero(np.any(pixels != first_center, axis=1))
+        if different.size == 0:
+            return np.zeros(pixels.shape[0], dtype=np.int64), np.stack(
+                (first_center, first_center)
+            ).astype(np.float64)
+        second_center = pixels[int(different[0])]
+    else:
+        probabilities = squared_distances / distance_sum
+        second_index = int(rng.choice(fit_pixels.shape[0], p=probabilities))
+        second_center = fit_pixels[second_index]
+    centers = np.stack((first_center, second_center)).astype(np.float64)
+
+    labels = np.zeros(fit_pixels.shape[0], dtype=np.int64)
     for _ in range(config.kmeans_max_iterations):
-        distances = np.sum((pixels[:, None, :] - centers[None, :, :]) ** 2, axis=2)
+        distances = np.sum(
+            (fit_pixels[:, None, :] - centers[None, :, :]) ** 2,
+            axis=2,
+        )
         labels = np.argmin(distances, axis=1).astype(np.int64)
         new_centers = centers.copy()
         for cluster_index in range(2):
-            members = pixels[labels == cluster_index]
+            members = fit_pixels[labels == cluster_index]
             if members.size == 0:
-                assigned_distances = distances[np.arange(pixels.shape[0]), labels]
+                assigned_distances = distances[
+                    np.arange(fit_pixels.shape[0]), labels
+                ]
                 replacement_index = int(np.argmax(assigned_distances))
-                new_centers[cluster_index] = pixels[replacement_index]
+                new_centers[cluster_index] = fit_pixels[replacement_index]
             else:
                 new_centers[cluster_index] = np.mean(members, axis=0)
         maximum_shift = float(np.max(np.linalg.norm(new_centers - centers, axis=1)))
         centers = new_centers
         if maximum_shift <= config.kmeans_tolerance:
             break
-    final_distances = np.sum(
+    final_labels = _assign_to_centers(pixels, centers)
+    for _ in range(config.kmeans_full_refinement_iterations):
+        refined = centers.copy()
+        for cluster_index in range(2):
+            members = pixels[final_labels == cluster_index]
+            if members.size:
+                refined[cluster_index] = np.mean(members, axis=0)
+        converged = (
+            float(np.max(np.linalg.norm(refined - centers, axis=1)))
+            <= config.kmeans_tolerance
+        )
+        centers = refined
+        final_labels = _assign_to_centers(pixels, centers)
+        if converged:
+            break
+    return final_labels, centers
+
+
+def _assign_to_centers(
+    pixels: NDArray[np.float64],
+    centers: NDArray[np.float64],
+) -> NDArray[np.int64]:
+    distances = np.sum(
         (pixels[:, None, :] - centers[None, :, :]) ** 2,
         axis=2,
     )
-    final_labels = np.argmin(final_distances, axis=1).astype(np.int64)
-    return final_labels, centers
+    return np.argmin(distances, axis=1).astype(np.int64)
 
 
 def _build_cluster(

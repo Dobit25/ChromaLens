@@ -92,3 +92,45 @@ conversion fidelity, not for speed. MediaPipe remains the documented explicit
 fallback for venue reliability. `--schp-runtime pytorch` preserves the
 reference backend; `auto` prefers verified OpenVINO and never silently changes
 the selected model family.
+
+## Owner-approved live corrective pass (2026-08-25)
+
+Webcam execution now keeps FP32/512 SCHP as the authoritative parser but moves
+it to one capacity-one latest-keyframe worker. Optical flow propagates the most
+recent accepted semantic regions onto current frames; the overlay separately
+reports pipeline FPS, SCHP FPS, mask source, keyframe ID, age, and dropped
+pending inferences. Invalid propagation or a mask older than the configured
+limit is cleared. Local video remains synchronous by default.
+
+On the same development machine, a 640x480 headless webcam run with a 3-second
+warm-up and 15-second measurement produced:
+
+```text
+pipeline_fps=11.82
+schp_inference_fps=2.21
+source_read_to_render_p50_ms=110.00
+source_read_to_render_p95_ms=171.15
+frame_processing_to_render_p50_ms=78.00
+frame_processing_to_render_p95_ms=110.00
+sensor_to_photon_ms=NOT_MEASURED
+```
+
+This speedup combines asynchronous keyframes with bounded deterministic K-means
+fitting; final color-cluster membership is still assigned across every valid
+garment pixel. It is development-host evidence, not an official demo-hardware
+claim.
+
+For the production GUI, requesting `480x360` selected an actual `640x360`
+camera mode and measured 10.75 and 13.75 pipeline FPS in two runs. The final
+default-command run reported GUI-submit p50/p95 110/156 ms over 8 seconds after
+a 3-second warm-up. The verified SCHP input remains 512x512. An explicit
+320x240 venue fallback measured 18.71 FPS and 32/63 ms; sensor-to-photon
+remains `NOT_MEASURED` for all observations.
+
+INT8 post-training quantization was attempted locally with NNCF 3.2.0 using 34
+consented/public calibration samples. Performance and mixed presets improved
+mean fixed-fixture runtime by 1.65x and 1.57x respectively, but both lost the
+`skirt` class on `nasa_shepard`; minimum per-class IoU was 0.0 and mean IoU was
+0.849/0.851. Both artifacts are ignored and marked `REJECTED`. Runtime manifest
+validation refuses rejected INT8, FP32 remains production, and temporary NNCF
+packages were removed so the locked runtime dependency set did not change.

@@ -43,6 +43,10 @@ This table is intentionally empty until an agent starts the plan.
 | T09 | Evaluation, responsible AI, and evidence package | `DONE` | Repository owner + Codex (coordinators) | 2026-08-20 18:59 +07:00 | 2026-08-24 00:00 +07:00 | T09 completion entry: strict validation of all four workstreams, 241-test full suite, accepted physical limitation, and fresh performance evidence |
 | T10 | SCHP/OpenVINO optimization gate | `DONE` | Repository owner + Codex | 2026-08-24 23:18 +07:00 | 2026-08-24 23:56 +07:00 | Owner-reopened gate accepted: verified ATR strict load, FP32 OpenVINO equivalence, SCHP default, explicit MediaPipe fallback, combined hashed lock and 258-test suite |
 | T11 | Competition handoff support | `DONE` | Repository owner + Codex | 2026-08-24 20:56 +07:00 | 2026-08-24 21:16 +07:00 | T11 completion entry: clean wheel install, 248-test suite, real-backend fallback/screenshots, claims/credits/shot-list handoff |
+| T11-UI | Product/diagnostic presentation correction | `DONE` | Repository owner + Codex | 2026-08-25 01:15 +07:00 | 2026-08-25 09:05 +07:00 | Shared pipeline now has an unobscured Product default and external Diagnostic shell; 283 tests pass |
+| T11-UI-2 | Product card text containment correction | `DONE` | Repository owner + Codex | 2026-08-25 09:20 +07:00 | 2026-08-25 10:10 +07:00 | Independent bounded title/value/detail regions prevent overlap; 286 tests pass |
+| T11-UI-3 | Product visual hierarchy and status-bar refinement | `DONE` | Repository owner + Codex | 2026-08-25 10:20 +07:00 | 2026-08-25 10:31 +07:00 | Cyan focal frame, result hierarchy, quieter cards and textual status bar; 286 tests pass |
+| T11-UI-4 | User-selectable high-contrast light/dark themes | `DONE` | Repository owner + Codex | 2026-08-25 10:40 +07:00 | 2026-08-25 10:42 +07:00 | Dark/light palette toggle with >=7:1 tested card/chrome contrast; 294 tests pass |
 
 ## 3. Active blockers
 
@@ -1251,7 +1255,7 @@ preceding entry.
 
 ### `2026-08-20 00:47 +07:00` — `T03` `White balance and lighting quality`
 
-**Status:** `IN_PROGRESS`
+**Status:** `DONE`
 **Owner/agent:** Codex
 **Plan reference:** `plan.md#t03--white-balance-and-lighting-quality`
 **Requirements/rubric affected:** FR-04, NFR-01, Metric 03 explainable local pipeline
@@ -4013,6 +4017,160 @@ accuracy superiority. MediaPipe remains the venue-reliability fallback.
 
 ---
 
+### `2026-08-25 00:38 +07:00` - `T10/T11 corrective` `Asynchronous SCHP live performance pass`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Plan reference:** T10 optimization evidence and T11 competition demo reliability; no new product scope
+
+#### Owner-approved objective and smallest implementation
+
+- Preserve verified SCHP-ATR/OpenVINO as the authoritative live garment parser
+  and preserve MediaPipe as the explicit fallback.
+- For live webcam input only, move SCHP inference to one bounded latest-frame
+  worker, propagate the most recent accepted semantic mask to current frames
+  with optical flow, and keep capture/display responsive without claiming that
+  propagated frames are fresh SCHP inferences.
+- Expose separate pipeline/display-loop FPS, SCHP inference FPS, mask source,
+  keyframe ID, and mask age. Clear rather than reuse a mask when it exceeds the
+  configured age or propagation validation fails.
+- Keep finite-video evaluation synchronous by default so existing per-frame
+  evidence semantics remain reproducible. Add an explicit synchronous live
+  diagnostic option.
+- Establish the asynchronous baseline and mask-quality tests before attempting
+  any INT8 experiment. An INT8 artifact may be accepted only with checksum,
+  fixed-fixture equivalence, measured speedup, and no silent fallback.
+
+#### Pre-change measurements
+
+Direct `benchmark_app` measurements of the existing ignored 512x512 FP32 IR on
+the development Lenovo 83DV:
+
+| Runtime mode | Result |
+| --- | --- |
+| OpenVINO CPU sync/latency, 10 iterations | median 298.89 ms; 3.19 FPS |
+| OpenVINO CPU async/throughput, 5 requests | median 1185.31 ms; 3.80 FPS |
+| OpenVINO GPU sync/latency, 10 iterations | median 564.89 ms; 1.75 FPS |
+| OpenVINO GPU async/throughput, 4 requests | median 2245.87 ms; 1.78 FPS |
+
+OpenVINO enumerated `CPU` and `GPU`; the latter identified the development
+machine's NVIDIA GeForce RTX 4050 Laptop GPU. The current locked Torch is
+`2.5.1+cpu` with no CUDA runtime. These observations reject a simple OpenVINO
+GPU or multi-request switch: both increase live latency, and GPU is slower for
+this IR on this machine.
+
+#### Definition-of-Done state
+
+- [x] Live SCHP inference is off the display thread and all queues/state are bounded.
+- [x] Current-frame masks are either freshly inferred, explicitly propagated,
+  or cleared as stale/unavailable; no stale result is mislabeled current.
+- [x] Overlay and terminal evidence distinguish pipeline FPS, SCHP FPS, mask
+  source/age, and unmeasured sensor-to-photon latency.
+- [x] Deterministic propagation, stale/failure, shutdown, synchronous fallback,
+  and existing regression tests pass without webcam/network/model dependency.
+- [x] A real-weight development-machine run records achieved FPS/latency and
+  mask behavior; INT8 is accepted or rejected with objective evidence.
+
+#### Implemented runtime behavior
+
+- `AsyncKeyframeSegmenter` owns one daemon inference worker, one pending input
+  slot, and one completed output slot. Pending frames are overwritten and
+  counted; there is no unbounded inference queue.
+- A quarter-resolution Farneback target-to-source flow propagates semantic
+  regions onto the current packet. Region area validation, a 2,000 ms age
+  limit, explicit warm-up/unavailable states, and bounded shutdown prevent an
+  old/failing mask from being silently shown as current inference.
+- Webcam SCHP defaults to `--schp-live-mode async`. The explicit `sync` mode
+  and all finite-video runs retain per-frame SCHP inference. MediaPipe remains
+  selectable and was not wrapped or deleted.
+- Overlay/terminal output separates pipeline FPS, SCHP FPS, mask provenance,
+  keyframe ID/age, capture drops, and inference-mailbox drops. Propagated
+  output is never labeled as a fresh SCHP inference.
+- The webcam default requests 480x360; the development driver selected
+  640x360. SCHP model input remains the accepted 512x512 graph. Explicit
+  capture sizes remain reversible CLI options.
+- Color K-means now fits centers on at most 4,096 deterministically selected
+  pixels, performs bounded full-pixel refinement, and assigns every valid
+  garment pixel to the final centers. Lab conversion is restricted to the
+  exact valid-mask bounding box; white-balance application uses float32. Unit
+  and integration contracts preserved deterministic names, ratios, masks,
+  source-frame immutability, and recolor containment.
+
+#### Measured development-machine outcome
+
+All following webcam runs used the verified FP32 SCHP/OpenVINO CPU graph on
+Lenovo 83DV / Intel Core i5-13450HX. They are software timing observations,
+not official demo-hardware or sensor-to-photon measurements.
+
+| Run | Pipeline FPS | SCHP FPS | Render/submit p50/p95 | Result |
+| --- | ---: | ---: | ---: | --- |
+| Initial async 640x480 headless, before bounded color fit | 5.12 | 2.17 | render 234/281 ms | Established non-blocking baseline |
+| Optimized 640x480 headless, 15 s after 3 s warm-up | 11.82 | 2.21 | render 110/171 ms | Exceeded 10 FPS target headless |
+| Production GUI default request 480x360, actual 640x360, final run | 10.75 | 1.48 | submit 110/156 ms | Exceeded 10 FPS target; zero latency slope in the measured window |
+| Same GUI mode, preceding run | 13.75 | 1.46 | submit 78/141 ms | Demonstrates run-to-run host variability |
+| Explicit 320x240 GUI venue fallback | 18.71 | 1.58 | submit 32/63 ms | Optional speed/quality trade-off |
+
+The final default GUI run processed 120 frames, retained 86 measured samples,
+reported current mask source `propagated` at exit with 968 ms age, and counted
+65 capture overwrites plus 103 inference-mailbox overwrites. Fourteen frames
+were degraded by normal analytical-stage criteria (for example insufficient
+two-color risk context), not fabricated as successful. `sensor_to_photon_ms`
+remains `NOT_MEASURED`.
+
+#### INT8 experiment and decision
+
+- NNCF 3.2.0 was temporarily installed only in `lens`; anonymous telemetry was
+  disabled via `NNCF_CI`, and calibration used 34 local samples from the five
+  public fixtures plus owner-confirmed consented T09 media. No media was
+  uploaded or tracked.
+- Performance preset: 1.65x mean fixed-fixture speedup, but class sets differed,
+  `nasa_shepard` lost `skirt`, minimum IoU was 0.0, and mean IoU was 0.849.
+- Mixed preset: 1.57x speedup, but the same class loss occurred; minimum IoU
+  was 0.0 and mean IoU was 0.851.
+- Both ignored manifests record `REJECTED`. Runtime validation now refuses any
+  INT8 manifest whose decision is not `ACCEPTED`. FP32 remains production.
+  NNCF and all 13 packages introduced only for the experiment were removed;
+  `pip check` passed and every committed lock remained byte-unchanged.
+
+#### Commands and observed results
+
+| Command/check | Observed result |
+| --- | --- |
+| OpenVINO `benchmark_app` CPU/GPU sync and throughput modes | CPU sync 3.19 FPS/298.89 ms median; CPU throughput 3.80 FPS/1185.31 ms median; GPU sync 1.75 FPS/564.89 ms; GPU throughput 1.78 FPS/2245.87 ms |
+| Targeted async/T03/T04/T08 suites during implementation | exit 0; final targeted pass 50 passed |
+| `python -m pytest -q` final | exit 0; 269 passed in 15.84 s |
+| `python -m chromalens --help` | exit 0; async/sync and resolution controls rendered without camera/model access |
+| Three-frame SCHP video command, headless | exit 0; synchronous mode, three current-frame inferences, zero degraded |
+| Final default SCHP webcam GUI command | exit 0; 120 frames and measurements above |
+| Two NNCF INT8 calibration/equivalence commands | logical exit 5 by design; both objective gates `REJECTED` |
+| NNCF/toolchain uninstall, `pip check`, lock diff | exit 0; no NNCF remains, no broken requirement, all four locks unchanged |
+| Full artifact ignore checks and `git diff --check` | exit 0; INT8 IR/manifests and profiler outputs remain ignored; patch valid |
+
+#### Files changed
+
+- Runtime: `src/chromalens/segmentation/async_keyframes.py`, segmentation base
+  contracts/exports/SCHP manifest gate, `app.py`, `pipeline.py`, `renderer.py`,
+  `color_extraction.py`, and `white_balance.py`.
+- Tests: new `tests/unit/test_async_keyframes.py` plus T04 and T10 regression
+  coverage.
+- Documentation/evidence: `README.md`, `docs/architecture.md`,
+  `docs/t10-schp-openvino.md`, and this log.
+
+#### Remaining limitations and exact next action
+
+- Display responsiveness is 10-14 FPS in the measured default mode, while
+  authoritative SCHP keyframes remain approximately 1.5-2.2 FPS. Optical flow
+  improves alignment between keyframes but is not a new semantic inference and
+  can fail under fast motion, occlusion, or large deformation; the visible
+  provenance/age/stale gate must remain enabled.
+- INT8 is rejected, not deferred or silently active. Reconsidering it requires
+  a stronger representative calibration/validation set and a fresh owner gate.
+- No implementation task remains in `plan.md`. Rehearse the default webcam
+  command and explicit MediaPipe/320x240 venue fallbacks, then perform the
+  owner-controlled recording, form verification, consent, and submission.
+
+---
+
 ## 6. Final handoff checklist
 
 Complete this only after all P0 work is finished.
@@ -4028,3 +4186,335 @@ Complete this only after all P0 work is finished.
 - [x] Privacy and responsible-AI behavior are recorded.
 - [x] A known-good demo version/commit is identified.
 - [x] The next human action for competition submission is stated.
+
+---
+
+### `2026-08-25 01:15 +07:00` - `T11-UI` `Product/diagnostic presentation correction started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Plan reference:** Owner-approved T11 demo usability correction; no pipeline, model, metric, or MVP-scope change
+
+#### Objective and approved boundary
+
+- Keep one analytical pipeline and add two presentation modes: `product` as
+  the user-facing default and `diagnostic` for technical evidence.
+- Render camera content, recolor, and outlines inside an unobscured viewport;
+  place all product cards, diagnostic telemetry, and controls outside it.
+- Product mode retains separate original-color, relational-risk, and lighting
+  states in plain Vietnamese, plus assistance/profile/guidance/action messages,
+  while hiding raw RGB, margins, confidence decimals, backend, frame IDs,
+  inference details, drops, and degraded implementation strings.
+- Diagnostic mode retains the existing technical fields without drawing them
+  over camera pixels. Both modes share the same result and renderer contracts.
+- Use the already locked Pillow 12.3.0 through a direct dependency declaration
+  and a Unicode-capable font without redistributing an operating-system font.
+  No new UI framework, network runtime, model, threshold, or analytical
+  behavior is authorized.
+
+#### Starting state
+
+- Branch `mvp` is synchronized with `origin/mvp` at
+  `e42080e1a9bafee32656bcb245843903a4630d44`.
+- The working tree contains the owner-approved, uncommitted asynchronous SCHP
+  corrective pass recorded immediately above: 14 modified and two untracked
+  source/test files. Those changes must be preserved and tested together.
+- Approved interpreter is `D:\Coding\Anaconda\envs\lens\python.exe`, Python
+  3.10.20; `pip check` reports no broken requirements.
+- Existing `render_pipeline_view()` paints a large technical status panel and
+  three-line footer directly over the camera frame. Product and diagnostic
+  modes do not yet exist.
+
+#### Smallest implementation and acceptance evidence
+
+1. Refactor the renderer so camera views contain only intentional analytical
+   pixels (source/assistive/mask/risk/diagnostic content and double outline).
+2. Add a typed presentation compositor that pastes the camera frame without
+   resizing into a separate canvas and draws Product or Diagnostic UI outside
+   the exact viewport rectangle.
+3. Add `--ui-mode product|diagnostic`, default `product`, plus a reversible
+   `u` key. Keep `--help` camera/model independent and headless execution valid.
+4. Bundle/test Unicode Vietnamese text, accessible text-plus-shape statuses,
+   truncation/wrapping, and layouts for 320x240, 640x360, and 640x480.
+5. Prove the viewport is not overwritten by presentation UI, source and
+   analytical contracts remain unchanged, both modes render offscreen, the
+   compositor overhead is measured, locks remain deterministic, and the full
+   suite passes.
+
+#### Baseline checks
+
+| Check | Result |
+| --- | --- |
+| Source-of-truth review | PASS: `AGENTS.md`, `context.md`, `rubric.md`, `plan.md`, `knowledge_plan_discussion.md`, and `codinglog.md` read in order; no conflict found |
+| Git baseline | PASS: local/remote `mvp` both at `e42080e...`; existing asynchronous SCHP worktree preserved |
+| Approved runtime | PASS: Python 3.10.20 in `lens`; `pip check` clean |
+| UI tests/implementation | NOT RUN - implementation begins after this entry |
+
+#### Exact next action
+
+Implement the typed two-mode compositor and camera-only view boundary, then
+run focused layout/CLI/headless tests before the complete regression suite.
+
+---
+
+### `2026-08-25 09:05 +07:00` - `T11-UI` `Product/diagnostic presentation correction completed`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Plan reference:** Owner-approved T11 demo usability correction; one analytical pipeline retained
+
+#### User-visible outcome
+
+- `--ui-mode product` is now the default. It presents an accented-Vietnamese,
+  card-based UI with garment colour/swatch, textual colour confidence,
+  distinguishability state, lighting guidance, matching guidance, selected CVD
+  profile, assistance state, and an actionable message. Raw RGB, decimal
+  margin/confidence/risk, backend/device, frame ID, inference telemetry, drops,
+  and degraded implementation strings are absent.
+- `--ui-mode diagnostic` presents those technical fields in an external right
+  panel. `u` switches shells at runtime without rebuilding or changing the
+  analytical pipeline; `--view` remains an independent camera-content choice.
+- The renderer now produces a camera-sized analytical view containing only the
+  source/assistive/mask/risk content and intentional garment outline. The
+  compositor pastes those pixels byte-for-byte into a larger canvas, with the
+  header, panel, and footer outside its exact rectangle.
+- Pillow 12.3.0 is a direct runtime dependency and all four hashed pip locks
+  were regenerated. The UI selects Segoe UI, DejaVu Sans, or Arial when present,
+  then Pillow's embedded fallback; no operating-system font binary is copied or
+  redistributed by ChromaLens.
+
+#### Acceptance checklist and evidence
+
+- [x] No presentation pixel overlaps the camera viewport: byte-equality tests
+  pass for both modes at 320x240, 640x360, and 640x480.
+- [x] Aspect ratio is preserved: the camera rectangle retains the exact input
+  width and height; the compositor does not resize analytical pixels.
+- [x] Long content is wrapped/ellipsized within cards/panels and renders in both
+  modes without overflow exceptions.
+- [x] Webcam, video, and headless paths share the same compositor contract;
+  a five-frame locked MediaPipe fallback-video headless run exited zero.
+- [x] Pipeline analysis is unchanged: camera-only views use existing current
+  `PipelineFrameResult` masks/colours/risks/recolor, and the complete regression
+  suite passes.
+- [x] Product states are not colour-only: visible text, bordered cards, swatch
+  shape, and action copy carry the meaning. Product-copy tests cover low,
+  medium, high, and unavailable risk states and forbid raw technical strings.
+- [x] Added render cost is bounded below pipeline capacity: 100-frame means
+  were Product 12.292/13.762/15.534 ms and Diagnostic
+  9.006/10.501/11.914 ms at 320x240, 640x360, and 640x480 respectively. The
+  slowest compositor-only capacity was 64.4 FPS, materially above the measured
+  SCHP display pipeline range of 10-19 FPS; this is development-host software
+  timing, not sensor-to-photon evidence.
+- [x] Unicode/provenance is explicit: Pillow is pinned at 12.3.0 (MIT-CMU),
+  notices and lock documentation are updated, and no unlicensed font is tracked.
+
+#### Commands and observed results
+
+| Command/check | Exit | Observed result |
+| --- | ---: | --- |
+| `python -m pytest -q tests/unit/test_presentation.py tests/unit/test_t06_renderer.py tests/integration/test_t08_pipeline.py tests/test_t00_smoke.py` (first run) | 1 | 39 passed, one new assertion was too strict about a diagnostic-line tuple; runtime output was correct |
+| Same focused command after the minimum assertion correction | 0 | 40 passed in 2.17 s |
+| Four documented `python -m piptools compile ...` lock commands in `lens` | 0 | All four locks regenerated; Pillow remains 12.3.0 with existing hashes and gains direct `chromalens-ai` provenance |
+| `python -m ruff check src tests scripts` | 1 | `ruff` is not installed or locked; no global/base install or unapproved dependency was introduced |
+| `python -m chromalens --help` | 0 | Product default, diagnostic choice, and `u` toggle documented without camera/model access |
+| `python -m pytest -q` | 0 | 283 passed in 24.14 s |
+| `python -m compileall -q src tests scripts` | 0 | Source, tests, and scripts compile |
+| 100-frame offscreen compositor benchmark | 0 | Product 12.292-15.534 ms; Diagnostic 9.006-11.914 ms across the three accepted resolutions |
+| `python -m chromalens --video artifacts/t11-handoff/fallback_mediapipe.avi --backend mediapipe-selfie-torso --no-display --max-frames 5` | 0 | Five frames, no drops/degraded frames; 8.90 FPS on development host |
+| `python -m pip check` | 0 | No broken requirements |
+| `git diff --check` | 0 | Patch has no whitespace errors |
+
+#### Files changed by this correction
+
+- Runtime: new `src/chromalens/presentation.py`, plus `app.py` and `renderer.py`.
+- Tests: new `tests/unit/test_presentation.py` and updated T08 integration tests.
+- Dependency contract: `pyproject.toml`, all four pip locks, and
+  `requirements/README.md`.
+- Documentation: `README.md`, `docs/architecture.md`,
+  `THIRD_PARTY_NOTICES.md`, and this log.
+- The pre-existing asynchronous SCHP corrective work remains in the same dirty
+  worktree and passed together with this correction; it was not reverted or
+  misattributed as new UI work.
+
+#### Deviations, limitations, and exact next action
+
+- No font binary is committed. This avoids redistributing a system font and
+  keeps the repository small, but exact glyph metrics can differ slightly by
+  operating system; wrapping and bounds are tested independently of a specific
+  font file. A bundled OFL font remains an optional future branding asset, not a
+  runtime requirement.
+- `ruff` was not runnable because it is outside the frozen toolchain. Test,
+  compile, dependency, lock, and whitespace gates all passed; adding a new lint
+  tool should be a separately owner-approved dependency change.
+- No task after T11 exists in `plan.md`. The exact next action is an owner demo
+  rehearsal of Product mode, a `u` switch to Diagnostic mode for judging
+  evidence, and then an owner-controlled review/commit of the accumulated SCHP
+  corrective pass plus this UI correction.
+
+---
+
+### `2026-08-25 10:10 +07:00` - `T11-UI-2` `Product card text containment corrected`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+
+#### Cause and correction
+
+- Product cards previously allowed the main value to wrap to two lines while
+  placing the secondary detail at a fixed bottom coordinate. Those text roles
+  had no reserved rectangles, so their glyph boxes could overlap.
+- Each card now has explicit, disjoint title, value, and detail rectangles.
+  Titles/details are single-line ellipsized; values derive their one/two-line
+  capacity from the actual reserved height and receive an ellipsis when more
+  content remains.
+- Product content height is at least 480 px so normal 320x240, 640x360, and
+  640x480 inputs provide stable card geometry. Camera pixels remain unchanged
+  and keep their original dimensions.
+- Card borders follow the layout's right/bottom-exclusive coordinate contract,
+  preventing even a one-pixel Pillow outline from entering the inter-card gap.
+
+#### Evidence
+
+| Check | Result |
+| --- | --- |
+| Focused Product/T08 tests after final correction | exit 0; 28 passed in 1.80 s |
+| Long-string containment at 320x240, 640x360, 640x480 | PASS; title/value/detail rectangles are disjoint and every inter-card gap remains byte-identical to the panel surface |
+| Regenerated real MediaPipe Product evidence | exit 0; visual review confirms the long distinguishability status wraps without touching its detail line |
+| Full `python -m pytest -q` | exit 0; 286 passed in 44.03 s |
+| `python -m compileall -q src tests` | exit 0 |
+| `git diff --check` | exit 0 |
+
+Two implementation-loop failures were corrected rather than hidden: the first
+new test used `zip(..., strict=True)` with four cards versus three adjacent
+pairs; a later optimization left one obsolete `target` parameter and exposed
+Pillow's inclusive rectangle endpoint. Each received the minimum scoped fix
+and the relevant suite was rerun before the final full pass.
+
+#### Files changed and next action
+
+- `src/chromalens/presentation.py`: bounded card regions, wrapping/ellipsis,
+  exclusive border coordinates, and taller minimum Product content area.
+- `tests/unit/test_presentation.py`: deterministic region-disjointness and
+  long-content gap-containment coverage at all three required resolutions.
+- `codinglog.md`: actual task state and command evidence.
+- Exact next action: owner demo rehearsal in default Product mode; no new
+  implementation task exists after T11 in `plan.md`.
+
+---
+
+### `2026-08-25 10:31 +07:00` - `T11-UI-3` `Product hierarchy and status bar refined`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+
+#### Selective feedback applied
+
+- Adopted the proposed dark AI palette with one cyan primary accent, plus
+  restrained green/warning/violet semantic accents. Every state still has a
+  textual label; colour alone never carries meaning for a CVD user.
+- Strengthened hierarchy in this order: cyan-framed unchanged camera viewport,
+  accented/larger garment-colour result, larger distinguishability result,
+  then quieter lighting and matching cards. Secondary cards no longer repeat
+  heavy borders.
+- Added a compact diamond brand mark, active Product underline, and profile
+  pill to the header. Increased card label/value/detail contrast and sizes.
+- Replaced the dense Product footer with four allocated status items: camera,
+  AI, recognition, and assistance, followed by a separate action/control row.
+  Every item is ellipsized within its own allocation at narrow sizes.
+- Retained the T11-UI-2 disjoint title/value/detail rectangles and long-text
+  containment. Weighted card heights still leave two lines for the main risk
+  result at normal demo sizes.
+
+#### Feedback intentionally not applied
+
+- No hover/click/ripple/active animation was added: OpenCV cards are
+  informational and currently have no useful card-specific action. Simulating
+  a button would be false affordance and add mouse-state complexity to the demo.
+- No glass badge, tooltip, or continuously animated glow was drawn over camera
+  pixels. This preserves the approved unobscured viewport and keeps analysis
+  coordinates/pixels independent from presentation.
+- Product mode does not show FPS/backend/keyframe telemetry; these remain in
+  Diagnostic mode. It also does not show a `92%` confidence bar because T04
+  margin and mask confidence are uncalibrated heuristics, not probabilities.
+- No transition/shimmer/shake state machine was added; avoiding decorative
+  per-frame state prevents distraction and scope growth before the demo.
+
+#### Evidence
+
+| Check | Result |
+| --- | --- |
+| Focused Product/T08 tests | exit 0; 28 passed in 1.67 s |
+| Regenerated real MediaPipe Product evidence | exit 0; visual review confirms hierarchy, spacing, status bar, and unobscured camera |
+| Full `python -m pytest -q` | exit 0; 286 passed in 24.24 s |
+| `python -m compileall -q src tests` | exit 0 |
+| `git diff --check` | exit 0 |
+| 100-frame Product compositor benchmark | exit 0; 18.748 ms at 320x240, 19.808 ms at 640x360, 21.071 ms at 640x480 (47.5 FPS slowest standalone capacity) |
+
+#### Files changed and exact next action
+
+- `src/chromalens/presentation.py`: palette, camera focus border, header
+  hierarchy, weighted cards, semantic indicators, and status bar.
+- `README.md`: Product presentation behavior and non-interactive card contract.
+- `codinglog.md`: selected/rejected feedback rationale and measured evidence.
+- Exact next action: owner rehearsal of Product and Diagnostic modes, followed
+  by owner-controlled review/commit; no implementation task follows T11 in
+  `plan.md`.
+
+---
+
+### `2026-08-25 10:42 +07:00` - `T11-UI-4` `High-contrast themes completed`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+
+#### User-visible outcome
+
+- `--theme dark|light` selects the initial palette; `dark` remains the default.
+  Pressing `t` reversibly switches the live Product or Diagnostic shell without
+  touching the current pipeline, frame, mask, colour, risk, or recolor result.
+- Dark theme uses a near-black shell with near-white cards and dark card text.
+  Light theme uses a near-white shell with dark-grey cards and light card text.
+- Header/footer chrome text has a separate foreground palette from card text,
+  preventing either inverted theme from producing light-on-light or
+  dark-on-dark combinations. Profile pill, semantic indicators, camera border,
+  primary card, secondary cards, and status bar all follow the selected theme.
+- Footer hints expose `T: Nền`; README documents both launch commands and the
+  runtime key.
+
+#### Objective contrast evidence
+
+- Unit tests calculate sRGB relative luminance and require at least 7.0:1 for
+  background/card separation, card/text readability, and surface/chrome text
+  in both frozen palettes. They also assert that Dark cards are lighter than
+  their background and Light cards are darker than their background.
+- Both themes retain byte-identical camera viewport tests in Product and
+  Diagnostic modes at 320x240, 640x360, and 640x480.
+- Ignored visual review artifacts were regenerated for real MediaPipe output:
+  `real_mediapipe_assistive.png` (Dark) and
+  `real_mediapipe_assistive_light.png` (Light).
+
+#### Commands and observed results
+
+| Check | Result |
+| --- | --- |
+| Focused presentation/T08/T00 suite | exit 0; 41 passed in 3.61 s |
+| `python -m chromalens --help` | exit 0; shows `--theme {dark,light}` and `t` toggle |
+| Dark and Light real MediaPipe evidence generation | exit 0 for both |
+| Full `python -m pytest -q` | exit 0; 294 passed in 47.72 s |
+| 640x480 Product compositor, 100 frames | Dark 20.473 ms / 48.8 FPS standalone; Light 33.977 ms / 29.4 FPS standalone |
+| `python -m pip check` | exit 0; no broken requirements |
+| `git diff --check` | exit 0 |
+
+#### Files changed and exact next action
+
+- `src/chromalens/presentation.py`: theme enum/factory, inverted palettes, and
+  separate card/chrome foreground contracts.
+- `src/chromalens/renderer.py`: theme carried by `PipelineDisplayState`.
+- `src/chromalens/app.py`: CLI selection, runtime theme state, and `t` toggle.
+- `tests/unit/test_presentation.py`: both-theme viewport and objective contrast
+  gates; `tests/integration/test_t08_pipeline.py`: reversible control/CLI gates.
+- `README.md` and `codinglog.md`: usage, behavior, evidence, and limitations.
+- Exact next action: owner visually rehearses `--theme dark`, `--theme light`,
+  and live `t` switching on the demo display, then performs the existing
+  owner-controlled review/commit. No implementation task follows T11 in
+  `plan.md`.

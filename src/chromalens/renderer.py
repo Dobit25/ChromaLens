@@ -20,6 +20,13 @@ from chromalens.contracts import (
     LightingQuality,
     RiskAssessment,
 )
+from chromalens.presentation import (
+    PresentationData,
+    PresentationMode,
+    PresentationTheme,
+    compose_presentation,
+)
+from chromalens.segmentation.base import SegmentationFrameTelemetry
 
 if TYPE_CHECKING:
     from chromalens.pipeline import PipelineFrameResult
@@ -83,6 +90,8 @@ class PipelineDisplayState:
     severity: float
     recolor_enabled: bool
     view: PipelineView
+    ui_mode: PresentationMode = PresentationMode.PRODUCT
+    theme: PresentationTheme = PresentationTheme.DARK
     dropped_capture_frames: int = 0
 
     def __post_init__(self) -> None:
@@ -94,6 +103,10 @@ class PipelineDisplayState:
             raise TypeError("recolor_enabled must be boolean")
         if not isinstance(self.view, PipelineView):
             raise TypeError("view must be a PipelineView")
+        if not isinstance(self.ui_mode, PresentationMode):
+            raise TypeError("ui_mode must be a PresentationMode")
+        if not isinstance(self.theme, PresentationTheme):
+            raise TypeError("theme must be a PresentationTheme")
         if self.dropped_capture_frames < 0:
             raise ValueError("dropped_capture_frames must be non-negative")
 
@@ -489,30 +502,42 @@ def render_pipeline_view(
     telemetry: PreviewTelemetry,
     display_state: PipelineDisplayState,
 ) -> ColorFrame:
-    """Render one T08 view using only analysis for the displayed frame ID."""
+    """Render a current camera view inside a separate Product/Diagnostic shell."""
 
     if not source_name.strip():
         raise ValueError("source_name must not be empty")
     if result.analysis_frame_id != result.packet.frame_id:
         raise ValueError("stale analysis must not be rendered as the current frame")
 
-    if display_state.view is PipelineView.ASSISTIVE:
-        rendered = _render_pipeline_assistive(result, display_state)
-    else:
-        rendered = _pipeline_base_view(result, display_state.view)
-        if result.primary_region is not None:
-            _draw_double_outline(rendered, result.primary_region.mask)
-        _draw_pipeline_status_panel(
-            rendered,
-            _pipeline_status_lines(result, display_state),
-        )
-
-    _draw_pipeline_footer(
-        rendered,
+    camera_view = render_pipeline_camera_view(result, display_state=display_state)
+    presentation_data = _presentation_data(
+        result,
         source_name=source_name,
         telemetry=telemetry,
         display_state=display_state,
     )
+    return compose_presentation(
+        camera_view,
+        presentation_data,
+        mode=display_state.ui_mode,
+        theme=display_state.theme,
+    )
+
+
+def render_pipeline_camera_view(
+    result: "PipelineFrameResult",
+    *,
+    display_state: PipelineDisplayState,
+) -> ColorFrame:
+    """Render only intentional analytical pixels at exact camera dimensions."""
+
+    if result.analysis_frame_id != result.packet.frame_id:
+        raise ValueError("stale analysis must not be rendered as the current frame")
+    if display_state.view is PipelineView.ASSISTIVE:
+        return _render_pipeline_assistive(result, display_state)
+    rendered = _pipeline_base_view(result, display_state.view)
+    if result.primary_region is not None:
+        _draw_double_outline(rendered, result.primary_region.mask)
     return rendered
 
 
@@ -521,48 +546,93 @@ def _render_pipeline_assistive(
     display_state: PipelineDisplayState,
 ) -> ColorFrame:
     region = result.primary_region
+    rendered = result.assistive_bgr.copy()
+    if region is not None:
+        _draw_double_outline(rendered, region.mask)
+    return rendered
+
+
+def _presentation_data(
+    result: "PipelineFrameResult",
+    *,
+    source_name: str,
+    telemetry: PreviewTelemetry,
+    display_state: PipelineDisplayState,
+) -> PresentationData:
     cluster = result.primary_cluster
     risk = result.risk
-    if region is None or cluster is None or risk is None:
-        rendered = result.assistive_bgr
-        if region is not None:
-            _draw_double_outline(rendered, region.mask)
-        _draw_pipeline_status_panel(
-            rendered,
-            _pipeline_status_lines(result, display_state),
-        )
-        return rendered
-
-    recolor_debug = result.recolor.debug if result.recolor is not None else None
-    overlay_data = AssistiveOverlayData(
-        frame_id=result.packet.frame_id,
-        original_color_name=cluster.original_name,
-        original_corrected_rgb=cluster.rgb,
-        assistive_display_rgb=(
-            recolor_debug.assistive_display_rgb
-            if recolor_debug is not None
-            else cluster.rgb
-        ),
-        color_margin=cluster.color_margin,
-        risk=risk,
-        lighting_quality=result.packet.lighting_quality,
+    lighting = result.packet.lighting_quality
+    matching_label: str | None = None
+    matching_harmony: str | None = None
+    if result.matching is not None and result.matching.suggestions:
+        suggestion = result.matching.suggestions[0]
+        matching_label = suggestion.target_label_vi
+        matching_harmony = suggestion.harmony.value
+    recolor_applied = bool(
+        display_state.recolor_enabled
+        and result.recolor is not None
+        and result.recolor.debug.applied
+    )
+    return PresentationData(
+        source_name=source_name,
         profile=display_state.profile,
         severity=display_state.severity,
-        backend_name=result.backend_name,
-        recolor_applied=(
-            bool(recolor_debug.applied)
-            if recolor_debug is not None and display_state.recolor_enabled
-            else False
+        recolor_enabled=display_state.recolor_enabled,
+        view_name=display_state.view.value,
+        original_color_label=(
+            None if cluster is None else vietnamese_color_label(cluster.original_name)
         ),
-        mask_confidence=region.mask_confidence,
-        degraded_reason=(
-            result.degraded_reasons[0] if result.degraded_reasons else None
+        original_color_rgb=None if cluster is None else cluster.rgb,
+        color_margin=None if cluster is None else cluster.color_margin,
+        risk_level=None if risk is None else risk.risk_level,
+        lighting_level=None if lighting is None else lighting.level.value,
+        matching_label=matching_label,
+        matching_harmony=matching_harmony,
+        action_message=_product_action_message(result, recolor_applied=recolor_applied),
+        diagnostic_lines=_diagnostic_lines(
+            result,
+            source_name=source_name,
+            telemetry=telemetry,
+            display_state=display_state,
         ),
     )
-    return render_assistive_overlay(
-        result.assistive_bgr,
-        region.mask,
-        overlay_data,
+
+
+def _product_action_message(
+    result: "PipelineFrameResult",
+    *,
+    recolor_applied: bool,
+) -> str:
+    if result.primary_region is None:
+        return "Đưa trang phục vào giữa khung hình."
+    if (
+        result.packet.lighting_quality is not None
+        and result.packet.lighting_quality.level.value == "poor"
+    ):
+        return "Ánh sáng chưa đủ. Hãy di chuyển tới nơi sáng hơn."
+    if result.primary_cluster is None:
+        return "Đang phân tích màu trang phục…"
+    if recolor_applied:
+        return "Đã tăng khả năng phân biệt màu."
+    return "Trang phục đã được nhận diện."
+
+
+def _diagnostic_lines(
+    result: "PipelineFrameResult",
+    *,
+    source_name: str,
+    telemetry: PreviewTelemetry,
+    display_state: PipelineDisplayState,
+) -> tuple[str, ...]:
+    fps = "warming" if telemetry.processed_fps is None else f"{telemetry.processed_fps:.1f}"
+    return _pipeline_status_lines(result, display_state) + (
+        (
+            f"Source: {source_name} | pipeline FPS={fps} | "
+            f"pre-render age={telemetry.frame_age_at_overlay_ms:.1f}ms | "
+            f"capture dropped={display_state.dropped_capture_frames}"
+        ),
+        _segmentation_footer_line(result.segmentation_telemetry),
+        "sensor_to_photon_ms=NOT_MEASURED",
     )
 
 
@@ -672,117 +742,23 @@ def _draw_double_outline(frame: ColorFrame, mask: BinaryMask) -> None:
     cv2.drawContours(frame, contours, -1, (255, 255, 255), 2, cv2.LINE_8)
 
 
-def _draw_pipeline_status_panel(
-    frame: ColorFrame,
-    lines: tuple[str, ...],
-) -> None:
-    height, width = frame.shape[:2]
-    margin = 8
-    padding = 7
-    line_height = 20
-    font_scale = 0.43
-    thickness = 1
-    maximum_text_width = max(1, width - 2 * margin - 2 * padding)
-    fitted = tuple(
-        _fit_generic_text(line, maximum_text_width, font_scale, thickness)
-        for line in lines
-    )
-    panel_height = min(
-        height,
-        2 * padding + line_height * len(fitted),
-    )
-    overlay = frame.copy()
-    cv2.rectangle(
-        overlay,
-        (margin, margin),
-        (max(margin, width - margin - 1), min(height - 1, margin + panel_height)),
-        (0, 0, 0),
-        -1,
-    )
-    cv2.addWeighted(overlay, 0.86, frame, 0.14, 0.0, dst=frame)
-    for index, line in enumerate(fitted):
-        baseline_y = margin + padding + line_height * (index + 1)
-        if baseline_y >= height:
-            break
-        cv2.putText(
-            frame,
-            line,
-            (margin + padding, baseline_y),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            font_scale,
-            (255, 255, 255),
-            thickness,
-            cv2.LINE_AA,
-        )
-
-
-def _draw_pipeline_footer(
-    frame: ColorFrame,
-    *,
-    source_name: str,
-    telemetry: PreviewTelemetry,
-    display_state: PipelineDisplayState,
-) -> None:
-    height, width = frame.shape[:2]
-    line_height = 19
-    panel_height = min(height, 2 * line_height + 8)
-    y0 = max(0, height - panel_height)
-    cv2.rectangle(frame, (0, y0), (width - 1, height - 1), (0, 0, 0), -1)
-    fps = (
-        "warming"
-        if telemetry.processed_fps is None
-        else f"{telemetry.processed_fps:.1f}"
-    )
-    lines = (
-        (
-            f"{source_name} | FPS={fps} | pre-render age="
-            f"{telemetry.frame_age_at_overlay_ms:.1f}ms "
-            f"| dropped={display_state.dropped_capture_frames}"
-        ),
-        "Keys: p profile | [/] severity | r recolor | v/1-5 view | q/Esc quit",
-    )
-    for index, line in enumerate(lines):
-        fitted = _fit_generic_text(line, max(1, width - 12), 0.42, 1)
-        cv2.putText(
-            frame,
-            fitted,
-            (6, y0 + 16 + index * line_height),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.42,
-            (255, 255, 255),
-            1,
-            cv2.LINE_AA,
-        )
-
-
-def _fit_generic_text(
-    value: str,
-    maximum_width: int,
-    font_scale: float,
-    thickness: int,
+def _segmentation_footer_line(
+    telemetry: SegmentationFrameTelemetry | None,
 ) -> str:
-    if maximum_width <= 0:
-        return ""
-    if cv2.getTextSize(
-        value,
-        cv2.FONT_HERSHEY_SIMPLEX,
-        font_scale,
-        thickness,
-    )[0][0] <= maximum_width:
-        return value
-    suffix = "..."
-    candidate = value
-    while candidate:
-        candidate = candidate[:-1]
-        fitted = candidate.rstrip() + suffix
-        if cv2.getTextSize(
-            fitted,
-            cv2.FONT_HERSHEY_SIMPLEX,
-            font_scale,
-            thickness,
-        )[0][0] <= maximum_width:
-            return fitted
-    return ""
+    if telemetry is None:
+        return "Segmentation: synchronous current-frame | model FPS=not-separated"
+    inference_fps = (
+        "warming"
+        if telemetry.inference_fps is None
+        else f"{telemetry.inference_fps:.1f}"
+    )
+    age = "n/a" if telemetry.mask_age_ms is None else f"{telemetry.mask_age_ms:.0f}ms"
+    keyframe = "n/a" if telemetry.keyframe_id is None else str(telemetry.keyframe_id)
+    return (
+        f"SCHP FPS={inference_fps} | mask={telemetry.mask_source.value} "
+        f"| keyframe={keyframe} age={age} "
+        f"| inference-dropped={telemetry.dropped_pending_frames}"
+    )
 
 
 def _fit_text_to_width(

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import importlib.util
 from pathlib import Path
+import hashlib
+import json
 
 import numpy as np
 import pytest
@@ -15,6 +17,7 @@ from chromalens.segmentation.schp_backend import (
     SCHPSegmenterConfig,
     _prepare_input,
     _remove_small_components,
+    _validate_openvino_manifest,
 )
 
 
@@ -86,6 +89,43 @@ def test_small_component_cleanup_preserves_only_adequate_regions() -> None:
     assert cleaned.dtype == np.bool_
     assert not np.any(cleaned[1:3, 1:3])
     assert np.all(cleaned[8:16, 8:16])
+
+
+def test_rejected_int8_manifest_cannot_be_selected(tmp_path: Path) -> None:
+    checkpoint = tmp_path / "checkpoint.pth"
+    model = tmp_path / "model.xml"
+    binary = tmp_path / "model.bin"
+    checkpoint.write_bytes(b"checkpoint")
+    model.write_bytes(b"xml")
+    binary.write_bytes(b"bin")
+    digest = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+    manifest = {
+        "schema_version": "1.0.0",
+        "input_size": 512,
+        "precision": "INT8",
+        "source_checkpoint": {
+            "sha256": (
+                "e9d7c91ce3b4e7133df56b599fc817b533e3439c5e8d282a59126d2fda339a2a"
+            ),
+            "bytes": checkpoint.stat().st_size,
+        },
+        "artifacts": {
+            "xml": {"bytes": model.stat().st_size, "sha256": digest(model)},
+            "bin": {"bytes": binary.stat().st_size, "sha256": digest(binary)},
+        },
+        "acceptance": {"decision": "REJECTED"},
+    }
+    model.with_suffix(".manifest.json").write_text(json.dumps(manifest))
+
+    with pytest.raises(
+        SCHPBackendUnavailableError,
+        match="manifest validation failed",
+    ):
+        _validate_openvino_manifest(
+            model,
+            checkpoint_path=checkpoint,
+            input_size=512,
+        )
 
 
 @pytest.mark.skipif(

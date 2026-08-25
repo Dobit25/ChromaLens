@@ -140,7 +140,7 @@ class SCHPSegmenter(Segmenter):
                 f"OpenVINO SCHP model is missing at {model_path}. Run the T10 "
                 "export command or use --schp-runtime pytorch."
             )
-        _validate_openvino_manifest(
+        self._openvino_precision = _validate_openvino_manifest(
             model_path,
             checkpoint_path=checkpoint_path,
             input_size=self._config.input_size,
@@ -166,7 +166,13 @@ class SCHPSegmenter(Segmenter):
     @property
     def device_info(self) -> str:
         if self._active_runtime == "openvino":
-            return f"schp-atr/openvino/CPU ({self._openvino_device_name})"
+            precision_suffix = (
+                "" if self._openvino_precision == "FP32" else "/INT8"
+            )
+            return (
+                f"schp-atr/openvino/CPU{precision_suffix} "
+                f"({self._openvino_device_name})"
+            )
         return "schp-atr/pytorch/cpu"
 
     def segment(self, packet: FramePacket) -> tuple[GarmentRegion, ...]:
@@ -302,7 +308,7 @@ def _validate_openvino_manifest(
     *,
     checkpoint_path: Path,
     input_size: int,
-) -> None:
+) -> str:
     manifest_path = model_path.with_suffix(".manifest.json")
     binary_path = model_path.with_suffix(".bin")
     if not manifest_path.is_file() or not binary_path.is_file():
@@ -315,6 +321,14 @@ def _validate_openvino_manifest(
             raise ValueError("unsupported manifest schema")
         if manifest["input_size"] != input_size:
             raise ValueError("manifest input size differs from runtime config")
+        precision = manifest["precision"]
+        if precision not in {"FP32", "INT8"}:
+            raise ValueError("manifest precision is unsupported")
+        if (
+            precision == "INT8"
+            and manifest.get("acceptance", {}).get("decision") != "ACCEPTED"
+        ):
+            raise ValueError("INT8 artifact did not pass its acceptance gate")
         if manifest["source_checkpoint"]["sha256"] != SCHP_ATR_CHECKPOINT_SHA256:
             raise ValueError("manifest checkpoint identity differs")
         if manifest["source_checkpoint"]["bytes"] != checkpoint_path.stat().st_size:
@@ -325,6 +339,7 @@ def _validate_openvino_manifest(
                 raise ValueError(f"{artifact_path.name} size differs")
             if record["sha256"] != _sha256(artifact_path):
                 raise ValueError(f"{artifact_path.name} checksum differs")
+        return str(precision)
     except (KeyError, OSError, TypeError, ValueError, json.JSONDecodeError) as exc:
         raise SCHPBackendUnavailableError(
             "OpenVINO SCHP artifact manifest validation failed; regenerate the "

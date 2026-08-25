@@ -27,7 +27,11 @@ from chromalens.cvd_simulation import validate_severity
 from chromalens.matching import MatchingResult, RuleBasedMatcher
 from chromalens.recolor import AssistiveRecolorResult, SelectiveRecolorer
 from chromalens.risk_detection import RelationalRiskDetector
-from chromalens.segmentation.base import Segmenter
+from chromalens.segmentation.base import (
+    SegmentationFrameTelemetry,
+    SegmentationMaskSource,
+    Segmenter,
+)
 from chromalens.tracking import TemporalMaskSmoother
 from chromalens.white_balance import GrayWorldWhiteBalancer, WhiteBalanceResult
 
@@ -116,6 +120,7 @@ class PipelineFrameResult:
     matching: MatchingResult | None
     white_balance: WhiteBalanceResult | None
     stage_reports: tuple[StageReport, ...]
+    segmentation_telemetry: SegmentationFrameTelemetry | None = None
 
     def __post_init__(self) -> None:
         if self.analysis_frame_id != self.packet.frame_id:
@@ -147,6 +152,13 @@ class PipelineFrameResult:
             raise ValueError("comparison_cluster must belong to clusters")
         if not self.stage_reports:
             raise ValueError("stage_reports must not be empty")
+        if (
+            self.segmentation_telemetry is not None
+            and self.segmentation_telemetry.frame_id != self.packet.frame_id
+        ):
+            raise ValueError(
+                "segmentation telemetry must describe the displayed packet frame"
+            )
 
     @property
     def assistive_bgr(self) -> ColorFrame:
@@ -214,6 +226,12 @@ class ChromaLensPipeline:
 
         return self.segmenter.device_info
 
+    @property
+    def segmentation_telemetry(self) -> SegmentationFrameTelemetry | None:
+        """Expose provenance from the most recent segmentation call."""
+
+        return self.segmenter.frame_telemetry
+
     def process(
         self,
         packet: FramePacket,
@@ -240,20 +258,36 @@ class ChromaLensPipeline:
                 stream_id=self.stream_id,
                 frame_shape=frame_shape,
             )
+            frame_telemetry = self.segmenter.frame_telemetry
             if regions:
+                provenance = (
+                    ""
+                    if frame_telemetry is None
+                    else f"; mask={frame_telemetry.mask_source.value}"
+                )
                 reports.append(
                     StageReport(
                         PipelineStage.SEGMENTATION,
                         StageStatus.OK,
-                        f"{len(regions)} current-frame region(s)",
+                        f"{len(regions)} current-frame-aligned region(s){provenance}",
                     )
                 )
             else:
+                unavailable = (
+                    frame_telemetry is not None
+                    and frame_telemetry.mask_source
+                    is SegmentationMaskSource.UNAVAILABLE
+                )
                 reports.append(
                     StageReport(
                         PipelineStage.SEGMENTATION,
-                        StageStatus.DEGRADED,
-                        "no current garment region; prior masks cleared",
+                        StageStatus.UNAVAILABLE if unavailable else StageStatus.DEGRADED,
+                        (
+                            frame_telemetry.message
+                            if frame_telemetry is not None
+                            and frame_telemetry.message is not None
+                            else "no current garment region; prior masks cleared"
+                        ),
                     )
                 )
         except Exception as exc:  # explicit recoverable backend boundary
@@ -500,6 +534,7 @@ class ChromaLensPipeline:
             matching=matching,
             white_balance=white_balance,
             stage_reports=tuple(reports),
+            segmentation_telemetry=self.segmenter.frame_telemetry,
         )
 
     def reset_temporal_state(self) -> None:
