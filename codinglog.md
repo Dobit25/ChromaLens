@@ -48,6 +48,8 @@ This table is intentionally empty until an agent starts the plan.
 | T11-UI-3 | Product visual hierarchy and status-bar refinement | `DONE` | Repository owner + Codex | 2026-08-25 10:20 +07:00 | 2026-08-25 10:31 +07:00 | Cyan focal frame, result hierarchy, quieter cards and textual status bar; 286 tests pass |
 | T11-UI-4 | User-selectable high-contrast light/dark themes | `DONE` | Repository owner + Codex | 2026-08-25 10:40 +07:00 | 2026-08-25 10:42 +07:00 | Dark/light palette toggle with >=7:1 tested card/chrome contrast; 294 tests pass |
 | T11-TUNE-1 | Lower runtime medium-risk/recolor activation threshold | `DONE` | Repository owner + Codex | 2026-08-25 11:00 +07:00 | 2026-08-25 11:56 +07:00 | Medium/recolor boundaries are 0.10 with exact-boundary tests; frozen T09 evidence remains historical |
+| T11-UI-5 | Toggleable theme-inverted camera display cover | `DONE` | Repository owner + Codex | 2026-08-25 12:10 +07:00 | 2026-08-25 17:30 +07:00 | Tracked implementation toggles with `c`; full 302-test release gate passes |
+| T11-DECK-1 | Six-feature competition HTML slide deck | `DONE` | Repository owner + Codex | 2026-08-25 14:40 +07:00 | 2026-08-25 17:30 +07:00 | Offline interactive deck; owner-selected amber token, structural tests, and visual QA pass |
 
 ## 3. Active blockers
 
@@ -4569,3 +4571,134 @@ and the relevant suite was rerun before the final full pass.
 - Exact next action: owner compares intervention frequency at `0.10` on the
   intended demo garments and lighting; revert/configure upward if marginal
   false positives distract from the assistive result.
+
+---
+
+### `2026-08-25 14:26 +07:00` - `T11-UI-5` `Toggleable camera display cover completed locally`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Delivery boundary:** Local working tree only; not committed or pushed
+
+#### User-visible behavior
+
+- `--camera-cover` starts with the camera viewport hidden; `c` toggles the
+  cover at runtime in Product or Diagnostic mode. Default remains uncovered.
+- Dark theme renders a near-white viewport layer with dark `ChromaLens AI`
+  text and a cyan diamond. Light theme renders a near-black layer with light
+  text and the same visual mark. Branding is centered and scales from 24 to
+  42 px with viewport width.
+- The layer covers exactly `camera_rect`; its cyan focus border, header, result
+  cards, footer, and status remain outside. The footer explicitly changes to
+  `HIỂN THỊ ĐÃ CHE` and exposes `C: Che camera`.
+- This is display privacy only. Capture, local inference, analysis, telemetry,
+  and current results continue underneath so reveal is immediate; it is not a
+  camera hardware privacy switch or processing pause.
+
+#### Evidence
+
+- Theme-parametrized tests verify the cover background occupies more than 90%
+  of the viewport, raw camera pixels are not visible as the rendered viewport,
+  the input frame remains byte-identical, and cover/text contrast is at least
+  7:1. Non-boolean cover state is rejected.
+- Runtime-control tests prove `c` is reversible and reaches
+  `PipelineDisplayState`; CLI tests prove the default is off and
+  `--camera-cover` starts it on.
+- Real MediaPipe visual artifacts were generated locally at
+  `artifacts/t08-pipeline/camera_cover_dark.png` and
+  `camera_cover_light.png`; both are ignored and were visually reviewed.
+
+| Check | Result |
+| --- | --- |
+| Focused presentation/T08/T00 suite | exit 0; 44 passed in 6.75 s |
+| `python -m chromalens --help` | exit 0; cover flag and `c` toggle documented |
+| Dark/Light cover evidence generation | exit 0 |
+| Full `python -m pytest -q` | exit 0; 299 passed in 38.29 s |
+| 640x480 compositor, 100 frames | uncovered 26.366 ms; covered 29.247 ms (2.881 ms measured cover overhead) |
+| `python -m pip check` | exit 0; no broken requirements |
+| `git diff --check` | exit 0 |
+
+#### Files changed and exact next action
+
+- Runtime: `presentation.py`, `renderer.py`, and `app.py`.
+- Tests: presentation cover/contrast plus T08 CLI/control integration.
+- Documentation: root README and this log.
+- Exact next action: owner rehearses `c` while webcam and video are running and
+  confirms the distinction between hiding display and stopping capture. Commit
+  or push only after explicit owner approval; this pass remains local.
+
+---
+
+### `2026-08-25 15:37 +07:00` - `T11-DECK-1` `Six-feature competition HTML deck completed locally`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Delivery boundary:** Local working tree only; not committed or pushed
+
+#### User-visible result
+
+- Added one self-contained offline 16:9 HTML deck with six slides: selectable
+  Deutan/Protan/Tritan profile, garment color plus camera, relational color
+  risk, lighting correction, explainable matching, and the Product-to-
+  Diagnostic view transition.
+- Slide 1 supports both direct profile buttons and cycling the large profile
+  box. The deck supports on-screen navigation, arrows, Page Up/Page Down,
+  Space, Home/End, URL slide hashes, and `F` fullscreen.
+- The visual language follows the current ChromaLens dark/cyan product UI,
+  keeps copy short, preserves Vietnamese diacritics, and uses only local
+  assets. The astronaut fixture is the tracked NASA public-domain image and is
+  credited in-slide. Its relative reference is intentionally replaceable with
+  an owner-approved presentation photo.
+
+#### Evidence
+
+| Check | Result |
+| --- | --- |
+| Focused deck/T00 command | exit 0; 8 passed in 7.72 s |
+| Edge headless 1600x900 render of slides 1-6 | exit 0; six ignored PNG artifacts generated and visually reviewed |
+| Full `python -m pytest -q` | exit 0; 302 passed in 54.52 s at release gate |
+| `python -m pip check` | exit 0; no broken requirements |
+| `git diff --check` | exit 0; line-ending conversion warnings only |
+
+#### Files and delivery notes
+
+- Deck: `docs/competition-feature-slides.html`.
+- Structural regression tests: `tests/test_competition_slides.py`.
+- Launch instructions: root `README.md`.
+- Ignored visual-QA artifacts:
+  `artifacts/competition-slides/slide-1.png` through `slide-6.png`.
+- No dependency, model, API, server, camera, or network requirement was added.
+- Exact next action: owner opens the deck in the intended presentation browser,
+  rehearses the six-slide narration, and optionally replaces the astronaut
+  image reference with an approved photograph.
+
+---
+
+### `2026-08-25 17:10 +07:00` - `T11-DECK-1` `Slide 05 amber-token correction`
+
+**Status:** `DONE`
+
+- Changed only `.color-tile` from the former literal color to
+  `background: var(--amber)`, so slides 02 and 05 use the same owner-selected
+  `#E65C23` garment orange.
+- `python -m pytest -q tests/test_competition_slides.py`: exit 0; 3 passed.
+- Edge headless 1600x900 slide-05 render: exit 0; visually confirmed in the
+  ignored `artifacts/competition-slides/slide-5-amber-check.png` artifact.
+
+---
+
+### `2026-08-25 17:30 +07:00` - `T11-RELEASE-1` `Local UI and deck changes approved for mvp publication`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+
+- Camera viewport cover is isolated in commit `003cc32`.
+- Competition feature deck is isolated in commit `9f2be22`.
+- Release gate: full suite exit 0 with 302 passed in 54.52 s; `pip check` exit
+  0; staged and working-tree diff checks exit 0 after removing one extra EOF
+  blank line before amending the deck commit.
+- Generated screenshots and other files under `artifacts/` remain ignored and
+  are not included in publication.
+- Slide 6 labels development telemetry as illustrative and preserves
+  `sensor-to-photon = NOT MEASURED`; profile selection is explicitly described
+  as a user setting rather than diagnosis.
