@@ -284,12 +284,17 @@ assessments = RelationalRiskDetector().assess_cluster_pairs(
 ```
 
 The default heuristic uses `minimum_original_delta_e=5.0`,
-`cvd_confusion_delta_e=20.0`, `medium_score_threshold=0.25`, and
+`cvd_confusion_delta_e=20.0`, `medium_score_threshold=0.10`, and
 `high_score_threshold=0.60`. These are validated configuration values, not
 probabilities, medical thresholds, or universal perceptual truth. Formula,
 papers, DaltonLens version/tag/license, gamma behavior, and limitations are
 documented in [`assets/cvd/README.md`](assets/cvd/README.md); T09 must validate
 the thresholds with declared conditions and users before competition claims.
+
+The current runtime also activates recolor candidates at risk `>=0.10`, subject
+to the unchanged simulated-improvement and containment gates. This owner-tuned
+value is newer than the frozen T09 protocol, whose reports remain historical at
+`0.25`; they do not validate the more sensitive runtime default.
 
 Reproduce known-patch simulation and pair-risk evidence offline:
 

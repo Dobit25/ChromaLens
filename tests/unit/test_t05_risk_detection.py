@@ -182,6 +182,14 @@ def test_configurable_score_thresholds_control_level_mapping() -> None:
     assert risk_level_for_score(0.20, config=config) is RiskLevel.MEDIUM
 
 
+def test_default_medium_level_starts_at_point_one() -> None:
+    config = RelationalRiskConfig()
+
+    assert config.medium_score_threshold == pytest.approx(0.10)
+    assert risk_level_for_score(0.099, config=config) is RiskLevel.LOW
+    assert risk_level_for_score(0.10, config=config) is RiskLevel.MEDIUM
+
+
 def test_zero_original_distance_is_safe_when_floor_is_configured_to_zero() -> None:
     config = RelationalRiskConfig(minimum_original_delta_e=0.0)
 

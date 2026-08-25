@@ -47,6 +47,7 @@ This table is intentionally empty until an agent starts the plan.
 | T11-UI-2 | Product card text containment correction | `DONE` | Repository owner + Codex | 2026-08-25 09:20 +07:00 | 2026-08-25 10:10 +07:00 | Independent bounded title/value/detail regions prevent overlap; 286 tests pass |
 | T11-UI-3 | Product visual hierarchy and status-bar refinement | `DONE` | Repository owner + Codex | 2026-08-25 10:20 +07:00 | 2026-08-25 10:31 +07:00 | Cyan focal frame, result hierarchy, quieter cards and textual status bar; 286 tests pass |
 | T11-UI-4 | User-selectable high-contrast light/dark themes | `DONE` | Repository owner + Codex | 2026-08-25 10:40 +07:00 | 2026-08-25 10:42 +07:00 | Dark/light palette toggle with >=7:1 tested card/chrome contrast; 294 tests pass |
+| T11-TUNE-1 | Lower runtime medium-risk/recolor activation threshold | `DONE` | Repository owner + Codex | 2026-08-25 11:00 +07:00 | 2026-08-25 11:56 +07:00 | Medium/recolor boundaries are 0.10 with exact-boundary tests; frozen T09 evidence remains historical |
 
 ## 3. Active blockers
 
@@ -4518,3 +4519,53 @@ and the relevant suite was rerun before the final full pass.
   and live `t` switching on the demo display, then performs the existing
   owner-controlled review/commit. No implementation task follows T11 in
   `plan.md`.
+
+---
+
+### `2026-08-25 11:56 +07:00` - `T11-TUNE-1` `Runtime risk/recolor sensitivity lowered`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+
+#### Approved behavior change
+
+- `RelationalRiskConfig.medium_score_threshold` changed from `0.25` to `0.10`.
+  Scores below `0.10` remain `low`; scores from `0.10` through below `0.60`
+  display as `medium`; the high threshold remains `0.60`.
+- `RecolorConfig.minimum_risk_score` changed from `0.25` to `0.10`. At exactly
+  `0.10`, recolor proceeds only if the unchanged candidate-improvement,
+  severity, three-mask containment, and stability gates also pass.
+- The risk formula, CVD simulation, severity semantics, high threshold,
+  candidate scoring, and source-frame containment are unchanged.
+
+#### Evidence and historical boundary
+
+- New unit boundaries prove `0.099` is low, `0.10` is medium, `0.09` is below
+  recolor activation, and a valid scene at exactly `0.10` applies a candidate.
+- T05, T06, and T08 ignored evidence scripts all regenerated successfully.
+- Frozen T09 protocol/results/scripts intentionally retain `0.25`: they are
+  historical evaluation evidence and must not be rewritten or cited as
+  validation of the newer, more sensitive runtime default.
+- Lowering activation can increase assistive interventions/false positives in
+  marginal scenes. Product labels remain heuristic guidance, not diagnosis or
+  calibrated probability; owner demo observation is required.
+
+#### Commands and observed results
+
+| Check | Result |
+| --- | --- |
+| Focused T05/T06/T08 command | exit 0; 62 passed in 1.46 s |
+| T05/T06/T08 evidence scripts | exit 0 for all three |
+| Full `python -m pytest -q` | exit 0; 296 passed in 25.06 s |
+| `python -m compileall -q src tests` | exit 0 |
+| `python -m pip check` | exit 0; no broken requirements |
+| `git diff --check` | exit 0 |
+
+#### Files changed and exact next action
+
+- Runtime: `src/chromalens/risk_detection.py`, `src/chromalens/recolor.py`.
+- Tests: T05 risk-boundary and T06 recolor-boundary unit suites.
+- Documentation: root README, CVD/recolor algorithm notes, and this log.
+- Exact next action: owner compares intervention frequency at `0.10` on the
+  intended demo garments and lighting; revert/configure upward if marginal
+  false positives distract from the assistive result.

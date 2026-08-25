@@ -34,7 +34,7 @@ AlphaMask = NDArray[np.float32]
 class RecolorConfig:
     """Validated thresholds for candidate choice, containment, and stability."""
 
-    minimum_risk_score: float = 0.25
+    minimum_risk_score: float = 0.10
     feather_radius_px: float = 3.0
     candidate_hue_offsets_degrees: tuple[float, ...] = (
         -150.0,

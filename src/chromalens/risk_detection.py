@@ -37,7 +37,7 @@ class RelationalRiskConfig:
 
     minimum_original_delta_e: float = 5.0
     cvd_confusion_delta_e: float = 20.0
-    medium_score_threshold: float = 0.25
+    medium_score_threshold: float = 0.10
     high_score_threshold: float = 0.60
 
     def __post_init__(self) -> None:

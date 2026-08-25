@@ -64,7 +64,7 @@ CVD-created loss. Default configuration is:
 | --- | ---: |
 | `minimum_original_delta_e` | 5.0 |
 | `cvd_confusion_delta_e` | 20.0 |
-| `medium_score_threshold` | 0.25 |
+| `medium_score_threshold` | 0.10 |
 | `high_score_threshold` | 0.60 |
 
 Scores below the medium threshold display as `low`; scores at/above the medium
@@ -77,6 +77,11 @@ probabilities, universal just-noticeable-difference thresholds, medical
 claims, or validated user-confusion rates. They require the declared T09
 evaluation with relevant CVD profiles, displays, lighting, garments, and user
 feedback before competition claims are made.
+
+The runtime medium threshold was lowered from `0.25` to `0.10` after the frozen
+T09 run by explicit repository-owner tuning. T09 reports remain historical at
+their declared `0.25` protocol and must not be presented as validation of the
+new runtime threshold.
 
 T05 P0 compares unordered retained-color pairs inside one garment. It does not
 invent top-bottom or garment-background relationships when those regions are

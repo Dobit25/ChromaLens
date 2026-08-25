@@ -35,7 +35,7 @@ path, not a rule such as “red always becomes purple.”
 
    `simulated CIEDE2000 separation - 0.18 × original-to-candidate CIEDE2000`
 
-5. Apply a candidate only when risk is at least `0.25` and its simulated
+5. Apply a candidate only when risk is at least `0.10` and its simulated
    separation improves by at least `3.0` Delta-E00. These defaults are visible,
    configurable heuristics requiring T09 validation.
 6. A different per-key target must exceed the retained target's objective by

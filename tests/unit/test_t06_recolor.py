@@ -154,7 +154,7 @@ def test_low_risk_returns_an_explicit_unchanged_result() -> None:
         comparison_id=high_risk.comparison_id,
         delta_e_original=high_risk.delta_e_original,
         delta_e_cvd=high_risk.delta_e_cvd,
-        risk_score=0.10,
+        risk_score=0.09,
         risk_level="low",
     )
     source, _, cluster, _, _, result = _run_recolor(risk_override=low_risk)
@@ -164,6 +164,25 @@ def test_low_risk_returns_an_explicit_unchanged_result() -> None:
     assert result.debug.decision_reason == "risk_below_threshold"
     assert not np.any(result.alpha_mask)
     assert np.array_equal(result.assistive_bgr, source)
+
+
+def test_default_recolor_activates_at_point_one_boundary() -> None:
+    _, _, _, _, _, assessed_risk, _ = _scene()
+    boundary_risk = RiskAssessment(
+        source_id=assessed_risk.source_id,
+        comparison_id=assessed_risk.comparison_id,
+        delta_e_original=assessed_risk.delta_e_original,
+        delta_e_cvd=assessed_risk.delta_e_cvd,
+        risk_score=0.10,
+        risk_level="medium",
+    )
+
+    source, _, _, _, _, result = _run_recolor(risk_override=boundary_risk)
+
+    assert RecolorConfig().minimum_risk_score == pytest.approx(0.10)
+    assert result.debug.applied
+    assert result.debug.decision_reason == "candidate_applied"
+    assert np.any(result.assistive_bgr != source)
 
 
 def test_zero_severity_never_fabricates_an_assistive_change() -> None:
