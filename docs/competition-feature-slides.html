@@ -1,0 +1,1061 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChromaLens AI — Sáu tính năng chính</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #071015;
+      --surface: #101c23;
+      --surface-2: #172730;
+      --line: #29404b;
+      --text: #f5f8fa;
+      --muted: #a8b7c0;
+      --cyan: #5ee7ff;
+      --cyan-soft: rgba(94, 231, 255, .15);
+      --violet: #8b7cff;
+      --green: #52e5a4;
+      --amber: #E65C23;
+      --red: #ff7a8a;
+      --shadow: 0 22px 60px rgba(0, 0, 0, .34);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% 12%, rgba(94, 231, 255, .12), transparent 27%),
+        radial-gradient(circle at 92% 82%, rgba(139, 124, 255, .14), transparent 30%),
+        var(--bg);
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .deck {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: clamp(14px, 2.2vh, 24px);
+      padding: clamp(20px, 4vh, 42px) clamp(26px, 5vw, 76px) clamp(18px, 3vh, 32px);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(28px) scale(.992);
+      transition: none;
+      pointer-events: none;
+    }
+
+    .ready .slide {
+      transition: opacity 260ms ease, transform 260ms ease, visibility 260ms;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      pointer-events: auto;
+    }
+
+    .topline,
+    .bottomline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: clamp(17px, 1.7vw, 25px);
+      font-weight: 800;
+    }
+
+    .diamond {
+      width: .8em;
+      height: .8em;
+      background: linear-gradient(135deg, var(--cyan), #28bad6);
+      transform: rotate(45deg);
+      border-radius: 2px;
+      box-shadow: 0 0 22px rgba(94, 231, 255, .45);
+    }
+
+    .competition {
+      color: var(--muted);
+      font-size: clamp(11px, 1.05vw, 15px);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow {
+      color: var(--cyan);
+      font-size: clamp(12px, 1.1vw, 16px);
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 6px 0 0;
+      max-width: 980px;
+      font-size: clamp(31px, 4.4vw, 66px);
+      line-height: 1.02;
+      letter-spacing: -.035em;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(20px, 2.2vw, 34px);
+      line-height: 1.1;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .accent {
+      color: var(--cyan);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .content {
+      min-height: 0;
+      display: grid;
+      align-items: center;
+      gap: clamp(18px, 3vw, 46px);
+    }
+
+    .cols {
+      grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr);
+    }
+
+    .cols-even {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stack {
+      display: grid;
+      gap: clamp(12px, 2vh, 22px);
+    }
+
+    .lead {
+      max-width: 820px;
+      color: #d3dce1;
+      font-size: clamp(16px, 1.65vw, 25px);
+      line-height: 1.45;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(150deg, rgba(23, 39, 48, .96), rgba(12, 23, 29, .96));
+      box-shadow: var(--shadow);
+    }
+
+    .feature-card {
+      padding: clamp(18px, 2.7vw, 34px);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      width: fit-content;
+      padding: 8px 13px;
+      border: 1px solid rgba(94, 231, 255, .28);
+      border-radius: 999px;
+      background: var(--cyan-soft);
+      color: #c8f8ff;
+      font-size: clamp(12px, 1.05vw, 15px);
+      font-weight: 750;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 12px currentColor;
+      flex: none;
+    }
+
+    .mini-label {
+      color: var(--muted);
+      font-size: clamp(11px, 1vw, 14px);
+      font-weight: 750;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    /* Slide 1 */
+    .profile-display {
+      width: 100%;
+      padding: clamp(18px, 2.2vw, 28px);
+      border: 1px solid rgba(94, 231, 255, .5);
+      border-radius: 22px;
+      background: linear-gradient(135deg, var(--cyan-soft), rgba(139, 124, 255, .08));
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      transition: transform 170ms ease, box-shadow 170ms ease, border-color 170ms ease;
+    }
+
+    .profile-display:hover,
+    .profile-display:focus-visible {
+      transform: translateY(-2px);
+      border-color: var(--cyan);
+      box-shadow: 0 12px 34px rgba(94, 231, 255, .16);
+      outline: none;
+    }
+
+    .profile-display:active {
+      transform: scale(.985);
+    }
+
+    .profile-name {
+      display: block;
+      margin-top: 8px;
+      font-size: clamp(31px, 4.8vw, 64px);
+      font-weight: 850;
+      letter-spacing: -.03em;
+    }
+
+    .profile-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .profile-option {
+      padding: 13px 9px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(16, 28, 35, .8);
+      cursor: pointer;
+      transition: 160ms ease;
+    }
+
+    .profile-option:hover,
+    .profile-option:focus-visible {
+      border-color: var(--cyan);
+      color: var(--text);
+      outline: none;
+    }
+
+    .profile-option.active {
+      color: #071015;
+      background: var(--cyan);
+      border-color: var(--cyan);
+      font-weight: 850;
+      box-shadow: 0 0 22px rgba(94, 231, 255, .28);
+    }
+
+    .spectrum {
+      height: 10px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #fa6c7c, #ffc857, #52e5a4, #5ee7ff, #8b7cff);
+    }
+
+    /* Camera and result components */
+    .camera-shell {
+      overflow: hidden;
+      position: relative;
+      min-height: 0;
+      border: 1px solid #35505d;
+      border-radius: 24px;
+      background: #05090c;
+      box-shadow: var(--shadow);
+    }
+
+    .camera-shell img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 260px;
+      object-fit: cover;
+    }
+
+    .content>.camera-shell {
+      align-self: stretch;
+      height: 100%;
+    }
+
+    .content>.camera-shell>img {
+      position: absolute;
+      inset: 0;
+      min-height: 0;
+    }
+
+    .camera-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 13px;
+      border: 1px solid rgba(255, 255, 255, .22);
+      border-radius: 999px;
+      color: white;
+      background: rgba(4, 11, 15, .78);
+      backdrop-filter: blur(8px);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .camera-credit {
+      position: absolute;
+      right: 12px;
+      bottom: 10px;
+      padding: 5px 8px;
+      border-radius: 8px;
+      color: rgba(255, 255, 255, .78);
+      background: rgba(0, 0, 0, .62);
+      font-size: 10px;
+    }
+
+    .scan {
+      position: absolute;
+      inset: 14% 20% 8%;
+      border: 2px solid rgba(94, 231, 255, .8);
+      border-radius: 46% 46% 23% 23%;
+      box-shadow: 0 0 20px rgba(94, 231, 255, .24), inset 0 0 20px rgba(94, 231, 255, .08);
+    }
+
+    .result-main {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .swatch {
+      width: clamp(58px, 7vw, 94px);
+      aspect-ratio: 1;
+      border: 3px solid #e6edf0;
+      border-radius: 20px;
+      background: #E65C23;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, .25);
+      flex: none;
+    }
+
+    .result-word {
+      font-size: clamp(34px, 5vw, 68px);
+      font-weight: 850;
+      letter-spacing: -.03em;
+    }
+
+    .steps {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      font-size: clamp(12px, 1.15vw, 16px);
+    }
+
+    .steps span {
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+    }
+
+    .steps b {
+      color: var(--cyan);
+    }
+
+    /* Slide 3 */
+    .risk-flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1.2fr;
+      align-items: stretch;
+      gap: 13px;
+    }
+
+    .flow-node {
+      display: grid;
+      place-items: center;
+      min-height: 150px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+      text-align: center;
+    }
+
+    .flow-icon {
+      font-size: clamp(25px, 3.5vw, 48px);
+      font-weight: 900;
+      color: var(--cyan);
+    }
+
+    .arrow {
+      align-self: center;
+      color: var(--cyan);
+      font-size: 30px;
+    }
+
+    .risk-scale {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .risk-item {
+      padding: 16px 20px;
+      border-radius: 16px;
+      background: var(--surface);
+      border-left: 5px solid currentColor;
+    }
+
+    .risk-item.low {
+      color: var(--green);
+    }
+
+    .risk-item.medium {
+      color: var(--amber);
+    }
+
+    .risk-item.high {
+      color: var(--red);
+    }
+
+    .risk-item strong {
+      display: block;
+      color: var(--text);
+      font-size: clamp(15px, 1.4vw, 21px);
+    }
+
+    /* Slide 4 */
+    .light-compare {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .light-shot {
+      overflow: hidden;
+      position: relative;
+      min-height: 290px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: #05090c;
+    }
+
+    .light-shot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .light-shot.dim img {
+      filter: brightness(.46) saturate(.72) sepia(.12);
+    }
+
+    .light-shot.corrected img {
+      filter: brightness(1.08) saturate(1.02);
+    }
+
+    .light-caption {
+      position: absolute;
+      inset: auto 14px 14px;
+      padding: 11px 14px;
+      border-radius: 13px;
+      background: rgba(5, 12, 16, .84);
+      backdrop-filter: blur(8px);
+      font-weight: 800;
+    }
+
+    .light-caption.warning {
+      color: var(--amber);
+    }
+
+    .light-caption.good {
+      color: var(--green);
+    }
+
+    /* Slide 5 */
+    .match-stage {
+      display: grid;
+      grid-template-columns: .9fr 70px 1.4fr;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .color-tile {
+      display: grid;
+      place-items: center;
+      min-height: 250px;
+      border-radius: 24px;
+      background: var(--amber);
+      border: 3px solid rgba(255, 255, 255, .78);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .color-tile strong {
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, .62);
+      font-size: clamp(24px, 3vw, 42px);
+    }
+
+    .match-arrow {
+      color: var(--cyan);
+      font-size: 48px;
+      text-align: center;
+    }
+
+    .match-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .match-row {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 20px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--surface);
+    }
+
+    .match-swatch {
+      width: 48px;
+      height: 48px;
+      border: 2px solid rgba(255, 255, 255, .72);
+      border-radius: 13px;
+      flex: none;
+    }
+
+    .match-row strong {
+      display: block;
+      font-size: clamp(17px, 1.7vw, 25px);
+    }
+
+    /* Slide 6 */
+    .diagnostic {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      min-height: 0;
+      overflow: hidden;
+      border: 1px solid #35505d;
+      border-radius: 24px;
+      background: #0b1419;
+      box-shadow: var(--shadow);
+    }
+
+    .diagnostic .camera-shell {
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .metric-panel {
+      display: grid;
+      align-content: center;
+      gap: 9px;
+      padding: clamp(18px, 2.3vw, 30px);
+      border-left: 1px solid var(--line);
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(84, 112, 124, .28);
+      color: var(--muted);
+      font-size: clamp(11px, 1.1vw, 15px);
+    }
+
+    .metric strong {
+      color: var(--text);
+      text-align: right;
+    }
+
+    .view-toggle {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      width: min(340px, 100%);
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #0c171d;
+    }
+
+    .view-toggle span {
+      padding: 8px 14px;
+      border-radius: 999px;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 750;
+    }
+
+    .view-toggle .selected {
+      color: #071015;
+      background: var(--cyan);
+    }
+
+    .judge-points {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .judge-points span {
+      padding: 9px 13px;
+      border: 1px solid rgba(94, 231, 255, .32);
+      border-radius: 999px;
+      color: #c6f8ff;
+      background: var(--cyan-soft);
+      font-size: clamp(11px, 1vw, 14px);
+    }
+
+    .bottomline {
+      color: var(--muted);
+      font-size: clamp(11px, 1vw, 14px);
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-button {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      color: var(--text);
+      background: var(--surface);
+      cursor: pointer;
+      transition: 160ms ease;
+    }
+
+    .nav-button:hover,
+    .nav-button:focus-visible {
+      color: #061015;
+      border-color: var(--cyan);
+      background: var(--cyan);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .dots {
+      display: flex;
+      gap: 7px;
+    }
+
+    .slide-dot {
+      width: 8px;
+      height: 8px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: #50636d;
+      cursor: pointer;
+      transition: 160ms ease;
+    }
+
+    .slide-dot.active {
+      width: 24px;
+      border-radius: 99px;
+      background: var(--cyan);
+    }
+
+    .slide-count {
+      min-width: 42px;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+
+    @media (max-width: 820px) {
+      .slide {
+        overflow-y: auto;
+      }
+
+      .cols,
+      .cols-even,
+      .diagnostic {
+        grid-template-columns: 1fr;
+      }
+
+      .risk-flow {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+        justify-self: center;
+      }
+
+      .diagnostic {
+        overflow: visible;
+      }
+
+      .metric-panel {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .competition {
+        display: none;
+      }
+    }
+
+    @media (max-height: 650px) and (min-width: 821px) {
+      .slide {
+        gap: 10px;
+        padding-top: 18px;
+        padding-bottom: 14px;
+      }
+
+      .camera-shell img {
+        min-height: 220px;
+      }
+
+      .flow-node {
+        min-height: 115px;
+      }
+
+      .light-shot {
+        min-height: 230px;
+      }
+
+      .color-tile {
+        min-height: 200px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: 1ms !important;
+        animation-duration: 1ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="deck" aria-label="Bộ slide sáu tính năng ChromaLens AI">
+    <section class="slide active" id="slide-1" data-slide="1" aria-label="Hồ sơ hỗ trợ màu">
+      <header class="topline">
+        <div class="brand"><span class="diamond"></span>ChromaLens AI</div>
+        <div class="competition">Intel Vietnam AI Impact Festival 2026</div>
+      </header>
+      <div class="content cols">
+        <div class="stack">
+          <div class="eyebrow">01 · Cá nhân hóa hỗ trợ</div>
+          <h1>Chọn hồ sơ phù hợp với <span class="accent">cách bạn nhìn màu</span></h1>
+          <p class="lead" id="profileHint">Ưu tiên tăng tách biệt các cặp đỏ–lục.</p>
+          <div class="tag"><span class="dot"></span>Thiết lập hỗ trợ</div>
+        </div>
+        <div class="card feature-card stack">
+          <button class="profile-display" id="profileCycle" type="button" aria-label="Đổi hồ sơ hỗ trợ màu">
+            <span class="mini-label">Hồ sơ đang dùng · nhấn để đổi</span>
+            <span class="profile-name" id="profileName">Deutan</span>
+          </button>
+          <div class="profile-options" role="group" aria-label="Chọn hồ sơ">
+            <button class="profile-option active" type="button" data-profile="deutan"
+              aria-pressed="true">Deutan</button>
+            <button class="profile-option" type="button" data-profile="protan" aria-pressed="false">Protan</button>
+            <button class="profile-option" type="button" data-profile="tritan" aria-pressed="false">Tritan</button>
+          </div>
+          <div class="spectrum" aria-hidden="true"></div>
+        </div>
+      </div>
+      <footer class="bottomline"><span>Hồ sơ do người dùng tự chọn</span>
+        <div class="controls"></div>
+      </footer>
+    </section>
+
+    <section class="slide" id="slide-2" data-slide="2" aria-label="Màu trang phục và camera">
+      <header class="topline">
+        <div class="brand"><span class="diamond"></span>ChromaLens AI</div>
+        <div class="competition">Tính năng 02 · Màu trang phục</div>
+      </header>
+      <div class="content cols">
+        <div class="camera-shell">
+          <!-- Replace this repository fixture with an owner-approved demo photo if desired. -->
+          <img src="../tests/samples/t02/astronaut.png" alt="Ảnh mẫu phi hành gia trong khung camera">
+          <div class="scan" aria-hidden="true"></div>
+          <div class="camera-badge"><span class="dot" style="color: var(--green)"></span>TRANG PHỤC ĐÃ NHẬN DIỆN</div>
+          <div class="camera-credit">Ảnh mẫu NASA · public domain</div>
+        </div>
+        <div class="stack">
+          <div>
+            <div class="eyebrow">02 · Nhìn màu rõ ràng</div>
+            <h1>Màu trang phục<br><span class="accent">ngay trong camera</span></h1>
+          </div>
+          <div class="card feature-card stack">
+            <div class="mini-label">Màu trội đã hiệu chỉnh</div>
+            <div class="result-main">
+              <div class="swatch"></div>
+              <div>
+                <div class="result-word">Cam</div>
+                <div class="muted">Tên màu tiếng Việt dễ hiểu</div>
+              </div>
+            </div>
+          </div>
+          <div class="steps"><span>Hiệu chỉnh sáng</span><b>→</b><span>Cụm màu trội</span><b>→</b><span>11 tên
+              màu</span></div>
+        </div>
+      </div>
+      <footer class="bottomline"><span>Phân tích local/offline · không tải frame lên cloud</span>
+        <div class="controls"></div>
+      </footer>
+    </section>
+
+    <section class="slide" id="slide-3" data-slide="3" aria-label="Khả năng phân biệt màu">
+      <header class="topline">
+        <div class="brand"><span class="diamond"></span>ChromaLens AI</div>
+        <div class="competition">Tính năng 03 · Khả năng phân biệt</div>
+      </header>
+      <div class="content stack">
+        <div>
+          <div class="eyebrow">03 · Relational color risk</div>
+          <h1>Đo xem <span class="accent">hai màu có dễ bị nhầm</span> hay không</h1>
+        </div>
+        <div class="risk-flow">
+          <div class="flow-node">
+            <div>
+              <div class="flow-icon">● ●</div><strong>Cặp màu gốc</strong>
+              <p class="muted">sau hiệu chỉnh sáng</p>
+            </div>
+          </div>
+          <div class="arrow">→</div>
+          <div class="flow-node">
+            <div>
+              <div class="flow-icon">◐</div><strong>Mô phỏng hồ sơ</strong>
+              <p class="muted">Deutan / Protan / Tritan</p>
+            </div>
+          </div>
+          <div class="arrow">→</div>
+          <div class="flow-node">
+            <div>
+              <div class="flow-icon">ΔE</div><strong>So sánh khoảng cách màu</strong>
+              <p class="muted">trước và sau mô phỏng</p>
+            </div>
+          </div>
+        </div>
+        <div class="risk-scale">
+          <div class="risk-item low"><strong>Thấp</strong><span>Không có xung đột đáng kể</span></div>
+          <div class="risk-item medium"><strong>Cần lưu ý</strong><span>Có thể khó phân biệt</span></div>
+          <div class="risk-item high"><strong>Khó phân biệt</strong><span>Kích hoạt hỗ trợ chọn lọc</span></div>
+        </div>
+      </div>
+      <footer class="bottomline"><span>Điểm rủi ro là heuristic hỗ trợ, không phải xác suất y khoa</span>
+        <div class="controls"></div>
+      </footer>
+    </section>
+
+    <section class="slide" id="slide-4" data-slide="4" aria-label="Hiệu chỉnh ánh sáng">
+      <header class="topline">
+        <div class="brand"><span class="diamond"></span>ChromaLens AI</div>
+        <div class="competition">Tính năng 04 · Ánh sáng</div>
+      </header>
+      <div class="content cols">
+        <div class="light-compare">
+          <div class="light-shot dim"><img src="../tests/samples/t02/astronaut.png" alt="Ảnh mẫu trong ánh sáng yếu">
+            <div class="light-caption warning">◆ Nên tăng thêm ánh sáng</div>
+          </div>
+          <div class="light-shot corrected"><img src="../tests/samples/t02/astronaut.png"
+              alt="Ảnh mẫu sau hiệu chỉnh ánh sáng">
+            <div class="light-caption good">◆ Màu đã ổn định hơn</div>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="eyebrow">04 · Lighting-aware</div>
+          <h1>Nhận biết ánh sáng trước khi <span class="accent">gọi tên màu</span></h1>
+          <p class="lead">Gray-world cân bằng kênh màu. Chất lượng ánh sáng vẫn được báo riêng để người dùng chủ động
+            cải thiện.</p>
+          <div class="steps"><span>Frame gốc</span><b>→</b><span>Cân bằng RGB</span><b>→</b><span>Ước lượng màu</span>
+          </div>
+        </div>
+      </div>
+      <footer class="bottomline"><span>Không che giấu điều kiện quan sát kém</span>
+        <div class="controls"></div>
+      </footer>
+    </section>
+
+    <section class="slide" id="slide-5" data-slide="5" aria-label="Gợi ý phối màu">
+      <header class="topline">
+        <div class="brand"><span class="diamond"></span>ChromaLens AI</div>
+        <div class="competition">Tính năng 05 · Gợi ý phối màu</div>
+      </header>
+      <div class="content cols">
+        <div class="stack">
+          <div class="eyebrow">05 · Explainable matching</div>
+          <h1>Gợi ý phối từ <span class="accent">màu gốc đã hiệu chỉnh</span></h1>
+          <p class="lead">Quy tắc minh bạch theo sắc độ và độ trung tính - dùng màu gốc để đưa ra lời khuyên.
+          </p>
+          <div class="tag"><span class="dot"></span>Gợi ý tham khảo · người dùng quyết định</div>
+        </div>
+        <div class="match-stage">
+          <div class="color-tile"><strong>Cam</strong></div>
+          <div class="match-arrow">→</div>
+          <div class="match-list">
+            <div class="match-row"><span class="match-swatch" style="background:#111820"></span>
+              <div><strong>Đen</strong><span class="muted">Trung tính · tương phản rõ</span></div>
+            </div>
+            <div class="match-row"><span class="match-swatch" style="background:#f4f3ec"></span>
+              <div><strong>Trắng</strong><span class="muted">Sáng · dễ phối</span></div>
+            </div>
+            <div class="match-row"><span class="match-swatch" style="background:#24517b"></span>
+              <div><strong>Xanh dương</strong><span class="muted">Mát · cân bằng sắc ấm</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="bottomline"><span>Rule-based · có thể giải thích · nhất quán</span>
+        <div class="controls"></div>
+      </footer>
+    </section>
+
+    <section class="slide" id="slide-6" data-slide="6" aria-label="Chế độ kỹ thuật">
+      <header class="topline">
+        <div class="brand"><span class="diamond"></span>ChromaLens AI</div>
+        <div class="competition">Tính năng 06 · Minh bạch kỹ thuật</div>
+      </header>
+      <div class="content cols">
+        <div class="diagnostic">
+          <div class="camera-shell"><img src="../tests/samples/t02/astronaut.png" alt="Ảnh mẫu trong chế độ kỹ thuật">
+            <div class="scan" aria-hidden="true"></div>
+            <div class="camera-badge"><span class="dot" style="color:var(--cyan)"></span>KỸ THUẬT</div>
+          </div>
+          <div class="metric-panel">
+            <div class="view-toggle" aria-label="Chế độ xem"><span>Sản phẩm</span><span class="selected">Kỹ thuật</span>
+            </div>
+            <div class="metric"><span>Backend</span><strong>SCHP-ATR / OpenVINO / CPU</strong></div>
+            <div class="metric"><span>Pipeline FPS</span><strong>13.8*</strong></div>
+            <div class="metric"><span>SCHP keyframe FPS</span><strong>2.4*</strong></div>
+            <div class="metric"><span>Mask</span><strong>propagated · age 968 ms*</strong></div>
+            <div class="metric"><span>Risk / confidence</span><strong>0.25 / 0.96*</strong></div>
+            <div class="metric"><span>Sensor-to-photon</span><strong>NOT MEASURED</strong></div>
+            <small class="muted">* Minh họa telemetry trên development machine; không phải benchmark phần cứng
+              demo.</small>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="eyebrow">06 · Product ↔ Diagnostic</div>
+          <h1>Một pipeline.<br><span class="accent">Hai góc nhìn.</span></h1>
+          <p class="lead">Người dùng thấy thông tin hành động. Kỹ sư và giám khảo có thể kiểm tra backend, độ trễ, mask
+            và fallback.</p>
+          <div class="judge-points"><span>Local / Offline</span><span>Telemetry minh bạch</span><span>Fallback rõ
+              ràng</span></div>
+        </div>
+      </div>
+      <footer class="bottomline"><span>Nhấn <strong>F</strong> để trình chiếu toàn màn hình</span>
+        <div class="controls"></div>
+      </footer>
+    </section>
+  </main>
+
+  <template id="deckControls">
+    <button class="nav-button prev" type="button" aria-label="Slide trước">‹</button>
+    <div class="dots" aria-label="Chọn slide"></div>
+    <span class="slide-count" aria-live="polite">1 / 6</span>
+    <button class="nav-button next" type="button" aria-label="Slide sau">›</button>
+  </template>
+
+  <script>
+    (() => {
+      const slides = [...document.querySelectorAll('.slide')];
+      let current = Math.max(0, Math.min(slides.length - 1, Number(location.hash.replace('#slide-', '')) - 1 || 0));
+      const controlTemplate = document.getElementById('deckControls');
+
+      document.querySelectorAll('.controls').forEach((host) => {
+        const controls = controlTemplate.content.cloneNode(true);
+        const dots = controls.querySelector('.dots');
+        slides.forEach((_, index) => {
+          const dot = document.createElement('button');
+          dot.className = 'slide-dot';
+          dot.type = 'button';
+          dot.setAttribute('aria-label', `Đi tới slide ${index + 1}`);
+          dot.addEventListener('click', () => show(index));
+          dots.appendChild(dot);
+        });
+        controls.querySelector('.prev').addEventListener('click', () => show(current - 1));
+        controls.querySelector('.next').addEventListener('click', () => show(current + 1));
+        host.appendChild(controls);
+      });
+
+      function show(index) {
+        current = (index + slides.length) % slides.length;
+        slides.forEach((slide, i) => slide.classList.toggle('active', i === current));
+        document.querySelectorAll('.controls').forEach((controls) => {
+          controls.querySelectorAll('.slide-dot').forEach((dot, i) => dot.classList.toggle('active', i === current));
+          controls.querySelector('.slide-count').textContent = `${current + 1} / ${slides.length}`;
+        });
+        history.replaceState(null, '', `#slide-${current + 1}`);
+      }
+
+      const profiles = {
+        deutan: { name: 'Deutan', hint: 'Ưu tiên tăng tách biệt các cặp đỏ–lục.' },
+        protan: { name: 'Protan', hint: 'Ưu tiên làm rõ các sắc đỏ dễ nhầm.' },
+        tritan: { name: 'Tritan', hint: 'Ưu tiên tăng tách biệt xanh lam–vàng.' }
+      };
+      const profileKeys = Object.keys(profiles);
+      let profile = 'deutan';
+      function selectProfile(key) {
+        profile = key;
+        document.getElementById('profileName').textContent = profiles[key].name;
+        document.getElementById('profileHint').textContent = profiles[key].hint;
+        document.querySelectorAll('.profile-option').forEach((button) => {
+          const selected = button.dataset.profile === key;
+          button.classList.toggle('active', selected);
+          button.setAttribute('aria-pressed', String(selected));
+        });
+      }
+      document.querySelectorAll('.profile-option').forEach((button) => button.addEventListener('click', () => selectProfile(button.dataset.profile)));
+      document.getElementById('profileCycle').addEventListener('click', () => selectProfile(profileKeys[(profileKeys.indexOf(profile) + 1) % profileKeys.length]));
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') { event.preventDefault(); show(current + 1); }
+        if (event.key === 'ArrowLeft' || event.key === 'PageUp') { event.preventDefault(); show(current - 1); }
+        if (event.key === 'Home') show(0);
+        if (event.key === 'End') show(slides.length - 1);
+        if (event.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.();
+      });
+      show(current);
+      requestAnimationFrame(() => document.documentElement.classList.add('ready'));
+    })();
+  </script>
+</body>
+
+</html>

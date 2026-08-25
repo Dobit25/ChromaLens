@@ -748,6 +748,22 @@ The final handoff sources are intentionally small and reviewable:
 - [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md): default runtime,
   algorithms, public fixtures, credits, licenses, and deferred-asset gaps.
 
+The six-feature competition slide deck is a self-contained offline HTML file:
+
+```powershell
+Start-Process docs/competition-feature-slides.html
+```
+
+Use the on-screen arrows or `Left`/`Right`, `Page Up`/`Page Down`, and `Space`
+to navigate; press `F` for browser fullscreen. Slide 1 is interactive: click
+the large profile box to cycle through Deutan, Protan, and Tritan, or select
+one of the three profile buttons directly. The deck uses the tracked NASA
+public-domain fixture at `tests/samples/t02/astronaut.png`, runs without a
+server, CDN, API, camera, or model, and can later use an owner-approved image
+by replacing that relative image reference. Telemetry on slide 6 is clearly
+marked as illustrative development-machine evidence rather than an official
+demo-hardware benchmark.
+
 Prepare the ignored demo package through the real locked MediaPipe backend:
 
 ```powershell
