@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-09-09 04:08 +07:00
+Last updated: 2026-09-09 04:28 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -51,7 +51,7 @@ This table is intentionally empty until an agent starts the plan.
 | T11-UI-5 | Toggleable theme-inverted camera display cover | `DONE` | Repository owner + Codex | 2026-08-25 12:10 +07:00 | 2026-08-25 17:30 +07:00 | Tracked implementation toggles with `c`; full 302-test release gate passes |
 | T11-DECK-1 | Six-feature competition HTML slide deck | `DONE` | Repository owner + Codex | 2026-08-25 14:40 +07:00 | 2026-08-25 17:30 +07:00 | Offline interactive deck; owner-selected amber token, structural tests, and visual QA pass |
 | T12-T17-GATE-0 | Post-MVP scope and evaluation-contract freeze | `DONE` | Repository owner + Codex | 2026-09-08 21:24 +07:00 | 2026-09-08 21:56 +07:00 | Protocol 2.0.0, 176 cases, 44 metrics, strict baseline validation, and 310-test suite |
-| T14 | Fullscreen and resolution-independent presentation | `IN_PROGRESS` | Repository owner + Codex | 2026-09-09 04:08 +07:00 | 2026-09-09 04:08 +07:00 | Display/compositor-only implementation started under frozen protocol 2.0.0 |
+| T14 | Fullscreen and resolution-independent presentation | `DONE` | Repository owner + Codex | 2026-09-09 04:08 +07:00 | 2026-09-09 04:28 +07:00 | Four frozen layouts, real GUI toggle, strict artifact validation, and 321-test suite pass |
 
 ## 3. Active blockers
 
@@ -4949,3 +4949,99 @@ color naming, risk, and recolor behavior must remain unchanged.
 - [ ] Aspect-ratio error is at most 0.005, processing resolution is unchanged, and text overflow count is zero.
 - [ ] Product and Diagnostic pass at 1366x768 and 1920x1080 plus a recorded GUI smoke.
 - [ ] Masks, color analysis, recolor containment, and source pixels are unchanged by display scaling.
+
+---
+
+### `2026-09-09 04:28 +07:00` - `T14` `Fullscreen and resolution-independent presentation complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Implementation commit:** `c4cd008b7d9e22fdce146d5a995d6eb07f0a681e`
+
+#### Outcome
+
+- Added a display-only OpenCV controller. `f` changes the existing window
+  between windowed and fullscreen, `Esc` leaves fullscreen without stopping
+  inference, and `q` exits. `--fullscreen` selects the initial state.
+- The compositor still produces its existing camera-derived presentation
+  canvas. Fullscreen then applies one final aspect fit with black
+  letterbox/pillarbox bands; no capture, SCHP input, pipeline, mask, color,
+  risk, or recolor setting is changed.
+- The final-canvas fit is included before the render-complete timestamp, while
+  `source_read_to_display_submit_ms` still ends only after `cv2.imshow()`.
+- Product and Diagnostic footers now expose the fullscreen escape path and use
+  bounded single-line regions for technical controls.
+- Added a deterministic evidence generator, four ignored synthetic PNGs, one
+  ignored raw JSON manifest, a tracked schema-valid result, and a concise
+  human-readable report. Clean-clone tests do not require ignored artifacts;
+  the explicit strict command verifies their exact bytes when regenerated.
+
+#### Frozen T14 results
+
+| Case | Mode/theme | Display | Viewport aspect error | Processing changed | Text overflow | Result |
+| --- | --- | ---: | ---: | --- | ---: | --- |
+| PM-FULLSCREEN-1366X768-PRODUCT | Product/dark | 1366x768 | 0.0022007 | false | 0 | PASS |
+| PM-FULLSCREEN-1366X768-DIAGNOSTIC | Diagnostic/light | 1366x768 | 0.0022007 | false | 0 | PASS |
+| PM-FULLSCREEN-1920X1080-PRODUCT | Product/light | 1920x1080 | 0.0006250 | false | 0 | PASS |
+| PM-FULLSCREEN-1920X1080-DIAGNOSTIC | Diagnostic/dark | 1920x1080 | 0.0006250 | false | 0 | PASS |
+
+Worst aspect error is below the frozen 0.005 maximum. A real OpenCV GUI smoke
+completed windowed/fullscreen/windowed transitions and reported the requested
+`WND_PROP_FULLSCREEN` states. The Product/dark 1366x768 and Diagnostic/dark
+1920x1080 outputs were also inspected visually; the camera aspect, panels,
+cards, text, and status bars remained contained.
+
+#### Commands and observed results
+
+| Command/check | Result |
+| --- | --- |
+| `...python.exe -m pytest -q tests\\unit\\test_t14_display.py tests\\integration\\test_t14_fullscreen.py tests\\test_t01_camera_renderer.py tests\\integration\\test_t08_pipeline.py tests\\unit\\test_presentation.py` | exit 0; 56 passed |
+| `...python.exe scripts\\t14_display_evaluation.py` | exit 0; 4/4 offscreen cases passed; GUI intentionally NOT RUN in this first pass |
+| `...python.exe scripts\\t14_display_evaluation.py --gui-smoke --gui-hold-seconds 0.4` | exit 0; 4/4 cases passed; real GUI toggle success=true |
+| `...python.exe scripts\\post_mvp_result_validation.py evaluation\\results\\curated\\post_mvp\\t14\\result.json --require-ignored-artifacts` | exit 0; 4 cases, 4 metrics, 5 exact artifacts verified |
+| `...python.exe -m pytest -q tests\\unit\\test_t14_display.py tests\\integration\\test_t14_fullscreen.py tests\\evaluation\\test_t14_result.py` | exit 0; 11 passed |
+| First full `...python.exe -m pytest -q` after implementation | exit 0; 320 passed in 44.07 s |
+| Final full `...python.exe -m pytest -q` with curated-result coverage | exit 0; 321 passed in 27.52 s |
+| `...python.exe -m chromalens --help` | exit 0; `--fullscreen` documented without opening camera/model/window |
+| `...python.exe -m compileall -q src scripts tests` | exit 0 |
+| `...python.exe -m pip check` | exit 0; no broken requirements |
+| `git diff --exit-code -- pyproject.toml environment.yml requirements` | exit 0; dependency declarations and locks unchanged |
+| `git diff --check` | exit 0; line-ending warnings only |
+
+#### Artifact evidence
+
+- Ignored raw manifest:
+  `artifacts/post_mvp/t14/display-evaluation-raw.json`, 5,305 bytes, SHA-256
+  `a2db345589f7c61414948e146f0073c97363044cec9960072d5eb16558a4e959`.
+- Four ignored PNGs record exact 1366x768 and 1920x1080 Product/Diagnostic
+  outputs. Their byte sizes, SHA-256 values, project-generated provenance,
+  consent `NOT_APPLICABLE`, and Apache-2.0 license are stored in the curated
+  result.
+- No camera frame, personal data, model output, or external media is used by
+  the T14 fixtures; zero frames were uploaded.
+
+#### Definition of Done
+
+- [x] Fullscreen toggles without inference restart; `Esc` leaves fullscreen and `q` exits.
+- [x] Worst aspect error is at most 0.005, processing resolution is unchanged, and text overflow count is zero.
+- [x] Product and Diagnostic pass at 1366x768 and 1920x1080; a real GUI smoke is recorded.
+- [x] Source/presentation pixels remain immutable, and display fitting has no access to masks, color analysis, or recolor contracts.
+
+#### Deviations and limitations
+
+- No dependency, capture setting, SCHP/model setting, or analytical module was
+  changed. `app.py` wiring is coordinator-owned and was intentionally limited
+  to the display boundary approved by the owner.
+- Fixed-resolution evidence uses a deterministic synthetic gradient, so it is
+  display correctness evidence only, not segmentation/color-quality evidence.
+- The GUI smoke is a development-host OpenCV state observation, not final demo
+  hardware or a performance benchmark. Sensor-to-photon remains
+  `NOT_MEASURED`.
+- Existing local slide/PDF/voice-over work and the untracked demo image remain
+  untouched and outside both T14 commits.
+
+#### Exact next task
+
+`T12 — Extended color vocabulary and uncertainty`. T13, T15 instrumentation,
+and severity-only T16 also remain eligible to start independently under the
+frozen ownership map; T17 remains last.
