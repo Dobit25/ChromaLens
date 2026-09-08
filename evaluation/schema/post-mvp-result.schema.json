@@ -1,0 +1,630 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chromalens.local/schema/post-mvp-result-2.0.0.json",
+  "title": "ChromaLens post-MVP T12-T17 evaluation result",
+  "description": "Frozen structural contract for protocol 2.0.0. Metric name/unit/aggregation/threshold validation also uses post-mvp-metric-registry.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "schema_version",
+    "metric_registry_version",
+    "result_id",
+    "task_id",
+    "result_status",
+    "git_commit",
+    "created_at_utc",
+    "operator",
+    "environment",
+    "cases",
+    "configuration",
+    "metrics",
+    "artifacts",
+    "commands",
+    "limitations"
+  ],
+  "properties": {
+    "protocol_version": {
+      "const": "2.0.0"
+    },
+    "schema_version": {
+      "const": "2.0.0"
+    },
+    "metric_registry_version": {
+      "const": "2.0.0"
+    },
+    "result_id": {
+      "type": "string",
+      "pattern": "^post-mvp-[a-z0-9]+(?:-[a-z0-9]+)*-[0-9]{8}t[0-9]{6}z$"
+    },
+    "task_id": {
+      "enum": [
+        "T12-T17-GATE-0",
+        "T12",
+        "T13",
+        "T14",
+        "T15",
+        "T16",
+        "T17"
+      ]
+    },
+    "result_status": {
+      "enum": [
+        "COMPLETE",
+        "PARTIAL",
+        "INVALID",
+        "NOT_RUN"
+      ]
+    },
+    "git_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "created_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "operator": {
+      "$ref": "#/$defs/operator"
+    },
+    "environment": {
+      "$ref": "#/$defs/environment"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/case_result"
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "number",
+          "integer",
+          "boolean",
+          "string",
+          "null"
+        ]
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/metric"
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact"
+      }
+    },
+    "commands": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/command"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "operator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "identifier"
+      ],
+      "properties": {
+        "role": {
+          "enum": [
+            "coordinator",
+            "color_evaluator",
+            "segmentation_evaluator",
+            "ui_evaluator",
+            "performance_evaluator",
+            "risk_evaluator",
+            "release_evaluator"
+          ]
+        },
+        "identifier": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width",
+        "height"
+      ],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "host_role",
+        "declared_demo_hardware",
+        "manufacturer",
+        "model",
+        "operating_system",
+        "cpu",
+        "physical_core_count",
+        "logical_processor_count",
+        "ram_gib",
+        "gpu",
+        "npu",
+        "camera_or_source",
+        "python_version",
+        "package_versions",
+        "lock_sha256",
+        "backend_name",
+        "backend_device",
+        "source_kind",
+        "source_resolution",
+        "render_resolution",
+        "display_mode",
+        "warmup_seconds",
+        "measurement_seconds"
+      ],
+      "properties": {
+        "host_role": {
+          "enum": [
+            "development",
+            "demo"
+          ]
+        },
+        "declared_demo_hardware": {
+          "type": "boolean"
+        },
+        "manufacturer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operating_system": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cpu": {
+          "type": "string",
+          "minLength": 1
+        },
+        "physical_core_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "logical_processor_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ram_gib": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "gpu": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "npu": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "camera_or_source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "python_version": {
+          "type": "string",
+          "pattern": "^3\\.10\\.[0-9]+$"
+        },
+        "package_versions": {
+          "type": "object",
+          "minProperties": 4,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "lock_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "backend_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "backend_device": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_kind": {
+          "enum": [
+            "webcam",
+            "video",
+            "image",
+            "synthetic_patch",
+            "manual_selection",
+            "not_applicable"
+          ]
+        },
+        "source_resolution": {
+          "$ref": "#/$defs/resolution"
+        },
+        "render_resolution": {
+          "$ref": "#/$defs/resolution"
+        },
+        "display_mode": {
+          "enum": [
+            "gui",
+            "headless",
+            "offscreen",
+            "not_applicable"
+          ]
+        },
+        "warmup_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "measurement_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "external_measurement_apparatus": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "case_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "status",
+        "fixture_id",
+        "artifact_ids",
+        "reason"
+      ],
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "pattern": "^PM-[A-Z0-9-]+$"
+        },
+        "status": {
+          "enum": [
+            "COMPLETE",
+            "PARTIAL",
+            "INVALID",
+            "NOT_RUN"
+          ]
+        },
+        "fixture_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifact_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]*$"
+          }
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "aggregation",
+        "unit",
+        "status",
+        "value",
+        "case_ids",
+        "threshold_id",
+        "threshold_result",
+        "reason",
+        "method"
+      ],
+      "properties": {
+        "name": {
+          "enum": [
+            "processed_fps",
+            "inference_fps",
+            "source_read_to_render_ms",
+            "source_read_to_display_submit_ms",
+            "sensor_to_photon_ms",
+            "stage_duration_ms",
+            "mask_age_ms",
+            "processed_frame_count",
+            "dropped_capture_frame_count",
+            "dropped_inference_frame_count",
+            "degraded_frame_rate",
+            "rss_mib",
+            "latency_continuous_growth_flag",
+            "rss_continuous_growth_flag",
+            "basic_color_accuracy",
+            "extended_color_accuracy",
+            "lighting_label_stability_rate",
+            "uncertain_output_rate",
+            "forced_low_evidence_label_count",
+            "color_name_margin",
+            "segmentation_iou",
+            "segmentation_adequacy_rating",
+            "segmentation_adequate_rate",
+            "automatic_mask_available_rate",
+            "dominant_color_correct_rate",
+            "manual_roi_completion_seconds",
+            "fullscreen_toggle_success",
+            "viewport_aspect_ratio_error",
+            "processing_resolution_changed_flag",
+            "text_overflow_count",
+            "delta_e_original",
+            "delta_e_cvd",
+            "risk_score",
+            "recolor_applied",
+            "severity_response_consistency_rate",
+            "spatial_risk_valid_pixel_rate",
+            "spatial_risk_outside_mask_pixel_count",
+            "spatial_risk_runtime_ms",
+            "test_pass_count",
+            "test_fail_count",
+            "privacy_default_saved_frame_count",
+            "fatal_error_count",
+            "artifact_checksum_mismatch_count",
+            "unconsented_tracked_media_count"
+          ]
+        },
+        "aggregation": {
+          "enum": [
+            "single",
+            "p50",
+            "p95",
+            "peak",
+            "start",
+            "end",
+            "count",
+            "overall",
+            "per_class",
+            "per_lighting",
+            "per_category",
+            "per_profile",
+            "per_stage",
+            "mean",
+            "median",
+            "whole_session",
+            "window_median"
+          ]
+        },
+        "unit": {
+          "enum": [
+            "ms",
+            "s",
+            "frames/s",
+            "MiB",
+            "frame",
+            "count",
+            "ratio",
+            "boolean",
+            "score_0_1",
+            "rating_0_3",
+            "delta_e_00"
+          ]
+        },
+        "status": {
+          "enum": [
+            "MEASURED",
+            "COMPUTED",
+            "NOT_MEASURED",
+            "NOT_APPLICABLE",
+            "INVALID"
+          ]
+        },
+        "value": {
+          "type": [
+            "number",
+            "integer",
+            "boolean",
+            "null"
+          ]
+        },
+        "case_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^PM-[A-Z0-9-]+$"
+          }
+        },
+        "threshold_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "threshold_result": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "NOT_APPLICABLE",
+            "NOT_EVALUATED"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "method": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dimensions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "integer",
+              "boolean"
+            ]
+          }
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "path",
+        "tracking",
+        "media_kind",
+        "contains_personal_data",
+        "provenance",
+        "consent",
+        "license",
+        "bytes",
+        "sha256",
+        "availability",
+        "generation_command"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]*$"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tracking": {
+          "enum": [
+            "tracked_curated",
+            "ignored_raw"
+          ]
+        },
+        "media_kind": {
+          "enum": [
+            "json",
+            "csv",
+            "markdown",
+            "image",
+            "video",
+            "trace",
+            "annotation",
+            "other"
+          ]
+        },
+        "contains_personal_data": {
+          "type": "boolean"
+        },
+        "provenance": {
+          "type": "string",
+          "minLength": 1
+        },
+        "consent": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "OWNER_CONFIRMED",
+            "DOCUMENTED_PRIVATE",
+            "NOT_AUTHORIZED"
+          ]
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bytes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "availability": {
+          "enum": [
+            "AVAILABLE",
+            "TO_BE_ACQUIRED",
+            "UNAVAILABLE"
+          ]
+        },
+        "generation_command": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "command": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command",
+        "exit_code",
+        "purpose"
+      ],
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exit_code": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

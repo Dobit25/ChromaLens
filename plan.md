@@ -459,3 +459,245 @@ Cut rules:
 ## 8. Global Definition of Done
 
 The MVP is complete only when all P0 tasks are `DONE`, all test/results evidence is stored, and the repository satisfies the Definition of Done in `AGENTS.md`. A visually appealing demo without evaluation and responsible-AI evidence is not complete; a technically sophisticated collection of modules without a stable end-to-end demo is also not complete.
+
+## 9. Owner-approved post-MVP phase: T12-T17
+
+Approval date: 2026-09-08
+Status: Approved scope; implementation begins only after Post-MVP Gate 0 is
+`DONE`.
+Purpose: Incorporate the dated 09-17 September review feedback without
+rewriting the completed T00-T11 MVP history or the frozen T09 protocol/results.
+
+The T00-T11 plan and its August evidence remain historical. The following
+tasks are an additive post-MVP phase. They preserve the modular local/offline
+pipeline, original corrected color, user-selected non-diagnostic CVD profile,
+separate risk/confidence/lighting concepts, bounded newest-frame processing,
+and explicit MediaPipe fallback.
+
+### Post-MVP Gate 0 — Scope and evaluation-contract freeze
+
+Dependencies: T00-T11 `DONE`
+Priority: Required before T12-T17 feature implementation
+
+Work:
+
+- Freeze protocol version 2.0.0, machine-readable result schema, metric
+  registry, fixture IDs, artifact/consent/license/checksum rules, and file
+  ownership.
+- Record the current development-host benchmark baseline without describing it
+  as demo-hardware or sensor-to-photon evidence.
+- Keep `evaluation/protocol.md` and T09 schema/results frozen at 1.0.0; use
+  separate v2 paths.
+- Preserve unrelated local work and do not include it in the Gate commit.
+
+Definition of Done:
+
+- T12-T17 scope, dependency rules, and task DoD are recorded in this plan.
+- Protocol, schema, metric registry, fixture registry, and ownership all state
+  version 2.0.0 and pass automated cross-validation.
+- A fresh current-product baseline records the exact host role, source,
+  backend/device, resolution, duration, metric semantics, and target comparison.
+- Every baseline artifact records provenance, consent/privacy classification,
+  license, byte size, and SHA-256; raw media/traces stay ignored.
+- Focused Gate tests and the complete existing test suite pass in the isolated
+  Python 3.10 `lens` environment.
+- No T12-T17 feature behavior is implemented by the Gate.
+
+### T12 — Extended color vocabulary and uncertainty
+
+Priority: Post-MVP product quality
+Dependencies: Post-MVP Gate 0; T04
+Can run in parallel with: T13, T14, T15 baseline instrumentation, and the
+severity-only portion of T16
+
+Work:
+
+- Preserve the 11 basic color families as the stable level-one output.
+- Add the frozen 29-label level-two vocabulary from protocol v2 using light,
+  dark, and selected common shade names.
+- Return an explicit `uncertain` state when naming evidence is below the frozen
+  margin/lighting criteria instead of forcing a specific display label.
+- Evaluate at least 30 declared physical samples under neutral, warm, and low
+  lighting. The frozen registry treats this as 30 samples x 3 conditions = 90
+  observations; unavailable captures remain `NOT_RUN`.
+
+Definition of Done:
+
+- Every output retains a level-one basic family; a confident output may also
+  expose one allowed level-two label.
+- Low-evidence cases display `Uncertain`/`Không chắc chắn` and do not present a
+  forced label as reliable.
+- The 29-label digital contract and uncertainty-boundary tests pass.
+- All 90 physical observation IDs are reported with confusion/stability tables,
+  including explicit `NOT_RUN` rows and failure causes.
+- Naming scores/margins remain documented heuristics, not calibrated
+  probabilities.
+
+### T13 — Standalone-garment evaluation and manual ROI fallback
+
+Priority: Post-MVP reliability
+Dependencies: Post-MVP Gate 0; T02-T04
+Can run in parallel with: T12, T14, and T15 instrumentation
+
+Work:
+
+- Evaluate exactly 20 frozen standalone products: tops, trousers, skirts,
+  dresses, and coats across simple and complex backgrounds.
+- Record mask quality, original corrected color result, and failure reason.
+- If automatic human parsing does not return a usable standalone-garment mask,
+  provide an explicit user-selected rectangular/polygonal ROI fallback.
+- Do not replace the segmentation model or claim that manual selection is AI
+  detection. ATR has no dedicated coat label; coat observations measure mask
+  usefulness and may map visibly to `upper-clothes`.
+
+Definition of Done:
+
+- All 20 IDs have automatic-backend results or explicit `NOT_RUN` reasons,
+  adequacy ratings, and color observations.
+- Manual selection is optional, visibly labeled `manual selection`, bounded to
+  the source frame, reversible, and never reported as automatic inference.
+- Automated tests cover cancel/invalid/out-of-bounds selection and prove source
+  frame immutability.
+- Fixture provenance, consent, license, checksums, failures, and mitigations are
+  recorded.
+
+### T14 — Fullscreen and resolution-independent presentation
+
+Priority: Post-MVP demo usability
+Dependencies: Post-MVP Gate 0; completed T11 presentation compositor
+Can run in parallel with: T12, T13, and T15 instrumentation after display
+ownership is frozen
+
+Work:
+
+- Add a reversible windowed/fullscreen control with a visible keyboard escape
+  path.
+- Preserve camera aspect ratio with letterbox/pillarbox as needed and scale
+  typography, labels, and outlines for the display canvas.
+- Scale only presentation output; do not increase capture/model processing
+  resolution implicitly.
+- Test the frozen 1366x768 and 1920x1080 cases in Product and Diagnostic modes.
+
+Definition of Done:
+
+- Fullscreen toggles without restarting inference; `Esc` leaves fullscreen and
+  `q` exits clearly.
+- Viewport aspect-ratio error is within the frozen tolerance, processing
+  resolution does not change, and no text/card overflow is detected.
+- Product and Diagnostic modes pass offscreen tests at both required display
+  resolutions and a manual GUI smoke test is recorded.
+- Camera masks, color analysis, recolor containment, and source pixels are
+  unchanged by presentation scaling.
+
+### T15 — Bottleneck measurement and bounded performance optimization
+
+Priority: Post-MVP performance
+Dependencies: Post-MVP Gate 0; final acceptance benchmark runs after T12-T14
+integration and any enabled T16 path
+Can run in parallel with: T12-T14 during instrumentation/baseline only
+
+Work:
+
+- Instrument named pipeline stages before optimizing them.
+- Preserve bounded newest-frame capture/inference, SCHP keyframes, optical-flow
+  propagation, stale-mask clearing, and explicit mask provenance.
+- Profile model input resolution/cadence, array copies, color analysis,
+  renderer, compositor, and GUI submission. Optimize only measured bottlenecks.
+- Do not promote the previously rejected INT8 model without a new representative
+  calibration/equivalence gate.
+- Run five-minute GUI and headless measurements with exact hardware/backend/
+  resolution declarations.
+
+Definition of Done:
+
+- Per-stage timing identifies the dominant bottlenecks with reproducible raw
+  evidence.
+- Internal target on the declared test configuration is at least 20 processed
+  frames/s and p95 `source_read_to_display_submit_ms <= 120 ms` for GUI, or p95
+  `source_read_to_render_ms <= 120 ms` for headless.
+- No continuously increasing software latency or RSS trend is detected during
+  each 300-second measured interval; missed targets are reported, not hidden.
+- `sensor_to_photon_ms` remains `NOT_MEASURED` without synchronized external
+  apparatus.
+- Mask fidelity, semantic labels, recolor containment, and fallback reliability
+  remain at or above their pre-optimization gates.
+
+### T16 — Severity coverage and experimental spatial gradient risk
+
+Priority: Severity support required; spatial gradient risk experimental
+Dependencies: Post-MVP Gate 0; T05-T06. T12 is optional for the algorithm but
+required before final Product-copy integration.
+Can run in parallel with: T12-T15 while isolated behind configuration
+
+Work:
+
+- Keep CVD profile and severity user-selected and explicitly non-diagnostic.
+- Evaluate severity values 0.00, 0.25, 0.50, 0.75, and 1.00 for protan, deutan,
+  and tritan using frozen sanity fixtures.
+- Expose understandable support-intensity presets in Product mode while keeping
+  the exact numeric severity in Diagnostic mode.
+- Prototype a tiled/region-based CIELAB spatial risk map inside the garment
+  mask for large gradients, with zero risk pixels outside that mask.
+- Keep spatial gradient risk behind an explicit experimental flag unless its
+  frozen validation gate passes.
+
+Definition of Done:
+
+- Severity 0 remains identity and all 15 profile/severity contract cases store
+  Delta-E00/risk/recolor behavior without medical claims.
+- Severity presets map exactly and reversibly to documented numeric values.
+- Protan, deutan, and tritan each have a large-gradient evaluation row.
+- Spatial-risk output is aligned to the source mask, bounded to `[0,1]`, and
+  zero outside the garment; performance cost is measured.
+- If the experimental quality/performance gate fails, severity support ships
+  independently and gradient risk remains disabled and labeled experimental.
+
+### T17 — Integration, release gate, and demo freeze
+
+Priority: Required final task
+Dependencies: T12-T16 have terminal statuses (`DONE`, or owner-accepted
+`PARTIAL`/`DEFERRED` with explicit claim cuts)
+Can run in parallel with: none
+
+Work:
+
+- Integrate only validated T12-T16 outputs into one stable Product/Diagnostic
+  application.
+- Run all existing tests (302 collected at Gate start) plus every new test; the
+  exact collected count replaces the stale feedback reference to 193 tests.
+- Exercise webcam, deterministic video, fullscreen at both required display
+  sizes, standalone and multicolor garments, severity, privacy defaults, and a
+  five-minute performance/stability session.
+- Record all failures, licenses, consent/provenance, limitations, and release
+  claims. Freeze features after acceptance; fixes after freeze are limited to
+  release blockers.
+
+Definition of Done:
+
+- All automated tests pass, or each failure has explicit owner acceptance and
+  a corresponding claim cut; no test is silently skipped to obtain green CI.
+- Required manual/demo checks and schema-valid machine/human-readable results
+  are stored with checksums and exact commands.
+- Camera frames remain local and unsaved by default; no private/raw/bulk media
+  is tracked.
+- README, architecture, attribution, limitations, benchmark summary, and demo
+  commands match the release behavior.
+- A known-good release commit/tag is identified and no core implementation
+  remains after feature freeze.
+
+## 10. Post-MVP dependency and integration order
+
+```text
+Post-MVP Gate 0
+  +-- T12 extended naming -----------+
+  +-- T13 standalone garments -------+
+  +-- T14 fullscreen ----------------+--> T15 final benchmark --+
+  +-- T15 instrumentation/baseline --+                         |
+  +-- T16 severity/experimental gradient ----------------------+--> T17
+```
+
+T12-T16 may be developed in parallel only within the ownership map frozen by
+protocol v2. Coordinator-owned integration surfaces (`app.py`, `pipeline.py`,
+`presentation.py`, configuration/contracts, dependencies, CI, plan, and coding
+log) are merged deliberately. T15's final acceptance benchmark is rerun after
+the integrated feature set; T17 is always last.

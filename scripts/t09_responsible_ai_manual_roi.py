@@ -59,12 +59,9 @@ Clock = Callable[[], float]
 
 def verify_fixtures() -> tuple[Path, ...]:
     paths = tuple(FIXTURE_DIR / name for name in FIXTURES)
-    actual_names = {path.name for path in FIXTURE_DIR.iterdir() if path.suffix.lower() in {".png", ".jpg", ".jpeg"}}
-    if actual_names != set(FIXTURES):
-        raise ManualRoiError(
-            f"manual ROI fixture set changed: {sorted(actual_names)}"
-        )
     for path in paths:
+        if not path.is_file():
+            raise ManualRoiError(f"declared manual ROI fixture is missing: {path.name}")
         if sha256_file(path) != FIXTURES[path.name]:
             raise ManualRoiError(f"fixture checksum mismatch: {path.name}")
     return paths

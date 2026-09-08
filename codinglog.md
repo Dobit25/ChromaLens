@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-08-24 21:16 +07:00
+Last updated: 2026-09-08 21:56 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -50,6 +50,7 @@ This table is intentionally empty until an agent starts the plan.
 | T11-TUNE-1 | Lower runtime medium-risk/recolor activation threshold | `DONE` | Repository owner + Codex | 2026-08-25 11:00 +07:00 | 2026-08-25 11:56 +07:00 | Medium/recolor boundaries are 0.10 with exact-boundary tests; frozen T09 evidence remains historical |
 | T11-UI-5 | Toggleable theme-inverted camera display cover | `DONE` | Repository owner + Codex | 2026-08-25 12:10 +07:00 | 2026-08-25 17:30 +07:00 | Tracked implementation toggles with `c`; full 302-test release gate passes |
 | T11-DECK-1 | Six-feature competition HTML slide deck | `DONE` | Repository owner + Codex | 2026-08-25 14:40 +07:00 | 2026-08-25 17:30 +07:00 | Offline interactive deck; owner-selected amber token, structural tests, and visual QA pass |
+| T12-T17-GATE-0 | Post-MVP scope and evaluation-contract freeze | `DONE` | Repository owner + Codex | 2026-09-08 21:24 +07:00 | 2026-09-08 21:56 +07:00 | Protocol 2.0.0, 176 cases, 44 metrics, strict baseline validation, and 310-test suite |
 
 ## 3. Active blockers
 
@@ -77,6 +78,7 @@ Use this section only for implementation decisions that affect later tasks. Deta
 | DEC-012 | 2026-08-23 | Close T09 with all 33 physical color cases still honestly `NOT_RUN` as an owner-accepted limitation; supersede seven unrecoverable contributor artifacts with four fresh raw benchmark runs plus one deterministic video, never reconstructed values. | T09, T10, T11 | T09 completion entry |
 | DEC-013 | 2026-08-24 | Ship the T07 matching CSV as byte-identical package data and resolve it beside the installed module, while retaining the root audit copy and an equality test. | T07, T08, T11 packaging | T11 completion entry |
 | DEC-014 | 2026-08-24 | After owner reopen, promote verified SCHP-ATR at upstream 512 input as the primary demo backend, prefer checksummed FP32 OpenVINO, preserve explicit MediaPipe fallback, and reject faster 256/384 variants because class/mask fidelity degraded. | T10, T11 demo/handoff | T10 owner-reopened completion entry |
+| DEC-015 | 2026-09-08 | Add T12-T17 as a separate post-MVP phase under protocol 2.0.0; preserve T09 v1 history, allow T12-T16 parallel work only inside frozen ownership, rerun T15 acceptance after integration, and keep T17 strictly last. | T12-T17 | Post-MVP Gate 0 completion entry |
 
 ## 5. Chronological entries
 
@@ -4702,3 +4704,198 @@ and the relevant suite was rerun before the final full pass.
 - Slide 6 labels development telemetry as illustrative and preserves
   `sensor-to-photon = NOT MEASURED`; profile selection is explicitly described
   as a user setting rather than diagnosis.
+
+---
+
+### `2026-09-08 21:24 +07:00` - `T12-T17-GATE-0` `Post-MVP scope and evaluation-contract freeze started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Plan reference:** Owner-approved post-MVP T12-T17 addendum to be recorded in `plan.md`
+**Requirements/rubric affected:** FR-02-FR-19; NFR-02-NFR-08; post-MVP color, standalone-garment, fullscreen, performance, severity/spatial-risk, and release evidence
+
+#### Objective
+
+Before any T12-T17 feature implementation, freeze a versioned post-MVP scope,
+dependency graph, Definition of Done, protocol v2, machine-readable schema,
+fixture IDs, metric names/formulas/units/thresholds, artifact policy, and file
+ownership. Record an honest benchmark baseline for the current product on the
+development host using only the approved `lens` Python 3.10 environment.
+
+#### Starting state
+
+- Branch `main` is synchronized with `origin/main` at
+  `d876e6acaa7373928bdfc796265051a36a80d680`; local branch `mvp` and
+  `origin/mvp` point to the same commit.
+- T00-T11 and the recorded T11 UI/demo corrections are `DONE`. The frozen T09
+  protocol 1.0.0 and its historical thresholds/results remain immutable.
+- The repository owner explicitly approved proceeding with Gate 0 for a new
+  T12-T17 post-MVP phase on 2026-09-08. This is new approved scope, not a
+  retroactive change to the August MVP plan or evidence.
+- Approved interpreter: `D:\Coding\Anaconda\envs\lens\python.exe`, Python
+  `3.10.20`; `pip check` reports no broken requirements.
+- Existing unrelated local work is preserved and excluded from Gate 0:
+  modified `docs/competition-feature-slides.html`, untracked slide PDF and
+  voiceover documents, and untracked `tests/samples/t02/demo_garment_person.png`.
+- Host remains a development machine. It is not declared final demo hardware,
+  and software timestamps cannot measure sensor-to-photon latency.
+
+#### Smallest Gate 0 implementation
+
+1. Append, rather than rewrite, the approved T12-T17 scope and dependencies in
+   `plan.md`; T17 remains strictly dependent on T12-T16.
+2. Create protocol v2 and separate post-MVP schema, metric registry, fixture
+   registry, ownership map, and validation tests without modifying frozen T09
+   v1 contracts or curated results.
+3. Capture current development-host baseline evidence with exact backend,
+   device, source, resolution, timing semantics, raw-artifact checksum, and
+   explicit target comparison. Keep raw output under ignored `artifacts/` and
+   track only small JSON/Markdown evidence.
+4. Validate registry/schema/checksum consistency and run the existing full test
+   suite. Do not begin implementation of extended colors, standalone garment
+   interaction, fullscreen, performance optimization, or spatial risk.
+
+#### Baseline checks
+
+| Check | Result |
+| --- | --- |
+| Source-of-truth review | PASS: mandatory files read in order; no conflict with the owner-approved post-MVP addendum |
+| Git baseline | PASS: `main`/`origin/main` at `d876e6a...`; unrelated dirty files identified and preserved |
+| Approved environment | PASS: Python 3.10.20 in `lens`; `pip check` exit 0 |
+| Existing automated inventory | PASS: prior read-only collection found 302 tests; Gate 0 rerun pending |
+| Gate files and fresh baseline | NOT RUN at task start |
+
+#### Definition-of-Done state
+
+- [ ] T12-T17 scope, dependencies, and task DoD are owner-approved and recorded.
+- [ ] Protocol v2, schema, fixtures, metrics, artifact rules, and ownership are frozen and mutually validated.
+- [ ] Current baseline is saved with exact development-host/backend/conditions and honest latency semantics.
+- [ ] Baseline raw artifact has provenance, consent/privacy status, license, byte size, and SHA-256.
+- [ ] Focused Gate validation and full repository tests pass in `lens`.
+- [ ] No T12-T17 feature implementation or unrelated local file is included.
+
+#### Exact next action
+
+Create the post-MVP addendum and versioned Gate 0 contracts, then run and
+strictly validate the current baseline before changing this Gate to `DONE`.
+
+---
+
+### `2026-09-08 21:56 +07:00` - `T12-T17-GATE-0` `Post-MVP scope and evaluation-contract freeze complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Decision:** `DEC-015`
+
+#### Outcome
+
+- Appended an owner-approved T12-T17 phase to `plan.md` without modifying the
+  completed T00-T11 task definitions or historical T09 evidence.
+- Froze protocol/schema/metric/fixture/ownership version 2.0.0. The registry
+  contains 176 unique cases and 44 exact metrics.
+- Locked 29 level-two color labels over the original 11 level-one families,
+  three uncertainty contracts, 30 physical samples x three lighting conditions,
+  20 standalone garments, four fullscreen cases, four 300-second performance
+  cases, 15 severity cases, three gradients, and seven release cases.
+- Extended CI's curated-result allowlist for only the owned post-MVP task
+  namespaces and rejected tracked raw `artifacts/post_mvp/` content.
+- Recorded one fresh current-product baseline through the actual SCHP-ATR/
+  OpenVINO asynchronous webcam path. The wrapper saved telemetry only; it saved
+  and uploaded zero frames.
+- Corrected two historical fixture consumers that treated every image beside
+  the five declared T02 fixtures as evaluation data. They now use the explicit
+  five-file registry and safely ignore the owner's unrelated untracked slide
+  image without deleting, moving, or committing it.
+
+#### Current development-host baseline
+
+Host: Lenovo 83DV, Intel Core i5-13450HX, 15.78 GiB RAM, Windows 11 build
+26200, Python 3.10.20 `lens`. Backend: SCHP-ATR FP32/OpenVINO CPU with async
+keyframes and optical flow. Webcam requested 480x360 and delivered 640x360.
+The run used 15 seconds warm-up and 60 measured seconds in headless mode.
+
+| Metric | Observation | Frozen v2 target | Result |
+| --- | ---: | ---: | --- |
+| Processed FPS | 10.85 frames/s | at least 20 | FAIL |
+| SCHP keyframe inference FPS | 1.21 frames/s | observation | REPORTED |
+| `source_read_to_render_ms` p50/p95 | 110/188 ms | p95 at most 120 ms | FAIL |
+| Retained render samples | 651 | positive | PASS |
+| Capture mailbox overwrites | 392 | observation | REPORTED |
+| Degraded frames | 651/651 | observation | REPORTED |
+| RSS start/end/peak | 915.32/129.45/956.22 MiB | observation | REPORTED |
+| GUI display-submit latency | `NOT_MEASURED` | GUI only | N/A |
+| Sensor-to-photon latency | `NOT_MEASURED` | external apparatus | N/A |
+| 300-second growth flags | `NOT_MEASURED` | no growth | NOT EVALUATED |
+
+All measured frames were degraded in the uncontrolled scene, so this baseline
+is an honest current software starting point and not mask/color quality
+evidence. It cannot replace the representative 300-second T15 GUI/headless
+acceptance runs.
+
+Raw telemetry is ignored at
+`artifacts/post_mvp/gate0/current-baseline-raw.json`: 4,048 bytes, SHA-256
+`9ef8c2ffe40e21280fbd561e082edeeb25fffcd10af7e6d2efa734f72b9f3392`.
+The manifest records project provenance, Apache-2.0, no personal data, consent
+not applicable, no saved/uploaded frames, and exact generation command.
+
+#### Files changed
+
+- Plan/log/docs: `plan.md`, `codinglog.md`, `README.md`, and
+  `evaluation/results/README.md`.
+- Frozen v2 contracts: `evaluation/protocol-v2.md`,
+  `evaluation/OWNERSHIP-v2.md`, `evaluation/schema/post-mvp-result.schema.json`,
+  `evaluation/schema/post-mvp-metric-registry.json`,
+  `evaluation/fixtures/post-mvp-cases.csv`, and its README.
+- Baseline/validation: `scripts/post_mvp_baseline.py`,
+  `scripts/post_mvp_result_validation.py`, Gate 0 curated JSON/Markdown, and
+  `tests/evaluation/test_post_mvp_gate.py`.
+- CI/fixture robustness: `.github/workflows/ci.yml`,
+  `scripts/t09_responsible_ai_manual_roi.py`, and
+  `tests/integration/test_t10_schp_integration.py`.
+
+#### Commands and observed results
+
+| Command/check | Result |
+| --- | --- |
+| `D:\Coding\Anaconda\envs\lens\python.exe scripts\post_mvp_baseline.py --backend schp-atr --camera-index 0 --width 480 --height 360 --warmup-seconds 15 --measurement-seconds 60` | exit 0; raw telemetry generated; no frame saved/uploaded |
+| `...python.exe scripts\post_mvp_result_validation.py --require-ignored-artifacts` | exit 0; one case, nine metrics, one ignored artifact verified |
+| First `...python.exe -m pytest -q tests\evaluation\test_post_mvp_gate.py` | exit 1; 6 passed/2 failed because assertions expected phrases across Markdown line wrapping |
+| Focused Gate rerun after whitespace-normalized documentation assertions | exit 0; 8 passed |
+| First full `...python.exe -m pytest -q` | exit 1; 307 passed/3 failed because an unrelated untracked slide image was incorrectly globbed as a sixth T02 fixture |
+| Fixture-registry correction suite | exit 0; 12 passed including real SCHP PyTorch/OpenVINO integration |
+| Final full `...python.exe -m pytest -q` | exit 0; 310 passed in 27.92 s after staging; preceding repaired full run also passed 310 in 36.62 s |
+| `...python.exe -m pytest --collect-only -q -p no:cacheprovider` | exit 0; 310 tests collected |
+| `...python.exe -m chromalens --help`; both new script `--help` checks | exit 0; no camera/model access for help |
+| `...python.exe -m compileall -q src scripts tests` | exit 0 |
+| `...python.exe -m pip check` | exit 0; no broken requirements |
+| `git diff --exit-code -- pyproject.toml environment.yml requirements` | exit 0; dependencies and locks unchanged |
+| `git diff --check` | exit 0 after removing new Markdown trailing whitespace; line-ending warnings only |
+
+#### Definition of Done
+
+- [x] T12-T17 scope, dependencies, and task DoD are approved and recorded.
+- [x] Protocol, schema, metric registry, 176 fixtures, artifact rules, and file
+  ownership are frozen at 2.0.0 and cross-validated.
+- [x] Current baseline records exact development host, source, backend/device,
+  actual resolution, duration, timing semantics, and failed target comparison.
+- [x] Raw baseline artifact records provenance, privacy/consent, license, exact
+  bytes and SHA-256; it remains ignored and is not required on clean checkouts.
+- [x] Focused Gate validation, exact-present-byte validation, compilation,
+  dependency checks, and the complete 310-test suite pass in `lens`.
+- [x] No T12-T17 feature behavior or unrelated slide/media change is included.
+
+#### Deviations and limitations
+
+- Gate baseline duration is 60 seconds by design; the final stability metric is
+  locked to 300 seconds and remains `NOT_MEASURED` until T15.
+- The current baseline scene produced only degraded analysis frames. The result
+  is retained rather than rerun selectively to obtain a more favorable number.
+- No dependency was installed or changed.
+- Existing local slide, PDF, voiceover, and demo-image work remains outside the
+  Gate change.
+
+#### Exact next task
+
+`T12 — Extended color vocabulary and uncertainty`. T13, T14, T15
+instrumentation, and the severity-only part of T16 may start in parallel under
+the frozen ownership map; T17 remains last.

@@ -1,0 +1,214 @@
+{
+  "protocol_version": "2.0.0",
+  "schema_version": "2.0.0",
+  "metric_registry_version": "2.0.0",
+  "result_id": "post-mvp-gate0-baseline-20260908t143953z",
+  "task_id": "T12-T17-GATE-0",
+  "result_status": "COMPLETE",
+  "git_commit": "d876e6acaa7373928bdfc796265051a36a80d680",
+  "created_at_utc": "2026-09-08T14:39:53.631380Z",
+  "operator": {
+    "role": "coordinator",
+    "identifier": "repository-owner-and-codex"
+  },
+  "environment": {
+    "host_role": "development",
+    "declared_demo_hardware": false,
+    "manufacturer": "LENOVO",
+    "model": "83DV",
+    "operating_system": "Microsoft Windows 11 Home Single Language 10.0.26200 build 26200",
+    "cpu": "13th Gen Intel(R) Core(TM) i5-13450HX",
+    "physical_core_count": 10,
+    "logical_processor_count": 16,
+    "ram_gib": 15.78,
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU (not used)",
+    "npu": null,
+    "camera_or_source": "Integrated camera index 0; no serial or instance ID stored",
+    "python_version": "3.10.20",
+    "package_versions": {
+      "chromalens-ai": "0.1.0",
+      "numpy": "1.26.4",
+      "opencv-contrib-python": "4.10.0.84",
+      "Pillow": "12.3.0",
+      "daltonlens": "0.1.5",
+      "openvino": "2025.4.1",
+      "torch": "2.5.1",
+      "mediapipe": "0.10.21"
+    },
+    "lock_sha256": "e17b881b0b8409cd87ea02a9cec916bc81fe1095868201dfe9a3eb30ef05a944",
+    "backend_name": "schp-atr/openvino with async keyframes and optical-flow propagation",
+    "backend_device": "CPU (13th Gen Intel(R) Core(TM) i5-13450HX)",
+    "source_kind": "webcam",
+    "source_resolution": {"width": 640, "height": 360},
+    "render_resolution": {"width": 1025, "height": 648},
+    "display_mode": "headless",
+    "warmup_seconds": 15,
+    "measurement_seconds": 60,
+    "external_measurement_apparatus": null
+  },
+  "cases": [
+    {
+      "case_id": "PM-GATE0-BASELINE-WEBCAM-HEADLESS-60",
+      "status": "COMPLETE",
+      "fixture_id": "current-schp-webcam-headless-60",
+      "artifact_ids": ["gate0-current-baseline-raw"],
+      "reason": "Fresh telemetry captured; every measured frame was degraded because the uncontrolled scene did not yield complete analytical context."
+    }
+  ],
+  "configuration": {
+    "requested_width": 480,
+    "requested_height": 360,
+    "actual_width": 640,
+    "actual_height": 360,
+    "cvd_profile": "deutan",
+    "severity": 1.0,
+    "ui_mode": "product",
+    "theme": "dark",
+    "display": false,
+    "schp_live_mode": "async",
+    "model_precision": "FP32",
+    "worktree_dirty": true
+  },
+  "metrics": [
+    {
+      "name": "processed_fps",
+      "aggregation": "single",
+      "unit": "frames/s",
+      "status": "MEASURED",
+      "value": 10.85,
+      "case_ids": ["PM-GATE0-BASELINE-WEBCAM-HEADLESS-60"],
+      "threshold_id": "internal_target",
+      "threshold_result": "FAIL",
+      "reason": "Below the frozen 20 frames/s internal target.",
+      "method": "Processed render samples divided by 60.02 measured seconds."
+    },
+    {
+      "name": "inference_fps",
+      "aggregation": "single",
+      "unit": "frames/s",
+      "status": "MEASURED",
+      "value": 1.21,
+      "case_ids": ["PM-GATE0-BASELINE-WEBCAM-HEADLESS-60"],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Authoritative keyframe throughput is separate from display-loop throughput.",
+      "method": "Runtime async segmenter EMA at session completion."
+    },
+    {
+      "name": "source_read_to_render_ms",
+      "aggregation": "p50",
+      "unit": "ms",
+      "status": "MEASURED",
+      "value": 110.0,
+      "case_ids": ["PM-GATE0-BASELINE-WEBCAM-HEADLESS-60"],
+      "threshold_id": null,
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "The v2 acceptance threshold is defined for p95.",
+      "method": "NumPy linear percentile over 651 retained samples."
+    },
+    {
+      "name": "source_read_to_render_ms",
+      "aggregation": "p95",
+      "unit": "ms",
+      "status": "MEASURED",
+      "value": 188.0,
+      "case_ids": ["PM-GATE0-BASELINE-WEBCAM-HEADLESS-60"],
+      "threshold_id": "headless_p95_target",
+      "threshold_result": "FAIL",
+      "reason": "Exceeds the frozen 120 ms headless p95 target.",
+      "method": "NumPy linear percentile over 651 retained samples."
+    },
+    {
+      "name": "source_read_to_display_submit_ms",
+      "aggregation": "p95",
+      "unit": "ms",
+      "status": "NOT_MEASURED",
+      "value": null,
+      "case_ids": ["PM-GATE0-BASELINE-WEBCAM-HEADLESS-60"],
+      "threshold_id": "gui_p95_target",
+      "threshold_result": "NOT_APPLICABLE",
+      "reason": "Headless run has no cv2.imshow submission.",
+      "method": "Not measured."
+    },
+    {
+      "name": "sensor_to_photon_ms",
+      "aggregation": "p95",
+      "unit": "ms",
+      "status": "NOT_MEASURED",
+      "value": null,
+      "case_ids": ["PM-GATE0-BASELINE-WEBCAM-HEADLESS-60"],
+      "threshold_id": "external_apparatus_required",
+      "threshold_result": "NOT_APPLICABLE",
+      "reason": "No synchronized external apparatus was used.",
+      "method": "Not measured."
+    },
+    {
+      "name": "degraded_frame_rate",
+      "aggregation": "single",
+      "unit": "ratio",
+      "status": "COMPUTED",
+      "value": 1.0,
+      "case_ids": ["PM-GATE0-BASELINE-WEBCAM-HEADLESS-60"],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "651 of 651 measured frames were degraded.",
+      "method": "Degraded frame count divided by retained render sample count."
+    },
+    {
+      "name": "rss_mib",
+      "aggregation": "peak",
+      "unit": "MiB",
+      "status": "MEASURED",
+      "value": 956.22,
+      "case_ids": ["PM-GATE0-BASELINE-WEBCAM-HEADLESS-60"],
+      "threshold_id": "observation_only",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "Development-host observation only.",
+      "method": "Peak process working set observed by the runtime tracker."
+    },
+    {
+      "name": "artifact_checksum_mismatch_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "COMPUTED",
+      "value": 0,
+      "case_ids": ["PM-GATE0-BASELINE-WEBCAM-HEADLESS-60"],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "Present raw telemetry bytes match the manifest.",
+      "method": "SHA-256 over exact file bytes."
+    }
+  ],
+  "artifacts": [
+    {
+      "artifact_id": "gate0-current-baseline-raw",
+      "path": "artifacts/post_mvp/gate0/current-baseline-raw.json",
+      "tracking": "ignored_raw",
+      "media_kind": "json",
+      "contains_personal_data": false,
+      "provenance": "Generated locally by scripts/post_mvp_baseline.py from terminal telemetry; no image/frame bytes saved.",
+      "consent": "NOT_APPLICABLE",
+      "license": "Project-authored telemetry under Apache-2.0",
+      "bytes": 4048,
+      "sha256": "9ef8c2ffe40e21280fbd561e082edeeb25fffcd10af7e6d2efa734f72b9f3392",
+      "availability": "AVAILABLE",
+      "generation_command": "python scripts/post_mvp_baseline.py --backend schp-atr --camera-index 0 --width 480 --height 360 --warmup-seconds 15 --measurement-seconds 60"
+    }
+  ],
+  "commands": [
+    {
+      "command": "D:\\Coding\\Anaconda\\envs\\lens\\python.exe scripts\\post_mvp_baseline.py --backend schp-atr --camera-index 0 --width 480 --height 360 --warmup-seconds 15 --measurement-seconds 60",
+      "exit_code": 0,
+      "purpose": "Capture a fresh headless development-host baseline without saving frames."
+    }
+  ],
+  "limitations": [
+    "Development-machine snapshot, not owner-declared demo-hardware evidence.",
+    "The 60-second Gate snapshot cannot evaluate the frozen T15 300-second growth rules.",
+    "Headless mode cannot measure source_read_to_display_submit_ms.",
+    "Sensor-to-photon latency was not measured.",
+    "All measured frames were degraded; timing is not representative quality evidence.",
+    "The worktree contained Gate files and unrelated presentation changes, but measured product source remained at the recorded commit."
+  ],
+  "notes": "Fresh baseline fails both applicable targets: 10.85 < 20 frames/s and p95 188 > 120 ms."
+}

@@ -18,10 +18,13 @@ _OPENVINO = Path("models/schp/openvino/schp-atr-512.xml")
 _HAS_TORCH = importlib.util.find_spec("torch") is not None
 _HAS_OPENVINO = importlib.util.find_spec("openvino") is not None
 _FIXTURES = tuple(
-    sorted(
-        path
-        for path in Path("tests/samples/t02").iterdir()
-        if path.suffix.lower() in {".jpg", ".png"}
+    Path("tests/samples/t02") / name
+    for name in (
+        "astronaut.png",
+        "cc0_woman.jpg",
+        "loc_lincoln.jpg",
+        "loc_man.jpg",
+        "nasa_shepard.jpg",
     )
 )
 

@@ -28,3 +28,25 @@ The coordinator-owned
 [`curated/summary.md`](curated/summary.md) reports cross-workstream coverage
 and remaining gaps. It never converts `NOT_RUN` or `NOT_MEASURED` rows into a
 success claim.
+
+## Post-MVP T12-T17 results
+
+Protocol 2.0.0 results are tracked separately below:
+
+```text
+evaluation/results/curated/post_mvp/gate0/
+evaluation/results/curated/post_mvp/t12/
+evaluation/results/curated/post_mvp/t13/
+evaluation/results/curated/post_mvp/t14/
+evaluation/results/curated/post_mvp/t15/
+evaluation/results/curated/post_mvp/t16/
+evaluation/results/curated/post_mvp/t17/
+```
+
+They conform to `evaluation/schema/post-mvp-result.schema.json`, use exact
+case IDs from `evaluation/fixtures/post-mvp-cases.csv`, and use metrics from
+`evaluation/schema/post-mvp-metric-registry.json`. The same 1 MiB curated-text
+limit applies. Raw/private/large v2 artifacts stay under ignored
+`artifacts/post_mvp/<task>/` and receive provenance, consent, license, size,
+and SHA-256 manifest entries. Present bytes must verify; absent ignored bytes
+remain unavailable. `git add -f` remains prohibited.

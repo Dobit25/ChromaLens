@@ -731,6 +731,41 @@ strict raw-byte verification with:
 conda run --name lens python scripts/t09_result_validation.py --require-untracked-artifacts
 ```
 
+## Post-MVP T12-T17 Gate 0
+
+The owner-approved post-MVP scope is appended to `plan.md`. Gate 0 freezes a
+separate protocol 2.0.0 without changing historical T09 protocol 1.0.0:
+
+- `evaluation/protocol-v2.md`: scope, procedures, timing semantics, targets,
+  uncertainty and claim boundaries;
+- `evaluation/schema/post-mvp-result.schema.json` and
+  `evaluation/schema/post-mvp-metric-registry.json`: machine-readable result,
+  metric, unit, formula, and threshold contracts;
+- `evaluation/fixtures/post-mvp-cases.csv`: 176 frozen cases covering extended
+  colors, physical lighting, standalone garments, fullscreen, performance,
+  severity/gradient risk, and release integration;
+- `evaluation/OWNERSHIP-v2.md`: parallel task namespaces and coordinator-owned
+  integration files.
+
+The fresh Gate baseline runs the current SCHP/OpenVINO asynchronous webcam path
+for 15 seconds warm-up and 60 measured seconds in headless mode. It stores
+terminal telemetry only and never saves a camera frame:
+
+```powershell
+conda run --name lens python scripts/post_mvp_baseline.py --backend schp-atr --camera-index 0 --width 480 --height 360 --warmup-seconds 15 --measurement-seconds 60
+conda run --name lens python scripts/post_mvp_result_validation.py --require-ignored-artifacts
+conda run --name lens python -m pytest -q tests/evaluation/test_post_mvp_gate.py
+```
+
+The development-host snapshot measured 10.85 processed FPS, 1.21 SCHP
+keyframe FPS, and p50/p95 `source_read_to_render_ms` of 110/188 ms at an actual
+640x360 source resolution. It fails the new 20 FPS and 120 ms p95 internal
+targets. All measured frames were degraded in the uncontrolled scene, so this
+is a starting-point observation rather than quality evidence. GUI submission,
+sensor-to-photon latency, and the frozen 300-second growth checks were not
+measured. Full details are in
+`evaluation/results/curated/post_mvp/gate0/report.md`.
+
 ## T11 competition handoff
 
 The final handoff sources are intentionally small and reviewable:

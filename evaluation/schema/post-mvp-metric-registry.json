@@ -1,0 +1,762 @@
+{
+  "registry_version": "2.0.0",
+  "protocol_version": "2.0.0",
+  "clock": "monotonic",
+  "percentile_method": "linear",
+  "measurement_window_seconds": 300,
+  "growth_windows": {
+    "count": 6,
+    "seconds_each": 50
+  },
+  "metrics": [
+    {
+      "name": "processed_fps",
+      "unit": "frames/s",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "single"
+      ],
+      "formula": "processed_frame_count / measured_elapsed_seconds",
+      "thresholds": [
+        {
+          "id": "internal_target",
+          "comparator": ">=",
+          "value": 20
+        }
+      ]
+    },
+    {
+      "name": "inference_fps",
+      "unit": "frames/s",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "single"
+      ],
+      "formula": "completed_authoritative_inference_count / measured_elapsed_seconds",
+      "thresholds": [
+        {
+          "id": "observation_only",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "source_read_to_render_ms",
+      "unit": "ms",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "p50",
+        "p95",
+        "window_median"
+      ],
+      "formula": "(render_complete_monotonic_ns - frame_packet_timestamp_ns) / 1000000",
+      "thresholds": [
+        {
+          "id": "headless_p95_target",
+          "comparator": "<=",
+          "value": 120
+        }
+      ]
+    },
+    {
+      "name": "source_read_to_display_submit_ms",
+      "unit": "ms",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "p50",
+        "p95",
+        "window_median"
+      ],
+      "formula": "(post_cv2_imshow_monotonic_ns - frame_packet_timestamp_ns) / 1000000",
+      "thresholds": [
+        {
+          "id": "gui_p95_target",
+          "comparator": "<=",
+          "value": 120
+        }
+      ]
+    },
+    {
+      "name": "sensor_to_photon_ms",
+      "unit": "ms",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "p50",
+        "p95"
+      ],
+      "formula": "external synchronized sensor stimulus to measured emitted display light",
+      "thresholds": [
+        {
+          "id": "external_apparatus_required",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "stage_duration_ms",
+      "unit": "ms",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "p50",
+        "p95",
+        "per_stage"
+      ],
+      "formula": "(stage_end_monotonic_ns - stage_start_monotonic_ns) / 1000000; stage dimension is required",
+      "thresholds": [
+        {
+          "id": "observation_only",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "mask_age_ms",
+      "unit": "ms",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "p50",
+        "p95",
+        "peak"
+      ],
+      "formula": "(current_frame_timestamp_ns - authoritative_mask_frame_timestamp_ns) / 1000000",
+      "thresholds": [
+        {
+          "id": "stale_limit",
+          "comparator": "<=",
+          "value": 2000
+        }
+      ]
+    },
+    {
+      "name": "processed_frame_count",
+      "unit": "frame",
+      "value_type": "integer",
+      "allowed_aggregations": [
+        "count"
+      ],
+      "formula": "count of frames completing render in the measured interval",
+      "thresholds": [
+        {
+          "id": "must_be_positive",
+          "comparator": ">",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "dropped_capture_frame_count",
+      "unit": "frame",
+      "value_type": "integer",
+      "allowed_aggregations": [
+        "count"
+      ],
+      "formula": "count of capacity-one capture mailbox overwrites",
+      "thresholds": [
+        {
+          "id": "observation_only",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "dropped_inference_frame_count",
+      "unit": "frame",
+      "value_type": "integer",
+      "allowed_aggregations": [
+        "count"
+      ],
+      "formula": "count of capacity-one inference mailbox overwrites",
+      "thresholds": [
+        {
+          "id": "observation_only",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "degraded_frame_rate",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "single"
+      ],
+      "formula": "degraded_frame_count / processed_frame_count",
+      "thresholds": [
+        {
+          "id": "observation_only",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "rss_mib",
+      "unit": "MiB",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "start",
+        "end",
+        "peak",
+        "window_median"
+      ],
+      "formula": "resident_or_working_set_bytes / 1048576",
+      "thresholds": [
+        {
+          "id": "observation_only",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "latency_continuous_growth_flag",
+      "unit": "boolean",
+      "value_type": "boolean",
+      "allowed_aggregations": [
+        "whole_session"
+      ],
+      "formula": "true when six consecutive 50-second source_read_to_render_ms window medians strictly increase and Q6-Q1 > max(20 ms, 0.10*Q1)",
+      "thresholds": [
+        {
+          "id": "required",
+          "comparator": "==",
+          "value": false
+        }
+      ]
+    },
+    {
+      "name": "rss_continuous_growth_flag",
+      "unit": "boolean",
+      "value_type": "boolean",
+      "allowed_aggregations": [
+        "whole_session"
+      ],
+      "formula": "true when six consecutive 50-second RSS window medians strictly increase and Q6-Q1 > max(8 MiB, 0.05*Q1)",
+      "thresholds": [
+        {
+          "id": "required",
+          "comparator": "==",
+          "value": false
+        }
+      ]
+    },
+    {
+      "name": "basic_color_accuracy",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "overall",
+        "per_class",
+        "per_lighting"
+      ],
+      "formula": "correct level-one basic-family predictions / evaluated cases",
+      "thresholds": [
+        {
+          "id": "physical_observation",
+          "comparator": "report_only",
+          "value": null
+        },
+        {
+          "id": "digital_contract",
+          "comparator": "==",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "name": "extended_color_accuracy",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "overall",
+        "per_class",
+        "per_lighting"
+      ],
+      "formula": "correct allowed level-two display labels / evaluated cases",
+      "thresholds": [
+        {
+          "id": "physical_observation",
+          "comparator": "report_only",
+          "value": null
+        },
+        {
+          "id": "digital_contract",
+          "comparator": "==",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "name": "lighting_label_stability_rate",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "overall",
+        "per_class"
+      ],
+      "formula": "physical samples retaining one level-two label across neutral, warm, and low lighting / samples evaluated in all three conditions",
+      "thresholds": [
+        {
+          "id": "diagnostic_target",
+          "comparator": ">=",
+          "value": 0.8
+        }
+      ]
+    },
+    {
+      "name": "uncertain_output_rate",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "overall",
+        "per_lighting"
+      ],
+      "formula": "cases emitted as uncertain / evaluated cases",
+      "thresholds": [
+        {
+          "id": "observation_only",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "forced_low_evidence_label_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": [
+        "count"
+      ],
+      "formula": "count of cases below frozen evidence gates that expose a confident level-two label",
+      "thresholds": [
+        {
+          "id": "required",
+          "comparator": "==",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "color_name_margin",
+      "unit": "score_0_1",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "single",
+        "median"
+      ],
+      "formula": "best normalized color-name score minus second-best normalized color-name score; heuristic, not probability",
+      "thresholds": [
+        {
+          "id": "confident_minimum",
+          "comparator": ">=",
+          "value": 0.1
+        }
+      ]
+    },
+    {
+      "name": "segmentation_iou",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "single",
+        "mean",
+        "median"
+      ],
+      "formula": "intersection pixel count / union pixel count; empty-empty is NOT_APPLICABLE",
+      "thresholds": [
+        {
+          "id": "observation_only",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "segmentation_adequacy_rating",
+      "unit": "rating_0_3",
+      "value_type": "integer",
+      "allowed_aggregations": [
+        "single",
+        "median"
+      ],
+      "formula": "manual 0-3 adequacy rating with recorded reason",
+      "thresholds": [
+        {
+          "id": "adequate_case",
+          "comparator": ">=",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "segmentation_adequate_rate",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "overall",
+        "per_category"
+      ],
+      "formula": "standalone cases with adequacy rating >= 2 / evaluated standalone cases",
+      "thresholds": [
+        {
+          "id": "observation_only",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "automatic_mask_available_rate",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "overall",
+        "per_category"
+      ],
+      "formula": "standalone cases producing a non-empty automatic garment mask / evaluated standalone cases",
+      "thresholds": [
+        {
+          "id": "observation_only",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "dominant_color_correct_rate",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "overall",
+        "per_category"
+      ],
+      "formula": "standalone cases whose original corrected dominant color matches the declared reference / evaluated cases",
+      "thresholds": [
+        {
+          "id": "observation_only",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "manual_roi_completion_seconds",
+      "unit": "s",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "single",
+        "median"
+      ],
+      "formula": "monotonic elapsed seconds from explicit manual-selection start to accepted ROI",
+      "thresholds": [
+        {
+          "id": "observation_only",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "fullscreen_toggle_success",
+      "unit": "boolean",
+      "value_type": "boolean",
+      "allowed_aggregations": [
+        "single"
+      ],
+      "formula": "requested fullscreen transition is confirmed by window state or manual recorded observation",
+      "thresholds": [
+        {
+          "id": "required",
+          "comparator": "==",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "viewport_aspect_ratio_error",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "single",
+        "peak"
+      ],
+      "formula": "absolute(displayed_viewport_aspect/source_frame_aspect - 1)",
+      "thresholds": [
+        {
+          "id": "maximum",
+          "comparator": "<=",
+          "value": 0.005
+        }
+      ]
+    },
+    {
+      "name": "processing_resolution_changed_flag",
+      "unit": "boolean",
+      "value_type": "boolean",
+      "allowed_aggregations": [
+        "single"
+      ],
+      "formula": "true when fullscreen presentation implicitly changes capture or model processing resolution",
+      "thresholds": [
+        {
+          "id": "required",
+          "comparator": "==",
+          "value": false
+        }
+      ]
+    },
+    {
+      "name": "text_overflow_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": [
+        "count"
+      ],
+      "formula": "count of rendered text/card bounds outside their allocated presentation rectangles",
+      "thresholds": [
+        {
+          "id": "required",
+          "comparator": "==",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "delta_e_original",
+      "unit": "delta_e_00",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "single"
+      ],
+      "formula": "CIEDE2000 distance between the original corrected color pair",
+      "thresholds": [
+        {
+          "id": "record_required",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "delta_e_cvd",
+      "unit": "delta_e_00",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "single"
+      ],
+      "formula": "CIEDE2000 distance between the selected-profile simulated pair",
+      "thresholds": [
+        {
+          "id": "record_required",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "risk_score",
+      "unit": "score_0_1",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "single"
+      ],
+      "formula": "configured relational risk heuristic for the selected profile and severity",
+      "thresholds": [
+        {
+          "id": "medium",
+          "comparator": ">=",
+          "value": 0.1
+        },
+        {
+          "id": "high",
+          "comparator": ">=",
+          "value": 0.6
+        }
+      ]
+    },
+    {
+      "name": "recolor_applied",
+      "unit": "boolean",
+      "value_type": "boolean",
+      "allowed_aggregations": [
+        "single"
+      ],
+      "formula": "whether the selective recolor passed risk, improvement, severity, containment, and stability gates",
+      "thresholds": [
+        {
+          "id": "observation_only",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "severity_response_consistency_rate",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "overall",
+        "per_profile"
+      ],
+      "formula": "adjacent severity steps whose confusing-pair risk does not decrease beyond numerical tolerance / evaluated adjacent steps",
+      "thresholds": [
+        {
+          "id": "diagnostic_target",
+          "comparator": ">=",
+          "value": 0.95
+        }
+      ]
+    },
+    {
+      "name": "spatial_risk_valid_pixel_rate",
+      "unit": "ratio",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "single",
+        "mean"
+      ],
+      "formula": "finite in-range spatial-risk pixels inside the evaluated garment mask / garment-mask pixels",
+      "thresholds": [
+        {
+          "id": "required",
+          "comparator": "==",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "name": "spatial_risk_outside_mask_pixel_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": [
+        "count"
+      ],
+      "formula": "count of nonzero spatial-risk pixels outside the garment mask",
+      "thresholds": [
+        {
+          "id": "required",
+          "comparator": "==",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "spatial_risk_runtime_ms",
+      "unit": "ms",
+      "value_type": "number",
+      "allowed_aggregations": [
+        "p50",
+        "p95"
+      ],
+      "formula": "spatial risk map completion timestamp minus start timestamp",
+      "thresholds": [
+        {
+          "id": "observation_only",
+          "comparator": "report_only",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "test_pass_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": [
+        "count"
+      ],
+      "formula": "pytest passed test count from the release invocation",
+      "thresholds": [
+        {
+          "id": "must_be_positive",
+          "comparator": ">",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "test_fail_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": [
+        "count"
+      ],
+      "formula": "pytest failed plus error test count from the release invocation",
+      "thresholds": [
+        {
+          "id": "required",
+          "comparator": "==",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "privacy_default_saved_frame_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": [
+        "count"
+      ],
+      "formula": "camera/video frames persisted during a default run without explicit artifact-saving opt-in",
+      "thresholds": [
+        {
+          "id": "required",
+          "comparator": "==",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "fatal_error_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": [
+        "count"
+      ],
+      "formula": "unhandled fatal errors across the frozen release scenarios",
+      "thresholds": [
+        {
+          "id": "required",
+          "comparator": "==",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "artifact_checksum_mismatch_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": [
+        "count"
+      ],
+      "formula": "available artifact bytes whose SHA-256 differs from the manifest",
+      "thresholds": [
+        {
+          "id": "required",
+          "comparator": "==",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "unconsented_tracked_media_count",
+      "unit": "count",
+      "value_type": "integer",
+      "allowed_aggregations": [
+        "count"
+      ],
+      "formula": "tracked personal-media artifacts without documented consent",
+      "thresholds": [
+        {
+          "id": "required",
+          "comparator": "==",
+          "value": 0
+        }
+      ]
+    }
+  ]
+}
