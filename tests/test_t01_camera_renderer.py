@@ -239,6 +239,7 @@ def test_preview_q_exit_releases_source_and_window() -> None:
     source = OneFrameSource()
     with (
         patch("chromalens.app.cv2.imshow") as imshow,
+        patch("chromalens.display.cv2.namedWindow"),
         patch("chromalens.app.cv2.waitKey", return_value=ord("q")),
         patch("chromalens.app.cv2.destroyWindow") as destroy_window,
     ):

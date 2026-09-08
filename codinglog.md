@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-09-08 21:56 +07:00
+Last updated: 2026-09-09 04:08 +07:00
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -51,6 +51,7 @@ This table is intentionally empty until an agent starts the plan.
 | T11-UI-5 | Toggleable theme-inverted camera display cover | `DONE` | Repository owner + Codex | 2026-08-25 12:10 +07:00 | 2026-08-25 17:30 +07:00 | Tracked implementation toggles with `c`; full 302-test release gate passes |
 | T11-DECK-1 | Six-feature competition HTML slide deck | `DONE` | Repository owner + Codex | 2026-08-25 14:40 +07:00 | 2026-08-25 17:30 +07:00 | Offline interactive deck; owner-selected amber token, structural tests, and visual QA pass |
 | T12-T17-GATE-0 | Post-MVP scope and evaluation-contract freeze | `DONE` | Repository owner + Codex | 2026-09-08 21:24 +07:00 | 2026-09-08 21:56 +07:00 | Protocol 2.0.0, 176 cases, 44 metrics, strict baseline validation, and 310-test suite |
+| T14 | Fullscreen and resolution-independent presentation | `IN_PROGRESS` | Repository owner + Codex | 2026-09-09 04:08 +07:00 | 2026-09-09 04:08 +07:00 | Display/compositor-only implementation started under frozen protocol 2.0.0 |
 
 ## 3. Active blockers
 
@@ -4899,3 +4900,52 @@ not applicable, no saved/uploaded frames, and exact generation command.
 `T12 — Extended color vocabulary and uncertainty`. T13, T14, T15
 instrumentation, and the severity-only part of T16 may start in parallel under
 the frozen ownership map; T17 remains last.
+
+---
+
+### `2026-09-09 04:08 +07:00` - `T14` `Fullscreen and resolution-independent presentation started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Plan reference:** `plan.md` post-MVP T14; protocol 2.0.0 section 5
+**Requirements/rubric affected:** Demo usability; NFR-02, NFR-03, NFR-04; frozen fullscreen metrics and cases
+
+#### Objective and boundaries
+
+Add a reversible OpenCV windowed/fullscreen presentation path that preserves
+the camera viewport aspect ratio at 1366x768 and 1920x1080. The change is
+strictly limited to display/window management and final-canvas composition.
+Capture resolution, SCHP input resolution, pipeline analysis, mask coordinates,
+color naming, risk, and recolor behavior must remain unchanged.
+
+#### Smallest implementation
+
+1. Add an isolated display controller that owns OpenCV window lifecycle,
+   fullscreen state, and aspect-fit letterbox/pillarbox of the already composed
+   presentation canvas.
+2. Wire `--fullscreen` and the `f`/`Esc`/`q` controls into the existing GUI
+   boundary without restarting or rebuilding the pipeline.
+3. Add deterministic offscreen tests for the four frozen T14 cases, controller
+   tests with mocked OpenCV state, and invariants proving presentation scaling
+   cannot mutate source/analysis pixels or processing resolution.
+4. Record machine-readable and human-readable T14 evidence, then run a GUI
+   window-property smoke when the development desktop supports it and the full
+   Python 3.10 suite.
+
+#### Starting state
+
+- Dependency Gate 0 is `DONE` at commit `bb51d20bba11040a7b607c9582909bd5adcafbb9`.
+- Branch `main` is one commit ahead of `origin/main`; no push is part of the
+  T14 authorization.
+- Approved environment is `lens`, Python 3.10.20; `pip check` is clean.
+- Existing slide HTML/PDF/voice-over changes and
+  `tests/samples/t02/demo_garment_person.png` are unrelated local work and will
+  remain untouched and excluded from the T14 commit.
+- Tests and evidence are `NOT RUN` at task start.
+
+#### Definition-of-Done state
+
+- [ ] Fullscreen toggles without inference restart; `Esc` leaves fullscreen and `q` exits.
+- [ ] Aspect-ratio error is at most 0.005, processing resolution is unchanged, and text overflow count is zero.
+- [ ] Product and Diagnostic pass at 1366x768 and 1920x1080 plus a recorded GUI smoke.
+- [ ] Masks, color analysis, recolor containment, and source pixels are unchanged by display scaling.

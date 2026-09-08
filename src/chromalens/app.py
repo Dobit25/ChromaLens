@@ -24,6 +24,7 @@ from chromalens.camera import (
 )
 from chromalens.config import CVDProfile
 from chromalens.contracts import ColorFrame, FramePacket
+from chromalens.display import OpenCVDisplayController
 from chromalens.metrics import RuntimeMetricsSnapshot, RuntimeMetricsTracker
 from chromalens.pipeline import ChromaLensPipeline, PipelineSettings
 from chromalens.presentation import PresentationMode, PresentationTheme
@@ -324,6 +325,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="process and render frames without creating a GUI window",
     )
     parser.add_argument(
+        "--fullscreen",
+        action="store_true",
+        help=(
+            "start the presentation fullscreen without changing camera/model "
+            "resolution (press f to toggle; Esc returns to windowed mode)"
+        ),
+    )
+    parser.add_argument(
         "--window-title",
         default="ChromaLens AI",
         help="OpenCV window title",
@@ -352,6 +361,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             preview = run_preview(
                 source,
                 display=not args.no_display,
+                fullscreen=args.fullscreen,
                 max_frames=args.max_frames,
                 duration_seconds=args.duration_seconds,
                 window_title=args.window_title,
@@ -379,6 +389,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             pipeline,
             controls=controls,
             display=not args.no_display,
+            fullscreen=args.fullscreen,
             max_frames=args.max_frames,
             duration_seconds=args.duration_seconds,
             metrics_warmup_seconds=args.metrics_warmup_seconds,
@@ -444,6 +455,8 @@ def run_pipeline_session(
     *,
     controls: RuntimeControls | None = None,
     display: bool = True,
+    fullscreen: bool = False,
+    fullscreen_size: tuple[int, int] | None = None,
     max_frames: int | None = None,
     duration_seconds: float | None = None,
     metrics_warmup_seconds: float = 0.0,
@@ -462,7 +475,15 @@ def run_pipeline_session(
     frames_processed = 0
     measured_degraded_frames = 0
     stop_reason = "unknown"
-    window_created = False
+    display_controller = (
+        OpenCVDisplayController(
+            window_title,
+            fullscreen=fullscreen,
+            fullscreen_size=fullscreen_size,
+        )
+        if display
+        else None
+    )
     latest_reader = LatestFrameReader(source).start() if source.is_live else None
     dropped_frames = 0
     dropped_at_measurement_start = 0
@@ -520,14 +541,19 @@ def run_pipeline_session(
                     dropped_capture_frames=dropped_frames
                 ),
             )
+            prepared = (
+                display_controller.prepare(rendered)
+                if display_controller is not None
+                else None
+            )
             render_completed_ns = monotonic_ns()
             frames_processed += 1
 
             display_submitted_ns: int | None = None
-            if display:
-                cv2.imshow(window_title, rendered)
+            if display_controller is not None:
+                assert prepared is not None
+                display_controller.submit(prepared)
                 display_submitted_ns = monotonic_ns()
-                window_created = True
 
             observed_ns = (
                 render_completed_ns
@@ -554,21 +580,26 @@ def run_pipeline_session(
                 )
                 measured_degraded_frames += int(analysis.degraded)
 
-            if display:
+            if display_controller is not None:
                 wait_ms = 1
                 if video_frame_period_seconds is not None:
                     next_video_frame_at += video_frame_period_seconds
                     wait_ms = max(1, round((next_video_frame_at - monotonic()) * 1_000.0))
                 key = cv2.waitKey(wait_ms) & 0xFF
-                if key in (27, ord("q")):
+                if key == ord("q"):
                     stop_reason = "user_exit"
                     break
-                active_controls.apply_key(key)
-                try:
-                    visible = cv2.getWindowProperty(window_title, cv2.WND_PROP_VISIBLE)
-                except cv2.error:
-                    visible = 0.0
-                if visible < 1:
+                if key == 27:
+                    if display_controller.fullscreen:
+                        display_controller.set_fullscreen(False)
+                    else:
+                        stop_reason = "user_exit"
+                        break
+                elif key == ord("f"):
+                    display_controller.toggle_fullscreen()
+                else:
+                    active_controls.apply_key(key)
+                if not display_controller.is_visible():
                     stop_reason = "window_closed"
                     break
 
@@ -585,11 +616,8 @@ def run_pipeline_session(
         else:
             source.close()
         pipeline.close()
-        if window_created:
-            try:
-                cv2.destroyWindow(window_title)
-            except cv2.error:
-                pass
+        if display_controller is not None:
+            display_controller.close()
 
     assert metrics_completed_at_ns is not None
     metrics = runtime_metrics.snapshot(
@@ -613,6 +641,8 @@ def run_preview(
     source: FrameSource,
     *,
     display: bool = True,
+    fullscreen: bool = False,
+    fullscreen_size: tuple[int, int] | None = None,
     max_frames: int | None = None,
     duration_seconds: float | None = None,
     window_title: str = "ChromaLens AI - T01 Preview",
@@ -625,7 +655,15 @@ def run_preview(
     started_at = monotonic()
     frames_processed = 0
     stop_reason = "unknown"
-    window_created = False
+    display_controller = (
+        OpenCVDisplayController(
+            window_title,
+            fullscreen=fullscreen,
+            fullscreen_size=fullscreen_size,
+        )
+        if display
+        else None
+    )
     video_frame_period_seconds = (
         1.0 / source.nominal_fps
         if display and not source.is_live and source.nominal_fps is not None
@@ -645,22 +683,26 @@ def run_preview(
             telemetry = tracker.observe(packet, observed_ns=monotonic_ns())
             rendered = render_frame(packet, source_name=source.name, telemetry=telemetry)
             frames_processed += 1
-            if display:
-                cv2.imshow(window_title, rendered)
-                window_created = True
+            if display_controller is not None:
+                prepared = display_controller.prepare(rendered)
+                display_controller.submit(prepared)
                 wait_ms = 1
                 if video_frame_period_seconds is not None:
                     next_video_frame_at += video_frame_period_seconds
                     wait_ms = max(1, round((next_video_frame_at - monotonic()) * 1_000.0))
                 key = cv2.waitKey(wait_ms) & 0xFF
-                if key in (27, ord("q")):
+                if key == ord("q"):
                     stop_reason = "user_exit"
                     break
-                try:
-                    visible = cv2.getWindowProperty(window_title, cv2.WND_PROP_VISIBLE)
-                except cv2.error:
-                    visible = 0.0
-                if visible < 1:
+                if key == 27:
+                    if display_controller.fullscreen:
+                        display_controller.set_fullscreen(False)
+                    else:
+                        stop_reason = "user_exit"
+                        break
+                elif key == ord("f"):
+                    display_controller.toggle_fullscreen()
+                if not display_controller.is_visible():
                     stop_reason = "window_closed"
                     break
             if max_frames is not None and frames_processed >= max_frames:
@@ -668,11 +710,8 @@ def run_preview(
                 break
     finally:
         source.close()
-        if window_created:
-            try:
-                cv2.destroyWindow(window_title)
-            except cv2.error:
-                pass
+        if display_controller is not None:
+            display_controller.close()
 
     return PreviewResult(
         source_name=source.name,

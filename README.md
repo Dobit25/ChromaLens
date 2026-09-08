@@ -436,6 +436,18 @@ larger canvas outside that viewport, so status text never obscures the garment.
 The camera pixels are not resized by the presentation layer and retain their
 original aspect ratio.
 
+Start directly in fullscreen, or press `f` while the same pipeline is running:
+
+```powershell
+conda run --name lens python -m chromalens --webcam --fullscreen
+```
+
+Fullscreen scales only the completed presentation canvas. It preserves the
+camera aspect ratio with letterbox/pillarbox bands and does not request a new
+capture resolution, change the 512x512 SCHP input, rebuild the backend, or
+alter mask/color/recolor coordinates. Press `Esc` to return to the windowed
+view without stopping inference; press `q` to exit from either state.
+
 For development, benchmark review, or a technical judging walkthrough, switch
 to the separate presentation mode without changing the analytical pipeline:
 
@@ -510,8 +522,9 @@ conda run --name lens python -m chromalens --webcam --schp-runtime pytorch
 conda run --name lens python -m chromalens --webcam --backend mediapipe-selfie-torso
 ```
 
-Press `q`, Escape, or close the window to exit. Automated/headless checks can
-avoid GUI and bound execution explicitly:
+Press `q` or close the window to exit. `Esc` first leaves fullscreen; from an
+already windowed view it exits for backward compatibility. Automated/headless
+checks can avoid GUI and bound execution explicitly:
 
 ```powershell
 conda run --name lens python -m chromalens --video C:\path\to\sample.mp4 --no-display
@@ -528,6 +541,8 @@ medical diagnosis:
 - `c`: cover or reveal only the displayed camera viewport.
 - `t`: switch the presentation palette between `dark` and `light`.
 - `u`: switch the presentation shell between `product` and `diagnostic`.
+- `f`: switch the existing window between fullscreen and windowed without
+  restarting inference; `Esc` returns from fullscreen.
 - `v`: cycle views; keys `1`-`5` select `assistive`, `original`, `mask`,
   `risk`, and `diagnostic` directly.
 

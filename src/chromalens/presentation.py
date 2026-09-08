@@ -720,7 +720,7 @@ def _draw_footer(
         _single_line_in_region(
             draw,
             (midpoint, y0 + 38, x1 - style.outer_padding_px, y0 + 60),
-            "C: Che camera  ·  T: Nền  ·  U: Kỹ thuật  ·  P: Hồ sơ  ·  Q: Thoát",
+            "F: Toàn màn hình  ·  Esc: Cửa sổ  ·  Q: Thoát",
             12,
             style.chrome_muted_text_bgr,
         )
@@ -731,17 +731,20 @@ def _draw_footer(
             f"Nguồn: {data.source_name} | Hỗ trợ={support} | "
             f"view={data.view_name} | cover={cover}"
         )
-        keys = "C cover | T theme | U product/diagnostic | P profile | [/] severity | R recolor | V/1-5 view | Q quit"
-        _text(
+        keys = (
+            "F fullscreen | Esc windowed | Q quit | C cover | T theme | "
+            "U product/diagnostic | P profile | [/] severity | R recolor | V/1-5 view"
+        )
+        _single_line_in_region(
             draw,
-            (style.outer_padding_px, y0 + 10),
+            (style.outer_padding_px, y0 + 7, x1 - style.outer_padding_px, y0 + 31),
             left,
             14,
             style.chrome_text_bgr,
         )
-        _text(
+        _single_line_in_region(
             draw,
-            (style.outer_padding_px, y0 + 37),
+            (style.outer_padding_px, y0 + 34, x1 - style.outer_padding_px, y0 + 60),
             keys,
             12,
             style.chrome_muted_text_bgr,

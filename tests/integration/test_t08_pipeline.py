@@ -287,7 +287,9 @@ def test_cli_rejects_non_finite_duration_and_severity() -> None:
     assert parser.parse_args(["--webcam"]).ui_mode == "product"
     assert parser.parse_args(["--webcam"]).theme == "dark"
     assert not parser.parse_args(["--webcam"]).camera_cover
+    assert not parser.parse_args(["--webcam"]).fullscreen
     assert parser.parse_args(["--webcam", "--camera-cover"]).camera_cover
+    assert parser.parse_args(["--webcam", "--fullscreen"]).fullscreen
 
 
 def test_local_video_runs_the_same_pipeline_to_clean_eof(tmp_path: Path) -> None:
@@ -316,6 +318,7 @@ def test_gui_session_records_display_submit_after_render(tmp_path: Path) -> None
 
     with (
         patch("chromalens.app.cv2.imshow") as imshow,
+        patch("chromalens.display.cv2.namedWindow"),
         patch("chromalens.app.cv2.waitKey", return_value=ord("q")),
         patch("chromalens.app.cv2.getWindowProperty", return_value=1.0),
         patch("chromalens.app.cv2.destroyWindow"),
