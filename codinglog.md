@@ -4702,3 +4702,16 @@ and the relevant suite was rerun before the final full pass.
 - Slide 6 labels development telemetry as illustrative and preserves
   `sensor-to-photon = NOT MEASURED`; profile selection is explicitly described
   as a user setting rather than diagnosis.
+
+---
+
+### `2026-09-11 19:40 +07:00` - `T04-COLOR-UPGRADE` `Expand color registry to two-tier architecture and uncertainty %`
+
+**Status:** `DONE`
+**Owner/agent:** Antigravity
+
+- Expanded color anchor registry to 46 specific W3C standard CSS colors mapped to 11 basic Level 1 families.
+- Implemented uncertainty logic calculating `margin < 0.15` or `distance > 35` to flag `is_uncertain`.
+- Updated `presentation.py` to display the exact percentages of top color predictions when uncertain.
+- Updated `generate_eval_matrix.py` to synthesize 120 testing conditions (30 Level 2 colors over 3 physical lightings and 30 synthetic patches) mapping to `extended_controlled.csv`.
+- Full test suite passed.

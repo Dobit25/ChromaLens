@@ -1,0 +1,31 @@
+expected_name,label_vi,r,g,b,condition
+black,Đen,0,0,0,synthetic black
+dim_gray,Đen nhạt,105,105,105,synthetic dim_gray
+gray,Xám,128,128,128,synthetic gray
+silver,Bạc,169,169,169,synthetic silver
+slate_gray,Ghi,112,128,144,synthetic slate_gray
+white,Trắng,255,255,255,synthetic white
+beige,Be,245,245,220,synthetic beige
+blue,Xanh dương,0,0,255,synthetic blue
+navy,Xanh hải quân,0,0,128,synthetic navy
+cyan,Lục lam,0,255,255,synthetic cyan
+sky_blue,Xanh da trời,135,206,235,synthetic sky_blue
+brown,Nâu,165,42,42,synthetic brown
+saddle_brown,Nâu sẫm,139,69,19,synthetic saddle_brown
+chocolate,Sô-cô-la,210,105,30,synthetic chocolate
+green,Xanh lá,0,128,0,synthetic green
+lime,Xanh lá mạ,0,255,0,synthetic lime
+olive,Xanh ô liu,128,128,0,synthetic olive
+teal,Xanh mòng két,0,128,128,synthetic teal
+orange,Cam,255,165,0,synthetic orange
+dark_orange,Cam đậm,255,140,0,synthetic dark_orange
+pink,Hồng,255,192,203,synthetic pink
+deep_pink,Hồng đậm,255,20,147,synthetic deep_pink
+purple,Tím,128,0,128,synthetic purple
+indigo,Tím than,75,0,130,synthetic indigo
+magenta,Hồng sẫm,255,0,255,synthetic magenta
+red,Đỏ,255,0,0,synthetic red
+maroon,Đỏ tía,128,0,0,synthetic maroon
+crimson,Đỏ thẫm,220,20,60,synthetic crimson
+yellow,Vàng,255,255,0,synthetic yellow
+gold,Vàng đồng,255,215,0,synthetic gold

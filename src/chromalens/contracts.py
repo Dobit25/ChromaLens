@@ -91,6 +91,9 @@ class ColorCluster:
     original_name: str
     name_scores: dict[str, float]
     color_margin: float | None = None
+    is_uncertain: bool = False
+    top_predictions: tuple[tuple[str, float], ...] = ()
+    level2_label_vi: str = ""
 
     def __post_init__(self) -> None:
         if not 0.0 <= self.ratio <= 1.0:
