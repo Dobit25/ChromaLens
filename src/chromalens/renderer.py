@@ -584,10 +584,12 @@ def _presentation_data(
         recolor_enabled=display_state.recolor_enabled,
         view_name=display_state.view.value,
         original_color_label=(
-            None if cluster is None else vietnamese_color_label(cluster.original_name)
+            None if cluster is None else cluster.level2_label_vi
         ),
         original_color_rgb=None if cluster is None else cluster.rgb,
         color_margin=None if cluster is None else cluster.color_margin,
+        is_uncertain=False if cluster is None else cluster.is_uncertain,
+        top_predictions=() if cluster is None else cluster.top_predictions,
         risk_level=None if risk is None else risk.risk_level,
         lighting_level=None if lighting is None else lighting.level.value,
         matching_label=matching_label,

@@ -21,7 +21,7 @@ from chromalens.color_naming import (
 )
 from chromalens.contracts import FramePacket, GarmentRegion
 
-CONTROLLED_SET = Path("tests/samples/t04/basic11_controlled.csv")
+CONTROLLED_SET = Path("tests/samples/t04/extended_controlled.csv")
 
 
 def main() -> int:

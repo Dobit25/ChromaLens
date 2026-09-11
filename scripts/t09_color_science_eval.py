@@ -38,7 +38,7 @@ from scripts.t09_evaluation_common import (
 
 WORKSTREAM = "color_science"
 OUTPUT_DIR = ROOT / "evaluation/results/curated/color_science"
-CONTROLLED_SET = ROOT / "tests/samples/t04/basic11_controlled.csv"
+CONTROLLED_SET = ROOT / "tests/samples/t04/extended_controlled.csv"
 BASE_LOCK = ROOT / "requirements/py310-win64.lock"
 COMMAND = "conda run --name lens python scripts/t09_color_science_eval.py"
 RANDOM_SEED = 17

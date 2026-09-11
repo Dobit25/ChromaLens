@@ -129,6 +129,8 @@ class PresentationData:
     matching_harmony: str | None
     action_message: str
     diagnostic_lines: tuple[str, ...]
+    is_uncertain: bool = False
+    top_predictions: tuple[tuple[str, float], ...] = ()
 
     def __post_init__(self) -> None:
         if not self.source_name.strip() or not self.view_name.strip():
@@ -326,7 +328,11 @@ def build_product_copy(
         color = "Đang phân tích…"
         confidence = "Chưa xác định"
     else:
-        color = data.original_color_label
+        if data.is_uncertain and data.top_predictions:
+            color = " | ".join(f"{name} {int(prob*100)}%" for name, prob in data.top_predictions)
+        else:
+            color = data.original_color_label
+        
         if data.color_margin is None:
             confidence = "Chưa xác định"
         elif data.color_margin >= active.color_margin_high:
