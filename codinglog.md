@@ -4899,3 +4899,46 @@ not applicable, no saved/uploaded frames, and exact generation command.
 `T12 — Extended color vocabulary and uncertainty`. T13, T14, T15
 instrumentation, and the severity-only part of T16 may start in parallel under
 the frozen ownership map; T17 remains last.
+
+---
+
+### `2026-09-12 10:39 +07:00` - `T15` `Bottleneck measurement and bounded performance optimization started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/fps-increment`
+
+#### Approved scope for this execution slice
+
+1. Enable CI validation for `main`, `mvp`, and `feature/**` pushes and for pull
+   requests targeting `main` or `mvp`.
+2. Record a development-host baseline before changing runtime behavior.
+3. Add bounded, low-overhead instrumentation for the eight frozen protocol-v2
+   stages: `segmentation_inference`, `optical_flow`, `white_balance`,
+   `color_extraction`, `risk`, `recolor_render`, `presentation`, and
+   `display_submit`.
+4. Preserve all existing inference, optical-flow, renderer, resolution,
+   scheduling, mask provenance, fallback, and analytical behavior.
+
+#### Starting state
+
+- Branch HEAD: `5c24d1787571a6d86e1db91351d1882dd12ff4ac`, based on Gate 0
+  `bb51d20bba11040a7b607c9582909bd5adcafbb9`.
+- Approved runtime: conda environment `lens`, Python 3.10.20.
+- Gate 0 development-host observation: 10.85 processed frames/s and p95
+  `source_read_to_render_ms` 188 ms for a 60-second headless SCHP webcam run.
+  That observation remains historical evidence and will not be overwritten.
+- No OpenVINO, optical-flow, renderer, model-resolution, or cadence
+  optimization is authorized in this execution slice.
+
+#### Evidence state
+
+- CI trigger validation: PENDING.
+- Fresh pre-optimization baseline: PENDING.
+- Stage instrumentation and overhead comparison: PENDING.
+- Focused and full regression tests: PENDING.
+
+#### Exact next action
+
+Update the CI trigger, capture the baseline on the unchanged pipeline, then
+implement and validate bounded stage timing without optimizing any stage.

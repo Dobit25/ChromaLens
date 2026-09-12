@@ -3,9 +3,12 @@ name: ChromaLens CI
 on:
   push:
     branches:
+      - main
       - mvp
+      - "feature/**"
   pull_request:
     branches:
+      - main
       - mvp
   workflow_dispatch:
 
