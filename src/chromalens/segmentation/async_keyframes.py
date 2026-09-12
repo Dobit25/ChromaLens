@@ -13,6 +13,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from chromalens.contracts import BinaryMask, FramePacket, GarmentRegion
+from chromalens.metrics import StageTimingName, StageTimingTracker
 from chromalens.segmentation.base import (
     SegmentationFrameTelemetry,
     SegmentationMaskSource,
@@ -75,11 +76,14 @@ class AsyncKeyframeSegmenter(Segmenter):
         self,
         backend: Segmenter,
         config: AsyncKeyframeConfig | None = None,
+        *,
+        stage_timing: StageTimingTracker | None = None,
     ) -> None:
         if not isinstance(backend, Segmenter):
             raise TypeError("backend must implement the Segmenter interface")
         self._backend = backend
         self.config = config or AsyncKeyframeConfig()
+        self._stage_timing = stage_timing
         self._condition = Condition()
         self._pending: FramePacket | None = None
         self._completed: _CompletedInference | None = None
@@ -114,6 +118,10 @@ class AsyncKeyframeSegmenter(Segmenter):
         return self._frame_telemetry
 
     @property
+    def manages_stage_timing(self) -> bool:
+        return True
+
+    @property
     def dropped_pending_frames(self) -> int:
         with self._condition:
             return self._dropped_pending_frames
@@ -128,6 +136,7 @@ class AsyncKeyframeSegmenter(Segmenter):
 
         completed = self._take_completed()
         self._submit_latest(packet)
+        optical_flow_attempted = False
 
         source = SegmentationMaskSource.WARMING_UP
         message: str | None = "waiting for first SCHP keyframe"
@@ -143,6 +152,7 @@ class AsyncKeyframeSegmenter(Segmenter):
             else:
                 self._keyframe_id = completed.packet.frame_id
                 self._keyframe_timestamp_ns = completed.packet.timestamp_ns
+                optical_flow_attempted = completed.packet.frame_id != packet.frame_id
                 aligned = self._align_completed(completed, packet)
                 if completed.regions and not aligned:
                     self._clear_active(keep_keyframe=True)
@@ -158,6 +168,7 @@ class AsyncKeyframeSegmenter(Segmenter):
                     )
                     message = None
         elif self._active_regions and self._active_frame_bgr is not None:
+            optical_flow_attempted = True
             propagated = self._propagate(
                 self._active_regions,
                 self._active_frame_bgr,
@@ -172,6 +183,9 @@ class AsyncKeyframeSegmenter(Segmenter):
                 self._clear_active(keep_keyframe=True)
                 source = SegmentationMaskSource.UNAVAILABLE
                 message = "optical-flow propagation failed validation"
+
+        if self._stage_timing is not None and not optical_flow_attempted:
+            self._stage_timing.skip(StageTimingName.OPTICAL_FLOW)
 
         age_ms = self._mask_age_ms(packet)
         if age_ms is not None and age_ms > self.config.maximum_mask_age_ms:
@@ -245,7 +259,13 @@ class AsyncKeyframeSegmenter(Segmenter):
             assert packet is not None
             started_ns = monotonic_ns()
             try:
-                regions = self._backend.segment(packet)
+                if self._stage_timing is None:
+                    regions = self._backend.segment(packet)
+                else:
+                    with self._stage_timing.measure(
+                        StageTimingName.SEGMENTATION_INFERENCE
+                    ):
+                        regions = self._backend.segment(packet)
                 error: Exception | None = None
             except Exception as exc:  # reported on the main analysis boundary
                 regions = ()
@@ -301,11 +321,19 @@ class AsyncKeyframeSegmenter(Segmenter):
         if source_bgr.shape != target_bgr.shape or not regions:
             return ()
         try:
-            backward_flow = estimate_backward_flow(
-                source_bgr,
-                target_bgr,
-                scale=self.config.flow_scale,
-            )
+            if self._stage_timing is None:
+                backward_flow = estimate_backward_flow(
+                    source_bgr,
+                    target_bgr,
+                    scale=self.config.flow_scale,
+                )
+            else:
+                with self._stage_timing.measure(StageTimingName.OPTICAL_FLOW):
+                    backward_flow = estimate_backward_flow(
+                        source_bgr,
+                        target_bgr,
+                        scale=self.config.flow_scale,
+                    )
         except (cv2.error, ValueError):
             return ()
         propagated: list[GarmentRegion] = []

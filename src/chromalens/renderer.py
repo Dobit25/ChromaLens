@@ -20,6 +20,7 @@ from chromalens.contracts import (
     LightingQuality,
     RiskAssessment,
 )
+from chromalens.metrics import StageTimingName, StageTimingTracker
 from chromalens.presentation import (
     PresentationData,
     PresentationMode,
@@ -504,8 +505,34 @@ def render_pipeline_view(
     source_name: str,
     telemetry: PreviewTelemetry,
     display_state: PipelineDisplayState,
+    stage_timing: StageTimingTracker | None = None,
 ) -> ColorFrame:
     """Render a current camera view inside a separate Product/Diagnostic shell."""
+
+    if stage_timing is None:
+        return _render_pipeline_view_impl(
+            result,
+            source_name=source_name,
+            telemetry=telemetry,
+            display_state=display_state,
+        )
+    with stage_timing.measure(StageTimingName.PRESENTATION):
+        return _render_pipeline_view_impl(
+            result,
+            source_name=source_name,
+            telemetry=telemetry,
+            display_state=display_state,
+        )
+
+
+def _render_pipeline_view_impl(
+    result: "PipelineFrameResult",
+    *,
+    source_name: str,
+    telemetry: PreviewTelemetry,
+    display_state: PipelineDisplayState,
+) -> ColorFrame:
+    """Render without coupling the visual implementation to metrics state."""
 
     if not source_name.strip():
         raise ValueError("source_name must not be empty")

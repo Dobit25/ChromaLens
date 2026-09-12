@@ -77,6 +77,12 @@ class Segmenter(ABC):
 
         return None
 
+    @property
+    def manages_stage_timing(self) -> bool:
+        """Whether this adapter times inference/propagation internally."""
+
+        return False
+
     @abstractmethod
     def segment(self, packet: FramePacket) -> tuple[GarmentRegion, ...]:
         """Return garment masks aligned with ``packet.original_bgr``.

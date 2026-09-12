@@ -3,15 +3,193 @@
 from __future__ import annotations
 
 from collections import deque
+from contextlib import contextmanager
 import ctypes
 from ctypes import wintypes
 from dataclasses import dataclass
+from enum import Enum
 import os
 from pathlib import Path
+from threading import Lock
 from time import monotonic_ns
-from typing import Callable
+from typing import Callable, Iterator
 
 import numpy as np
+
+
+class StageTimingName(str, Enum):
+    """Frozen protocol-v2 stage dimensions."""
+
+    SEGMENTATION_INFERENCE = "segmentation_inference"
+    OPTICAL_FLOW = "optical_flow"
+    WHITE_BALANCE = "white_balance"
+    COLOR_EXTRACTION = "color_extraction"
+    RISK = "risk"
+    RECOLOR_RENDER = "recolor_render"
+    PRESENTATION = "presentation"
+    DISPLAY_SUBMIT = "display_submit"
+
+
+@dataclass(frozen=True, slots=True)
+class StageTimingConfig:
+    """Bound retained duration samples for every named stage."""
+
+    max_samples_per_stage: int = 10_000
+
+    def __post_init__(self) -> None:
+        if self.max_samples_per_stage <= 0:
+            raise ValueError("max_samples_per_stage must be positive")
+
+
+@dataclass(frozen=True, slots=True)
+class StageTimingSnapshot:
+    """One stage summary; unavailable percentiles remain ``None``."""
+
+    stage: StageTimingName
+    count: int
+    retained_samples: int
+    skipped_count: int
+    error_count: int
+    mean_ms: float | None
+    p50_ms: float | None
+    p95_ms: float | None
+    max_ms: float | None
+
+
+class StageTimingTracker:
+    """Thread-safe, bounded timing for the eight frozen T15 stages.
+
+    The tracker is opt-in. A reset starts a new measurement epoch; work that
+    began before that epoch is ignored when it later completes, preventing a
+    warm-up inference from contaminating the measured interval.
+    """
+
+    def __init__(
+        self,
+        config: StageTimingConfig | None = None,
+        *,
+        clock_ns: Callable[[], int] = monotonic_ns,
+    ) -> None:
+        self.config = config or StageTimingConfig()
+        self._clock_ns = clock_ns
+        self._lock = Lock()
+        self._epoch_ns = self._clock_ns()
+        self._samples = {
+            stage: deque(maxlen=self.config.max_samples_per_stage)
+            for stage in StageTimingName
+        }
+        self._counts = {stage: 0 for stage in StageTimingName}
+        self._totals_ms = {stage: 0.0 for stage in StageTimingName}
+        self._maximum_ms = {stage: None for stage in StageTimingName}
+        self._skipped = {stage: 0 for stage in StageTimingName}
+        self._errors = {stage: 0 for stage in StageTimingName}
+
+    @contextmanager
+    def measure(self, stage: StageTimingName) -> Iterator[None]:
+        """Measure one attempted stage call and preserve raised exceptions."""
+
+        active_stage = _validate_stage_name(stage)
+        started_ns = self._clock_ns()
+        try:
+            yield
+        except BaseException:
+            completed_ns = self._clock_ns()
+            self._record_duration(
+                active_stage,
+                started_ns=started_ns,
+                completed_ns=completed_ns,
+                error=True,
+            )
+            raise
+        else:
+            completed_ns = self._clock_ns()
+            self._record_duration(
+                active_stage,
+                started_ns=started_ns,
+                completed_ns=completed_ns,
+                error=False,
+            )
+
+    def skip(self, stage: StageTimingName) -> None:
+        """Record that a current-frame stage was intentionally not executed."""
+
+        active_stage = _validate_stage_name(stage)
+        with self._lock:
+            self._skipped[active_stage] += 1
+
+    def reset(self) -> None:
+        """Atomically discard warm-up samples and start a new epoch."""
+
+        epoch_ns = self._clock_ns()
+        with self._lock:
+            self._epoch_ns = epoch_ns
+            for stage in StageTimingName:
+                self._samples[stage].clear()
+                self._counts[stage] = 0
+                self._totals_ms[stage] = 0.0
+                self._maximum_ms[stage] = None
+                self._skipped[stage] = 0
+                self._errors[stage] = 0
+
+    def snapshot(self) -> tuple[StageTimingSnapshot, ...]:
+        """Return summaries in frozen registry order without mutating state."""
+
+        with self._lock:
+            summaries: list[StageTimingSnapshot] = []
+            for stage in StageTimingName:
+                retained = tuple(self._samples[stage])
+                count = self._counts[stage]
+                values = np.asarray(retained, dtype=np.float64)
+                summaries.append(
+                    StageTimingSnapshot(
+                        stage=stage,
+                        count=count,
+                        retained_samples=len(retained),
+                        skipped_count=self._skipped[stage],
+                        error_count=self._errors[stage],
+                        mean_ms=(
+                            None if count == 0 else self._totals_ms[stage] / count
+                        ),
+                        p50_ms=(
+                            None if values.size == 0 else float(np.percentile(values, 50.0))
+                        ),
+                        p95_ms=(
+                            None if values.size == 0 else float(np.percentile(values, 95.0))
+                        ),
+                        max_ms=self._maximum_ms[stage],
+                    )
+                )
+            return tuple(summaries)
+
+    def _record_duration(
+        self,
+        stage: StageTimingName,
+        *,
+        started_ns: int,
+        completed_ns: int,
+        error: bool,
+    ) -> None:
+        if completed_ns < started_ns:
+            raise ValueError("stage completion must not precede its start")
+        duration_ms = (completed_ns - started_ns) / 1_000_000.0
+        with self._lock:
+            if started_ns < self._epoch_ns:
+                return
+            self._samples[stage].append(duration_ms)
+            self._counts[stage] += 1
+            self._totals_ms[stage] += duration_ms
+            maximum = self._maximum_ms[stage]
+            self._maximum_ms[stage] = (
+                duration_ms if maximum is None else max(maximum, duration_ms)
+            )
+            if error:
+                self._errors[stage] += 1
+
+
+def _validate_stage_name(stage: StageTimingName) -> StageTimingName:
+    if not isinstance(stage, StageTimingName):
+        raise TypeError("stage must be a StageTimingName")
+    return stage
 
 
 @dataclass(frozen=True, slots=True)

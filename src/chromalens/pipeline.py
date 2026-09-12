@@ -25,6 +25,7 @@ from chromalens.contracts import (
 )
 from chromalens.cvd_simulation import validate_severity
 from chromalens.matching import MatchingResult, RuleBasedMatcher
+from chromalens.metrics import StageTimingName, StageTimingTracker
 from chromalens.recolor import AssistiveRecolorResult, SelectiveRecolorer
 from chromalens.risk_detection import RelationalRiskDetector
 from chromalens.segmentation.base import (
@@ -203,6 +204,7 @@ class ChromaLensPipeline:
         risk_detector: RelationalRiskDetector | None = None,
         recolorer: SelectiveRecolorer | None = None,
         matcher: RuleBasedMatcher | None = None,
+        stage_timing: StageTimingTracker | None = None,
     ) -> None:
         if not isinstance(segmenter, Segmenter):
             raise TypeError("segmenter must implement the Segmenter interface")
@@ -217,6 +219,7 @@ class ChromaLensPipeline:
         self.risk_detector = risk_detector or RelationalRiskDetector()
         self.recolorer = recolorer or SelectiveRecolorer()
         self.matcher = matcher or RuleBasedMatcher()
+        self.stage_timing = stage_timing
         self._last_cvd_context: tuple[CVDProfile, float, bool] | None = None
         self._closed = False
 
@@ -252,7 +255,16 @@ class ChromaLensPipeline:
         frame_shape = packet.original_bgr.shape[:2]
         regions: tuple[GarmentRegion, ...] = ()
         try:
-            raw_regions = self.segmenter.segment(packet)
+            if self.segmenter.manages_stage_timing:
+                raw_regions = self.segmenter.segment(packet)
+            elif self.stage_timing is None:
+                raw_regions = self.segmenter.segment(packet)
+            else:
+                with self.stage_timing.measure(
+                    StageTimingName.SEGMENTATION_INFERENCE
+                ):
+                    raw_regions = self.segmenter.segment(packet)
+                self.stage_timing.skip(StageTimingName.OPTICAL_FLOW)
             regions = self.mask_smoother.smooth(
                 raw_regions,
                 stream_id=self.stream_id,
@@ -307,10 +319,17 @@ class ChromaLensPipeline:
             if np.any(background_mask):
                 estimation_mask = background_mask
         try:
-            white_balance = self.white_balancer.process(
-                packet,
-                estimation_mask=estimation_mask,
-            )
+            if self.stage_timing is None:
+                white_balance = self.white_balancer.process(
+                    packet,
+                    estimation_mask=estimation_mask,
+                )
+            else:
+                with self.stage_timing.measure(StageTimingName.WHITE_BALANCE):
+                    white_balance = self.white_balancer.process(
+                        packet,
+                        estimation_mask=estimation_mask,
+                    )
             reports.append(
                 StageReport(
                     PipelineStage.WHITE_BALANCE,
@@ -332,6 +351,8 @@ class ChromaLensPipeline:
 
         clusters: tuple[ColorCluster, ...] = ()
         if primary_region is None:
+            if self.stage_timing is not None:
+                self.stage_timing.skip(StageTimingName.COLOR_EXTRACTION)
             reports.append(
                 StageReport(
                     PipelineStage.COLOR,
@@ -340,6 +361,8 @@ class ChromaLensPipeline:
                 )
             )
         elif white_balance is None:
+            if self.stage_timing is not None:
+                self.stage_timing.skip(StageTimingName.COLOR_EXTRACTION)
             reports.append(
                 StageReport(
                     PipelineStage.COLOR,
@@ -349,11 +372,19 @@ class ChromaLensPipeline:
             )
         else:
             try:
-                clusters = self.color_extractor.extract(
-                    packet,
-                    primary_region,
-                    mode=self.config.extraction_mode,
-                )
+                if self.stage_timing is None:
+                    clusters = self.color_extractor.extract(
+                        packet,
+                        primary_region,
+                        mode=self.config.extraction_mode,
+                    )
+                else:
+                    with self.stage_timing.measure(StageTimingName.COLOR_EXTRACTION):
+                        clusters = self.color_extractor.extract(
+                            packet,
+                            primary_region,
+                            mode=self.config.extraction_mode,
+                        )
                 reports.append(
                     StageReport(
                         PipelineStage.COLOR,
@@ -379,6 +410,8 @@ class ChromaLensPipeline:
         comparison_cluster = clusters[1] if len(clusters) >= 2 else None
         risk: RiskAssessment | None = None
         if primary_cluster is None or comparison_cluster is None:
+            if self.stage_timing is not None:
+                self.stage_timing.skip(StageTimingName.RISK)
             reports.append(
                 StageReport(
                     PipelineStage.RISK,
@@ -388,20 +421,37 @@ class ChromaLensPipeline:
             )
         else:
             try:
-                risk = self.risk_detector.assess_pair(
-                    primary_cluster.rgb,
-                    comparison_cluster.rgb,
-                    source_id=(
-                        f"{self.stream_id}:frame:{packet.frame_id}:cluster:0:"
-                        f"{primary_cluster.original_name}"
-                    ),
-                    comparison_id=(
-                        f"{self.stream_id}:frame:{packet.frame_id}:cluster:1:"
-                        f"{comparison_cluster.original_name}"
-                    ),
-                    profile=settings.profile,
-                    severity=settings.severity,
-                )
+                if self.stage_timing is None:
+                    risk = self.risk_detector.assess_pair(
+                        primary_cluster.rgb,
+                        comparison_cluster.rgb,
+                        source_id=(
+                            f"{self.stream_id}:frame:{packet.frame_id}:cluster:0:"
+                            f"{primary_cluster.original_name}"
+                        ),
+                        comparison_id=(
+                            f"{self.stream_id}:frame:{packet.frame_id}:cluster:1:"
+                            f"{comparison_cluster.original_name}"
+                        ),
+                        profile=settings.profile,
+                        severity=settings.severity,
+                    )
+                else:
+                    with self.stage_timing.measure(StageTimingName.RISK):
+                        risk = self.risk_detector.assess_pair(
+                            primary_cluster.rgb,
+                            comparison_cluster.rgb,
+                            source_id=(
+                                f"{self.stream_id}:frame:{packet.frame_id}:cluster:0:"
+                                f"{primary_cluster.original_name}"
+                            ),
+                            comparison_id=(
+                                f"{self.stream_id}:frame:{packet.frame_id}:cluster:1:"
+                                f"{comparison_cluster.original_name}"
+                            ),
+                            profile=settings.profile,
+                            severity=settings.severity,
+                        )
                 reports.append(
                     StageReport(
                         PipelineStage.RISK,
@@ -424,6 +474,8 @@ class ChromaLensPipeline:
         recolor: AssistiveRecolorResult | None = None
         if not settings.recolor_enabled:
             self.recolorer.reset()
+            if self.stage_timing is not None:
+                self.stage_timing.skip(StageTimingName.RECOLOR_RENDER)
             reports.append(
                 StageReport(
                     PipelineStage.RECOLOR,
@@ -437,6 +489,8 @@ class ChromaLensPipeline:
             or comparison_cluster is None
             or risk is None
         ):
+            if self.stage_timing is not None:
+                self.stage_timing.skip(StageTimingName.RECOLOR_RENDER)
             reports.append(
                 StageReport(
                     PipelineStage.RECOLOR,
@@ -446,24 +500,47 @@ class ChromaLensPipeline:
             )
         else:
             try:
-                recolor = self.recolorer.recolor(
-                    packet.original_bgr,
-                    garment_mask=primary_region.mask,
-                    cluster=primary_cluster,
-                    risk_mask=(
-                        primary_cluster.submask
-                        if risk.risk_score >= self.recolorer.config.minimum_risk_score
-                        else risk_mask
-                    ),
-                    comparison_rgb=comparison_cluster.rgb,
-                    risk=risk,
-                    profile=settings.profile,
-                    severity=settings.severity,
-                    state_key=(
-                        f"{self.stream_id}:{settings.profile.value}:"
-                        f"{settings.severity:.2f}:cluster:0"
-                    ),
-                )
+                if self.stage_timing is None:
+                    recolor = self.recolorer.recolor(
+                        packet.original_bgr,
+                        garment_mask=primary_region.mask,
+                        cluster=primary_cluster,
+                        risk_mask=(
+                            primary_cluster.submask
+                            if risk.risk_score
+                            >= self.recolorer.config.minimum_risk_score
+                            else risk_mask
+                        ),
+                        comparison_rgb=comparison_cluster.rgb,
+                        risk=risk,
+                        profile=settings.profile,
+                        severity=settings.severity,
+                        state_key=(
+                            f"{self.stream_id}:{settings.profile.value}:"
+                            f"{settings.severity:.2f}:cluster:0"
+                        ),
+                    )
+                else:
+                    with self.stage_timing.measure(StageTimingName.RECOLOR_RENDER):
+                        recolor = self.recolorer.recolor(
+                            packet.original_bgr,
+                            garment_mask=primary_region.mask,
+                            cluster=primary_cluster,
+                            risk_mask=(
+                                primary_cluster.submask
+                                if risk.risk_score
+                                >= self.recolorer.config.minimum_risk_score
+                                else risk_mask
+                            ),
+                            comparison_rgb=comparison_cluster.rgb,
+                            risk=risk,
+                            profile=settings.profile,
+                            severity=settings.severity,
+                            state_key=(
+                                f"{self.stream_id}:{settings.profile.value}:"
+                                f"{settings.severity:.2f}:cluster:0"
+                            ),
+                        )
                 reports.append(
                     StageReport(
                         PipelineStage.RECOLOR,

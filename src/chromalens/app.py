@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
+import json
 import sys
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -24,7 +26,13 @@ from chromalens.camera import (
 )
 from chromalens.config import CVDProfile
 from chromalens.contracts import ColorFrame, FramePacket
-from chromalens.metrics import RuntimeMetricsSnapshot, RuntimeMetricsTracker
+from chromalens.metrics import (
+    RuntimeMetricsSnapshot,
+    RuntimeMetricsTracker,
+    StageTimingName,
+    StageTimingSnapshot,
+    StageTimingTracker,
+)
 from chromalens.pipeline import ChromaLensPipeline, PipelineSettings
 from chromalens.presentation import PresentationMode, PresentationTheme
 from chromalens.renderer import (
@@ -166,6 +174,7 @@ class PipelineSessionResult:
     backend_name: str
     metrics: RuntimeMetricsSnapshot
     segmentation_telemetry: SegmentationFrameTelemetry | None = None
+    stage_timings: tuple[StageTimingSnapshot, ...] = ()
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -319,6 +328,15 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--stage-metrics-output",
+        type=Path,
+        metavar="PATH",
+        help=(
+            "opt in to bounded T15 stage timing and write raw JSON; no frame "
+            "pixels are persisted"
+        ),
+    )
+    parser.add_argument(
         "--no-display",
         action="store_true",
         help="process and render frames without creating a GUI window",
@@ -361,9 +379,17 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         # Lazy construction keeps --help and the explicit capture-only path
         # independent of model packages and special hardware.
+        stage_timing = (
+            StageTimingTracker() if args.stage_metrics_output is not None else None
+        )
         pipeline = ChromaLensPipeline(
-            _build_segmenter(args, live_source=source.is_live),
+            _build_segmenter(
+                args,
+                live_source=source.is_live,
+                stage_timing=stage_timing,
+            ),
             stream_id=source.name,
+            stage_timing=stage_timing,
         )
         controls = RuntimeControls(
             profile=CVDProfile(args.profile),
@@ -384,6 +410,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             metrics_warmup_seconds=args.metrics_warmup_seconds,
             window_title=args.window_title,
         )
+        if args.stage_metrics_output is not None:
+            _write_stage_metrics_json(
+                args.stage_metrics_output,
+                result,
+                display=not args.no_display,
+                warmup_seconds=args.metrics_warmup_seconds,
+            )
     except SegmenterUnavailableError as error:
         if source is not None:
             source.close()
@@ -411,7 +444,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     return 0
 
 
-def _build_segmenter(args: argparse.Namespace, *, live_source: bool = False):
+def _build_segmenter(
+    args: argparse.Namespace,
+    *,
+    live_source: bool = False,
+    stage_timing: StageTimingTracker | None = None,
+):
     """Construct only the explicitly selected backend after argument parsing."""
 
     if args.backend == "mediapipe-selfie-torso":
@@ -434,7 +472,7 @@ def _build_segmenter(args: argparse.Namespace, *, live_source: bool = False):
     if live_source and args.schp_live_mode == "async":
         from chromalens.segmentation.async_keyframes import AsyncKeyframeSegmenter
 
-        return AsyncKeyframeSegmenter(segmenter)
+        return AsyncKeyframeSegmenter(segmenter, stage_timing=stage_timing)
     return segmenter
 
 
@@ -467,6 +505,7 @@ def run_pipeline_session(
     dropped_frames = 0
     dropped_at_measurement_start = 0
     metrics_completed_at_ns: int | None = None
+    stage_timings: tuple[StageTimingSnapshot, ...] = ()
     video_frame_period_seconds = (
         1.0 / source.nominal_fps
         if display and not source.is_live and source.nominal_fps is not None
@@ -482,6 +521,8 @@ def run_pipeline_session(
                 and now - started_at >= metrics_warmup_seconds
             ):
                 runtime_metrics = RuntimeMetricsTracker()
+                if pipeline.stage_timing is not None:
+                    pipeline.stage_timing.reset()
                 measurement_started_at = now
                 dropped_at_measurement_start = (
                     latest_reader.dropped_frames if latest_reader else 0
@@ -519,15 +560,22 @@ def run_pipeline_session(
                 display_state=active_controls.display_state(
                     dropped_capture_frames=dropped_frames
                 ),
+                stage_timing=pipeline.stage_timing,
             )
             render_completed_ns = monotonic_ns()
             frames_processed += 1
 
             display_submitted_ns: int | None = None
             if display:
-                cv2.imshow(window_title, rendered)
+                if pipeline.stage_timing is None:
+                    cv2.imshow(window_title, rendered)
+                else:
+                    with pipeline.stage_timing.measure(StageTimingName.DISPLAY_SUBMIT):
+                        cv2.imshow(window_title, rendered)
                 display_submitted_ns = monotonic_ns()
                 window_created = True
+            elif pipeline.stage_timing is not None:
+                pipeline.stage_timing.skip(StageTimingName.DISPLAY_SUBMIT)
 
             observed_ns = (
                 render_completed_ns
@@ -579,6 +627,8 @@ def run_pipeline_session(
         if runtime_metrics is None:
             runtime_metrics = RuntimeMetricsTracker()
         metrics_completed_at_ns = monotonic_ns()
+        if pipeline.stage_timing is not None:
+            stage_timings = pipeline.stage_timing.snapshot()
         if latest_reader is not None:
             latest_reader.close()
             dropped_frames = latest_reader.dropped_frames
@@ -606,6 +656,7 @@ def run_pipeline_session(
         backend_name=pipeline.backend_name,
         metrics=metrics,
         segmentation_telemetry=pipeline.segmentation_telemetry,
+        stage_timings=stage_timings,
     )
 
 
@@ -709,6 +760,66 @@ def _preview_summary(result: PreviewResult) -> str:
     )
 
 
+def _write_stage_metrics_json(
+    path: Path,
+    result: PipelineSessionResult,
+    *,
+    display: bool,
+    warmup_seconds: float,
+) -> None:
+    """Persist opt-in timing telemetry without frame pixels or user media."""
+
+    payload = {
+        "format": "chromalens-t15-stage-timing-1.0",
+        "created_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "source": result.source_name,
+        "backend": result.backend_name,
+        "resolution": (
+            None
+            if result.resolution is None
+            else {"width": result.resolution[0], "height": result.resolution[1]}
+        ),
+        "display_mode": "gui" if display else "headless",
+        "warmup_seconds": warmup_seconds,
+        "measurement_seconds": result.metrics.elapsed_seconds,
+        "processed_frame_count": result.metrics.total_frames,
+        "latency_semantics": {
+            "source_read_to_render_ms": (
+                "after source read returned through presentation completion"
+            ),
+            "source_read_to_display_submit_ms": (
+                "after source read returned through cv2.imshow return; GUI only"
+            ),
+            "sensor_to_photon_ms": "NOT_MEASURED",
+        },
+        "stages": [
+            {
+                "stage": timing.stage.value,
+                "count": timing.count,
+                "retained_samples": timing.retained_samples,
+                "skipped_count": timing.skipped_count,
+                "error_count": timing.error_count,
+                "mean_ms": timing.mean_ms,
+                "p50_ms": timing.p50_ms,
+                "p95_ms": timing.p95_ms,
+                "max_ms": timing.max_ms,
+            }
+            for timing in result.stage_timings
+        ],
+        "privacy": {
+            "frames_saved": 0,
+            "frames_uploaded": 0,
+            "contains_frame_pixels": False,
+        },
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(payload, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+
+
 def _pipeline_summary(result: PipelineSessionResult) -> str:
     metrics = result.metrics
     resolution = (
@@ -767,6 +878,7 @@ def _pipeline_summary(result: PipelineSessionResult) -> str:
         f"display_submit_samples="
         f"{metrics.retained_source_read_to_display_submit_samples} "
         f"dropped={metrics.dropped_capture_frames} degraded={metrics.degraded_frames} "
+        f"stage_timing_samples={sum(stage.count for stage in result.stage_timings)} "
         f"{segmentation_summary}"
     )
 
