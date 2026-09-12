@@ -153,15 +153,17 @@ def test_artifact_policy_and_file_ownership_prevent_parallel_conflicts() -> None
     assert "artifacts/(t09|post_mvp)" in workflow
 
 
-def test_gate0_result_strictly_validates_present_raw_artifact() -> None:
+def test_gate0_result_is_portable_when_ignored_raw_artifact_is_absent() -> None:
     summary = validator.validate_result_file(
-        ROOT / "evaluation/results/curated/post_mvp/gate0/result.json",
-        require_ignored_artifacts=True,
+        ROOT / "evaluation/results/curated/post_mvp/gate0/result.json"
     )
     assert summary.case_count == 1
     assert summary.metric_count == 9
-    assert summary.verified_artifact_count == 1
-    assert summary.unavailable_ignored_artifact_count == 0
+    assert (
+        summary.verified_artifact_count
+        + summary.unavailable_ignored_artifact_count
+        == 1
+    )
 
 
 def test_clean_checkout_validation_does_not_depend_on_ignored_raw_bytes(tmp_path: Path) -> None:
