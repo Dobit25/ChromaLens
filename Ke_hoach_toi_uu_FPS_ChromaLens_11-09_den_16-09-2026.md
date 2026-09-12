@@ -8,11 +8,11 @@
 > thiện tương đối bên dưới chỉ là demo floor/contingency để phân tích, không
 > đủ để tự tuyên bố T15 `DONE`.
 
-**Thời gian thực hiện:** 11–16/09/2026  
-**Quỹ thời gian:** tương đương 5 ngày công cho mỗi thành viên, tối đa 4 giờ/người/ngày  
-**Nhân sự:** 3 người, mỗi người 20 giờ, tổng cộng 60 giờ-người  
-**Phần cứng mục tiêu:** camera tích hợp và laptop cá nhân của nhóm; không có máy demo chuyên dụng  
-**Mốc mã nguồn đã kiểm tra:** nhánh `main` tại commit `d876e6acaa7373928bdfc796265051a36a80d680`  
+**Thời gian thực hiện:** 11–16/09/2026<br>
+**Quỹ thời gian:** tương đương 5 ngày công cho mỗi thành viên, tối đa 4 giờ/người/ngày<br>
+**Nhân sự:** 3 người, mỗi người 20 giờ, tổng cộng 60 giờ-người<br>
+**Phần cứng mục tiêu:** camera tích hợp và laptop cá nhân của nhóm; không có máy demo chuyên dụng<br>
+**Mốc nền của nhánh:** Gate 0 tại commit `bb51d20bba11040a7b607c9582909bd5adcafbb9`
 **Trạng thái:** sẵn sàng phân công; chưa bắt đầu triển khai
 
 ## 1. Kết luận điều hành
@@ -35,7 +35,7 @@ Chiến lược đề xuất:
 - giữ MediaPipe và độ phân giải 320×240 làm phương án dự phòng công khai, có nhãn rõ ràng;
 - chỉ tích hợp những thay đổi có số đo chứng minh và có thể hoàn tác riêng lẻ.
 
-Mục tiêu phát hành thực tế là **đạt tối thiểu 15 pipeline FPS ở chế độ GUI 640×360 trên laptop cá nhân được chọn làm máy tham chiếu**. Nếu giới hạn phần cứng khiến 15 FPS chưa đạt được, điều kiện chấp nhận thay thế là tăng ít nhất 20% median FPS so với baseline của chính máy đó và giảm ít nhất 15% p95 latency, với toàn bộ cổng chất lượng vẫn được giữ nguyên. Nhóm **không nên cam kết 15 SCHP mask mới mỗi giây** trên CPU hiện tại: benchmark trực tiếp của mô hình chỉ đạt 3,19 FPS, còn trong sản phẩm đang đạt khoảng 1,5–2,2 SCHP keyframe/giây. Muốn đạt 15 suy luận ngữ nghĩa mới mỗi giây sẽ cần mô hình nhẹ hơn đáng kể, phần cứng/runtime khác hoặc chấp nhận đánh đổi chất lượng sau khi kiểm chứng.
+Definition of Done chính thức là **đạt tối thiểu 20 processed FPS và p95 không quá 120 ms ở chế độ GUI 640×360 trên laptop cá nhân được chọn làm máy tham chiếu**. Mốc 15 FPS chỉ là demo floor để đánh giá khả năng trình diễn; nếu chỉ đạt mốc này hoặc chỉ cải thiện tương đối so với baseline thì T15 vẫn phải được báo cáo `PARTIAL`, không phải `DONE`. Nhóm **không nên cam kết 15 SCHP mask mới mỗi giây** trên CPU hiện tại: benchmark trực tiếp của mô hình chỉ đạt 3,19 FPS, còn trong sản phẩm đang đạt khoảng 1,5–2,2 SCHP keyframe/giây. Muốn đạt 15 suy luận ngữ nghĩa mới mỗi giây sẽ cần mô hình nhẹ hơn đáng kể, phần cứng/runtime khác hoặc chấp nhận đánh đổi chất lượng sau khi kiểm chứng.
 
 ## 2. Cơ sở bằng chứng và tình trạng sản phẩm hiện tại
 
@@ -45,12 +45,12 @@ Kế hoạch này đã đối chiếu các tài liệu được cung cấp với
 
 Nguồn bằng chứng chính của dự án:
 
-- [Repository tại commit đã kiểm tra](https://github.com/DangTrinhdzZz/ChromaLens/tree/d876e6acaa7373928bdfc796265051a36a80d680)
-- [README và trạng thái demo hiện tại](https://github.com/DangTrinhdzZz/ChromaLens/blob/d876e6acaa7373928bdfc796265051a36a80d680/README.md)
-- [Biên bản nghiệm thu SCHP/OpenVINO](https://github.com/DangTrinhdzZz/ChromaLens/blob/d876e6acaa7373928bdfc796265051a36a80d680/docs/t10-schp-openvino.md)
-- [Báo cáo hiệu năng và AI có trách nhiệm](https://github.com/DangTrinhdzZz/ChromaLens/blob/d876e6acaa7373928bdfc796265051a36a80d680/evaluation/results/curated/performance_responsible_ai/report.md)
-- [Thông tin mô hình, checksum và giới hạn bản quyền](https://github.com/DangTrinhdzZz/ChromaLens/blob/d876e6acaa7373928bdfc796265051a36a80d680/models/README.md)
-- [Nhật ký triển khai và phát hành](https://github.com/DangTrinhdzZz/ChromaLens/blob/d876e6acaa7373928bdfc796265051a36a80d680/codinglog.md)
+- [Repository tại Gate 0](https://github.com/Dobit25/ChromaLens/tree/bb51d20bba11040a7b607c9582909bd5adcafbb9)
+- [README và trạng thái demo hiện tại](https://github.com/Dobit25/ChromaLens/blob/bb51d20bba11040a7b607c9582909bd5adcafbb9/README.md)
+- [Biên bản nghiệm thu SCHP/OpenVINO](https://github.com/Dobit25/ChromaLens/blob/bb51d20bba11040a7b607c9582909bd5adcafbb9/docs/t10-schp-openvino.md)
+- [Báo cáo hiệu năng và AI có trách nhiệm](https://github.com/Dobit25/ChromaLens/blob/bb51d20bba11040a7b607c9582909bd5adcafbb9/evaluation/results/curated/performance_responsible_ai/report.md)
+- [Thông tin mô hình, checksum và giới hạn bản quyền](https://github.com/Dobit25/ChromaLens/blob/bb51d20bba11040a7b607c9582909bd5adcafbb9/models/README.md)
+- [Nhật ký triển khai và phát hành](https://github.com/Dobit25/ChromaLens/blob/bb51d20bba11040a7b607c9582909bd5adcafbb9/codinglog.md)
 
 Các tài liệu rubric đánh giá, hướng dẫn AI có đạo đức, consent form, bảng nghiên cứu, thứ tự task, phân chia công việc, kế hoạch, context, hướng dẫn repository, báo cáo test webcam và ghi chú bàn giao cũng đã được đọc. Những ràng buộc liên quan đã được đưa vào kế hoạch: xử lý cục bộ, xin đồng ý khi dùng dữ liệu người thật, báo cáo số liệu trung thực, nêu rõ giới hạn, có bằng chứng regression và luôn duy trì phương án dự phòng.
 
@@ -70,7 +70,7 @@ Các tài liệu rubric đánh giá, hướng dẫn AI có đạo đức, consen
 | Backend dự phòng | `mediapipe-selfie-torso`; person mask kết hợp heuristic thân người/khuôn mặt, không tương đương semantic parsing của SCHP |
 | UI/rendering | Camera OpenCV đặt trong khung Product/Diagnostic bên ngoài được dựng bằng Pillow |
 | Pipeline màu | White balance từng frame, trích màu trong mask bằng K-means xác định, phân tích rủi ro CVD, recolor chọn lọc, matching và rendering |
-| Kiểm thử tự động mới nhất | 302 test pass trong release gate gần nhất được ghi nhận |
+| Kiểm thử tự động mới nhất | Phải đo lại tại HEAD của `feature/fps-increment`; không tái sử dụng số đếm 302 cũ |
 | Máy đã đo | Lenovo 83DV, Intel Core i5-13450HX, RAM 15,78 GiB, Windows, Python 3.10.20 |
 | Sensor-to-photon latency | Chưa đo |
 
@@ -168,7 +168,7 @@ Microbenchmark presentation hiện tại ở 640×480 khoảng 15,5 ms cho Produ
 
 ### 4.1 Mục tiêu phát hành trên laptop tham chiếu
 
-Kết quả được tính bằng median của ba lần chạy có kiểm soát sau warm-up ba giây. Không dùng một lần chạy tốt nhất làm bằng chứng nghiệm thu.
+Kết quả quick-run được tính bằng median của ba lần chạy có kiểm soát sau warm-up 15 giây. Không dùng một lần chạy tốt nhất làm bằng chứng nghiệm thu; bằng chứng cuối vẫn phải dùng phép đo 300 giây theo protocol v2.
 
 | Chỉ số | Số liệu hiện tại | Mục tiêu tối thiểu | Mục tiêu cao hơn |
 | --- | ---: | ---: | ---: |
@@ -181,7 +181,7 @@ Kết quả được tính bằng median của ba lần chạy có kiểm soát 
 | Frame stale/unavailable do lỗi vận hành sau warm-up | Chưa tách riêng | ≤2% | ≤1% |
 | FPS fallback GUI 320×240 | 18,71 | ≥20,0 | ≥22,0 |
 
-Nếu không thể đạt 15 FPS mà không làm giảm chất lượng hoặc tính trung thực, bản phát hành chỉ được chấp nhận khi median FPS tăng ít nhất 20% và p95 latency giảm ít nhất 15% trên cùng laptop tham chiếu. Khi đó phải giữ fallback 320×240/MediaPipe và báo cáo rõ giới hạn phần cứng. Không được nới cổng chất lượng chỉ để đạt một con số FPS tròn.
+Nếu chưa thể đạt 20 FPS mà không làm giảm chất lượng hoặc tính trung thực, có thể báo cáo riêng mức cải thiện median FPS/p95 và demo floor 15 FPS như evidence kỹ thuật, nhưng T15 vẫn là `PARTIAL`. Phải giữ fallback 320×240/MediaPipe và báo cáo rõ giới hạn phần cứng. Không được nới cổng chất lượng chỉ để đạt một con số FPS tròn.
 
 ### 4.2 Quy tắc chấp nhận một phương án tối ưu
 
@@ -201,7 +201,7 @@ Chỉ merge phương án khi đáp ứng ít nhất một lợi ích và toàn b
 | Trích xuất màu | Giữ tên màu chính/phụ trên exact cases hiện có; chênh cluster ratio tuyệt đối ≤0,03; không sửa source frame |
 | Recolor | Thay đổi pixel chỉ nằm trong risk/garment mask cho phép; đổi profile/severity phải vô hiệu cache ngay |
 | UI | Pixel camera không bị che trừ khi người dùng bật cover; Product/Diagnostic controls và telemetry vẫn đúng |
-| Tests | Toàn bộ 302 test hiện có và các test performance contract mới phải pass |
+| Tests | Toàn bộ test tại HEAD của nhánh và các test performance contract mới phải pass |
 | Bộ nhớ | Soak 5 phút sau warm-up không có RSS tăng liên tục qua 4 cửa sổ; RSS cuối không cao hơn steady-state median quá 25 MiB; queue/cache phải có giới hạn |
 | Metrics | Báo riêng pipeline FPS, fresh SCHP FPS, mask source/age, capture/inference drops, p50/p95, resolution/backend thực tế và degradation theo reason code |
 | Tuyên bố latency | Tiếp tục ghi sensor-to-photon là `NOT_MEASURED` nếu chưa đo bằng thiết bị đồng bộ bên ngoài |
@@ -473,7 +473,7 @@ Quyết định dựa trên tỷ trọng stage đã đo, không dựa vào cảm
 | Capture age tăng dù reader capacity-one | Thử backend/driver có sẵn và kiểm tra hành vi buffer thực | Mặc định cho rằng `CAP_PROP_BUFFERSIZE=1` chắc chắn có hiệu lực |
 | FPS giảm dần theo nhiệt độ | Ổn định power/thermal state, ghi vào báo cáo và benchmark lại | Gán lỗi thermal throttling cho một thay đổi code |
 | Memory tăng | Tìm array/cache/native buffer không hữu hạn; loại candidate cho tới khi sửa | Dùng một mẫu RSS giảm để kết luận không leak |
-| Vẫn không đạt 15 FPS sau các cải tiến an toàn | Phát hành phần tăng đã đo cùng fallback 320×240/MediaPipe; mở nghiên cứu model/hardware riêng | Tự ý bật lại INT8 hoặc SCHP 256/384 đã bị loại |
+| Vẫn không đạt DoD 20 FPS sau các cải tiến an toàn | Báo `PARTIAL`, phát hành phần tăng đã đo cùng fallback 320×240/MediaPipe; mở nghiên cứu model/hardware riêng | Tự ý bật lại INT8 hoặc SCHP 256/384 đã bị loại |
 
 ## 12. Các performance mode cần bàn giao
 
@@ -530,7 +530,7 @@ Tại release gate ngày 16/09, nhóm phải bàn giao:
 - [ ] Không candidate nào được nhận nếu làm mất fixture class hoặc vi phạm IoU/color/recolor gate.
 - [ ] Operational stale/unavailable reason được tách khỏi analytical non-applicability.
 - [ ] Soak 5 phút xác nhận queue/cache hữu hạn và không có RSS/latency tăng liên tục.
-- [ ] Toàn bộ test hiện có cộng test mới pass; baseline gần nhất đã biết là 302 test.
+- [ ] Toàn bộ test tại HEAD cộng test mới pass; ghi lại số lượng thực tế thay vì tái sử dụng baseline cũ.
 - [ ] Product/Diagnostic mode, theme, controls, camera cover và fallback command chạy trên camera tích hợp của laptop tham chiếu.
 - [ ] Không commit nhầm human media thô, checkpoint, derived IR hoặc INT8 artifact đã bị loại.
 - [ ] Có consent và local processing cho mọi video người thật mới.
@@ -543,7 +543,7 @@ Trong buổi làm việc tiếp theo:
 
 1. Gán tên thật cho P1, P2 và P3.
 2. Xác nhận phân bổ 20 giờ/người, tối đa 4 giờ/ngày và quy tắc không mở task mới ngày 16/09.
-3. Chọn laptop/camera tích hợp tham chiếu; xác minh `main` tại `d876e6a`, worktree sạch và model/IR hash trên máy đó.
+3. Chọn laptop/camera tích hợp tham chiếu; xác minh nhánh bắt đầu từ Gate 0 `bb51d20`, worktree sạch và model/IR hash trên máy đó.
 4. Tạo và push baseline recovery tag.
 5. Chạy B01, B04 và B07 trước khi sửa performance code; B06 chỉ chạy nếu cần đối chiếu baseline cũ.
 6. Khóa schema của stage timing.
