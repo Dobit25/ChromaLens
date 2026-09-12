@@ -4942,3 +4942,124 @@ the frozen ownership map; T17 remains last.
 
 Update the CI trigger, capture the baseline on the unchanged pipeline, then
 implement and validate bounded stage timing without optimizing any stage.
+
+---
+
+### `2026-09-12 11:03 +07:00` - `T15` `CI, baseline, and stage-instrumentation slice complete`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Instrumentation commit:** `b1e90da8c2f99ffaec880455dcb5a52aebdb4957`
+
+#### Outcome
+
+- Expanded CI triggers to `main`, `mvp`, and `feature/**` pushes and pull
+  requests targeting `main` or `mvp`. The first newly visible run exposed a
+  pre-existing Gate 0 test that required ignored raw bytes in a clean checkout;
+  the test now validates available bytes when present and accepts a declared
+  unavailable ignored artifact when absent.
+- Added opt-in, thread-safe stage timing with bounded 10,000-sample deques for
+  the eight frozen protocol-v2 dimensions. Warm-up reset ignores worker work
+  that began before the measurement epoch. Every stage reports count,
+  retained count, skips, errors, mean, p50, p95, and maximum duration.
+- Wired synchronous and asynchronous segmentation correctly: real SCHP
+  inference is measured on its worker thread, while optical flow is measured
+  on the current-frame path. Presentation and GUI submission retain their
+  existing latency boundaries.
+- Added `--stage-metrics-output`, which is disabled by default and saves only
+  aggregate JSON telemetry. No frame pixels are saved or uploaded.
+- Added a reproducible T15 baseline wrapper, strict partial result, report, and
+  hardware-independent unit/integration/schema tests.
+- Did not alter OpenVINO settings, optical-flow parameters/algorithm, renderer
+  behavior, processing resolution, inference cadence, model assets, or
+  dependencies.
+
+#### Pre-instrumentation and instrumented observations
+
+Both webcam runs used the development Lenovo 83DV, `lens` Python 3.10.20,
+SCHP-ATR FP32/OpenVINO CPU, requested 480x360 (actual 640x360), asynchronous
+keyframes, 15 seconds warm-up, and 60 measured headless seconds.
+
+| Observation | Before | Instrumented |
+| --- | ---: | ---: |
+| Commit | `6e4e321` | `b1e90da` |
+| Processed FPS | 14.88 | 14.96 |
+| `source_read_to_render_ms` p50/p95 | 47/78 ms | 47/78 ms |
+| Frame-processing p50 | 32 ms | 32 ms |
+| SCHP inference FPS | 2.28 | 2.31 |
+| Measured degraded frames | 893/893 | 899/899 |
+
+The sequential-run FPS delta is +0.54%, consistent with low overhead, but it
+is not claimed as a calibrated `<2%` bound because webcam content and host
+scheduling can vary.
+
+#### Instrumented stage evidence
+
+| Stage | Count | Skipped | Error | Mean | p50/p95 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `segmentation_inference` | 149 | 0 | 0 | 401.32 ms | 391/453 ms |
+| `optical_flow` | 0 | 749 | 0 | N/A | N/A |
+| `white_balance` | 899 | 0 | 0 | 20.58 ms | 16/32 ms |
+| `color_extraction` | 0 | 899 | 0 | N/A | N/A |
+| `risk` | 0 | 899 | 0 | N/A | N/A |
+| `recolor_render` | 0 | 899 | 0 | N/A | N/A |
+| `presentation` | 899 | 0 | 0 | 16.09 ms | 16/31 ms |
+| `display_submit` | 0 | 899 | 0 | N/A | N/A |
+
+The webcam scene did not produce a usable garment mask. The unavailable stage
+values remain `NOT_MEASURED`; they are not replaced with zero. SCHP inference
+overlaps the main loop and must not be summed with main-thread durations.
+
+A separate real SCHP/OpenVINO three-frame synchronous video smoke exercised
+all analytical stages without degraded frames: 1.56 processed FPS, p95
+render-complete latency 794.2 ms, segmentation inference p50 516 ms, color
+extraction p50 32 ms, recolor p50 32 ms, and presentation p50 16 ms. This is
+wiring evidence, not a benchmark. A preceding 30-frame attempt timed out at
+exit 124; its exact child Python/conda processes were identified and stopped
+before subsequent measurements.
+
+#### Raw artifact checksums
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `artifacts/post_mvp/t15/pre-instrumentation-baseline-raw.json` | 4,040 | `a61229fffeffb1e28b3bf1f5f191c64e8eaaa2cddc41fe85496cd98190fdb4b4` |
+| `artifacts/post_mvp/t15/instrumented-baseline-raw.json` | 7,249 | `623a5a2ef24b8b83dee9413aa4a959adbce506583ccb607ad7fe5f4891fc6dad` |
+| `artifacts/post_mvp/t15/stage-timing-raw.json` | 2,718 | `a04d7fe5b0de0e9c7abdbb18962690a62f378b19e8eb717104e074b4eae54624` |
+
+All remain ignored. The curated result records provenance, privacy, consent,
+license, exact bytes, checksum, commands, and limitations.
+
+#### Commands and observed results
+
+| Command/check | Result |
+| --- | --- |
+| Pre-instrumentation `scripts/post_mvp_baseline.py` 15 s + 60 s | PASS, exit 0 |
+| Initial focused instrumentation suite | FAIL, exit 1: async test assumed exactly one completion; worker validly completed a second request before assertion |
+| Repaired focused instrumentation suite | PASS, exit 0: 24 passed |
+| Real MediaPipe five-frame stage-output smoke | PASS, exit 0; eight stages, zero errors |
+| First complete suite after instrumentation | PASS, exit 0: 316 passed |
+| Instrumented `scripts/t15_stage_baseline.py` 15 s + 60 s | PASS, exit 0 |
+| SCHP synchronous 30-frame diagnostic | TIMEOUT, exit 124; result rejected and orphan child processes stopped |
+| SCHP synchronous three-frame smoke | PASS, exit 0 |
+| Strict current-byte T15 result validation | PASS, exit 0: one case, 22 metrics, three artifacts verified |
+| Final focused T15 result/instrumentation suite | PASS, exit 0: 7 passed |
+| Final complete suite | PASS, exit 0: 317 passed in 49.16 s |
+| `python -m pip check` | PASS, exit 0: no broken requirements |
+| `python -m compileall -q src scripts tests` | PASS, exit 0 |
+| `git diff --check` | PASS, exit 0; line-ending warnings only |
+| Optional `python -m ruff check` | NOT RUN: exit 1 because Ruff is not part of the locked environment; no package was installed |
+
+#### Current gate status
+
+- Processed FPS `>=20`: **FAIL** at 14.96.
+- Headless p95 `<=120 ms`: **PASS** at 78 ms for the partial 60-second run.
+- GUI display-submit latency: `NOT_MEASURED`.
+- 300-second latency/RSS growth: `NOT_MEASURED`.
+- Sensor-to-photon: `NOT_MEASURED`.
+- T15 remains `IN_PROGRESS`; no optimization has started.
+
+#### Exact next action
+
+Capture a controlled garment-present/motion run that exercises optical flow
+and downstream analysis, then select only a measured dominant bottleneck for
+the first reversible optimization candidate.

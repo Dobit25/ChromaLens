@@ -766,6 +766,27 @@ sensor-to-photon latency, and the frozen 300-second growth checks were not
 measured. Full details are in
 `evaluation/results/curated/post_mvp/gate0/report.md`.
 
+### T15 opt-in stage instrumentation
+
+T15 stage timing is disabled on the default executable path. Opt in with an
+ignored JSON output path; the writer stores aggregate timings and no frame
+pixels:
+
+```powershell
+conda run --name lens python -m chromalens --webcam --no-display --metrics-warmup-seconds 15 --duration-seconds 60 --stage-metrics-output artifacts/post_mvp/t15/stage-timing-raw.json
+conda run --name lens python scripts/t15_stage_baseline.py --backend schp-atr --camera-index 0 --width 480 --height 360 --warmup-seconds 15 --measurement-seconds 60
+conda run --name lens python scripts/post_mvp_result_validation.py evaluation/results/curated/post_mvp/t15/result.json --require-ignored-artifacts
+```
+
+The frozen dimensions are `segmentation_inference`, `optical_flow`,
+`white_balance`, `color_extraction`, `risk`, `recolor_render`, `presentation`,
+and `display_submit`. Each reports bounded count/skip/error values and
+mean/p50/p95/max durations. Worker-thread SCHP inference overlaps the main
+loop and must not be summed with serial stage durations. Headless runs leave
+display submission unmeasured, and sensor-to-photon remains `NOT_MEASURED`.
+The current 60-second result is a partial development-host baseline, not the
+final 300-second T15 acceptance benchmark.
+
 ## T11 competition handoff
 
 The final handoff sources are intentionally small and reviewable:
