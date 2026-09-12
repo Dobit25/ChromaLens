@@ -5048,6 +5048,7 @@ license, exact bytes, checksum, commands, and limitations.
 | `python -m compileall -q src scripts tests` | PASS, exit 0 |
 | `git diff --check` | PASS, exit 0; line-ending warnings only |
 | Optional `python -m ruff check` | NOT RUN: exit 1 because Ruff is not part of the locked environment; no package was installed |
+| GitHub Actions run `34672210976` at `2051df9` | PASS: Locked Python 3.10 base, Locked MediaPipe 0.10.21 backend, and Locked SCHP/OpenVINO contract all completed successfully |
 
 #### Current gate status
 
