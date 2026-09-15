@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
+from PIL import Image
 
 from chromalens.config import CVDProfile
 from chromalens.presentation import (
     _CAMERA_BEZEL_LOGICAL_PX,
     _camera_shell_rect,
     _antialiased_rounded_patch,
+    _draw_aa_rounded_rectangle,
     _antialiased_product_icon,
     _card_elevation_px,
     _highlight_rgb,
@@ -27,6 +29,23 @@ from chromalens.presentation import (
     _product_card_regions,
     _product_sidebar_rect,
 )
+
+
+def test_rounded_rectangle_accepts_even_narrow_geometry() -> None:
+    """Small responsive accents must not produce inverted native fill boxes."""
+
+    image = Image.new("RGB", (24, 96), (0, 0, 0))
+
+    _draw_aa_rounded_rectangle(
+        image,
+        (4, 3, 9, 92),
+        radius=3,
+        fill=(0, 126, 178),
+        outline=(94, 231, 255),
+        width=1,
+    )
+
+    assert image.getbbox() is not None
 
 
 def _data(**overrides: object) -> PresentationData:

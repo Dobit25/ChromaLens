@@ -6065,3 +6065,36 @@ The bounded repair replaces that external-host assertion with deterministic
 Windows API success/unavailable contracts and enables CI triggers for `main`
 and `feature/**`. Runtime DPI behavior, presentation geometry, dependencies,
 and analytical processing remain unchanged.
+
+---
+
+### `2026-09-15` - `T14` `Narrow-viewport CI compositor repair`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+GitHub Actions run `34954890087` exposed the actual remaining cross-host
+failure in both the locked Python base and locked MediaPipe jobs. On the
+headless Windows runner, HighGUI selected the supported minimum windowed
+presentation size before the mocked GUI became observable. A six-pixel-wide
+rounded primary-card accent then produced an empty native center rectangle
+after its radius was applied, and Pillow correctly rejected the inverted
+coordinates with `ValueError: x1 must be greater than or equal to x0`.
+
+The bounded fix makes `_draw_aa_rounded_rectangle()` skip only empty native
+interior/edge rectangles while retaining its supersampled corner tiles. This
+does not alter valid demo-size geometry, processing resolution, camera pixels,
+mask, color, risk, or recolor behavior. A regression test covers the exact
+even-width/radius case.
+
+Evidence before push:
+
+- Reproduced failing CI traceback from run `34954890087` annotations.
+- Presentation plus the two formerly failing integration tests:
+  `52 passed in 3.39 s`.
+- Complete locked local suite through the CI wrapper:
+  `356 passed in 67.06 s`.
+
+Final status remains `IN_PROGRESS` until all three GitHub Actions jobs pass on
+the pushed commit.

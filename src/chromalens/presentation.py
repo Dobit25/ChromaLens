@@ -1863,35 +1863,47 @@ def _draw_aa_rounded_rectangle(
         return
     effective_radius = min(max(0, radius), patch_width // 2, patch_height // 2)
     native_draw = ImageDraw.Draw(image)
+
+    def draw_rectangle_if_valid(
+        rectangle: tuple[int, int, int, int],
+        *,
+        color: tuple[int, int, int],
+    ) -> None:
+        """Draw a native rectangle only when rounding leaves a non-empty box."""
+
+        left, top, right, bottom = rectangle
+        if left <= right and top <= bottom:
+            native_draw.rectangle(rectangle, fill=color)
+
     if fill is not None:
         if effective_radius == 0:
             native_draw.rectangle(box, fill=fill)
         else:
-            native_draw.rectangle(
+            draw_rectangle_if_valid(
                 (x0 + effective_radius, y0, x1 - effective_radius, y1),
-                fill=fill,
+                color=fill,
             )
-            native_draw.rectangle(
+            draw_rectangle_if_valid(
                 (x0, y0 + effective_radius, x1, y1 - effective_radius),
-                fill=fill,
+                color=fill,
             )
     if outline is not None:
         edge_width = min(max(1, width), patch_width, patch_height)
-        native_draw.rectangle(
+        draw_rectangle_if_valid(
             (x0 + effective_radius, y0, x1 - effective_radius, y0 + edge_width - 1),
-            fill=outline,
+            color=outline,
         )
-        native_draw.rectangle(
+        draw_rectangle_if_valid(
             (x0 + effective_radius, y1 - edge_width + 1, x1 - effective_radius, y1),
-            fill=outline,
+            color=outline,
         )
-        native_draw.rectangle(
+        draw_rectangle_if_valid(
             (x0, y0 + effective_radius, x0 + edge_width - 1, y1 - effective_radius),
-            fill=outline,
+            color=outline,
         )
-        native_draw.rectangle(
+        draw_rectangle_if_valid(
             (x1 - edge_width + 1, y0 + effective_radius, x1, y1 - effective_radius),
-            fill=outline,
+            color=outline,
         )
     if effective_radius == 0:
         return
