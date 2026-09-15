@@ -366,6 +366,11 @@ def _build_cluster(
         original_name=naming.name,
         name_scores=naming.name_scores,
         color_margin=naming.margin,
+        level2_key=naming.level2_key,
+        level2_label_vi=naming.level2_label_vi,
+        level2_scores=naming.level2_scores,
+        top_level2_predictions=naming.top_predictions,
+        naming_uncertain=naming.is_uncertain,
     )
 
 

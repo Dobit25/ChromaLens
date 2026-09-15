@@ -640,7 +640,9 @@ def _presentation_data(
         recolor_enabled=display_state.recolor_enabled,
         view_name=display_state.view.value,
         original_color_label=(
-            None if cluster is None else vietnamese_color_label(cluster.original_name)
+            None
+            if cluster is None
+            else (cluster.level2_label_vi or vietnamese_color_label(cluster.original_name))
         ),
         original_color_rgb=None if cluster is None else cluster.rgb,
         color_margin=None if cluster is None else cluster.color_margin,
@@ -665,6 +667,7 @@ def _presentation_data(
             else None
         ),
         garment_detected=result.primary_region is not None,
+        color_uncertain=False if cluster is None else cluster.naming_uncertain,
     )
 
 
@@ -754,7 +757,7 @@ def _pipeline_status_lines(
         if cluster is None
         else (
             f"Original corrected: {cluster.original_name}/"
-            f"{_ascii_for_opencv(vietnamese_color_label(cluster.original_name))} "
+            f"{_ascii_for_opencv(cluster.level2_label_vi or vietnamese_color_label(cluster.original_name))} "
             f"RGB={cluster.rgb} | margin="
             f"{'unavailable' if cluster.color_margin is None else f'{cluster.color_margin:.3f}'}"
         )

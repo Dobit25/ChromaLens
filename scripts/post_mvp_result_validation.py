@@ -1,4 +1,4 @@
-"""Validate protocol-2.0.0 results and exact available artifact bytes."""
+"""Validate versioned post-MVP results and exact available artifact bytes."""
 
 from __future__ import annotations
 
@@ -23,6 +23,14 @@ ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "evaluation/schema/post-mvp-result.schema.json"
 REGISTRY_PATH = ROOT / "evaluation/schema/post-mvp-metric-registry.json"
 CASES_PATH = ROOT / "evaluation/fixtures/post-mvp-cases.csv"
+CONTRACT_PATHS = {
+    "2.0.0": (SCHEMA_PATH, REGISTRY_PATH, CASES_PATH),
+    "2.1.0": (
+        ROOT / "evaluation/schema/post-mvp-result-v2.1.schema.json",
+        ROOT / "evaluation/schema/post-mvp-metric-registry-v2.1.json",
+        ROOT / "evaluation/fixtures/post-mvp-cases-v2.1.csv",
+    ),
+}
 DEFAULT_RESULTS = (ROOT / "evaluation/results/curated/post_mvp/gate0/result.json",)
 
 
@@ -39,8 +47,8 @@ def _load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _load_cases() -> dict[str, dict[str, str]]:
-    with CASES_PATH.open(encoding="utf-8", newline="") as handle:
+def _load_cases(path: Path = CASES_PATH) -> dict[str, dict[str, str]]:
+    with path.open(encoding="utf-8", newline="") as handle:
         rows = list(csv.DictReader(handle))
     case_ids = [row["case_id"] for row in rows]
     if len(case_ids) != len(set(case_ids)):
@@ -70,11 +78,18 @@ def validate_result_file(
     require_ignored_artifacts: bool = False,
 ) -> ValidationSummary:
     payload = _load_json(result_path)
-    schema = _load_json(SCHEMA_PATH)
-    registry = _load_json(REGISTRY_PATH)
+    version = payload.get("protocol_version")
+    try:
+        schema_path, registry_path, cases_path = CONTRACT_PATHS[version]
+    except (KeyError, TypeError) as exc:
+        raise ResultValidationError(
+            f"{result_path}: unsupported post-MVP protocol version {version!r}"
+        ) from exc
+    schema = _load_json(schema_path)
+    registry = _load_json(registry_path)
     _validate_schema(payload, schema, schema, "$", strict_formats=True)
 
-    cases = _load_cases()
+    cases = _load_cases(cases_path)
     result_case_ids = [item["case_id"] for item in payload["cases"]]
     if len(result_case_ids) != len(set(result_case_ids)):
         raise ResultValidationError(f"{result_path}: duplicate result case IDs")

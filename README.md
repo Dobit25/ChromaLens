@@ -834,6 +834,29 @@ sensor-to-photon latency, and the frozen 300-second growth checks were not
 measured. Full details are in
 `evaluation/results/curated/post_mvp/gate0/report.md`.
 
+## T12 two-tier color naming
+
+Protocol 2.1 keeps the original 11 basic families and adds 50 stable
+Vietnamese level-two labels. Product UI shows a specific label only when the
+level-two heuristic margin is at least `0.10` and lighting is not `poor`;
+otherwise it says `Không chắc chắn`. Diagnostic data retains the nearest
+candidate and scores. These scores are not calibrated probabilities.
+
+The revision declares 50 digital anchor cases, three uncertainty-boundary
+cases, and 150 physical observations (50 labels under neutral, warm, and low
+lighting). Generate and strictly validate the evidence with:
+
+```powershell
+conda run --name lens python scripts/t12_color_evaluation.py
+conda run --name lens python scripts/post_mvp_result_validation.py evaluation/results/curated/post_mvp/t12/result.json
+conda run --name lens python -m pytest -q tests/unit/test_t12_two_tier_color.py tests/evaluation/test_t12_protocol_v21.py tests/evaluation/test_t12_color_evaluation.py
+```
+
+Without consented/licensed physical captures, all 150 physical rows remain
+honestly `NOT_RUN`; the 50/50 digital result proves contract consistency only.
+See `evaluation/protocol-v2.1.md` and
+`assets/color_names/extended_palette.csv` for the frozen definitions.
+
 ## T11 competition handoff
 
 The final handoff sources are intentionally small and reviewable:

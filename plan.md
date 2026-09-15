@@ -533,6 +533,36 @@ Definition of Done:
 - Naming scores/margins remain documented heuristics, not calibrated
   probabilities.
 
+#### Owner-approved T12 protocol revision 2.1.0 (2026-09-15)
+
+This additive revision supersedes only the T12 vocabulary and observation
+counts above. Protocol 2.0.0, its Gate 0 baseline, T14 results, and frozen T09
+history remain unchanged and valid under their original contracts.
+
+- Keep the same 11 stable level-one families.
+- Use the owner-approved 50-anchor Vietnamese level-two vocabulary recorded in
+  `assets/color_names/extended_palette.csv`.
+- Replace the 29-label digital contract with one case for each of the 50
+  anchors, while retaining three explicit uncertainty-boundary cases.
+- Replace 30 samples x 3 lighting conditions with 50 labels x neutral, warm,
+  and low lighting = 150 declared physical observations.
+- Report unavailable physical captures as `NOT_RUN`; digital anchor agreement
+  must not be described as physical-camera accuracy.
+- Freeze the revision in separate version-2.1 protocol, schema, metric, case,
+  and ownership files so historical version-2.0 results remain reproducible.
+
+Revised T12 Definition of Done:
+
+- Every output retains a level-one family and exposes an allowed level-two
+  Vietnamese label only when the frozen evidence criteria pass.
+- Low-margin or poor-light cases display `Không chắc chắn`; the nearest
+  candidate may remain diagnostic-only and must not be presented as reliable.
+- All 50 digital anchor contracts and three uncertainty-boundary cases pass.
+- All 150 physical observation IDs are present in the result with measured
+  evidence or an explicit `NOT_RUN` status and reason.
+- Scores and margins remain labeled deterministic heuristics rather than
+  calibrated probabilities.
+
 ### T13 — Standalone-garment evaluation and manual ROI fallback
 
 Priority: Post-MVP reliability

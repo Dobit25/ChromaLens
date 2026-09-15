@@ -202,6 +202,7 @@ class PresentationData:
     diagnostic_lines: tuple[str, ...]
     camera_input_issue: str | None = None
     garment_detected: bool = False
+    color_uncertain: bool = False
 
     def __post_init__(self) -> None:
         if not self.source_name.strip() or not self.view_name.strip():
@@ -218,6 +219,8 @@ class PresentationData:
             raise ValueError("action_message must not be empty")
         if not isinstance(self.garment_detected, bool):
             raise TypeError("garment_detected must be boolean")
+        if not isinstance(self.color_uncertain, bool):
+            raise TypeError("color_uncertain must be boolean")
         if self.camera_input_issue not in {None, "blocked_or_black"}:
             raise ValueError("camera_input_issue is not a supported presentation state")
 
@@ -766,6 +769,16 @@ def build_product_copy(
         }
 
     assert data.original_color_label is not None
+    if data.color_uncertain or data.lighting_level == "poor":
+        return {
+            "color": "Không chắc chắn",
+            "confidence": "Thử ánh sáng tốt hơn",
+            "risk": "Chờ kết quả màu đáng tin cậy",
+            "lighting": _lighting_copy(data.lighting_level),
+            "guidance": "Chưa đưa ra gợi ý phối màu",
+            "action": "Giữ trang phục ổn định ở nơi đủ sáng.",
+        }
+
     color = data.original_color_label
     if data.color_margin is None:
         confidence = "Độ chắc chắn: Chưa xác định"
