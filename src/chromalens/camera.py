@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from pathlib import Path
 from threading import Condition, Event, Thread
 from time import monotonic, monotonic_ns
@@ -31,6 +32,65 @@ class FrameSourceClosedError(FrameSourceError):
 
 class LatestFrameTimeout(TimeoutError):
     """Raised when no live frame arrives within a bounded consumer wait."""
+
+
+@dataclass(frozen=True, slots=True)
+class CameraFrameHealth:
+    """Small privacy-safe summary used to distinguish black input from UI cover."""
+
+    mean_luma: float
+    luma_range: float
+    appears_blocked: bool
+
+
+def assess_camera_frame(frame_bgr: np.ndarray) -> CameraFrameHealth:
+    """Detect a near-uniform black camera feed without retaining frame pixels."""
+
+    if frame_bgr.dtype != np.uint8 or frame_bgr.ndim != 3 or frame_bgr.shape[2] != 3:
+        raise ValueError("frame_bgr must be uint8 with shape H x W x 3")
+    gray = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
+    mean_luma = float(np.mean(gray))
+    p05, p95 = np.percentile(gray, (5.0, 95.0))
+    luma_range = float(p95 - p05)
+    return CameraFrameHealth(
+        mean_luma=mean_luma,
+        luma_range=luma_range,
+        appears_blocked=mean_luma <= 24.0 and luma_range <= 4.0,
+    )
+
+
+def prepare_analysis_packet(
+    source: FramePacket,
+    *,
+    maximum_width: int,
+    maximum_height: int,
+) -> FramePacket:
+    """Create an aspect-preserving analysis copy bounded independently of display.
+
+    Frame identity and the capture-return timestamp are retained. Analytical
+    products are deliberately not copied from ``source`` because this function
+    defines the beginning of a fresh per-frame analysis path.
+    """
+
+    if maximum_width <= 0 or maximum_height <= 0:
+        raise ValueError("analysis dimensions must be positive")
+    height, width = source.original_bgr.shape[:2]
+    scale = min(1.0, maximum_width / width, maximum_height / height)
+    target_width = max(1, round(width * scale))
+    target_height = max(1, round(height * scale))
+    if (target_width, target_height) == (width, height):
+        resized = source.original_bgr.copy()
+    else:
+        resized = cv2.resize(
+            source.original_bgr,
+            (target_width, target_height),
+            interpolation=cv2.INTER_AREA,
+        )
+    return FramePacket(
+        frame_id=source.frame_id,
+        timestamp_ns=source.timestamp_ns,
+        original_bgr=resized,
+    )
 
 
 class FrameSource(ABC):

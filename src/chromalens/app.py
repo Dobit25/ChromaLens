@@ -15,16 +15,18 @@ import cv2
 
 from chromalens import __version__
 from chromalens.camera import (
+    assess_camera_frame,
     FrameSource,
     FrameSourceError,
     LatestFrameReader,
     LatestFrameTimeout,
     open_video,
     open_webcam,
+    prepare_analysis_packet,
 )
 from chromalens.config import CVDProfile
 from chromalens.contracts import ColorFrame, FramePacket
-from chromalens.display import OpenCVDisplayController
+from chromalens.display import OpenCVDisplayController, configure_process_dpi_awareness
 from chromalens.metrics import RuntimeMetricsSnapshot, RuntimeMetricsTracker
 from chromalens.pipeline import ChromaLensPipeline, PipelineSettings
 from chromalens.presentation import PresentationMode, PresentationTheme
@@ -288,14 +290,26 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--width",
         type=_positive_int,
-        default=480,
-        help="requested webcam width (default: 480; driver may choose nearest mode)",
+        default=1280,
+        help="requested webcam capture/display width (default: 1280)",
     )
     parser.add_argument(
         "--height",
         type=_positive_int,
+        default=720,
+        help="requested webcam capture/display height (default: 720)",
+    )
+    parser.add_argument(
+        "--analysis-width",
+        type=_positive_int,
+        default=480,
+        help="maximum live analysis width; display pixels remain separate (default: 480)",
+    )
+    parser.add_argument(
+        "--analysis-height",
+        type=_positive_int,
         default=360,
-        help="requested webcam height (default: 360; driver may choose nearest mode)",
+        help="maximum live analysis height; aspect ratio is preserved (default: 360)",
     )
     parser.add_argument(
         "--max-frames",
@@ -343,6 +357,9 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     """Execute only an explicitly selected local source."""
 
+    # Must precede the first OpenCV window and display-size query. On Windows,
+    # this prevents the OS from bitmap-upscaling the completed UI at 125/150%.
+    configure_process_dpi_awareness()
     parser = build_parser()
     args = parser.parse_args(list(argv) if argv is not None else None)
     if not args.webcam and args.video is None:
@@ -390,6 +407,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             controls=controls,
             display=not args.no_display,
             fullscreen=args.fullscreen,
+            analysis_size=(args.analysis_width, args.analysis_height) if source.is_live else None,
             max_frames=args.max_frames,
             duration_seconds=args.duration_seconds,
             metrics_warmup_seconds=args.metrics_warmup_seconds,
@@ -457,6 +475,7 @@ def run_pipeline_session(
     display: bool = True,
     fullscreen: bool = False,
     fullscreen_size: tuple[int, int] | None = None,
+    analysis_size: tuple[int, int] | None = None,
     max_frames: int | None = None,
     duration_seconds: float | None = None,
     metrics_warmup_seconds: float = 0.0,
@@ -467,6 +486,10 @@ def run_pipeline_session(
     _validate_session_limits(max_frames, duration_seconds, window_title)
     if not isfinite(metrics_warmup_seconds) or metrics_warmup_seconds < 0.0:
         raise ValueError("metrics_warmup_seconds must be finite and non-negative")
+    if analysis_size is not None and (
+        analysis_size[0] <= 0 or analysis_size[1] <= 0
+    ):
+        raise ValueError("analysis_size dimensions must be positive")
     active_controls = controls or RuntimeControls()
     preview_metrics = PreviewMetricsTracker()
     runtime_metrics: RuntimeMetricsTracker | None = None
@@ -515,7 +538,7 @@ def run_pipeline_session(
                 stop_reason = "duration_limit"
                 break
             try:
-                packet = (
+                source_packet = (
                     latest_reader.read_latest(timeout_seconds=0.25)
                     if latest_reader is not None
                     else source.read()
@@ -524,9 +547,19 @@ def run_pipeline_session(
                 # A live camera may briefly pause; the bounded wait also lets
                 # duration and interruption controls remain responsive.
                 continue
-            if packet is None:
+            if source_packet is None:
                 stop_reason = "source_finished" if source.is_live else "end_of_video"
                 break
+
+            packet = (
+                prepare_analysis_packet(
+                    source_packet,
+                    maximum_width=analysis_size[0],
+                    maximum_height=analysis_size[1],
+                )
+                if analysis_size is not None
+                else source_packet
+            )
 
             processing_started_ns = monotonic_ns()
             analysis = pipeline.process(packet, active_controls.settings)
@@ -539,6 +572,12 @@ def run_pipeline_session(
                 telemetry=telemetry,
                 display_state=active_controls.display_state(
                     dropped_capture_frames=dropped_frames
+                ),
+                display_source_bgr=source_packet.original_bgr,
+                display_size=(
+                    display_controller.presentation_size
+                    if display_controller is not None
+                    else None
                 ),
             )
             prepared = (
@@ -670,6 +709,7 @@ def run_preview(
         else None
     )
     next_video_frame_at = started_at
+    camera_input_warning_emitted = False
 
     try:
         while True:
@@ -680,6 +720,16 @@ def run_preview(
             if packet is None:
                 stop_reason = "end_of_video"
                 break
+            if source.is_live and not camera_input_warning_emitted:
+                health = assess_camera_frame(packet.original_bgr)
+                if health.appears_blocked:
+                    print(
+                        "ChromaLens warning: the webcam opened, but its frame is "
+                        "uniformly dark. Open the physical privacy shutter, check "
+                        "OS camera privacy mode, or try --camera-index 1.",
+                        file=sys.stderr,
+                    )
+                    camera_input_warning_emitted = True
             telemetry = tracker.observe(packet, observed_ns=monotonic_ns())
             rendered = render_frame(packet, source_name=source.name, telemetry=telemetry)
             frames_processed += 1

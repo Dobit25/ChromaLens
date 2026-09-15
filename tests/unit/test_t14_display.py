@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from unittest.mock import call, patch
 
 import cv2
@@ -8,8 +9,10 @@ import pytest
 
 from chromalens.config import CVDProfile
 from chromalens.display import (
+    configure_process_dpi_awareness,
     OpenCVDisplayController,
     fit_presentation_to_display,
+    recommended_windowed_size,
 )
 from chromalens.presentation import (
     PresentationData,
@@ -94,13 +97,18 @@ def test_aspect_fit_uses_letterbox_or_pillarbox_without_stretching() -> None:
 def test_display_controller_toggles_existing_window_without_recreation() -> None:
     frame = np.zeros((480, 800, 3), dtype=np.uint8)
     controller = OpenCVDisplayController(
-        "T14 test", fullscreen_size=(1366, 768)
+        "T14 test", fullscreen_size=(1366, 768), windowed_size=(800, 480)
     )
 
     with (
         patch("chromalens.display.cv2.imshow") as imshow,
         patch("chromalens.display.cv2.namedWindow") as named_window,
+        patch("chromalens.display.cv2.resizeWindow") as resize_window,
         patch("chromalens.display.cv2.setWindowProperty") as set_property,
+        patch(
+            "chromalens.display.cv2.getWindowImageRect",
+            return_value=(0, 0, 800, 480),
+        ),
         patch("chromalens.display.cv2.destroyWindow") as destroy_window,
     ):
         controller.submit(controller.prepare(frame))
@@ -115,7 +123,90 @@ def test_display_controller_toggles_existing_window_without_recreation() -> None
         call("T14 test", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN),
         call("T14 test", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL),
     ]
+    assert resize_window.call_args_list == [
+        call("T14 test", 800, 480),
+        call("T14 test", 800, 480),
+    ]
     destroy_window.assert_called_once_with("T14 test")
+
+
+def test_windowed_controller_tracks_native_client_resize() -> None:
+    frame = np.zeros((480, 800, 3), dtype=np.uint8)
+    controller = OpenCVDisplayController(
+        "T14 resize", windowed_size=(800, 480)
+    )
+
+    with (
+        patch("chromalens.display.cv2.namedWindow"),
+        patch("chromalens.display.cv2.resizeWindow"),
+        patch("chromalens.display.cv2.imshow"),
+        patch(
+            "chromalens.display.cv2.getWindowImageRect",
+            return_value=(40, 60, 1024, 600),
+        ),
+    ):
+        first = controller.prepare(frame)
+        controller.submit(first)
+        observed_size = controller.presentation_size
+        native = np.zeros((600, 1024, 3), dtype=np.uint8)
+        second = controller.prepare(native)
+
+    assert first.target_size == (800, 480)
+    assert observed_size == (1024, 600)
+    assert second.frame_bgr is native
+    assert second.target_size == (1024, 600)
+
+
+@pytest.mark.parametrize(
+    ("display_size", "expected"),
+    [
+        ((1920, 1080), (1366, 768)),
+        ((1366, 768), (1161, 630)),
+    ],
+)
+def test_recommended_window_size_is_bounded_to_physical_display(
+    display_size: tuple[int, int], expected: tuple[int, int]
+) -> None:
+    with patch("chromalens.display.primary_display_size", return_value=display_size):
+        assert recommended_windowed_size() == expected
+
+
+def test_dpi_configuration_is_a_no_op_off_windows() -> None:
+    configure_process_dpi_awareness.cache_clear()
+    try:
+        with patch("chromalens.display.sys.platform", "linux"):
+            status = configure_process_dpi_awareness()
+        assert not status.enabled
+        assert status.mode == "not-applicable"
+        assert status.error_code is None
+    finally:
+        configure_process_dpi_awareness.cache_clear()
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows DPI contract")
+def test_fresh_windows_process_enables_physical_pixel_awareness() -> None:
+    import subprocess
+
+    command = (
+        "import ctypes; "
+        "from chromalens.display import configure_process_dpi_awareness, "
+        "primary_display_size; "
+        "status=configure_process_dpi_awareness(); "
+        "awareness=ctypes.c_int(); "
+        "hr=ctypes.windll.shcore.GetProcessDpiAwareness(None, "
+        "ctypes.byref(awareness)); "
+        "size=primary_display_size(); "
+        "assert status.enabled, status; "
+        "assert hr == 0 and awareness.value == 2, (hr, awareness.value); "
+        "assert size is not None and min(size) > 0, size"
+    )
+    result = subprocess.run(
+        [sys.executable, "-c", command],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr or result.stdout
 
 
 @pytest.mark.parametrize(

@@ -11,6 +11,7 @@ import unicodedata
 import cv2
 import numpy as np
 
+from chromalens.camera import assess_camera_frame
 from chromalens.color_naming import RGBColor, vietnamese_color_label
 from chromalens.config import CVDProfile
 from chromalens.contracts import (
@@ -504,6 +505,8 @@ def render_pipeline_view(
     source_name: str,
     telemetry: PreviewTelemetry,
     display_state: PipelineDisplayState,
+    display_source_bgr: ColorFrame | None = None,
+    display_size: tuple[int, int] | None = None,
 ) -> ColorFrame:
     """Render a current camera view inside a separate Product/Diagnostic shell."""
 
@@ -512,12 +515,21 @@ def render_pipeline_view(
     if result.analysis_frame_id != result.packet.frame_id:
         raise ValueError("stale analysis must not be rendered as the current frame")
 
-    camera_view = render_pipeline_camera_view(result, display_state=display_state)
+    camera_view = render_pipeline_camera_view(
+        result,
+        display_state=display_state,
+        display_source_bgr=display_source_bgr,
+    )
     presentation_data = _presentation_data(
         result,
         source_name=source_name,
         telemetry=telemetry,
         display_state=display_state,
+        display_source_bgr=(
+            result.packet.original_bgr
+            if display_source_bgr is None
+            else display_source_bgr
+        ),
     )
     return compose_presentation(
         camera_view,
@@ -525,6 +537,7 @@ def render_pipeline_view(
         mode=display_state.ui_mode,
         theme=display_state.theme,
         camera_cover_enabled=display_state.camera_cover_enabled,
+        target_size=display_size,
     )
 
 
@@ -532,17 +545,58 @@ def render_pipeline_camera_view(
     result: "PipelineFrameResult",
     *,
     display_state: PipelineDisplayState,
+    display_source_bgr: ColorFrame | None = None,
 ) -> ColorFrame:
     """Render only intentional analytical pixels at exact camera dimensions."""
 
     if result.analysis_frame_id != result.packet.frame_id:
         raise ValueError("stale analysis must not be rendered as the current frame")
     if display_state.view is PipelineView.ASSISTIVE:
-        return _render_pipeline_assistive(result, display_state)
-    rendered = _pipeline_base_view(result, display_state.view)
-    if result.primary_region is not None:
-        _draw_double_outline(rendered, result.primary_region.mask)
-    return rendered
+        rendered = _render_pipeline_assistive(result, display_state)
+    else:
+        rendered = _pipeline_base_view(result, display_state.view)
+        if result.primary_region is not None:
+            _draw_double_outline(rendered, result.primary_region.mask)
+    if display_source_bgr is None or display_source_bgr.shape == rendered.shape:
+        return rendered
+    return _transfer_analysis_view_to_display_source(
+        result.packet.original_bgr,
+        rendered,
+        display_source_bgr,
+    )
+
+
+def _transfer_analysis_view_to_display_source(
+    analysis_source_bgr: ColorFrame,
+    analysis_view_bgr: ColorFrame,
+    display_source_bgr: ColorFrame,
+) -> ColorFrame:
+    """Apply the low-resolution analytical visual delta to a detailed source.
+
+    The high-resolution camera texture is retained while masks, outlines, and
+    assistive shifts remain driven exclusively by the bounded analysis packet.
+    Both frames must describe the same aspect-preserving capture.
+    """
+
+    if display_source_bgr.dtype != np.uint8 or display_source_bgr.ndim != 3:
+        raise ValueError("display_source_bgr must be uint8 with shape H x W x 3")
+    analysis_height, analysis_width = analysis_source_bgr.shape[:2]
+    display_height, display_width = display_source_bgr.shape[:2]
+    analysis_aspect = analysis_width / analysis_height
+    display_aspect = display_width / display_height
+    if abs(display_aspect / analysis_aspect - 1.0) > 0.01:
+        raise ValueError("display and analysis sources must have matching aspect ratios")
+    delta = analysis_view_bgr.astype(np.int16) - analysis_source_bgr.astype(np.int16)
+    resized_delta = cv2.resize(
+        delta.astype(np.float32),
+        (display_width, display_height),
+        interpolation=cv2.INTER_LINEAR,
+    )
+    return np.clip(
+        display_source_bgr.astype(np.float32) + resized_delta,
+        0,
+        255,
+    ).astype(np.uint8)
 
 
 def _render_pipeline_assistive(
@@ -562,6 +616,7 @@ def _presentation_data(
     source_name: str,
     telemetry: PreviewTelemetry,
     display_state: PipelineDisplayState,
+    display_source_bgr: ColorFrame,
 ) -> PresentationData:
     cluster = result.primary_cluster
     risk = result.risk
@@ -577,6 +632,7 @@ def _presentation_data(
         and result.recolor is not None
         and result.recolor.debug.applied
     )
+    camera_health = assess_camera_frame(display_source_bgr)
     return PresentationData(
         source_name=source_name,
         profile=display_state.profile,
@@ -592,13 +648,23 @@ def _presentation_data(
         lighting_level=None if lighting is None else lighting.level.value,
         matching_label=matching_label,
         matching_harmony=matching_harmony,
-        action_message=_product_action_message(result, recolor_applied=recolor_applied),
+        action_message=(
+            "Không thấy hình camera. Hãy mở nắp che hoặc kiểm tra quyền camera."
+            if camera_health.appears_blocked
+            else _product_action_message(result, recolor_applied=recolor_applied)
+        ),
         diagnostic_lines=_diagnostic_lines(
             result,
             source_name=source_name,
             telemetry=telemetry,
             display_state=display_state,
         ),
+        camera_input_issue=(
+            "blocked_or_black"
+            if camera_health.appears_blocked
+            else None
+        ),
+        garment_detected=result.primary_region is not None,
     )
 
 
