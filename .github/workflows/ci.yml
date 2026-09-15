@@ -124,7 +124,7 @@ jobs:
 
       - name: Run tests
         shell: pwsh
-        run: python -m pytest -q
+        run: python scripts/run_ci_pytest.py -q
 
       - name: Reject forbidden artifacts and oversized tracked files
         shell: pwsh
@@ -214,8 +214,9 @@ jobs:
       - name: Run real-backend and full test gates
         shell: pwsh
         run: |
-          python -m pytest -q tests/integration/test_t02_segmentation_integration.py
-          python -m pytest -q
+          python scripts/run_ci_pytest.py -q tests/integration/test_t02_segmentation_integration.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/run_ci_pytest.py -q
 
   verify-schp-contract:
     name: Locked SCHP/OpenVINO contract
@@ -277,5 +278,6 @@ jobs:
       - name: Run portable SCHP contract and full regression suite
         shell: pwsh
         run: |
-          python -m pytest -q tests/unit/test_t10_schp.py
-          python -m pytest -q
+          python scripts/run_ci_pytest.py -q tests/unit/test_t10_schp.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/run_ci_pytest.py -q
