@@ -6098,3 +6098,25 @@ Evidence before push:
 
 Final status remains `IN_PROGRESS` until all three GitHub Actions jobs pass on
 the pushed commit.
+
+---
+
+### `2026-09-15` - `T14` `CI portability gate complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+GitHub Actions run `34955489805` passed on runtime-fix commit
+`0f2fb52b6b17e648dbf6fd1ec4fe121cf46db4a6`:
+
+- `Locked Python 3.10 base`: `SUCCESS`.
+- `Locked MediaPipe 0.10.21 backend`: `SUCCESS`.
+- `Locked SCHP/OpenVINO contract`: `SUCCESS`.
+
+The two Conda annotations about the implicitly available `defaults` channel
+and the optional conda-pypi feature are warnings only; environment creation,
+locked installs, CLI/backend gates, and tests all completed successfully.
+Together with the local `356 passed in 67.06 s` result, this closes the
+cross-host T14 regression. The feature branch is ready for merge after this
+audit-only completion entry receives the same CI gate.
