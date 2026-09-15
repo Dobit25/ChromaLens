@@ -189,7 +189,8 @@ def test_cli_defaults_live_schp_to_async_and_keeps_sync_diagnostic() -> None:
 
     defaults = parser.parse_args(["--webcam"])
     assert defaults.schp_live_mode == "async"
-    assert (defaults.width, defaults.height) == (480, 360)
+    assert (defaults.width, defaults.height) == (1280, 720)
+    assert (defaults.analysis_width, defaults.analysis_height) == (480, 360)
     assert (
         parser.parse_args(["--webcam", "--schp-live-mode", "sync"]).schp_live_mode
         == "sync"

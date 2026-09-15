@@ -1,0 +1,248 @@
+{
+  "protocol_version": "2.0.0",
+  "schema_version": "2.0.0",
+  "metric_registry_version": "2.0.0",
+  "result_id": "post-mvp-t14-fullscreen-20260908t212448z",
+  "task_id": "T14",
+  "result_status": "COMPLETE",
+  "git_commit": "c4cd008b7d9e22fdce146d5a995d6eb07f0a681e",
+  "created_at_utc": "2026-09-08T21:24:48.212440Z",
+  "operator": {
+    "role": "ui_evaluator",
+    "identifier": "repository-owner-and-codex"
+  },
+  "environment": {
+    "host_role": "development",
+    "declared_demo_hardware": false,
+    "manufacturer": "LENOVO",
+    "model": "83DV",
+    "operating_system": "Microsoft Windows 11 Home Single Language 10.0.26200 build 26200",
+    "cpu": "13th Gen Intel(R) Core(TM) i5-13450HX",
+    "physical_core_count": 10,
+    "logical_processor_count": 16,
+    "ram_gib": 15.78,
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU (not used)",
+    "npu": null,
+    "camera_or_source": "Project-generated synthetic 640x360 gradient; no camera or personal data",
+    "python_version": "3.10.20",
+    "package_versions": {
+      "chromalens-ai": "0.1.0",
+      "numpy": "1.26.4",
+      "opencv-contrib-python": "4.10.0.84",
+      "Pillow": "12.3.0"
+    },
+    "lock_sha256": "e17b881b0b8409cd87ea02a9cec916bc81fe1095868201dfe9a3eb30ef05a944",
+    "backend_name": "not_applicable-display-only",
+    "backend_device": "CPU display compositor",
+    "source_kind": "synthetic_patch",
+    "source_resolution": {"width": 640, "height": 360},
+    "render_resolution": {"width": 1025, "height": 648},
+    "display_mode": "offscreen",
+    "warmup_seconds": 0,
+    "measurement_seconds": 0,
+    "external_measurement_apparatus": null
+  },
+  "cases": [
+    {
+      "case_id": "PM-FULLSCREEN-1366X768-PRODUCT",
+      "status": "COMPLETE",
+      "fixture_id": "fullscreen-1366x768-product-dark",
+      "artifact_ids": ["t14-display-raw", "t14-1366-product-dark"],
+      "reason": "Product/dark offscreen layout passed aspect, resolution, mutation, and overflow checks."
+    },
+    {
+      "case_id": "PM-FULLSCREEN-1366X768-DIAGNOSTIC",
+      "status": "COMPLETE",
+      "fixture_id": "fullscreen-1366x768-diagnostic-light",
+      "artifact_ids": ["t14-display-raw", "t14-1366-diagnostic-light"],
+      "reason": "Diagnostic/light offscreen layout passed aspect, resolution, mutation, and overflow checks."
+    },
+    {
+      "case_id": "PM-FULLSCREEN-1920X1080-PRODUCT",
+      "status": "COMPLETE",
+      "fixture_id": "fullscreen-1920x1080-product-light",
+      "artifact_ids": ["t14-display-raw", "t14-1920-product-light"],
+      "reason": "Product/light offscreen layout passed aspect, resolution, mutation, and overflow checks."
+    },
+    {
+      "case_id": "PM-FULLSCREEN-1920X1080-DIAGNOSTIC",
+      "status": "COMPLETE",
+      "fixture_id": "fullscreen-1920x1080-diagnostic-dark",
+      "artifact_ids": ["t14-display-raw", "t14-1920-diagnostic-dark"],
+      "reason": "Diagnostic/dark offscreen layout passed aspect, resolution, mutation, and overflow checks."
+    }
+  ],
+  "configuration": {
+    "processing_width": 640,
+    "processing_height": 360,
+    "presentation_width": 1025,
+    "presentation_height": 648,
+    "aspect_ratio_tolerance": 0.005,
+    "fullscreen_key": "f",
+    "windowed_escape_key": "Esc",
+    "exit_key": "q",
+    "gui_smoke_per_state_seconds": 0.4,
+    "sensor_to_photon_ms": "NOT_MEASURED"
+  },
+  "metrics": [
+    {
+      "name": "fullscreen_toggle_success",
+      "aggregation": "single",
+      "unit": "boolean",
+      "status": "MEASURED",
+      "value": true,
+      "case_ids": [
+        "PM-FULLSCREEN-1366X768-PRODUCT",
+        "PM-FULLSCREEN-1366X768-DIAGNOSTIC",
+        "PM-FULLSCREEN-1920X1080-PRODUCT",
+        "PM-FULLSCREEN-1920X1080-DIAGNOSTIC"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "A real OpenCV window reported fullscreen >= 0.5 and windowed < 0.5 after reversible transitions.",
+      "method": "OpenCV WND_PROP_FULLSCREEN observation after windowed/fullscreen/windowed event-pump states; keyboard semantics are independently integration-tested."
+    },
+    {
+      "name": "viewport_aspect_ratio_error",
+      "aggregation": "peak",
+      "unit": "ratio",
+      "status": "COMPUTED",
+      "value": 0.0022007042253522346,
+      "case_ids": [
+        "PM-FULLSCREEN-1366X768-PRODUCT",
+        "PM-FULLSCREEN-1366X768-DIAGNOSTIC",
+        "PM-FULLSCREEN-1920X1080-PRODUCT",
+        "PM-FULLSCREEN-1920X1080-DIAGNOSTIC"
+      ],
+      "threshold_id": "maximum",
+      "threshold_result": "PASS",
+      "reason": "Worst observed relative aspect error is below the frozen 0.005 tolerance.",
+      "method": "Maximum of abs(displayed viewport aspect/source-frame aspect - 1) over the four frozen cases."
+    },
+    {
+      "name": "processing_resolution_changed_flag",
+      "aggregation": "single",
+      "unit": "boolean",
+      "status": "COMPUTED",
+      "value": false,
+      "case_ids": [
+        "PM-FULLSCREEN-1366X768-PRODUCT",
+        "PM-FULLSCREEN-1366X768-DIAGNOSTIC",
+        "PM-FULLSCREEN-1920X1080-PRODUCT",
+        "PM-FULLSCREEN-1920X1080-DIAGNOSTIC"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "Every case retained the exact 640x360 processing source and immutable presentation input.",
+      "method": "Shape and byte-equality checks before and after final-canvas fitting, plus one-pipeline F/Esc/Q integration test."
+    },
+    {
+      "name": "text_overflow_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "COMPUTED",
+      "value": 0,
+      "case_ids": [
+        "PM-FULLSCREEN-1366X768-PRODUCT",
+        "PM-FULLSCREEN-1366X768-DIAGNOSTIC",
+        "PM-FULLSCREEN-1920X1080-PRODUCT",
+        "PM-FULLSCREEN-1920X1080-DIAGNOSTIC"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "All header, camera, panel, footer, card, and card-local text allocations were contained; representative renders were visually inspected.",
+      "method": "Deterministic structural region audit, bounded compositor text helpers, long-content tests, and visual inspection of Product and Diagnostic PNGs."
+    }
+  ],
+  "artifacts": [
+    {
+      "artifact_id": "t14-display-raw",
+      "path": "artifacts/post_mvp/t14/display-evaluation-raw.json",
+      "tracking": "ignored_raw",
+      "media_kind": "json",
+      "contains_personal_data": false,
+      "provenance": "Generated locally by scripts/t14_display_evaluation.py from deterministic synthetic pixels and OpenCV window properties.",
+      "consent": "NOT_APPLICABLE",
+      "license": "Project-authored evidence under Apache-2.0",
+      "bytes": 5305,
+      "sha256": "a2db345589f7c61414948e146f0073c97363044cec9960072d5eb16558a4e959",
+      "availability": "AVAILABLE",
+      "generation_command": "python scripts/t14_display_evaluation.py --gui-smoke --gui-hold-seconds 0.4"
+    },
+    {
+      "artifact_id": "t14-1366-product-dark",
+      "path": "artifacts/post_mvp/t14/fullscreen-1366x768-product-dark.png",
+      "tracking": "ignored_raw",
+      "media_kind": "image",
+      "contains_personal_data": false,
+      "provenance": "Project-generated synthetic gradient rendered by the T14 Product/dark compositor.",
+      "consent": "NOT_APPLICABLE",
+      "license": "Apache-2.0",
+      "bytes": 369565,
+      "sha256": "980ce03d232258da6903958ff32198459e32e82a28d057bfaf3331ba9b1d1798",
+      "availability": "AVAILABLE",
+      "generation_command": "python scripts/t14_display_evaluation.py --gui-smoke --gui-hold-seconds 0.4"
+    },
+    {
+      "artifact_id": "t14-1366-diagnostic-light",
+      "path": "artifacts/post_mvp/t14/fullscreen-1366x768-diagnostic-light.png",
+      "tracking": "ignored_raw",
+      "media_kind": "image",
+      "contains_personal_data": false,
+      "provenance": "Project-generated synthetic gradient rendered by the T14 Diagnostic/light compositor.",
+      "consent": "NOT_APPLICABLE",
+      "license": "Apache-2.0",
+      "bytes": 338301,
+      "sha256": "6f3d07f2f52ac0dd2c20b5b239a244b7f9d456d4a3d45987c165b25e90930940",
+      "availability": "AVAILABLE",
+      "generation_command": "python scripts/t14_display_evaluation.py --gui-smoke --gui-hold-seconds 0.4"
+    },
+    {
+      "artifact_id": "t14-1920-product-light",
+      "path": "artifacts/post_mvp/t14/fullscreen-1920x1080-product-light.png",
+      "tracking": "ignored_raw",
+      "media_kind": "image",
+      "contains_personal_data": false,
+      "provenance": "Project-generated synthetic gradient rendered by the T14 Product/light compositor.",
+      "consent": "NOT_APPLICABLE",
+      "license": "Apache-2.0",
+      "bytes": 672728,
+      "sha256": "55ad1037e21cbbbcf69caf871c2f08d2a82bbf59b5cecf8b3bc6f3b01262b4e1",
+      "availability": "AVAILABLE",
+      "generation_command": "python scripts/t14_display_evaluation.py --gui-smoke --gui-hold-seconds 0.4"
+    },
+    {
+      "artifact_id": "t14-1920-diagnostic-dark",
+      "path": "artifacts/post_mvp/t14/fullscreen-1920x1080-diagnostic-dark.png",
+      "tracking": "ignored_raw",
+      "media_kind": "image",
+      "contains_personal_data": false,
+      "provenance": "Project-generated synthetic gradient rendered by the T14 Diagnostic/dark compositor.",
+      "consent": "NOT_APPLICABLE",
+      "license": "Apache-2.0",
+      "bytes": 621396,
+      "sha256": "ef54937fedce850344ca01d87d85853283a19976497d340f86548403fcf725a8",
+      "availability": "AVAILABLE",
+      "generation_command": "python scripts/t14_display_evaluation.py --gui-smoke --gui-hold-seconds 0.4"
+    }
+  ],
+  "commands": [
+    {
+      "command": "D:\\Coding\\Anaconda\\envs\\lens\\python.exe scripts\\t14_display_evaluation.py --gui-smoke --gui-hold-seconds 0.4",
+      "exit_code": 0,
+      "purpose": "Generate all frozen offscreen cases and exercise a real reversible OpenCV fullscreen transition."
+    },
+    {
+      "command": "D:\\Coding\\Anaconda\\envs\\lens\\python.exe -m pytest -q",
+      "exit_code": 0,
+      "purpose": "Run the complete repository regression suite."
+    }
+  ],
+  "limitations": [
+    "Fixed-resolution visual fixtures use deterministic synthetic pixels, not camera footage or segmentation quality evidence.",
+    "The real GUI smoke validates OpenCV window state on the development host; it is not a performance benchmark or a final demo-hardware declaration.",
+    "Sensor-to-photon latency was not measured because no synchronized external apparatus was used.",
+    "Ignored PNG and raw JSON artifacts are reproducible with the recorded command but are not available on a clean checkout until regenerated."
+  ],
+  "notes": "T14 changes only final presentation scaling/window state. Analytical processing remains at 640x360 in the frozen evidence."
+}

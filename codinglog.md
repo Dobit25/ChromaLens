@@ -1,6 +1,6 @@
 # ChromaLens AI — Coding Log
 
-Last updated: 2026-09-08 21:56 +07:00
+Last updated: 2026-09-14
 Document role: Append-only implementation record with a maintained summary table
 
 ## 1. Rules for coding agents
@@ -51,6 +51,7 @@ This table is intentionally empty until an agent starts the plan.
 | T11-UI-5 | Toggleable theme-inverted camera display cover | `DONE` | Repository owner + Codex | 2026-08-25 12:10 +07:00 | 2026-08-25 17:30 +07:00 | Tracked implementation toggles with `c`; full 302-test release gate passes |
 | T11-DECK-1 | Six-feature competition HTML slide deck | `DONE` | Repository owner + Codex | 2026-08-25 14:40 +07:00 | 2026-08-25 17:30 +07:00 | Offline interactive deck; owner-selected amber token, structural tests, and visual QA pass |
 | T12-T17-GATE-0 | Post-MVP scope and evaluation-contract freeze | `DONE` | Repository owner + Codex | 2026-09-08 21:24 +07:00 | 2026-09-08 21:56 +07:00 | Protocol 2.0.0, 176 cases, 44 metrics, strict baseline validation, and 310-test suite |
+| T14 | Fullscreen and resolution-independent presentation | `DONE` | Repository owner + Codex | 2026-09-09 04:08 +07:00 | 2026-09-15 | Shared camera/sidebar geometry, responsive fallback, and 353-test suite verified |
 
 ## 3. Active blockers
 
@@ -4899,3 +4900,1223 @@ not applicable, no saved/uploaded frames, and exact generation command.
 `T12 — Extended color vocabulary and uncertainty`. T13, T14, T15
 instrumentation, and the severity-only part of T16 may start in parallel under
 the frozen ownership map; T17 remains last.
+
+---
+
+### `2026-09-09 04:08 +07:00` - `T14` `Fullscreen and resolution-independent presentation started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Plan reference:** `plan.md` post-MVP T14; protocol 2.0.0 section 5
+**Requirements/rubric affected:** Demo usability; NFR-02, NFR-03, NFR-04; frozen fullscreen metrics and cases
+
+#### Objective and boundaries
+
+Add a reversible OpenCV windowed/fullscreen presentation path that preserves
+the camera viewport aspect ratio at 1366x768 and 1920x1080. The change is
+strictly limited to display/window management and final-canvas composition.
+Capture resolution, SCHP input resolution, pipeline analysis, mask coordinates,
+color naming, risk, and recolor behavior must remain unchanged.
+
+#### Smallest implementation
+
+1. Add an isolated display controller that owns OpenCV window lifecycle,
+   fullscreen state, and aspect-fit letterbox/pillarbox of the already composed
+   presentation canvas.
+2. Wire `--fullscreen` and the `f`/`Esc`/`q` controls into the existing GUI
+   boundary without restarting or rebuilding the pipeline.
+3. Add deterministic offscreen tests for the four frozen T14 cases, controller
+   tests with mocked OpenCV state, and invariants proving presentation scaling
+   cannot mutate source/analysis pixels or processing resolution.
+4. Record machine-readable and human-readable T14 evidence, then run a GUI
+   window-property smoke when the development desktop supports it and the full
+   Python 3.10 suite.
+
+#### Starting state
+
+- Dependency Gate 0 is `DONE` at commit `bb51d20bba11040a7b607c9582909bd5adcafbb9`.
+- Branch `main` is one commit ahead of `origin/main`; no push is part of the
+  T14 authorization.
+- Approved environment is `lens`, Python 3.10.20; `pip check` is clean.
+- Existing slide HTML/PDF/voice-over changes and
+  `tests/samples/t02/demo_garment_person.png` are unrelated local work and will
+  remain untouched and excluded from the T14 commit.
+- Tests and evidence are `NOT RUN` at task start.
+
+#### Definition-of-Done state
+
+- [ ] Fullscreen toggles without inference restart; `Esc` leaves fullscreen and `q` exits.
+- [ ] Aspect-ratio error is at most 0.005, processing resolution is unchanged, and text overflow count is zero.
+- [ ] Product and Diagnostic pass at 1366x768 and 1920x1080 plus a recorded GUI smoke.
+- [ ] Masks, color analysis, recolor containment, and source pixels are unchanged by display scaling.
+
+---
+
+### `2026-09-09 04:28 +07:00` - `T14` `Fullscreen and resolution-independent presentation complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Implementation commit:** `c4cd008b7d9e22fdce146d5a995d6eb07f0a681e`
+
+#### Outcome
+
+- Added a display-only OpenCV controller. `f` changes the existing window
+  between windowed and fullscreen, `Esc` leaves fullscreen without stopping
+  inference, and `q` exits. `--fullscreen` selects the initial state.
+- The compositor still produces its existing camera-derived presentation
+  canvas. Fullscreen then applies one final aspect fit with black
+  letterbox/pillarbox bands; no capture, SCHP input, pipeline, mask, color,
+  risk, or recolor setting is changed.
+- The final-canvas fit is included before the render-complete timestamp, while
+  `source_read_to_display_submit_ms` still ends only after `cv2.imshow()`.
+- Product and Diagnostic footers now expose the fullscreen escape path and use
+  bounded single-line regions for technical controls.
+- Added a deterministic evidence generator, four ignored synthetic PNGs, one
+  ignored raw JSON manifest, a tracked schema-valid result, and a concise
+  human-readable report. Clean-clone tests do not require ignored artifacts;
+  the explicit strict command verifies their exact bytes when regenerated.
+
+#### Frozen T14 results
+
+| Case | Mode/theme | Display | Viewport aspect error | Processing changed | Text overflow | Result |
+| --- | --- | ---: | ---: | --- | ---: | --- |
+| PM-FULLSCREEN-1366X768-PRODUCT | Product/dark | 1366x768 | 0.0022007 | false | 0 | PASS |
+| PM-FULLSCREEN-1366X768-DIAGNOSTIC | Diagnostic/light | 1366x768 | 0.0022007 | false | 0 | PASS |
+| PM-FULLSCREEN-1920X1080-PRODUCT | Product/light | 1920x1080 | 0.0006250 | false | 0 | PASS |
+| PM-FULLSCREEN-1920X1080-DIAGNOSTIC | Diagnostic/dark | 1920x1080 | 0.0006250 | false | 0 | PASS |
+
+Worst aspect error is below the frozen 0.005 maximum. A real OpenCV GUI smoke
+completed windowed/fullscreen/windowed transitions and reported the requested
+`WND_PROP_FULLSCREEN` states. The Product/dark 1366x768 and Diagnostic/dark
+1920x1080 outputs were also inspected visually; the camera aspect, panels,
+cards, text, and status bars remained contained.
+
+#### Commands and observed results
+
+| Command/check | Result |
+| --- | --- |
+| `...python.exe -m pytest -q tests\\unit\\test_t14_display.py tests\\integration\\test_t14_fullscreen.py tests\\test_t01_camera_renderer.py tests\\integration\\test_t08_pipeline.py tests\\unit\\test_presentation.py` | exit 0; 56 passed |
+| `...python.exe scripts\\t14_display_evaluation.py` | exit 0; 4/4 offscreen cases passed; GUI intentionally NOT RUN in this first pass |
+| `...python.exe scripts\\t14_display_evaluation.py --gui-smoke --gui-hold-seconds 0.4` | exit 0; 4/4 cases passed; real GUI toggle success=true |
+| `...python.exe scripts\\post_mvp_result_validation.py evaluation\\results\\curated\\post_mvp\\t14\\result.json --require-ignored-artifacts` | exit 0; 4 cases, 4 metrics, 5 exact artifacts verified |
+| `...python.exe -m pytest -q tests\\unit\\test_t14_display.py tests\\integration\\test_t14_fullscreen.py tests\\evaluation\\test_t14_result.py` | exit 0; 11 passed |
+| First full `...python.exe -m pytest -q` after implementation | exit 0; 320 passed in 44.07 s |
+| Final full `...python.exe -m pytest -q` with curated-result coverage | exit 0; 321 passed in 27.52 s |
+| `...python.exe -m chromalens --help` | exit 0; `--fullscreen` documented without opening camera/model/window |
+| `...python.exe -m compileall -q src scripts tests` | exit 0 |
+| `...python.exe -m pip check` | exit 0; no broken requirements |
+| `git diff --exit-code -- pyproject.toml environment.yml requirements` | exit 0; dependency declarations and locks unchanged |
+| `git diff --check` | exit 0; line-ending warnings only |
+
+#### Artifact evidence
+
+- Ignored raw manifest:
+  `artifacts/post_mvp/t14/display-evaluation-raw.json`, 5,305 bytes, SHA-256
+  `a2db345589f7c61414948e146f0073c97363044cec9960072d5eb16558a4e959`.
+- Four ignored PNGs record exact 1366x768 and 1920x1080 Product/Diagnostic
+  outputs. Their byte sizes, SHA-256 values, project-generated provenance,
+  consent `NOT_APPLICABLE`, and Apache-2.0 license are stored in the curated
+  result.
+- No camera frame, personal data, model output, or external media is used by
+  the T14 fixtures; zero frames were uploaded.
+
+#### Definition of Done
+
+- [x] Fullscreen toggles without inference restart; `Esc` leaves fullscreen and `q` exits.
+- [x] Worst aspect error is at most 0.005, processing resolution is unchanged, and text overflow count is zero.
+- [x] Product and Diagnostic pass at 1366x768 and 1920x1080; a real GUI smoke is recorded.
+- [x] Source/presentation pixels remain immutable, and display fitting has no access to masks, color analysis, or recolor contracts.
+
+#### Deviations and limitations
+
+- No dependency, capture setting, SCHP/model setting, or analytical module was
+  changed. `app.py` wiring is coordinator-owned and was intentionally limited
+  to the display boundary approved by the owner.
+- Fixed-resolution evidence uses a deterministic synthetic gradient, so it is
+  display correctness evidence only, not segmentation/color-quality evidence.
+- The GUI smoke is a development-host OpenCV state observation, not final demo
+  hardware or a performance benchmark. Sensor-to-photon remains
+  `NOT_MEASURED`.
+- Existing local slide/PDF/voice-over work and the untracked demo image remain
+  untouched and outside both T14 commits.
+
+#### Exact next task
+
+`T12 — Extended color vocabulary and uncertainty`. T13, T15 instrumentation,
+and severity-only T16 also remain eligible to start independently under the
+frozen ownership map; T17 remains last.
+
+---
+
+### `2026-09-14` - `T14` `Fullscreen usability and fidelity follow-up started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Owner-observed gaps
+
+- A light-theme fullscreen capture showed a black camera viewport after the
+  owner believed the presentation cover had been disabled.
+- Uniformly enlarging the completed low-resolution canvas passed the frozen
+  geometry gate but produced visibly soft camera pixels, typography, and card
+  edges on a large display.
+- The Product shell remains visually technical and should adopt a restrained,
+  playful, high-contrast design language without false-precision hex values,
+  diagnosis-like multiple-profile badges, or a misleading point-color picker.
+
+#### Approved follow-up scope
+
+1. Isolate raw webcam, windowed preview, fullscreen preview, and full-pipeline
+   paths; do not label a display symptom as a camera failure without evidence.
+2. Make camera-cover state explicit and add actionable dark-input feedback.
+3. Render Product presentation natively for the target display instead of
+   uniformly scaling a small completed UI canvas.
+4. Preserve a high-resolution camera image for display while using a bounded
+   lower-resolution analysis packet; map analytical output back without
+   increasing SCHP input work.
+5. Apply selected playful-accessible styling: rounded low-border cards, bold
+   typography, one current-profile pill, tactile controls, stronger spacing,
+   camera-first hierarchy, and text-plus-icon statuses.
+6. Preserve Diagnostic telemetry, local/offline behavior, original-color
+   semantics, CVD user selection, mask alignment, and recolor containment.
+
+#### Evidence state at start
+
+- Camera-path isolation: `NOT RUN`.
+- Native-resolution presentation tests: `NOT RUN`.
+- Dual-resolution invariants: `NOT RUN`.
+- Performance impact and full regression suite: `NOT RUN`.
+
+#### Exact next action
+
+Measure raw webcam frame luminance on available camera indices, then implement
+the smallest camera-health and native-display contracts before changing the
+capture/analysis boundary.
+
+---
+
+### `2026-09-14` - `T14` `Fullscreen usability and fidelity follow-up complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Outcome
+
+- A privacy-safe raw camera probe isolated the black viewport from the UI:
+  camera index 0 opened and returned 12/12 frames at 640x480, but every frame
+  had mean luminance 16 and p01=p99=16. Indices 1-3 did not open. The observed
+  black viewport is therefore an input/privacy-shutter/driver condition on this
+  development host, not a presentation cover or fullscreen compositor failure.
+- A near-uniform-dark health contract now distinguishes a likely blocked feed
+  from a genuinely dark scene with visible variation. Product mode shows an
+  actionable message and explicit warning status; preview-only emits one
+  console warning without retaining or saving camera pixels.
+- Live capture/display now defaults to 1280x720 while analysis is independently
+  aspect-bounded to 480x360. A 16:9 stream is analyzed at 480x270; frame ID and
+  capture-return timestamp remain unchanged. SCHP still receives its existing
+  verified preprocessing and the high-resolution frame is never passed to the
+  segmenter.
+- Analytical visual deltas (assistive recolor and outline) are mapped back to
+  the detailed display source. Original view remains pixel-exact, source pixels
+  are immutable, and a mismatched source aspect ratio fails fast.
+- Fullscreen Product/Diagnostic shells are composed directly at the requested
+  display density. An already-native canvas bypasses a second OpenCV resize.
+- Product styling uses restrained rounded cards, stronger result hierarchy,
+  tactile depth, the selected-profile keyboard pill, friendly guidance, and
+  text-plus-symbol statuses. Product mode still excludes hex values, multiple
+  diagnosis-like profile badges, pixel-picker semantics, and continuous visual
+  effects.
+
+#### Commands and observed results
+
+| Command/check | Result |
+| --- | --- |
+| Lens-Python read-only OpenCV probe over camera indices 0-3, 12 frames on index 0 | exit 0; index 0 opened at 640x480; mean/p01/p99 luminance 16/16/16; indices 1-3 unavailable; no image saved |
+| `conda run --name lens python -m pytest -q tests/unit/test_t14_camera_display.py tests/unit/test_t14_display.py tests/integration/test_t14_fullscreen.py tests/integration/test_t08_pipeline.py tests/unit/test_presentation.py tests/test_t01_camera_renderer.py` | exit 0; 61 passed in 1.81 s |
+| `conda run --name lens python scripts/t14_display_evaluation.py` | exit 0; 4/4 deterministic display cases passed; generated ignored evidence was removed afterward because this follow-up is not replacing the frozen historical curated result |
+| First full `conda run --name lens python -m pytest -q` | exit 1; 325 passed, 2 failed: one stale 480x360 CLI-default assertion and a checksum mismatch caused by the regenerated ignored historical artifact |
+| Repair | Updated the CLI contract test to assert capture 1280x720 plus analysis 480x360; removed exactly the five newly regenerated ignored T14 files so the clean-clone-compatible historical result remains authoritative |
+| Final `conda run --name lens python -m pytest -q` | exit 0; 327 passed in 43.80 s |
+| `conda run --name lens python -m compileall -q src tests` | exit 0 |
+| `conda run --name lens python -m chromalens --help` | exit 0; no camera/model/window required |
+| `conda run --name lens python -m pip check` | exit 0; no broken requirements |
+| `git diff --exit-code -- pyproject.toml environment.yml requirements` | exit 0; dependencies and locks unchanged |
+| `git diff --check` | exit 0; line-ending conversion warnings only |
+| Synthetic native 1920x1080 Product compositor microbenchmark, 20 samples | 34.04 ms/frame mean on the development host; this is compositor-only evidence, not end-to-end FPS or demo-hardware evidence |
+
+#### Definition of Done for this follow-up
+
+- [x] Black input is distinguished from camera-cover state with measured local evidence and actionable feedback.
+- [x] Product/Diagnostic rendering is native at 1366x768 and 1920x1080 and preserves the camera aspect ratio.
+- [x] Capture/display resolution is independent from bounded analysis resolution; tests prove the segmenter receives 480x270 for a 1280x720 source.
+- [x] Original display pixels remain available and exact; analytical overlays map from the analysis frame without changing mask/color/risk semantics.
+- [x] Product UI applies the approved accessible, playful visual subset without adding misleading precision, diagnosis, or animation scope.
+- [x] CLI help, focused tests, full regression suite, dependency consistency, and source compilation pass in `lens`.
+
+#### Limitations
+
+- Software cannot open a physical privacy shutter or override an OS/driver
+  privacy block. The owner must resolve the uniformly dark camera-0 input on
+  the demo machine and rerun the three documented preview isolation commands.
+- The 34.04 ms native-compositor measurement is a development-host microbenchmark.
+  T15 must measure end-to-end stage timing on a garment-present/motion workload
+  before any optimization claim or 20 FPS acceptance claim.
+- No AI super-resolution was added. Display sharpness is limited by the actual
+  resolution delivered by the camera driver and the available viewport size.
+- The historical curated T14 result was not rewritten from an uncommitted
+  worktree. New raw camera media was neither stored nor tracked.
+
+#### Exact next task
+
+Continue `T15 — Performance optimization and stability` on
+`feature/fps-increment` using the already-started stage-instrumentation baseline;
+do not merge this independent upscaling work into that branch before its
+bottleneck baseline is frozen.
+
+---
+
+### `2026-09-14` - `T14` `Product UX accessibility refinement started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Smallest approved implementation
+
+1. Derive one presentation-only state from camera health, garment availability,
+   and color-result availability so all Product cards tell one coherent story.
+2. Reduce the Product footer to one state, one action, and compact keyboard
+   help; preserve complete telemetry in Diagnostic mode.
+3. Replace identical color-only dots with distinct code-drawn shapes/icons and
+   text, then correct the asymmetric cyan camera frame.
+4. Show a restrained garment guide only while waiting; never add a point-color
+   picker or continuous animation.
+5. Use final-pixel responsive bounds for header/sidebar at 1366x768 and
+   1920x1080, then reduce decorative shadow and unnecessary bold weight.
+
+No model, pipeline, mask, color, risk, recolor, dependency, or processing
+resolution change is authorized by this refinement.
+
+#### Evidence state at start
+
+- Presentation state contract: `NOT RUN`.
+- Product/Diagnostic camera-pixel containment: `NOT RUN`.
+- Frozen display sizes and full regression suite: `NOT RUN`.
+
+---
+
+### `2026-09-14` - `T14` `Product UX accessibility refinement complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Outcome
+
+- Added a presentation-only `CAMERA_BLOCKED`, `WAITING_FOR_GARMENT`,
+  `ANALYZING`, and `RESULT_READY` state contract. Camera health takes
+  precedence, so a blocked feed now says that lighting cannot be measured
+  instead of presenting a false low-light recommendation.
+- Product footer now contains one state, one action, and compact keys. Full
+  source, cover, view, severity, backend, and performance telemetry remains in
+  Diagnostic mode.
+- Replaced identical dots with distinct code-drawn garment, progress, ready,
+  warning, risk, lighting, and matching glyphs. Every glyph remains paired
+  with text; no emoji/font-platform dependency was added.
+- Replaced the asymmetric cyan camera accent with a symmetric neutral frame.
+  A restrained four-corner garment guide and text badge appear only in the
+  waiting state and disappear when a garment is detected. The guide is not a
+  point-color picker.
+- At final display density, the sidebar is bounded to 300-430 px. Product mode
+  was visually inspected at 1366x768 and 1920x1080; camera remains the focal
+  region and all four cards/footer remain contained.
+- Header navigation was reduced to a small mode label; the profile control is
+  a truthful `[P] Deutan` keyboard pill with no false mouse chevron. Card
+  shadows were reduced, unavailable values use quieter type, and bold weight
+  is reserved for primary/actionable content.
+- Lighting cards move directly below the primary color card only when the
+  existing lighting result requires user action. Product mode still excludes
+  hex values and probability-like confidence percentages.
+
+#### Commands and observed results
+
+| Command/check | Result |
+| --- | --- |
+| First focused `conda run --name lens python -m pytest -q tests/unit/test_presentation.py tests/unit/test_t14_camera_display.py tests/unit/test_t14_display.py tests/integration/test_t14_fullscreen.py` | exit 1; 51 passed, one test assertion used an overly contiguous Vietnamese substring; production behavior was correct |
+| Assertion repair and focused rerun | exit 0; 52 passed in 1.64 s |
+| `conda run --name lens python -m chromalens --webcam --no-display --backend mediapipe-selfie-torso --max-frames 10` | exit 0; 10 live 1280x720 frames; smoke-only 9.85 FPS; no media stored; no performance claim |
+| Initial native 1920x1080 Product compositor microbenchmark after visual changes | 43.20 ms/frame mean, 20 samples; rejected as too costly |
+| Profile-guided canvas repair | Removed a redundant full-display allocation/copy and created the Pillow shell directly instead of converting an intermediate NumPy background |
+| Final native 1920x1080 Product compositor microbenchmark | 24.68 ms/frame mean, 30 samples on the development host; 42.9% below the rejected 43.20 ms observation |
+| Final full `conda run --name lens python -m pytest -q` | exit 0; 335 passed in 55.98 s |
+| `conda run --name lens python -m compileall -q src tests` | exit 0 |
+| `conda run --name lens python -m chromalens --help` | exit 0 |
+| `conda run --name lens python -m pip check` | exit 0; no broken requirements |
+| `git diff --exit-code -- pyproject.toml environment.yml requirements` | exit 0; dependency declarations and locks unchanged |
+| `git diff --check` | exit 0; line-ending conversion warnings only |
+
+#### Definition of Done
+
+- [x] Empty, analyzing, ready, camera-blocked, and display-covered messaging is coherent and actionable.
+- [x] Product status never depends on hue alone; text and distinct silhouettes remain present.
+- [x] Product footer is user-facing; Diagnostic mode retains technical detail.
+- [x] Waiting guide is bounded to the camera viewport and automatically absent from ready results.
+- [x] 1366x768 and 1920x1080 use bounded final-pixel sidebar geometry with preserved camera aspect ratio.
+- [x] No hex, fake calibrated probability, medical diagnosis, point picker, continuous animation, model change, or processing-resolution change was introduced.
+- [x] Focused tests, live webcam smoke, full regression suite, CLI help, compilation, and dependency checks pass in `lens`.
+
+#### Evidence and limitations
+
+- Five temporary ignored PNGs were generated for local visual inspection and
+  then removed. They can be regenerated; no user camera frame or private media
+  was stored.
+- The 24.68 ms compositor value is development-host microbenchmark evidence,
+  not end-to-end FPS, sensor-to-photon latency, or declared demo-hardware
+  evidence. T15 remains responsible for the controlled performance gate.
+- Product cards are keyboard-driven informational components. Mouse click,
+  hover, ripple, and continuous animation were intentionally not added to the
+  OpenCV UI.
+
+#### Exact next task
+
+Continue `T15 — Performance optimization and stability` on
+`feature/fps-increment`; integrate this independent T14 branch only after the
+T15 baseline ownership and merge point are reviewed.
+
+---
+
+### `2026-09-14` - `T14` `Windows DPI and raster-quality refinement started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Measured problem
+
+- The development display is physically 1920x1080 at 144 Hz with Windows scale
+  125% (`AppliedDPI=120`).
+- The lens Python process reported `ProcessDpiAwareness=0`,
+  `GetDpiForSystem=96`, and `GetSystemMetrics=1536x864`, while
+  `EnumDisplaySettings` reported the physical 1920x1080 mode.
+- ChromaLens was therefore composing a logical 1536x864 bitmap that Windows
+  enlarged by 1.25x to the physical panel. This explains uneven 1-2 px borders,
+  rounded-corner stair steps, icon aliasing, and otherwise anti-aliased Segoe UI
+  text becoming soft/uneven.
+
+#### Smallest approved implementation
+
+1. Request Windows Per-Monitor DPI Aware V2 before any OpenCV window or display
+   metric is created, with safe fallbacks and no failure on non-Windows hosts.
+2. Verify the fullscreen target uses physical pixels and that a native canvas
+   bypasses the final resize path.
+3. Keep Pillow/TrueType text at physical size; supersample only rounded chrome
+   and small shape icons, cache those raster patches, and never supersample the
+   camera or full 1920x1080 frame.
+4. Measure compositor cost and retain the existing analytical pipeline,
+   processing resolution, dependencies, and keyboard behavior.
+
+#### Evidence state at start
+
+- Per-monitor DPI-aware subprocess: `NOT RUN`.
+- Physical-size fullscreen contract: `NOT RUN`.
+- Cached local anti-alias quality and performance: `NOT RUN`.
+- Full regression suite: `NOT RUN`.
+
+---
+
+### `2026-09-15` - `T14` `Restrained 3D visual polish follow-up complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Outcome
+
+- Strengthened the camera hero surface with a theme-aware two-tone bezel,
+  directional top/left highlight, bottom/right shade, offset shadow, and a
+  shallow inset rim. Camera pixels and the privacy cover still share the same
+  antialiased rounded boundary.
+- Product cards now use an explicit four-level elevation contract: primary
+  result `4`, actionable warning `3`, available secondary result `2`, and
+  unavailable/inactive `1` final-pixel units before responsive scaling.
+- Card shadows derive from their own surface instead of a generic border
+  color, and every surface receives only one restrained top highlight. Primary
+  and warning semantic outlines remain text/shape reinforced.
+- The keyboard-operated profile pill has a three-pixel tactile base and a
+  subtle top highlight. Header and footer use paired material
+  highlight/separator lines so they read as structural surfaces rather than a
+  flat bitmap.
+- Added no blur, glass effect, heavy gradient, continuous animation, mouse-only
+  affordance, dependency, backend change, or processing-resolution change.
+
+#### Commands and observed results
+
+| Command/check | Result |
+| --- | --- |
+| Focused presentation/display regression | exit 0; `61 passed in 6.42 s` |
+| `scripts/t14_display_evaluation.py --output artifacts/ui-review/t14-3d` | exit 0; four frozen structural cases passed; GUI smoke intentionally not requested |
+| Native Product renders at 1366x768 and 1920x1080 in dark/light themes | exit 0; four local ignored PNGs generated and visually inspected; camera/card/header/footer geometry remained contained and hierarchy stayed readable |
+| Native 1920x1080 Product compositor, 30 warm samples | exit 0; mean `23.09 ms/frame`, median `22.83`, min `20.94`, max `25.92`, standalone capacity `43.3 FPS` on the development host |
+| Three-frame local-video Product/MediaPipe GUI smoke | exit 0; frame-limit stop, current-frame masks, dropped `0`, degraded `0`; startup-only pipeline FPS is not a performance claim |
+| Full `conda run --name lens python -m pytest -q` | exit 0; `344 passed in 77.35 s` |
+| `conda run --name lens python -m compileall -q src tests` | exit 0 |
+| First parallel `--help` and `pip check` attempt | invalid evidence: concurrent `conda run` processes collided on one Conda temporary activation file; application code was not reached |
+| Sequential `python -m chromalens --help` and `python -m pip check` rerun | exit 0 for both; no broken requirements |
+| `git diff --exit-code -- pyproject.toml environment.yml requirements` | exit 0; dependency declarations and locks unchanged |
+| `git diff --check` | exit 0; line-ending conversion warnings only |
+
+#### Definition of Done
+
+- [x] Camera is the highest-priority material surface and retains one rounded
+  clipping boundary for both visible and privacy-covered content.
+- [x] Primary, warning, normal, and inactive Product cards have deterministic,
+  decreasing elevation without relying on hue alone.
+- [x] Profile, header, and footer depth is visible but does not imply false
+  mouse interaction or compete with the camera/result hierarchy.
+- [x] Dark/light and 1366x768/1920x1080 native renders were visually inspected;
+  no text overflow, rectangular camera corner, or heavy visual effect appeared.
+- [x] The final 23.09 ms compositor observation is below both the preceding
+  27.62 ms follow-up and the accepted approximate 10% overhead ceiling relative
+  to the historical 25.41 ms baseline. This is development-host compositor
+  evidence, not end-to-end or official demo-hardware performance.
+- [x] Focused tests, local-video GUI smoke, 344-test full regression,
+  compilation, CLI, dependency integrity, lock immutability, and whitespace
+  checks pass in Python 3.10 environment `lens`.
+
+#### Limitations
+
+- OpenCV/Pillow remains a raster presentation host; the UI now has controlled
+  material depth and native-size rendering but does not claim browser/Qt vector
+  behavior.
+- Local visual PNGs and the temporary T14 report remain under ignored
+  `artifacts/ui-review/`; they are development evidence and will not enter Git.
+- End-to-end FPS, p95 latency, and five-minute stability remain T15 evidence;
+  the three-frame GUI smoke is not a benchmark.
+
+#### Exact next task
+
+Continue `T15 — Performance optimization and stability` on
+`feature/fps-increment`. Review and commit the complete T14 workset on
+`feature/upscaling` before selecting an integration point.
+
+---
+
+### `2026-09-14` - `T14` `Windows DPI and raster-quality refinement complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Outcome
+
+- Added a cached, typed Windows DPI boundary that requests Per-Monitor DPI
+  Aware V2 before argument handling, display metrics, or the first OpenCV
+  window. Older Windows releases receive per-monitor-v1/system-aware
+  fallbacks; non-Windows hosts receive an explicit no-op result.
+- A fresh `lens` process now reports `per-monitor-v2`, process awareness `2`,
+  and `GetSystemMetrics=1920x1080`, matching this development display's
+  physical mode. Before the repair the same process was unaware and received
+  the DPI-virtualized `1536x864` desktop at Windows scale 125%.
+- Fullscreen composition remains native at its physical target and the
+  `DisplayFit` boundary returns the same frame object when source and target
+  sizes match. No completed UI bitmap is enlarged a second time.
+- Pillow/TrueType text remains rendered directly at final physical size.
+  Rounded camera/card/profile chrome and shape-coded icons are rendered at 4x
+  then Lanczos-downsampled. Only curved corner neighborhoods are alpha-blended
+  per frame; large opaque interiors and straight pixel-aligned edges use native
+  drawing. Both rounded patches and icons use bounded caches.
+- No camera, model, mask, color, CVD risk, recolor, backend, dependency, or
+  analysis-resolution behavior changed in this refinement.
+
+#### Commands and observed results
+
+| Command/check | Result |
+| --- | --- |
+| Fresh-process DPI query via `conda run --name lens python -c ...` | exit 0; `DpiAwarenessStatus(enabled=True, mode='per-monitor-v2')`, primary display and metrics both `1920x1080`, process awareness `2` |
+| First focused compile + tests | exit 0; `43 passed in 2.79 s` |
+| Expanded DPI/AA/display focused tests | exit 0; `55 passed in 3.91 s` |
+| Full-patch 4x AA compositor trial, 30 warm samples | exit 0; 30.73 ms/frame mean; rejected because it added avoidable alpha-blend cost |
+| Corner-only cached AA compositor, focused tests + 30 warm samples | exit 0; `55 passed in 3.33 s`; 25.41 ms/frame mean, 39.4 FPS standalone capacity (min 21.50, max 30.47 ms) |
+| Synthetic native 1920x1080 Product visual inspection | exit 0; camera, symmetric frame, rounded cards, glyphs, TrueType text, footer, and profile pill remained contained; temporary ignored PNG removed after inspection |
+| `conda run --name lens python -m pytest -q` | exit 0; `338 passed in 52.62 s` |
+| `conda run --name lens python -m compileall -q src tests` | exit 0 |
+| `conda run --name lens python -m chromalens --help` | exit 0 |
+| `conda run --name lens python -m pip check` | exit 0; no broken requirements |
+| Fullscreen webcam preview, 10-frame smoke | exit 1; Windows Media Foundation opened camera 0 but `ReadSample` failed with external status `-1072875772`; not treated as display evidence or hidden by a code change |
+| `conda run --name lens python -m chromalens --video artifacts/t11-handoff/fallback_mediapipe.avi --preview-only --fullscreen --max-frames 10` | exit 0; 10 frames, 640x480 source, frame-limit stop |
+| Same local video through full MediaPipe Product pipeline, fullscreen, 3 frames | exit 0; 3 frames, frame-limit stop, synchronous current-frame mask, display-submit samples 3, dropped/degraded 0 |
+| Multiline `conda run ... python -c` benchmark attempt | command rejected by Conda because Windows wrapper does not support newline-bearing arguments; replaced by the equivalent one-line `timeit` command above, not by another environment |
+| `git diff --exit-code -- pyproject.toml environment.yml requirements` | exit 0; dependencies and locks unchanged |
+| `git diff --check` | exit 0; line-ending conversion warnings only |
+
+#### Definition of Done
+
+- [x] Windows process requests per-monitor DPI awareness before OpenCV GUI
+  creation; fresh-process evidence proves physical 1920x1080 metrics at 125%.
+- [x] Native fullscreen composition bypasses whole-canvas resizing and keeps
+  camera aspect ratio/analysis resolution contracts intact.
+- [x] TrueType text uses final physical size; rounded chrome and icons have
+  cached selective supersampling with measurable intermediate alpha coverage.
+- [x] Added deterministic non-Windows no-op, fresh-Windows-process,
+  supersampling/cache, native-size, viewport, and fullscreen integration tests.
+- [x] Final compositor cost is 25.41 ms/frame on the development host, only
+  0.73 ms (3.0%) above the previous 24.68 ms observation and still faster than
+  the rejected 30.73 ms full-patch implementation.
+- [x] Full regression, compile, CLI help, local-video GUI paths, dependency
+  integrity, lock immutability, and whitespace checks pass in `lens`.
+
+#### Limitations
+
+- OpenCV remains a raster presentation host; this repair removes Windows DPI
+  bitmap enlargement and improves the most visible curves/icons without
+  claiming browser/Qt vector rendering.
+- The compositor metric is development-host, steady-state, offscreen evidence,
+  not end-to-end FPS, sensor-to-photon latency, or official demo-hardware data.
+- The final webcam smoke was blocked by a Windows camera-source `ReadSample`
+  failure after the camera opened. The equivalent local-video preview and full
+  Product paths passed; the owner should close other camera applications or
+  reset the privacy shutter/driver before the next live manual review.
+
+#### Exact next task
+
+Continue `T15 — Performance optimization and stability` on
+`feature/fps-increment`; merge this independent T14 branch only after reviewing
+its current uncommitted T14 scope as one coherent change set.
+
+---
+
+### `2026-09-14` - `T14` `Rounded camera and native window lifecycle follow-up started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Confirmed defects
+
+- Camera chrome was rounded before a rectangular camera bitmap was pasted over
+  it. The content and privacy cover did not share a rounded clipping boundary.
+- A physical-pixel `1712x888` windowed canvas submitted through HighGUI's
+  default `WINDOW_NORMAL` lifecycle produced a measured client image rectangle
+  of only `302x273`, so HighGUI scaled the completed bitmap. Explicit
+  `cv2.resizeWindow` probes produced exact `1712x888` and `1366x768` image
+  rectangles, isolating the remaining aliasing source from Windows DPI.
+
+#### Smallest approved implementation
+
+1. Build a camera shadow/bezel/content hierarchy and clip camera plus privacy
+   cover to one rounded content shape using cached corner-only compositing.
+2. Initialize a bounded windowed client size explicitly, observe stable manual
+   resize geometry through `getWindowImageRect`, compose at that physical size,
+   and restore the prior windowed size after fullscreen.
+3. Preserve final-pixel TrueType text, integer geometry, selective AA, source
+   frames, processing resolution, masks, color/risk/recolor results, and all
+   backend behavior.
+4. Add restrained elevation using existing palette values only; no blur,
+   continuous animation, new UI framework, or dependency change.
+
+#### Evidence state at start
+
+- Rounded camera content/source immutability: `NOT RUN`.
+- Native windowed client/render size agreement: `NOT RUN`.
+- Fullscreen/windowed restoration: `NOT RUN`.
+- Updated compositor benchmark and full regression: `NOT RUN`.
+
+---
+
+### `2026-09-14` - `T14` `Rounded camera and native window lifecycle follow-up complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Outcome
+
+- Replaced the mismatched rounded-frame/rectangular-image stack with a camera
+  shadow, outer bezel, rounded camera content, and inset rim. The camera bitmap
+  and privacy cover now receive the same antialiased corner clipping.
+- Clipping composites only four cached corner cutouts. Camera pixels outside
+  the rim/corner neighborhoods remain byte-identical, the input frame is not
+  mutated, and neither mask nor analytical coordinates changed.
+- Windowed mode now starts with a bounded physical client size, calls
+  `resizeWindow` explicitly, observes manual client resizing through
+  `getWindowImageRect`, and supplies that size to the responsive compositor.
+  After at most the next frame, a settled window receives a native-size canvas
+  rather than a scaled completed bitmap.
+- Fullscreen remembers the latest windowed client size and restores it on
+  `Esc`. Per-Monitor DPI V2 and physical fullscreen sizing remain unchanged.
+- Added restrained depth through the camera bezel/shadow/inset rim, primary
+  and warning card rims, reduced bottom card elevation, and header/footer
+  separators. No blur, gradient-heavy chrome, continuous animation, new
+  framework, or dependency was introduced.
+- Removed a redundant final NumPy copy and cached already-cropped AA corner
+  tiles. These optimizations offset the new visual hierarchy without changing
+  array ownership or rendered semantics.
+
+#### Commands and observed results
+
+| Command/check | Result |
+| --- | --- |
+| Initial focused contract run after implementation | exit 1; 50 passed and 16 expected failures: 12 obsolete rectangular-camera assertions plus four test fixtures that had not mocked the new `resizeWindow` boundary |
+| Updated contract/fixture rerun | exit 1; 55 passed and 12 camera assertions needed an AA fringe allowance; production center-pixel contract already passed |
+| Corrected rounded-content contract rerun | exit 0; 67 passed in 7.88 s |
+| Expanded cover-boundary/window-size focused run | exit 0; 70 passed in 8.00 s |
+| Real Win32 native lifecycle probe in `lens` | exit 0; initial render/client `1366x768`; manual resize observed `1100x650`; next prepared frame was the same native `1100x650` array; fullscreen `1920x1080`; restored client/tracked size `1100x650` |
+| Windowed local-video preview, five frames | exit 0; frame-limit stop |
+| Windowed local-video full MediaPipe Product pipeline, three frames | exit 0; frame-limit stop, current-frame synchronous masks, dropped/degraded 0; startup-only metrics are not a performance claim |
+| Native 1366x768 synthetic Product visual inspection | exit 0; rounded camera/cover boundary, inset rim, restrained elevation, cards, text, and footer remained contained; ignored PNG removed after inspection |
+| Initial full 1920x1080 depth trial | 31.74 ms/frame; rejected and profiled before optimization |
+| Final repeated 1920x1080 Product benchmark, 30 warm samples | 27.62 ms/frame mean, 27.15 median, 20.52 min, 38.07 max, 36.2 FPS standalone capacity |
+| Same-process paired current/follow-up-disabled measurement | follow-up chrome overhead 5.50%; below the accepted approximate 10% limit and more robust to development-host load than comparing separate runs |
+| First full regression after new GUI boundary | exit 1; 341 passed, one T01 mock fixture omitted `resizeWindow` |
+| Repaired T01 fixture | exit 0; one passed |
+| Final `conda run --name lens python -m pytest -q` | exit 0; `342 passed in 56.49 s` |
+| `conda run --name lens python -m compileall -q src tests` | exit 0 |
+| `conda run --name lens python -m chromalens --help` | exit 0 |
+| `conda run --name lens python -m pip check` | exit 0; no broken requirements |
+| `git diff --exit-code -- pyproject.toml environment.yml requirements` | exit 0; dependencies and locks unchanged |
+| `git diff --check` | exit 0; line-ending conversion warnings only |
+
+#### Definition of Done
+
+- [x] Camera and privacy cover share one visibly rounded content boundary; no
+  rectangular corner layer remains over the bezel.
+- [x] Pixels outside the AA rim/corner allowance are byte-identical to the
+  rendered camera view and the source frame remains immutable.
+- [x] Windowed HighGUI client size and rendered target agree in a real Win32
+  probe; a manual resize produces a native-size frame on the next iteration.
+- [x] Windowed/fullscreen/windowed restores the exact prior client size while
+  preserving physical fullscreen resolution and processing resolution.
+- [x] Product depth is hierarchical but restrained and status remains encoded
+  by text/shape as well as color.
+- [x] Final 27.62 ms compositor mean is 8.7% above the prior 25.41 ms historical
+  observation; same-process paired overhead is 5.50%, both within the accepted
+  approximate 10% budget.
+- [x] Focused tests, real GUI probes, local-video GUI smoke, full regression,
+  compilation, CLI help, dependency integrity, and whitespace checks pass.
+
+#### Limitations
+
+- HighGUI may temporarily scale the previous frame while the user is actively
+  dragging a window edge. The next processing iteration observes the settled
+  client size and renders natively; no resize-event callback exists in Win32UI.
+- OpenCV remains a raster UI host. This follow-up improves native pixel
+  agreement, clipping, AA, and depth without claiming browser/Qt vector output.
+- Performance values are development-host compositor evidence, not end-to-end
+  FPS, sensor-to-photon latency, or an official demo-hardware benchmark.
+
+#### Exact next task
+
+Continue `T15 — Performance optimization and stability` on
+`feature/fps-increment`; review and commit this complete T14 branch as its own
+atomic integration before merging it into the selected shared baseline.
+
+---
+
+### `2026-09-15` - `T14` `3D visual-polish log-order correction`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+The complete evidence entry dated `2026-09-15` was accidentally inserted above
+the later `2026-09-14` start entry because an earlier repeated “Exact next
+task” paragraph was used as the patch anchor. Its implementation, commands,
+measurements, and conclusions are accurate. This append-only correction makes
+the latest chronological state authoritative: T14 is `DONE`, with `344 passed`
+and a measured native 1920x1080 Product compositor mean of `23.09 ms/frame`.
+No source behavior changed as part of this record correction.
+
+#### Exact next task
+
+Continue `T15 — Performance optimization and stability` on
+`feature/fps-increment`; review and commit the complete T14 workset on
+`feature/upscaling` before selecting an integration point.
+
+---
+
+### `2026-09-15` - `T14` `Subtle physical-interface freeze polish started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Frozen scope
+
+1. Reduce the camera offset shadow to a low-contrast three-pixel contact depth,
+   remove duplicate directional edges, and retain only outer shell, subtle rim,
+   and clipped camera surface.
+2. Rebalance Product elevation to camera `3`, primary card `2`,
+   warning/recommendation `1`, and normal/inactive `0-1`; do not increase
+   shadows elsewhere.
+3. Blend the sidebar tray only slightly away from the app background, increase
+   card-detail bottom padding, and preserve all text containment contracts.
+4. Replace the Product header mode caption with a stronger user-profile label,
+   remove the duplicated `[P]` shortcut from the profile pill, and name the
+   runtime toggle accurately as `Hỗ trợ màu`.
+5. Re-run native-size visual inspection, current-host 125% DPI evidence,
+   compositor measurement, focused tests, and the full suite. Windows 100% and
+   150% scale remain `NOT RUN` unless manually selected by the owner.
+
+No backend, capture, analysis resolution, mask, color, risk, recolor,
+dependency, blur, continuous animation, or new UI framework is authorized.
+
+---
+
+### `2026-09-14` - `T14` `Restrained 3D visual polish follow-up started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Smallest approved implementation
+
+1. Strengthen the camera as the hero surface with a two-tone bezel, a subtle
+   top/left highlight, bottom/right shade, and a shallow inset rim while
+   preserving the shared rounded camera/cover clipping contract.
+2. Give Product cards explicit elevation levels: primary result highest,
+   actionable lighting warning next, recommendation/normal cards lower, and
+   unavailable cards visually recessed.
+3. Give the truthful keyboard-operated profile pill a tactile pressed depth
+   and add restrained structural highlights to the header/footer surfaces.
+4. Use only final-pixel integer drawing and the existing cached corner AA;
+   add no blur, heavy gradient, continuous animation, dependency, processing
+   resolution change, or analytical-pipeline change.
+
+#### Evidence state at start
+
+- Focused hierarchy and camera immutability tests: `NOT RUN`.
+- Dark/light 1366x768 and 1920x1080 visual inspection: `NOT RUN`.
+- Updated compositor benchmark: `NOT RUN`.
+- Full regression suite: `NOT RUN`.
+
+---
+
+### `2026-09-15` - `T14` `Restrained 3D visual polish authoritative close`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+The detailed completion evidence and the append-only log-order correction above
+remain valid. This final close is intentionally appended after the start entry
+so the latest chronological state is unambiguous: T14 is `DONE`; dark/light
+native-size visual inspection passed at 1366x768 and 1920x1080, the 1920x1080
+Product compositor measured `23.09 ms/frame` across 30 warm samples on the
+development host, and the full suite passed `344` tests. This record-only close
+does not change source behavior.
+
+#### Exact next task
+
+Continue `T15 — Performance optimization and stability` on
+`feature/fps-increment`; review and commit the complete T14 workset on
+`feature/upscaling` before selecting an integration point.
+
+---
+
+### `2026-09-15` - `T14` `Subtle physical-interface freeze polish complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Outcome
+
+- Reduced the camera contact depth from five to three final-pixel units and
+  reduced its background-relative shade from 42% to 14%. The visible gray
+  offset slab is gone while the camera remains the highest-elevation surface.
+- Simplified camera chrome to one outer shell, one subtle top/left highlight,
+  one antialiased one-pixel rim, and the shared clipped camera/cover surface.
+  Removed bottom/right bezel strokes and four duplicate directional inner-rim
+  strokes.
+- Rebalanced Product card elevation to primary `2`, warning and normal `1`,
+  and inactive `0`. Shadows now use 10-14% surface-relative shade and top
+  highlights use 5-8%, retaining hierarchy without competing with the camera.
+- Blended the sidebar tray 22% from app background toward structural surface,
+  producing only a slight tonal distinction instead of a separate white box.
+- Reduced the primary card height share from 31% to 27%, redistributed the
+  space across secondary cards, and moved detail text upward by five logical
+  pixels to guarantee at least 12 pixels of bottom padding at base scale.
+- Product header now uses bold `HỒ SƠ NGƯỜI DÙNG`; the profile pill uses a
+  cached antialiased profile glyph plus `Deutan`/`Protan`/`Tritan`, without a
+  duplicated `[P]` developer shortcut. Footer accurately labels the runtime
+  toggle `Hỗ trợ màu: BẬT/TẮT`; `[P] Hồ sơ` remains the keyboard hint.
+- No gradient, blur, continuous animation, new dependency, backend, camera,
+  processing resolution, mask, color, risk, or recolor behavior was added.
+
+#### Commands and observed results
+
+| Command/check | Result |
+| --- | --- |
+| Focused Product/presentation/display suite | exit 0; `62 passed in 6.77 s` |
+| Four native Product renders: dark/light at 1366x768 and 1920x1080 | exit 0; visually inspected; clipping, containment, hierarchy, profile label, footer wording, and reduced shadow passed |
+| Current Windows scale query | exit 0; `AppliedDPI=120`, actual scale `125%` |
+| Fresh process DPI/display query | exit 0; Per-Monitor V2 enabled; physical display `(1920, 1080)` |
+| Native 1920x1080 Product compositor, 30 warm samples | exit 0; mean `21.12 ms/frame`, median `20.90`, min `19.82`, max `23.57`, standalone capacity `47.3 FPS` on the development host |
+| Three-frame local-video Product/MediaPipe GUI smoke | exit 0; frame-limit stop, current-frame masks, dropped `0`, degraded `0`; startup-only FPS is not a benchmark |
+| Full `conda run --name lens python -m pytest -q` | exit 0; `345 passed in 54.96 s` |
+| Compile, CLI help, `pip check`, lock immutability, and `git diff --check` | exit 0 for all; no broken requirements or dependency/lock changes; line-ending warnings only |
+
+#### Definition of Done
+
+- [x] Camera reads as a raised surface rather than a duplicated offset layer,
+  and camera/privacy content still shares one rounded clipping contract.
+- [x] Camera, card, and tray use one restrained material hierarchy of
+  `3 / 2 / 1 / 0` without hue-only meaning or heavy visual effects.
+- [x] Product header/profile and recolor-support wording are consumer-facing;
+  keyboard shortcuts remain available in the footer.
+- [x] Card detail regions retain disjoint text contracts and at least 12 base
+  pixels of bottom padding.
+- [x] Native 1366x768 and 1920x1080 dark/light renders pass visual review; real
+  125% DPI remains Per-Monitor V2 and physical-pixel aware.
+- [x] Final `21.12 ms/frame` compositor evidence is below the preceding
+  `23.09`, `27.62`, and historical `25.41 ms/frame` observations on this
+  development host.
+- [x] Focused tests, GUI smoke, 345-test full regression, compilation, CLI,
+  dependency, lock, and whitespace gates pass in environment `lens`.
+
+#### Explicitly not run / limitations
+
+- Windows scale 100% and 150% manual visual inspections are `NOT RUN`; changing
+  the owner's OS setting was neither required nor performed. Deterministic
+  responsive tests and the real current 125% path passed.
+- OpenCV/Pillow remains a raster UI host. This freeze improves native-size
+  material rendering without claiming browser/Qt vector output.
+- Local PNG review artifacts remain ignored under `artifacts/ui-review/` and
+  are not repository deliverables.
+- Compositor capacity is not end-to-end FPS, sensor-to-photon latency, or
+  official demo-hardware evidence. Those remain under T15.
+
+#### Exact next task
+
+Commit the complete T14 workset atomically on `feature/upscaling`, then continue
+`T15 — Performance optimization and stability` on `feature/fps-increment`.
+
+---
+
+### `2026-09-15` - `T14` `Shared camera-sidebar geometry correction started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Frozen scope
+
+- Replace independent Product-card vertical placement with one geometry
+  contract shared by the outer camera shell and the Product sidebar stack.
+- At supported desktop sizes, the first card top and final card bottom must
+  align with the outer camera shell; card heights and equal gaps are allocated
+  from that shared height rather than by manual pixel translation.
+- Retain a bounded fallback for small source-sized canvases so existing
+  320x240 and 640x360 Product views keep readable card regions.
+- Keep Diagnostic layout, camera pixels, processing resolution, mask, color,
+  risk, recolor, dependencies, and theme geometry parity unchanged.
+
+Evidence is `NOT RUN` until the implementation and checks below complete.
+
+---
+
+### `2026-09-15` - `T14` `Shared camera-sidebar geometry correction complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Outcome
+
+- Added an explicit exclusive-edge outer camera-shell rectangle and derived the
+  Product sidebar bounds from that same geometry source.
+- At supported desktop sizes, the sidebar tray and four-card stack now share
+  the camera shell's exact top and bottom. No card-specific 16-20 px offset or
+  resolution-specific translation was introduced.
+- Card heights and three equal gaps are allocated from the shared stack height;
+  the primary result remains taller than the secondary cards.
+- Source-sized 320x240 and 640x360 canvases retain the prior padded panel when
+  the camera shell is shorter than the frozen 440-logical-pixel readability
+  floor. This avoids compressing Product text merely to force alignment.
+- Diagnostic geometry and all analytical/camera contracts remain unchanged.
+
+#### Commands and observed results
+
+| Command/check | Result |
+| --- | --- |
+| Focused presentation/display/fullscreen suite | exit 0; `70 passed in 6.57 s` |
+| Frozen T14 structural evaluation to ignored `artifacts/ui-review/` | exit 0; `cases=4 passed=4`; its legacy fitted images were not used as native-size evidence |
+| Native Product renders, dark/light at 1366x768 and 1920x1080 | exit 0; all four inspected; outer camera-shell and card-stack top/bottom align, gaps are even, text remains contained |
+| Native 1920x1080 Product compositor, 30 warm samples | exit 0; mean `23.24 ms/frame`, median `22.66`, min `21.47`, max `29.14`, standalone capacity `43.0 FPS` on the development host |
+| Full `conda run --name lens python -m pytest -q` | exit 0; `353 passed in 65.02 s` |
+| `conda run --name lens python -m compileall -q src tests` | exit 0 |
+| First parallel CLI-help / `pip check` attempt | invalid evidence; two concurrent `conda run` calls collided on Conda's Windows activation temp file; no application or dependency failure was diagnosed |
+| Sequential `python -m chromalens --help` rerun in `lens` | exit 0; no camera, model, or special hardware required |
+| Sequential `python -m pip check` rerun in `lens` | exit 0; no broken requirements |
+| Dependency/lock immutability and `git diff --check` | exit 0; no dependency changes or whitespace errors; line-ending warnings only |
+
+#### Definition of Done
+
+- [x] Product camera shell, sidebar tray, first card, and final card use one
+  vertical geometry contract at 1366x768 and 1920x1080.
+- [x] Both themes use byte-identical geometry, equal card gaps, and a taller
+  primary card without manual position adjustment.
+- [x] Small source-sized canvases preserve readable, disjoint card regions via
+  a deterministic fallback.
+- [x] Native visual inspection passes for both themes at both desktop sizes.
+- [x] Compositor mean `23.24 ms/frame` is effectively unchanged from the prior
+  `23.25 ms/frame` observation and remains below the historical `25.41 ms/frame`
+  baseline.
+- [x] Focused tests, 353-test full regression, compilation, CLI, dependency,
+  lock, and whitespace checks pass in environment `lens`.
+
+#### Limitations
+
+- Windows scale 100% and 150% manual visual checks remain `NOT RUN`; current
+  125% Per-Monitor V2 evidence and deterministic native-size tests remain the
+  available DPI evidence.
+- Ignored visual PNGs are development evidence, not tracked deliverables.
+- The compositor measurement is not end-to-end FPS or sensor-to-photon latency.
+
+T14 returns to `DONE` and the corrected Product layout is frozen. Exact next
+task: commit the complete T14 workset atomically on `feature/upscaling`, then
+continue `T15 — Performance optimization and stability` on
+`feature/fps-increment`.
+
+#### Post-close test-contract strengthening
+
+The graphical-accent test was tightened from “passes on either card surface”
+to each accent's exact production surface: info on the primary card and
+recommendation/success/warning on regular cards. No runtime source changed.
+`tests/unit/test_presentation.py` passed `42` tests in `1.96 s`, followed by a
+fresh full-suite result of `346 passed in 49.04 s`.
+
+---
+
+### `2026-09-15` - `T14` `Light/dark design-token parity gate started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Scope and preserved decision
+
+- Introduce explicit theme tokens for app background, structural surface,
+  sidebar tray, camera shell/rim/shadow, regular/active card, divider, profile
+  control, primary/secondary text, and semantic accents.
+- Preserve the previously owner-approved high-contrast polarity: the dark app
+  shell uses near-light cards, while the light app shell uses dark cards. The
+  new gate targets equivalent component boundary, hierarchy, active emphasis,
+  control affordance, and text readability rather than silently reversing that
+  product choice.
+- Keep geometry, component presence, icon shapes, and interaction behavior
+  identical across themes. Only token values may differ.
+- Add deterministic parity/readability tests and perform native visual review
+  for both themes at 1366x768 and 1920x1080.
+
+No layout feature, model/backend, camera, processing resolution, analytical
+result, dependency, blur, animation, or UI framework change is authorized.
+
+---
+
+### `2026-09-15` - `T14` `Light/dark design-token parity gate complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+#### Outcome
+
+- Added explicit symmetric tokens for background, structural surface, tray,
+  camera shell/rim/shadow, divider, profile control/border, regular/active
+  cards, primary/secondary text, and card-local info/recommendation/success/
+  warning accents.
+- Preserved the owner-approved inverted high-contrast card polarity: dark app
+  shell with near-light cards, light app shell with dark cards. Geometry,
+  component presence, elevation, spacing, icon shape, and interactions remain
+  identical; only token values differ.
+- Dark camera shell/background contrast is `1.38:1` and light is `1.34:1`;
+  their difference is below `0.10`. Rim-to-shell contrast is at least `2.50:1`
+  in both themes, so visible and privacy-covered camera boundaries remain
+  present without a white hard border.
+- Sidebar tray/background contrast stays between `1.03:1` and `1.07:1`, giving
+  deliberate separation without reading as a pasted panel.
+- Secondary card text measures at least `5.81:1`, profile control text at least
+  `10.78:1`, and all card-local semantic icon/accent roles at least `3.00:1`.
+  Primary card surface contrast against regular cards is at least `1.20:1` and
+  remains reinforced by border, side rail, icon, text, and elevation.
+- Dark-shell regular cards were softened from `(236,232,228)` to
+  `(224,220,216)` BGR while its active card remains near-light. Light-shell
+  regular dark cards were lifted from `(68,58,48)` to `(82,72,61)` BGR while
+  its active card remains darker, balancing perceived weight across themes.
+- Profile control now has its own surface/border tokens; header/footer use an
+  explicit divider token rather than deriving different perceived contrast
+  from a generic shade operation.
+
+#### Commands and observed results
+
+| Command/check | Result |
+| --- | --- |
+| Focused presentation/display parity suite | exit 0; `63 passed in 5.17 s` |
+| Native Product visual review, dark/light at 1366x768 and 1920x1080 | exit 0; camera, tray, cards, active state, header, footer, control, secondary text, and icon roles remained structurally mirrored and perceptually distinct |
+| Native privacy-cover visual review, dark/light at 1366x768 | exit 0; both cover variants retained the same rounded camera boundary and shell definition |
+| Frozen T14 structural evaluation | exit 0; `cases=4 passed=4`; GUI smoke was not requested in that offscreen command |
+| Native 1920x1080 Product compositor, 30 warm samples | exit 0; mean `23.08 ms/frame`, median `22.14`, min `20.54`, max `28.19`, standalone capacity `43.3 FPS` on the development host |
+| Three-frame local-video Product/MediaPipe GUI smoke | exit 0; frame-limit stop, current-frame masks, dropped `0`, degraded `0`; startup-only FPS is not a benchmark |
+| Full `conda run --name lens python -m pytest -q` | exit 0; `346 passed in 49.43 s` |
+| Compile, CLI help, `pip check`, lock immutability, and `git diff --check` | exit 0 for all; no broken requirements or dependency/lock changes; line-ending warnings only |
+
+#### Definition of Done
+
+- [x] Both themes expose the same camera shell, rim, clipping, cards, active
+  state, tray, header/footer structure, profile control, and shape-coded icons.
+- [x] Deterministic tests enforce component geometry parity and minimum
+  boundary, text, control, active-surface, and graphical-accent contrast.
+- [x] Dark camera and privacy cover retain an explicit boundary equivalent to
+  light theme instead of merging into the app background.
+- [x] Card weight and primary/secondary hierarchy are perceptually balanced
+  while preserving the previously approved theme/card polarity.
+- [x] Native dark/light visual review passes at both frozen resolutions; cover
+  parity also passes at 1366x768.
+- [x] Final compositor mean `23.08 ms/frame` remains below the historical
+  `25.41 ms/frame` T14 baseline and introduces no full-frame blur/gradient.
+- [x] Focused tests, GUI smoke, 346-test full regression, compilation, CLI,
+  dependency, lock, and whitespace gates pass in environment `lens`.
+
+#### Limitations and freeze decision
+
+- Windows scale 100% and 150% manual visual inspections remain `NOT RUN`;
+  current-host 125% Per-Monitor V2 evidence and deterministic responsive tests
+  remain the available DPI evidence.
+- OpenCV/Pillow remains a raster presentation host; no vector-UI claim is made.
+- Local PNG/report files remain ignored under `artifacts/ui-review/`.
+- `23.08 ms/frame` is compositor-only development-host evidence, not
+  end-to-end FPS or sensor-to-photon latency.
+- T14 Product UI is now frozen. Further visual preference changes should be
+  deferred unless they correct an objective accessibility or functional defect.
+
+#### Exact next task
+
+Commit the complete T14 workset atomically on `feature/upscaling`, then continue
+`T15 — Performance optimization and stability` on `feature/fps-increment`.
+
+#### Final-state verification addendum
+
+After strengthening the accent test to validate each accent against its exact
+production card surface, `tests/unit/test_presentation.py` passed `42` tests in
+`1.96 s` and the complete repository suite passed `346` tests in `49.04 s`.
+Runtime source and the `DONE`/freeze decision were unchanged.
+
+---
+
+### `2026-09-15` - `T14` `Camera-frame width refinement started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+Owner requested a slightly wider visible webcam frame after the theme-parity
+review. The bounded change increases only the outer camera shell from five to
+seven logical pixels. The one-pixel inner rim, three-pixel contact shadow,
+rounded clipping, camera pixels, processing resolution, and pipeline behavior
+remain unchanged.
+
+---
+
+### `2026-09-15` - `T14` `Camera-frame width refinement complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+- Increased only the outer camera shell from five to seven logical pixels and
+  froze the value as `_CAMERA_BEZEL_LOGICAL_PX`.
+- Kept the inner rim at one pixel, contact shadow at three pixels, and all
+  theme-parity tokens unchanged. Native dark/light 1366x768 renders were
+  inspected and the wider shell remained restrained and symmetric.
+- Added a pixel-level contract proving the six uninterrupted inner shell
+  columns use the camera-shell token and the pixel beyond the seven-pixel shell
+  returns to app background.
+- Focused presentation/display tests: `64 passed in 6.06 s`.
+- Native 1920x1080 Product compositor, 30 warm samples: mean
+  `23.25 ms/frame`, median `22.82`, standalone capacity `43.0 FPS`; still below
+  the historical `25.41 ms/frame` baseline.
+- Full repository suite: `347 passed in 63.97 s`.
+- Compile, CLI help, `pip check`, dependency/lock immutability, and
+  `git diff --check`: exit `0`; line-ending warnings only.
+
+T14 returns to `DONE` and remains visually frozen. Exact next task: commit the
+complete T14 workset atomically on `feature/upscaling`, then continue
+`T15 — Performance optimization and stability` on `feature/fps-increment`.
+
+---
+
+### `2026-09-15` - `T14` `CI-host DPI portability repair started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+GitHub Actions run `34953175312` passed dependency locks, installation, CLI,
+and backend setup in all three jobs but failed when each job entered the full
+test suite. A clean snapshot of commit `c7cc4bc` passed `351` tests with two
+expected model-artifact skips on the development laptop, isolating the
+remaining cross-host risk to the T14 test that requires a real Windows process
+to report Per-Monitor V2 awareness and a physical primary display.
+
+The bounded repair replaces that external-host assertion with deterministic
+Windows API success/unavailable contracts and enables CI triggers for `main`
+and `feature/**`. Runtime DPI behavior, presentation geometry, dependencies,
+and analytical processing remain unchanged.
+
+---
+
+### `2026-09-15` - `T14` `Narrow-viewport CI compositor repair`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+GitHub Actions run `34954890087` exposed the actual remaining cross-host
+failure in both the locked Python base and locked MediaPipe jobs. On the
+headless Windows runner, HighGUI selected the supported minimum windowed
+presentation size before the mocked GUI became observable. A six-pixel-wide
+rounded primary-card accent then produced an empty native center rectangle
+after its radius was applied, and Pillow correctly rejected the inverted
+coordinates with `ValueError: x1 must be greater than or equal to x0`.
+
+The bounded fix makes `_draw_aa_rounded_rectangle()` skip only empty native
+interior/edge rectangles while retaining its supersampled corner tiles. This
+does not alter valid demo-size geometry, processing resolution, camera pixels,
+mask, color, risk, or recolor behavior. A regression test covers the exact
+even-width/radius case.
+
+Evidence before push:
+
+- Reproduced failing CI traceback from run `34954890087` annotations.
+- Presentation plus the two formerly failing integration tests:
+  `52 passed in 3.39 s`.
+- Complete locked local suite through the CI wrapper:
+  `356 passed in 67.06 s`.
+
+Final status remains `IN_PROGRESS` until all three GitHub Actions jobs pass on
+the pushed commit.
+
+---
+
+### `2026-09-15` - `T14` `CI portability gate complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+GitHub Actions run `34955489805` passed on runtime-fix commit
+`0f2fb52b6b17e648dbf6fd1ec4fe121cf46db4a6`:
+
+- `Locked Python 3.10 base`: `SUCCESS`.
+- `Locked MediaPipe 0.10.21 backend`: `SUCCESS`.
+- `Locked SCHP/OpenVINO contract`: `SUCCESS`.
+
+The two Conda annotations about the implicitly available `defaults` channel
+and the optional conda-pypi feature are warnings only; environment creation,
+locked installs, CLI/backend gates, and tests all completed successfully.
+Together with the local `356 passed in 67.06 s` result, this closes the
+cross-host T14 regression. The feature branch is ready for merge after this
+audit-only completion entry receives the same CI gate.

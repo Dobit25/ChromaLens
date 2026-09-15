@@ -152,7 +152,9 @@ def test_all_views_render_current_frame_on_copies() -> None:
         layout = layout_for_camera(240, 160)
         x0, y0, x1, y1 = layout.camera_rect
         assert rendered.shape == (layout.canvas_height, layout.canvas_width, 3)
-        assert np.array_equal(rendered[y0:y1, x0:x1], camera_view)
+        content = rendered[y0:y1, x0:x1]
+        assert np.array_equal(content[20:-20, 20:-20], camera_view[20:-20, 20:-20])
+        assert not np.array_equal(content[0, 0], camera_view[0, 0])
         assert rendered.dtype == np.uint8
         assert not np.shares_memory(rendered, result.packet.original_bgr)
 
@@ -287,7 +289,9 @@ def test_cli_rejects_non_finite_duration_and_severity() -> None:
     assert parser.parse_args(["--webcam"]).ui_mode == "product"
     assert parser.parse_args(["--webcam"]).theme == "dark"
     assert not parser.parse_args(["--webcam"]).camera_cover
+    assert not parser.parse_args(["--webcam"]).fullscreen
     assert parser.parse_args(["--webcam", "--camera-cover"]).camera_cover
+    assert parser.parse_args(["--webcam", "--fullscreen"]).fullscreen
 
 
 def test_local_video_runs_the_same_pipeline_to_clean_eof(tmp_path: Path) -> None:
@@ -316,6 +320,8 @@ def test_gui_session_records_display_submit_after_render(tmp_path: Path) -> None
 
     with (
         patch("chromalens.app.cv2.imshow") as imshow,
+        patch("chromalens.display.cv2.namedWindow"),
+        patch("chromalens.display.cv2.resizeWindow"),
         patch("chromalens.app.cv2.waitKey", return_value=ord("q")),
         patch("chromalens.app.cv2.getWindowProperty", return_value=1.0),
         patch("chromalens.app.cv2.destroyWindow"),

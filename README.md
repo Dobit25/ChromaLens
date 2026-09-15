@@ -433,8 +433,43 @@ The default `--ui-mode product` opens the user-facing Vietnamese presentation.
 The camera viewport contains only the camera image, assistive recolor, and
 garment outline. The header, result cards, and controls are composed on a
 larger canvas outside that viewport, so status text never obscures the garment.
-The camera pixels are not resized by the presentation layer and retain their
-original aspect ratio.
+The responsive compositor draws text, cards, and controls directly at the
+target display density instead of enlarging a small completed UI bitmap. The
+camera always retains its original aspect ratio.
+
+Windowed mode also uses native client pixels. ChromaLens creates a bounded
+initial window, explicitly sizes the HighGUI image area, observes user resize
+changes with `getWindowImageRect`, and recomposes the next presentation at the
+new client dimensions. A settled window therefore does not scale an already
+drawn Product UI bitmap. Entering fullscreen remembers the last windowed size;
+`Esc` restores that exact client area.
+
+On Windows, ChromaLens requests Per-Monitor DPI Aware V2 before OpenCV creates
+its first window. Therefore a display configured at 125% or 150% scale still
+uses its physical pixel dimensions instead of letting Windows enlarge a
+lower-resolution logical bitmap. Product typography is rendered from a
+TrueType font at the final physical size; rounded card chrome and shape-coded
+icons use cached selective supersampling. The camera and complete canvas are
+never supersampled, and native-size fullscreen output bypasses any final
+whole-canvas resize.
+
+The camera is presented as a layered device surface: a restrained shadow,
+outer bezel, rounded clipped camera/cover content, and an inset rim. Only the
+small corner neighborhoods are composited for clipping, so the source camera
+frame and analytical coordinate system remain unchanged and the full camera
+surface is not alpha-blended every frame.
+
+Start directly in fullscreen, or press `f` while the same pipeline is running:
+
+```powershell
+conda run --name lens python -m chromalens --webcam --fullscreen
+```
+
+Fullscreen requests a native-size presentation canvas and preserves the camera
+aspect ratio with letterbox/pillarbox bands. It does not change the bounded
+analysis resolution, SCHP's verified 512x512 graph, backend lifecycle, or
+mask/color/recolor coordinate system. Press `Esc` to return to the windowed
+view without stopping inference; press `q` to exit from either state.
 
 For development, benchmark review, or a technical judging walkthrough, switch
 to the separate presentation mode without changing the analytical pipeline:
@@ -464,35 +499,65 @@ black with light branding in Light theme:
 conda run --name lens python -m chromalens --webcam --camera-cover
 ```
 
-This is a display/privacy cover only: local capture and analysis continue
-underneath so removing the cover restores the current result immediately. It
-does not pause the camera, inference worker, or metrics and must not be
-described as a camera hardware privacy switch.
+The cover explicitly says that the image is hidden and shows the `C` key needed
+to reveal it. This is a display/privacy cover only: local capture and analysis
+continue underneath so removing the cover restores the current result
+immediately. It does not pause the camera, inference worker, or metrics and
+must not be described as a camera hardware privacy switch.
 
 The Product UI shows only the named garment colour and swatch, a textual colour
 confidence, an actionable distinguishability state, lighting guidance, matching
 guidance, the selected CVD profile, and whether assistive recoloring is active.
-Its cyan camera frame establishes the live image as the focal point; the main
-colour card receives the strongest accent, secondary cards use quieter
-surfaces, and the footer groups camera/AI/detection/assistance into a textual
-status bar. Cards are informational and deliberately do not imitate clickable
-controls.
+The large camera viewport establishes the live image as the focal point. A
+four-corner garment guide appears only while the app is waiting and disappears
+after detection; it represents a garment area, not a single-pixel color picker.
+Rounded, low-border cards use a friendly hierarchy and restrained cyan, mint,
+amber, and violet accents. Distinct garment, progress, ready, warning, risk,
+lighting, and matching glyphs accompany text so hue is never the only status
+channel. The main colour result is strongest, a lighting warning moves upward
+when the user can act on it, and unavailable results are visually quieter.
+
+Product copy follows one presentation state: camera blocked, waiting for a
+garment, analyzing, or result ready. A blocked camera never produces a
+misleading lighting recommendation. The compact `[P] Deutan` pill exposes the
+keyboard control without implying mouse interaction, and the Product footer
+contains only one state, one action, and compact keys. Cards remain
+informational: there are no misleading hex values, calibrated-probability
+claims, diagnosis badges, pixel-picker controls, or continuous animations.
 The Diagnostic UI additionally shows backend/device, pipeline and SCHP
 inference FPS, keyframe/propagation state, pre-render frame age, capture and
 inference drops, raw RGB/margin, mask confidence, risk score, frame ID, and the
 current degraded reason. Status is always expressed in text and card shapes;
 colour is never the only carrier of meaning.
 
-The webcam command requests the measured demo mode `480x360`; OpenCV/camera
-drivers may select the nearest supported mode (the development camera returned
-`640x360`). This changes only capture/output cost: SCHP preprocessing remains
-the verified 512x512 graph.
+The webcam command requests a `1280x720` capture/display stream by default while
+bounding analysis to `480x360` (aspect-fit, so 16:9 becomes `480x270`). The
+high-resolution source supplies the visible camera texture; a mapped analytical
+overlay supplies the garment mask, outline, and assistive rendering. This keeps
+fullscreen output sharper without asking SCHP to process a high-resolution
+frame. OpenCV/camera drivers may still select their nearest supported capture
+mode, and SCHP preprocessing remains the verified 512x512 graph.
 
 Request a capture resolution or choose another camera when required:
 
 ```powershell
 conda run --name lens python -m chromalens --webcam --camera-index 1 --width 1280 --height 720
+conda run --name lens python -m chromalens --webcam --width 1280 --height 720 --analysis-width 480 --analysis-height 360
 ```
+
+If the viewport is uniformly black, isolate the input before investigating AI
+or presentation code:
+
+```powershell
+conda run --name lens python -m chromalens --webcam --preview-only
+conda run --name lens python -m chromalens --webcam --preview-only --fullscreen
+conda run --name lens python -m chromalens --webcam --preview-only --camera-index 1
+```
+
+If the first command is also black, inspect the physical privacy shutter, OS
+camera privacy setting, driver, and camera index. ChromaLens emits a console
+warning when an opened live source is uniformly dark; it cannot override a
+hardware shutter or operating-system privacy block.
 
 Process a local sample video through the same analytical and rendering path
 without opening a camera:
@@ -510,8 +575,9 @@ conda run --name lens python -m chromalens --webcam --schp-runtime pytorch
 conda run --name lens python -m chromalens --webcam --backend mediapipe-selfie-torso
 ```
 
-Press `q`, Escape, or close the window to exit. Automated/headless checks can
-avoid GUI and bound execution explicitly:
+Press `q` or close the window to exit. `Esc` first leaves fullscreen; from an
+already windowed view it exits for backward compatibility. Automated/headless
+checks can avoid GUI and bound execution explicitly:
 
 ```powershell
 conda run --name lens python -m chromalens --video C:\path\to\sample.mp4 --no-display
@@ -528,6 +594,8 @@ medical diagnosis:
 - `c`: cover or reveal only the displayed camera viewport.
 - `t`: switch the presentation palette between `dark` and `light`.
 - `u`: switch the presentation shell between `product` and `diagnostic`.
+- `f`: switch the existing window between fullscreen and windowed without
+  restarting inference; `Esc` returns from fullscreen.
 - `v`: cycle views; keys `1`-`5` select `assistive`, `original`, `mask`,
   `risk`, and `diagnostic` directly.
 
