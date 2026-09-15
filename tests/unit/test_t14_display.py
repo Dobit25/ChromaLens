@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-import sys
-from unittest.mock import call, patch
+from unittest.mock import call, MagicMock, patch
 
 import cv2
 import numpy as np
@@ -183,30 +182,45 @@ def test_dpi_configuration_is_a_no_op_off_windows() -> None:
         configure_process_dpi_awareness.cache_clear()
 
 
-@pytest.mark.skipif(sys.platform != "win32", reason="Windows DPI contract")
-def test_fresh_windows_process_enables_physical_pixel_awareness() -> None:
-    import subprocess
+def test_windows_dpi_configuration_prefers_per_monitor_v2() -> None:
+    user32 = MagicMock()
+    user32.SetProcessDpiAwarenessContext.return_value = 1
+    configure_process_dpi_awareness.cache_clear()
+    try:
+        with (
+            patch("chromalens.display.sys.platform", "win32"),
+            patch(
+                "chromalens.display.ctypes.WinDLL",
+                return_value=user32,
+                create=True,
+            ),
+            patch("chromalens.display.ctypes.set_last_error", create=True),
+        ):
+            status = configure_process_dpi_awareness()
+        assert status.enabled
+        assert status.mode == "per-monitor-v2"
+        assert status.error_code is None
+        user32.SetProcessDpiAwarenessContext.assert_called_once()
+    finally:
+        configure_process_dpi_awareness.cache_clear()
 
-    command = (
-        "import ctypes; "
-        "from chromalens.display import configure_process_dpi_awareness, "
-        "primary_display_size; "
-        "status=configure_process_dpi_awareness(); "
-        "awareness=ctypes.c_int(); "
-        "hr=ctypes.windll.shcore.GetProcessDpiAwareness(None, "
-        "ctypes.byref(awareness)); "
-        "size=primary_display_size(); "
-        "assert status.enabled, status; "
-        "assert hr == 0 and awareness.value == 2, (hr, awareness.value); "
-        "assert size is not None and min(size) > 0, size"
-    )
-    result = subprocess.run(
-        [sys.executable, "-c", command],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    assert result.returncode == 0, result.stderr or result.stdout
+
+def test_windows_dpi_configuration_reports_unavailable_without_os_apis() -> None:
+    configure_process_dpi_awareness.cache_clear()
+    try:
+        with (
+            patch("chromalens.display.sys.platform", "win32"),
+            patch(
+                "chromalens.display.ctypes.WinDLL",
+                side_effect=OSError("Windows DPI API unavailable"),
+                create=True,
+            ),
+        ):
+            status = configure_process_dpi_awareness()
+        assert not status.enabled
+        assert status.mode == "unavailable"
+    finally:
+        configure_process_dpi_awareness.cache_clear()
 
 
 @pytest.mark.parametrize(

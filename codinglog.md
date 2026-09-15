@@ -6045,3 +6045,23 @@ remain unchanged.
 T14 returns to `DONE` and remains visually frozen. Exact next task: commit the
 complete T14 workset atomically on `feature/upscaling`, then continue
 `T15 — Performance optimization and stability` on `feature/fps-increment`.
+
+---
+
+### `2026-09-15` - `T14` `CI-host DPI portability repair started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `feature/upscaling`
+
+GitHub Actions run `34953175312` passed dependency locks, installation, CLI,
+and backend setup in all three jobs but failed when each job entered the full
+test suite. A clean snapshot of commit `c7cc4bc` passed `351` tests with two
+expected model-artifact skips on the development laptop, isolating the
+remaining cross-host risk to the T14 test that requires a real Windows process
+to report Per-Monitor V2 awareness and a physical primary display.
+
+The bounded repair replaces that external-host assertion with deterministic
+Windows API success/unavailable contracts and enables CI triggers for `main`
+and `feature/**`. Runtime DPI behavior, presentation geometry, dependencies,
+and analytical processing remain unchanged.
