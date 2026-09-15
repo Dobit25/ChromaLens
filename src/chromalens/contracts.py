@@ -91,6 +91,11 @@ class ColorCluster:
     original_name: str
     name_scores: dict[str, float]
     color_margin: float | None = None
+    level2_key: str | None = None
+    level2_label_vi: str | None = None
+    level2_scores: dict[str, float] | None = None
+    top_level2_predictions: tuple[tuple[str, float], ...] = ()
+    naming_uncertain: bool = False
 
     def __post_init__(self) -> None:
         if not 0.0 <= self.ratio <= 1.0:
@@ -100,6 +105,12 @@ class ColorCluster:
         _validate_binary_mask(self.submask, "submask")
         if not self.original_name.strip():
             raise ValueError("original_name must not be empty")
+        if (self.level2_key is None) != (self.level2_label_vi is None):
+            raise ValueError("level2 key and label must be provided together")
+        if self.level2_key is not None and not self.level2_key.strip():
+            raise ValueError("level2_key must not be empty")
+        if self.level2_label_vi is not None and not self.level2_label_vi.strip():
+            raise ValueError("level2_label_vi must not be empty")
 
 
 @dataclass(frozen=True, slots=True)

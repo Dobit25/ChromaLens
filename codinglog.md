@@ -51,6 +51,7 @@ This table is intentionally empty until an agent starts the plan.
 | T11-UI-5 | Toggleable theme-inverted camera display cover | `DONE` | Repository owner + Codex | 2026-08-25 12:10 +07:00 | 2026-08-25 17:30 +07:00 | Tracked implementation toggles with `c`; full 302-test release gate passes |
 | T11-DECK-1 | Six-feature competition HTML slide deck | `DONE` | Repository owner + Codex | 2026-08-25 14:40 +07:00 | 2026-08-25 17:30 +07:00 | Offline interactive deck; owner-selected amber token, structural tests, and visual QA pass |
 | T12-T17-GATE-0 | Post-MVP scope and evaluation-contract freeze | `DONE` | Repository owner + Codex | 2026-09-08 21:24 +07:00 | 2026-09-08 21:56 +07:00 | Protocol 2.0.0, 176 cases, 44 metrics, strict baseline validation, and 310-test suite |
+| T12 | Extended color vocabulary and uncertainty | `DONE` | Repository owner + Codex | 2026-09-15 20:15 +07:00 | 2026-09-15 20:50 +07:00 | Protocol 2.1: 50/50 digital anchors, 3/3 uncertainty cases, 150/150 physical IDs honestly NOT_RUN, strict validation, and 417-test suite |
 | T14 | Fullscreen and resolution-independent presentation | `DONE` | Repository owner + Codex | 2026-09-09 04:08 +07:00 | 2026-09-15 | Shared camera/sidebar geometry, responsive fallback, and 353-test suite verified |
 
 ## 3. Active blockers
@@ -80,6 +81,7 @@ Use this section only for implementation decisions that affect later tasks. Deta
 | DEC-013 | 2026-08-24 | Ship the T07 matching CSV as byte-identical package data and resolve it beside the installed module, while retaining the root audit copy and an equality test. | T07, T08, T11 packaging | T11 completion entry |
 | DEC-014 | 2026-08-24 | After owner reopen, promote verified SCHP-ATR at upstream 512 input as the primary demo backend, prefer checksummed FP32 OpenVINO, preserve explicit MediaPipe fallback, and reject faster 256/384 variants because class/mask fidelity degraded. | T10, T11 demo/handoff | T10 owner-reopened completion entry |
 | DEC-015 | 2026-09-08 | Add T12-T17 as a separate post-MVP phase under protocol 2.0.0; preserve T09 v1 history, allow T12-T16 parallel work only inside frozen ownership, rerun T15 acceptance after integration, and keep T17 strictly last. | T12-T17 | Post-MVP Gate 0 completion entry |
+| DEC-016 | 2026-09-15 | Revise only the T12 contract additively to protocol 2.1.0: retain 11 level-one families, adopt the approved 50-label Vietnamese level-two palette, and require 150 physical observations (50 labels x neutral/warm/low); preserve T09 and protocol 2.0.0 history unchanged. | T12 | T12 protocol 2.1 start entry |
 
 ## 5. Chronological entries
 
@@ -6120,3 +6122,110 @@ locked installs, CLI/backend gates, and tests all completed successfully.
 Together with the local `356 passed in 67.06 s` result, this closes the
 cross-host T14 regression. The feature branch is ready for merge after this
 audit-only completion entry receives the same CI gate.
+
+---
+
+### `2026-09-15 20:15 +07:00` - `T12` `50-label protocol 2.1 implementation started`
+
+**Status:** `IN_PROGRESS`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `integration/t12-two-tier-color`
+**Plan reference:** `plan.md#t12--extended-color-vocabulary-and-uncertainty`
+
+#### Approved scope revision
+
+The repository owner explicitly approved using all 50 Vietnamese level-two
+labels from `feature/two-tier-color-expansion` and expanding the T12 physical
+matrix to 150 observations so every label is represented under neutral, warm,
+and low lighting. This supersedes only the T12 counts in protocol 2.0.0; it
+does not edit or reinterpret T09 evidence or existing protocol-2.0 results.
+
+#### Smallest implementation
+
+1. Freeze an additive protocol/schema/metric/case/ownership revision 2.1.0.
+2. Port the 50-anchor naming contract while preserving the 11-family output.
+3. Apply the frozen uncertainty rule without presenting heuristic scores as
+   calibrated probability.
+4. Integrate the result into the current T14 Product/Diagnostic presentation.
+5. Store deterministic digital evidence plus honest `NOT_RUN` rows for any
+   unavailable physical observations, then run strict validation and the full
+   Python 3.10 `lens` test suite.
+
+#### Starting state
+
+- Baseline: `8658ed1d3709969299c34374bc373bdc7654e469` on current local `main`.
+- T09 protocol 1.0.0 and post-MVP protocol 2.0.0 are frozen historical
+  contracts and will remain byte-unchanged.
+- The contributor branch is not merged wholesale because it conflicts with
+  current T14 presentation work and mutates the frozen T09 registry.
+- Physical capture availability at start: `NOT RUN`; no accuracy claim will
+  be inferred from synthetic anchors.
+
+---
+
+### `2026-09-15 20:50 +07:00` - `T12` `50-label two-tier naming complete`
+
+**Status:** `DONE`
+**Owner/agent:** Repository owner + Codex
+**Branch:** `integration/t12-two-tier-color`
+**Implementation commit:** `d4aaf7002e9fe67d096f02c60b17eb26ee0d6397`
+
+#### Outcome
+
+- Preserved the exact historical T04 11-family classifier, then refined the
+  selected family into one of 50 stable level-two keys/Vietnamese labels.
+- Added typed level-two diagnostic fields without replacing the retained
+  original corrected RGB/Lab values used by risk and matching.
+- Product UI displays `Không chắc chắn` when level-two margin is below `0.10`
+  or lighting is `poor`; nearest candidates remain diagnostic-only.
+- Froze additive protocol/schema/metrics/cases/ownership version 2.1.0. T09
+  and version 2.0.0 files were not modified.
+- Declared all 150 physical observation IDs (50 labels x neutral/warm/low).
+  Because no consented/licensed inputs were supplied, every physical row is
+  explicitly `NOT_RUN`; no physical accuracy or lighting-stability claim is
+  made.
+
+#### Evidence and commands
+
+- Initial focused regression after the first port:
+  `conda run --name lens python -m pytest tests/unit/test_t04_color_naming.py tests/unit/test_t12_two_tier_color.py tests/evaluation/test_t12_protocol_v21.py tests/evaluation/test_t12_color_evaluation.py tests/unit/test_t04_color_extraction.py tests/unit/test_presentation.py tests/integration/test_t08_pipeline.py -q`
+  -> `146 passed`.
+- First complete regression:
+  `conda run --name lens python -m pytest -q`
+  -> exit `1`, `416 passed, 1 failed`; the expanded anchors had changed two
+  historical T09 family outcomes. The smallest correction restored the frozen
+  T04 level-one anchor set and made level two hierarchical.
+- Post-correction compatibility/contract regression:
+  `conda run --name lens python -m pytest -q tests/evaluation/test_t09_color_science_eval.py tests/unit/test_t04_color_naming.py tests/unit/test_t12_two_tier_color.py tests/evaluation/test_t12_protocol_v21.py tests/evaluation/test_t12_color_evaluation.py`
+  -> exit `0`, `74 passed`.
+- Final complete regression:
+  `conda run --name lens python -m pytest -q`
+  -> exit `0`, `417 passed in 58.24 s`.
+- Evidence generation:
+  `conda run --name lens python scripts/t12_color_evaluation.py`
+  -> exit `0`; generated 203 case rows: 53 `COMPLETE`, 150 `NOT_RUN`.
+- Strict result validation:
+  `conda run --name lens python scripts/post_mvp_result_validation.py evaluation/results/curated/post_mvp/t12/result.json`
+  -> exit `0`; `cases=203 metrics=6 artifacts_verified=2`.
+
+The curated result is intentionally `PARTIAL` because physical evidence is
+unavailable, while the revised T12 implementation task is `DONE`: its DoD
+requires all 150 IDs to be reported with measured evidence or explicit
+`NOT_RUN`, not fabricated captures.
+
+#### Revised Definition of Done
+
+- [x] All outputs retain one of the 11 stable T04 level-one families.
+- [x] All 50 approved level-two keys, Vietnamese labels, RGB anchors, and CSS
+  provenance names are frozen and cross-validated.
+- [x] Low-margin and poor-light Product states show `Không chắc chắn`; exact
+  threshold `0.10` passes, and diagnostic candidates remain available.
+- [x] All 50 digital anchors and three boundary cases pass.
+- [x] All 150 physical observation IDs exist across neutral/warm/low lighting
+  and are truthfully recorded `NOT_RUN` with reasons.
+- [x] Scores/margins are documented as deterministic heuristics, not
+  calibrated probabilities.
+- [x] Historical T09 and protocol-2.0 contracts remain unchanged, and the full
+  repository suite passes.
+
+**Exact next task:** T13 - Standalone-garment evaluation and manual ROI fallback.

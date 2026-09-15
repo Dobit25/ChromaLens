@@ -1,0 +1,51 @@
+level1_key,level1_label_vi,level2_key,level2_label_vi,r,g,b,css_anchor_name
+black,Đen,black,Đen,0,0,0,black
+grey,Xám,dim_gray,Đen nhạt,105,105,105,dimgray
+blue,Xanh dương,blue,Xanh dương,0,0,255,blue
+blue,Xanh dương,navy,Xanh hải quân,0,0,128,navy
+blue,Xanh dương,cyan,Lục lam,0,255,255,cyan
+blue,Xanh dương,sky_blue,Xanh da trời,135,206,235,skyblue
+blue,Xanh dương,royal_blue,Xanh hoàng gia,65,105,225,royalblue
+blue,Xanh dương,light_blue,Xanh lam nhạt,173,216,230,lightblue
+brown,Nâu,brown,Nâu,165,42,42,brown
+brown,Nâu,dark_brown,Nâu sẫm,139,69,19,saddlebrown
+brown,Nâu,peru,Da bò,205,133,63,peru
+brown,Nâu,chocolate,Sô-cô-la,210,105,30,chocolate
+brown,Nâu,sandy_brown,Nâu nhạt,244,164,96,sandybrown
+yellow,Vàng,dark_khaki,Kaki đậm,189,183,107,darkkhaki
+grey,Xám,grey,Xám,128,128,128,gray
+grey,Xám,light_grey,Xám nhạt,211,211,211,lightgray
+grey,Xám,ash_grey,Xám tro,192,192,192,silver
+grey,Xám,silver,Bạc,169,169,169,darkgray
+grey,Xám,slate_grey,Ghi,112,128,144,slategray
+green,Xanh lá,green,Xanh lá,0,128,0,green
+green,Xanh lá,lime,Xanh lá mạ,0,255,0,lime
+brown,Nâu,olive,Xanh ô liu,128,128,0,olive
+grey,Xám,teal,Xanh mòng két,0,128,128,teal
+green,Xanh lá,sea_green,Xanh ngọc,60,179,113,mediumseagreen
+green,Xanh lá,moss_green,Xanh rêu,85,107,47,darkolivegreen
+orange,Cam,orange,Cam,255,165,0,orange
+orange,Cam,dark_orange,Cam đậm,255,140,0,darkorange
+white,Trắng,peach,Cam đào,255,218,185,peachpuff
+brown,Nâu,coral,San hô,255,127,80,coral
+pink,Hồng,pink,Hồng,255,192,203,pink
+pink,Hồng,deep_pink,Hồng đậm,255,20,147,deeppink
+pink,Hồng,hot_pink,Hồng cánh sen,255,105,180,hotpink
+pink,Hồng,light_pink,Hồng nhạt,255,182,193,lightpink
+purple,Tím,purple,Tím,128,0,128,purple
+blue,Xanh dương,indigo,Tím than,75,0,130,indigo
+purple,Tím,violet,Tím nhạt,238,130,238,violet
+purple,Tím,magenta,Hồng sẫm,255,0,255,magenta
+purple,Tím,orchid,Tím hoa cà,186,85,211,mediumorchid
+red,Đỏ,red,Đỏ,255,0,0,red
+brown,Nâu,maroon,Đỏ tía,128,0,0,maroon
+red,Đỏ,firebrick,Đỏ gạch,178,34,34,firebrick
+red,Đỏ,crimson,Đỏ thẫm,220,20,60,crimson
+white,Trắng,white,Trắng,255,255,255,white
+white,Trắng,ivory,Trắng ngà,255,255,240,ivory
+white,Trắng,white_smoke,Trắng khói,245,245,245,whitesmoke
+white,Trắng,beige,Be,245,245,220,beige
+yellow,Vàng,yellow,Vàng,255,255,0,yellow
+yellow,Vàng,khaki,Vàng cát,240,230,140,khaki
+yellow,Vàng,gold,Vàng đồng,255,215,0,gold
+white,Trắng,light_yellow,Vàng chanh,255,255,224,lightyellow
