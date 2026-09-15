@@ -1,0 +1,204 @@
+case_id,fixture_id,status,lighting,expected_level1,expected_level2,observed_level1,observed_level2,display_label_vi,margin,uncertain,reason
+PM-COLOR-CONTRACT-BLACK,extended-black,COMPLETE,digital,black,black,black,black,Đen,1.000000000,false,deterministic anchor contract
+PM-COLOR-CONTRACT-DIM-GRAY,extended-dim_gray,COMPLETE,digital,grey,dim_gray,grey,dim_gray,Đen nhạt,0.687971743,false,deterministic anchor contract
+PM-COLOR-CONTRACT-BLUE,extended-blue,COMPLETE,digital,blue,blue,blue,blue,Xanh dương,0.999972391,false,deterministic anchor contract
+PM-COLOR-CONTRACT-NAVY,extended-navy,COMPLETE,digital,blue,navy,blue,navy,Xanh hải quân,0.889368092,false,deterministic anchor contract
+PM-COLOR-CONTRACT-CYAN,extended-cyan,COMPLETE,digital,blue,cyan,blue,cyan,Lục lam,0.998048192,false,deterministic anchor contract
+PM-COLOR-CONTRACT-SKY-BLUE,extended-sky_blue,COMPLETE,digital,blue,sky_blue,blue,sky_blue,Xanh da trời,0.816760797,false,deterministic anchor contract
+PM-COLOR-CONTRACT-ROYAL-BLUE,extended-royal_blue,COMPLETE,digital,blue,royal_blue,blue,royal_blue,Xanh hoàng gia,0.998892370,false,deterministic anchor contract
+PM-COLOR-CONTRACT-LIGHT-BLUE,extended-light_blue,COMPLETE,digital,blue,light_blue,blue,light_blue,Xanh lam nhạt,0.816937711,false,deterministic anchor contract
+PM-COLOR-CONTRACT-BROWN,extended-brown,COMPLETE,digital,brown,brown,brown,brown,Nâu,0.882110358,false,deterministic anchor contract
+PM-COLOR-CONTRACT-DARK-BROWN,extended-dark_brown,COMPLETE,digital,brown,dark_brown,brown,dark_brown,Nâu sẫm,0.968046481,false,deterministic anchor contract
+PM-COLOR-CONTRACT-PERU,extended-peru,COMPLETE,digital,brown,peru,brown,peru,Da bò,0.815605453,false,deterministic anchor contract
+PM-COLOR-CONTRACT-CHOCOLATE,extended-chocolate,COMPLETE,digital,brown,chocolate,brown,chocolate,Sô-cô-la,0.900071568,false,deterministic anchor contract
+PM-COLOR-CONTRACT-SANDY-BROWN,extended-sandy_brown,COMPLETE,digital,brown,sandy_brown,brown,sandy_brown,Nâu nhạt,0.829900209,false,deterministic anchor contract
+PM-COLOR-CONTRACT-DARK-KHAKI,extended-dark_khaki,COMPLETE,digital,yellow,dark_khaki,yellow,dark_khaki,Kaki đậm,0.943981575,false,deterministic anchor contract
+PM-COLOR-CONTRACT-GREY,extended-grey,COMPLETE,digital,grey,grey,grey,grey,Xám,0.637777298,false,deterministic anchor contract
+PM-COLOR-CONTRACT-LIGHT-GREY,extended-light_grey,COMPLETE,digital,grey,light_grey,grey,light_grey,Xám nhạt,0.570679994,false,deterministic anchor contract
+PM-COLOR-CONTRACT-ASH-GREY,extended-ash_grey,COMPLETE,digital,grey,ash_grey,grey,ash_grey,Xám tro,0.512416274,false,deterministic anchor contract
+PM-COLOR-CONTRACT-SILVER,extended-silver,COMPLETE,digital,grey,silver,grey,silver,Bạc,0.624845064,false,deterministic anchor contract
+PM-COLOR-CONTRACT-SLATE-GREY,extended-slate_grey,COMPLETE,digital,grey,slate_grey,grey,slate_grey,Ghi,0.733751633,false,deterministic anchor contract
+PM-COLOR-CONTRACT-GREEN,extended-green,COMPLETE,digital,green,green,green,green,Xanh lá,0.996189995,false,deterministic anchor contract
+PM-COLOR-CONTRACT-LIME,extended-lime,COMPLETE,digital,green,lime,green,lime,Xanh lá mạ,0.999993370,false,deterministic anchor contract
+PM-COLOR-CONTRACT-OLIVE,extended-olive,COMPLETE,digital,brown,olive,brown,olive,Xanh ô liu,0.998329224,false,deterministic anchor contract
+PM-COLOR-CONTRACT-TEAL,extended-teal,COMPLETE,digital,grey,teal,grey,teal,Xanh mòng két,0.985634783,false,deterministic anchor contract
+PM-COLOR-CONTRACT-SEA-GREEN,extended-sea_green,COMPLETE,digital,green,sea_green,green,sea_green,Xanh ngọc,0.996144745,false,deterministic anchor contract
+PM-COLOR-CONTRACT-MOSS-GREEN,extended-moss_green,COMPLETE,digital,green,moss_green,green,moss_green,Xanh rêu,0.998541058,false,deterministic anchor contract
+PM-COLOR-CONTRACT-ORANGE,extended-orange,COMPLETE,digital,orange,orange,orange,orange,Cam,0.892613380,false,deterministic anchor contract
+PM-COLOR-CONTRACT-DARK-ORANGE,extended-dark_orange,COMPLETE,digital,orange,dark_orange,orange,dark_orange,Cam đậm,0.892613380,false,deterministic anchor contract
+PM-COLOR-CONTRACT-PEACH,extended-peach,COMPLETE,digital,white,peach,white,peach,Cam đào,0.879054086,false,deterministic anchor contract
+PM-COLOR-CONTRACT-CORAL,extended-coral,COMPLETE,digital,brown,coral,brown,coral,San hô,0.915125798,false,deterministic anchor contract
+PM-COLOR-CONTRACT-PINK,extended-pink,COMPLETE,digital,pink,pink,pink,pink,Hồng,0.452581620,false,deterministic anchor contract
+PM-COLOR-CONTRACT-DEEP-PINK,extended-deep_pink,COMPLETE,digital,pink,deep_pink,pink,deep_pink,Hồng đậm,0.979223519,false,deterministic anchor contract
+PM-COLOR-CONTRACT-HOT-PINK,extended-hot_pink,COMPLETE,digital,pink,hot_pink,pink,hot_pink,Hồng cánh sen,0.978940174,false,deterministic anchor contract
+PM-COLOR-CONTRACT-LIGHT-PINK,extended-light_pink,COMPLETE,digital,pink,light_pink,pink,light_pink,Hồng nhạt,0.452546641,false,deterministic anchor contract
+PM-COLOR-CONTRACT-PURPLE,extended-purple,COMPLETE,digital,purple,purple,purple,purple,Tím,0.988974023,false,deterministic anchor contract
+PM-COLOR-CONTRACT-INDIGO,extended-indigo,COMPLETE,digital,blue,indigo,blue,indigo,Tím than,0.889280529,false,deterministic anchor contract
+PM-COLOR-CONTRACT-VIOLET,extended-violet,COMPLETE,digital,purple,violet,purple,violet,Tím nhạt,0.960144464,false,deterministic anchor contract
+PM-COLOR-CONTRACT-MAGENTA,extended-magenta,COMPLETE,digital,purple,magenta,purple,magenta,Hồng sẫm,0.999480019,false,deterministic anchor contract
+PM-COLOR-CONTRACT-ORCHID,extended-orchid,COMPLETE,digital,purple,orchid,purple,orchid,Tím hoa cà,0.955273883,false,deterministic anchor contract
+PM-COLOR-CONTRACT-RED,extended-red,COMPLETE,digital,red,red,red,red,Đỏ,0.998031044,false,deterministic anchor contract
+PM-COLOR-CONTRACT-MAROON,extended-maroon,COMPLETE,digital,brown,maroon,brown,maroon,Đỏ tía,0.882702903,false,deterministic anchor contract
+PM-COLOR-CONTRACT-FIREBRICK,extended-firebrick,COMPLETE,digital,red,firebrick,red,firebrick,Đỏ gạch,0.939554406,false,deterministic anchor contract
+PM-COLOR-CONTRACT-CRIMSON,extended-crimson,COMPLETE,digital,red,crimson,red,crimson,Đỏ thẫm,0.939050192,false,deterministic anchor contract
+PM-COLOR-CONTRACT-WHITE,extended-white,COMPLETE,digital,white,white,white,white,Trắng,0.284553777,false,deterministic anchor contract
+PM-COLOR-CONTRACT-IVORY,extended-ivory,COMPLETE,digital,white,ivory,white,ivory,Trắng ngà,0.375068166,false,deterministic anchor contract
+PM-COLOR-CONTRACT-WHITE-SMOKE,extended-white_smoke,COMPLETE,digital,white,white_smoke,white,white_smoke,Trắng khói,0.287007226,false,deterministic anchor contract
+PM-COLOR-CONTRACT-BEIGE,extended-beige,COMPLETE,digital,white,beige,white,beige,Be,0.328025014,false,deterministic anchor contract
+PM-COLOR-CONTRACT-YELLOW,extended-yellow,COMPLETE,digital,yellow,yellow,yellow,yellow,Vàng,0.981968772,false,deterministic anchor contract
+PM-COLOR-CONTRACT-KHAKI,extended-khaki,COMPLETE,digital,yellow,khaki,yellow,khaki,Vàng cát,0.943828224,false,deterministic anchor contract
+PM-COLOR-CONTRACT-GOLD,extended-gold,COMPLETE,digital,yellow,gold,yellow,gold,Vàng đồng,0.981781758,false,deterministic anchor contract
+PM-COLOR-CONTRACT-LIGHT-YELLOW,extended-light_yellow,COMPLETE,digital,white,light_yellow,white,light_yellow,Vàng chanh,0.359395683,false,deterministic anchor contract
+PM-COLOR-UNCERTAIN-01,uncertain-boundary-1,COMPLETE,good,diagnostic-retained,uncertainty-gate,diagnostic-retained,not-presented,Không chắc chắn,0.099999000,true,frozen margin/lighting truth table
+PM-COLOR-UNCERTAIN-02,uncertain-boundary-2,COMPLETE,good,diagnostic-retained,uncertainty-gate,diagnostic-retained,threshold-accepted,diagnostic candidate,0.100000000,false,frozen margin/lighting truth table
+PM-COLOR-UNCERTAIN-03,uncertain-boundary-3,COMPLETE,poor,diagnostic-retained,uncertainty-gate,diagnostic-retained,not-presented,Không chắc chắn,0.800000000,true,frozen margin/lighting truth table
+PM-COLOR-P01-BLACK-NEUTRAL,physical-01-black,NOT_RUN,neutral,physical-reference-unavailable,black,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P01-BLACK-WARM,physical-01-black,NOT_RUN,warm,physical-reference-unavailable,black,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P01-BLACK-LOW,physical-01-black,NOT_RUN,low,physical-reference-unavailable,black,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P02-DIM-GRAY-NEUTRAL,physical-02-dim_gray,NOT_RUN,neutral,physical-reference-unavailable,dim_gray,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P02-DIM-GRAY-WARM,physical-02-dim_gray,NOT_RUN,warm,physical-reference-unavailable,dim_gray,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P02-DIM-GRAY-LOW,physical-02-dim_gray,NOT_RUN,low,physical-reference-unavailable,dim_gray,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P03-BLUE-NEUTRAL,physical-03-blue,NOT_RUN,neutral,physical-reference-unavailable,blue,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P03-BLUE-WARM,physical-03-blue,NOT_RUN,warm,physical-reference-unavailable,blue,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P03-BLUE-LOW,physical-03-blue,NOT_RUN,low,physical-reference-unavailable,blue,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P04-NAVY-NEUTRAL,physical-04-navy,NOT_RUN,neutral,physical-reference-unavailable,navy,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P04-NAVY-WARM,physical-04-navy,NOT_RUN,warm,physical-reference-unavailable,navy,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P04-NAVY-LOW,physical-04-navy,NOT_RUN,low,physical-reference-unavailable,navy,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P05-CYAN-NEUTRAL,physical-05-cyan,NOT_RUN,neutral,physical-reference-unavailable,cyan,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P05-CYAN-WARM,physical-05-cyan,NOT_RUN,warm,physical-reference-unavailable,cyan,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P05-CYAN-LOW,physical-05-cyan,NOT_RUN,low,physical-reference-unavailable,cyan,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P06-SKY-BLUE-NEUTRAL,physical-06-sky_blue,NOT_RUN,neutral,physical-reference-unavailable,sky_blue,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P06-SKY-BLUE-WARM,physical-06-sky_blue,NOT_RUN,warm,physical-reference-unavailable,sky_blue,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P06-SKY-BLUE-LOW,physical-06-sky_blue,NOT_RUN,low,physical-reference-unavailable,sky_blue,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P07-ROYAL-BLUE-NEUTRAL,physical-07-royal_blue,NOT_RUN,neutral,physical-reference-unavailable,royal_blue,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P07-ROYAL-BLUE-WARM,physical-07-royal_blue,NOT_RUN,warm,physical-reference-unavailable,royal_blue,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P07-ROYAL-BLUE-LOW,physical-07-royal_blue,NOT_RUN,low,physical-reference-unavailable,royal_blue,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P08-LIGHT-BLUE-NEUTRAL,physical-08-light_blue,NOT_RUN,neutral,physical-reference-unavailable,light_blue,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P08-LIGHT-BLUE-WARM,physical-08-light_blue,NOT_RUN,warm,physical-reference-unavailable,light_blue,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P08-LIGHT-BLUE-LOW,physical-08-light_blue,NOT_RUN,low,physical-reference-unavailable,light_blue,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P09-BROWN-NEUTRAL,physical-09-brown,NOT_RUN,neutral,physical-reference-unavailable,brown,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P09-BROWN-WARM,physical-09-brown,NOT_RUN,warm,physical-reference-unavailable,brown,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P09-BROWN-LOW,physical-09-brown,NOT_RUN,low,physical-reference-unavailable,brown,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P10-DARK-BROWN-NEUTRAL,physical-10-dark_brown,NOT_RUN,neutral,physical-reference-unavailable,dark_brown,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P10-DARK-BROWN-WARM,physical-10-dark_brown,NOT_RUN,warm,physical-reference-unavailable,dark_brown,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P10-DARK-BROWN-LOW,physical-10-dark_brown,NOT_RUN,low,physical-reference-unavailable,dark_brown,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P11-PERU-NEUTRAL,physical-11-peru,NOT_RUN,neutral,physical-reference-unavailable,peru,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P11-PERU-WARM,physical-11-peru,NOT_RUN,warm,physical-reference-unavailable,peru,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P11-PERU-LOW,physical-11-peru,NOT_RUN,low,physical-reference-unavailable,peru,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P12-CHOCOLATE-NEUTRAL,physical-12-chocolate,NOT_RUN,neutral,physical-reference-unavailable,chocolate,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P12-CHOCOLATE-WARM,physical-12-chocolate,NOT_RUN,warm,physical-reference-unavailable,chocolate,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P12-CHOCOLATE-LOW,physical-12-chocolate,NOT_RUN,low,physical-reference-unavailable,chocolate,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P13-SANDY-BROWN-NEUTRAL,physical-13-sandy_brown,NOT_RUN,neutral,physical-reference-unavailable,sandy_brown,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P13-SANDY-BROWN-WARM,physical-13-sandy_brown,NOT_RUN,warm,physical-reference-unavailable,sandy_brown,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P13-SANDY-BROWN-LOW,physical-13-sandy_brown,NOT_RUN,low,physical-reference-unavailable,sandy_brown,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P14-DARK-KHAKI-NEUTRAL,physical-14-dark_khaki,NOT_RUN,neutral,physical-reference-unavailable,dark_khaki,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P14-DARK-KHAKI-WARM,physical-14-dark_khaki,NOT_RUN,warm,physical-reference-unavailable,dark_khaki,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P14-DARK-KHAKI-LOW,physical-14-dark_khaki,NOT_RUN,low,physical-reference-unavailable,dark_khaki,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P15-GREY-NEUTRAL,physical-15-grey,NOT_RUN,neutral,physical-reference-unavailable,grey,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P15-GREY-WARM,physical-15-grey,NOT_RUN,warm,physical-reference-unavailable,grey,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P15-GREY-LOW,physical-15-grey,NOT_RUN,low,physical-reference-unavailable,grey,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P16-LIGHT-GREY-NEUTRAL,physical-16-light_grey,NOT_RUN,neutral,physical-reference-unavailable,light_grey,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P16-LIGHT-GREY-WARM,physical-16-light_grey,NOT_RUN,warm,physical-reference-unavailable,light_grey,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P16-LIGHT-GREY-LOW,physical-16-light_grey,NOT_RUN,low,physical-reference-unavailable,light_grey,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P17-ASH-GREY-NEUTRAL,physical-17-ash_grey,NOT_RUN,neutral,physical-reference-unavailable,ash_grey,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P17-ASH-GREY-WARM,physical-17-ash_grey,NOT_RUN,warm,physical-reference-unavailable,ash_grey,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P17-ASH-GREY-LOW,physical-17-ash_grey,NOT_RUN,low,physical-reference-unavailable,ash_grey,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P18-SILVER-NEUTRAL,physical-18-silver,NOT_RUN,neutral,physical-reference-unavailable,silver,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P18-SILVER-WARM,physical-18-silver,NOT_RUN,warm,physical-reference-unavailable,silver,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P18-SILVER-LOW,physical-18-silver,NOT_RUN,low,physical-reference-unavailable,silver,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P19-SLATE-GREY-NEUTRAL,physical-19-slate_grey,NOT_RUN,neutral,physical-reference-unavailable,slate_grey,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P19-SLATE-GREY-WARM,physical-19-slate_grey,NOT_RUN,warm,physical-reference-unavailable,slate_grey,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P19-SLATE-GREY-LOW,physical-19-slate_grey,NOT_RUN,low,physical-reference-unavailable,slate_grey,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P20-GREEN-NEUTRAL,physical-20-green,NOT_RUN,neutral,physical-reference-unavailable,green,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P20-GREEN-WARM,physical-20-green,NOT_RUN,warm,physical-reference-unavailable,green,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P20-GREEN-LOW,physical-20-green,NOT_RUN,low,physical-reference-unavailable,green,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P21-LIME-NEUTRAL,physical-21-lime,NOT_RUN,neutral,physical-reference-unavailable,lime,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P21-LIME-WARM,physical-21-lime,NOT_RUN,warm,physical-reference-unavailable,lime,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P21-LIME-LOW,physical-21-lime,NOT_RUN,low,physical-reference-unavailable,lime,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P22-OLIVE-NEUTRAL,physical-22-olive,NOT_RUN,neutral,physical-reference-unavailable,olive,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P22-OLIVE-WARM,physical-22-olive,NOT_RUN,warm,physical-reference-unavailable,olive,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P22-OLIVE-LOW,physical-22-olive,NOT_RUN,low,physical-reference-unavailable,olive,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P23-TEAL-NEUTRAL,physical-23-teal,NOT_RUN,neutral,physical-reference-unavailable,teal,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P23-TEAL-WARM,physical-23-teal,NOT_RUN,warm,physical-reference-unavailable,teal,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P23-TEAL-LOW,physical-23-teal,NOT_RUN,low,physical-reference-unavailable,teal,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P24-SEA-GREEN-NEUTRAL,physical-24-sea_green,NOT_RUN,neutral,physical-reference-unavailable,sea_green,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P24-SEA-GREEN-WARM,physical-24-sea_green,NOT_RUN,warm,physical-reference-unavailable,sea_green,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P24-SEA-GREEN-LOW,physical-24-sea_green,NOT_RUN,low,physical-reference-unavailable,sea_green,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P25-MOSS-GREEN-NEUTRAL,physical-25-moss_green,NOT_RUN,neutral,physical-reference-unavailable,moss_green,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P25-MOSS-GREEN-WARM,physical-25-moss_green,NOT_RUN,warm,physical-reference-unavailable,moss_green,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P25-MOSS-GREEN-LOW,physical-25-moss_green,NOT_RUN,low,physical-reference-unavailable,moss_green,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P26-ORANGE-NEUTRAL,physical-26-orange,NOT_RUN,neutral,physical-reference-unavailable,orange,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P26-ORANGE-WARM,physical-26-orange,NOT_RUN,warm,physical-reference-unavailable,orange,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P26-ORANGE-LOW,physical-26-orange,NOT_RUN,low,physical-reference-unavailable,orange,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P27-DARK-ORANGE-NEUTRAL,physical-27-dark_orange,NOT_RUN,neutral,physical-reference-unavailable,dark_orange,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P27-DARK-ORANGE-WARM,physical-27-dark_orange,NOT_RUN,warm,physical-reference-unavailable,dark_orange,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P27-DARK-ORANGE-LOW,physical-27-dark_orange,NOT_RUN,low,physical-reference-unavailable,dark_orange,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P28-PEACH-NEUTRAL,physical-28-peach,NOT_RUN,neutral,physical-reference-unavailable,peach,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P28-PEACH-WARM,physical-28-peach,NOT_RUN,warm,physical-reference-unavailable,peach,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P28-PEACH-LOW,physical-28-peach,NOT_RUN,low,physical-reference-unavailable,peach,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P29-CORAL-NEUTRAL,physical-29-coral,NOT_RUN,neutral,physical-reference-unavailable,coral,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P29-CORAL-WARM,physical-29-coral,NOT_RUN,warm,physical-reference-unavailable,coral,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P29-CORAL-LOW,physical-29-coral,NOT_RUN,low,physical-reference-unavailable,coral,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P30-PINK-NEUTRAL,physical-30-pink,NOT_RUN,neutral,physical-reference-unavailable,pink,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P30-PINK-WARM,physical-30-pink,NOT_RUN,warm,physical-reference-unavailable,pink,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P30-PINK-LOW,physical-30-pink,NOT_RUN,low,physical-reference-unavailable,pink,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P31-DEEP-PINK-NEUTRAL,physical-31-deep_pink,NOT_RUN,neutral,physical-reference-unavailable,deep_pink,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P31-DEEP-PINK-WARM,physical-31-deep_pink,NOT_RUN,warm,physical-reference-unavailable,deep_pink,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P31-DEEP-PINK-LOW,physical-31-deep_pink,NOT_RUN,low,physical-reference-unavailable,deep_pink,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P32-HOT-PINK-NEUTRAL,physical-32-hot_pink,NOT_RUN,neutral,physical-reference-unavailable,hot_pink,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P32-HOT-PINK-WARM,physical-32-hot_pink,NOT_RUN,warm,physical-reference-unavailable,hot_pink,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P32-HOT-PINK-LOW,physical-32-hot_pink,NOT_RUN,low,physical-reference-unavailable,hot_pink,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P33-LIGHT-PINK-NEUTRAL,physical-33-light_pink,NOT_RUN,neutral,physical-reference-unavailable,light_pink,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P33-LIGHT-PINK-WARM,physical-33-light_pink,NOT_RUN,warm,physical-reference-unavailable,light_pink,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P33-LIGHT-PINK-LOW,physical-33-light_pink,NOT_RUN,low,physical-reference-unavailable,light_pink,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P34-PURPLE-NEUTRAL,physical-34-purple,NOT_RUN,neutral,physical-reference-unavailable,purple,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P34-PURPLE-WARM,physical-34-purple,NOT_RUN,warm,physical-reference-unavailable,purple,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P34-PURPLE-LOW,physical-34-purple,NOT_RUN,low,physical-reference-unavailable,purple,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P35-INDIGO-NEUTRAL,physical-35-indigo,NOT_RUN,neutral,physical-reference-unavailable,indigo,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P35-INDIGO-WARM,physical-35-indigo,NOT_RUN,warm,physical-reference-unavailable,indigo,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P35-INDIGO-LOW,physical-35-indigo,NOT_RUN,low,physical-reference-unavailable,indigo,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P36-VIOLET-NEUTRAL,physical-36-violet,NOT_RUN,neutral,physical-reference-unavailable,violet,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P36-VIOLET-WARM,physical-36-violet,NOT_RUN,warm,physical-reference-unavailable,violet,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P36-VIOLET-LOW,physical-36-violet,NOT_RUN,low,physical-reference-unavailable,violet,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P37-MAGENTA-NEUTRAL,physical-37-magenta,NOT_RUN,neutral,physical-reference-unavailable,magenta,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P37-MAGENTA-WARM,physical-37-magenta,NOT_RUN,warm,physical-reference-unavailable,magenta,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P37-MAGENTA-LOW,physical-37-magenta,NOT_RUN,low,physical-reference-unavailable,magenta,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P38-ORCHID-NEUTRAL,physical-38-orchid,NOT_RUN,neutral,physical-reference-unavailable,orchid,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P38-ORCHID-WARM,physical-38-orchid,NOT_RUN,warm,physical-reference-unavailable,orchid,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P38-ORCHID-LOW,physical-38-orchid,NOT_RUN,low,physical-reference-unavailable,orchid,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P39-RED-NEUTRAL,physical-39-red,NOT_RUN,neutral,physical-reference-unavailable,red,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P39-RED-WARM,physical-39-red,NOT_RUN,warm,physical-reference-unavailable,red,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P39-RED-LOW,physical-39-red,NOT_RUN,low,physical-reference-unavailable,red,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P40-MAROON-NEUTRAL,physical-40-maroon,NOT_RUN,neutral,physical-reference-unavailable,maroon,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P40-MAROON-WARM,physical-40-maroon,NOT_RUN,warm,physical-reference-unavailable,maroon,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P40-MAROON-LOW,physical-40-maroon,NOT_RUN,low,physical-reference-unavailable,maroon,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P41-FIREBRICK-NEUTRAL,physical-41-firebrick,NOT_RUN,neutral,physical-reference-unavailable,firebrick,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P41-FIREBRICK-WARM,physical-41-firebrick,NOT_RUN,warm,physical-reference-unavailable,firebrick,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P41-FIREBRICK-LOW,physical-41-firebrick,NOT_RUN,low,physical-reference-unavailable,firebrick,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P42-CRIMSON-NEUTRAL,physical-42-crimson,NOT_RUN,neutral,physical-reference-unavailable,crimson,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P42-CRIMSON-WARM,physical-42-crimson,NOT_RUN,warm,physical-reference-unavailable,crimson,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P42-CRIMSON-LOW,physical-42-crimson,NOT_RUN,low,physical-reference-unavailable,crimson,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P43-WHITE-NEUTRAL,physical-43-white,NOT_RUN,neutral,physical-reference-unavailable,white,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P43-WHITE-WARM,physical-43-white,NOT_RUN,warm,physical-reference-unavailable,white,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P43-WHITE-LOW,physical-43-white,NOT_RUN,low,physical-reference-unavailable,white,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P44-IVORY-NEUTRAL,physical-44-ivory,NOT_RUN,neutral,physical-reference-unavailable,ivory,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P44-IVORY-WARM,physical-44-ivory,NOT_RUN,warm,physical-reference-unavailable,ivory,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P44-IVORY-LOW,physical-44-ivory,NOT_RUN,low,physical-reference-unavailable,ivory,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P45-WHITE-SMOKE-NEUTRAL,physical-45-white_smoke,NOT_RUN,neutral,physical-reference-unavailable,white_smoke,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P45-WHITE-SMOKE-WARM,physical-45-white_smoke,NOT_RUN,warm,physical-reference-unavailable,white_smoke,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P45-WHITE-SMOKE-LOW,physical-45-white_smoke,NOT_RUN,low,physical-reference-unavailable,white_smoke,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P46-BEIGE-NEUTRAL,physical-46-beige,NOT_RUN,neutral,physical-reference-unavailable,beige,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P46-BEIGE-WARM,physical-46-beige,NOT_RUN,warm,physical-reference-unavailable,beige,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P46-BEIGE-LOW,physical-46-beige,NOT_RUN,low,physical-reference-unavailable,beige,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P47-YELLOW-NEUTRAL,physical-47-yellow,NOT_RUN,neutral,physical-reference-unavailable,yellow,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P47-YELLOW-WARM,physical-47-yellow,NOT_RUN,warm,physical-reference-unavailable,yellow,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P47-YELLOW-LOW,physical-47-yellow,NOT_RUN,low,physical-reference-unavailable,yellow,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P48-KHAKI-NEUTRAL,physical-48-khaki,NOT_RUN,neutral,physical-reference-unavailable,khaki,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P48-KHAKI-WARM,physical-48-khaki,NOT_RUN,warm,physical-reference-unavailable,khaki,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P48-KHAKI-LOW,physical-48-khaki,NOT_RUN,low,physical-reference-unavailable,khaki,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P49-GOLD-NEUTRAL,physical-49-gold,NOT_RUN,neutral,physical-reference-unavailable,gold,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P49-GOLD-WARM,physical-49-gold,NOT_RUN,warm,physical-reference-unavailable,gold,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P49-GOLD-LOW,physical-49-gold,NOT_RUN,low,physical-reference-unavailable,gold,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P50-LIGHT-YELLOW-NEUTRAL,physical-50-light_yellow,NOT_RUN,neutral,physical-reference-unavailable,light_yellow,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P50-LIGHT-YELLOW-WARM,physical-50-light_yellow,NOT_RUN,warm,physical-reference-unavailable,light_yellow,,,,,,No consented/licensed physical capture was supplied for this frozen observation.
+PM-COLOR-P50-LIGHT-YELLOW-LOW,physical-50-light_yellow,NOT_RUN,low,physical-reference-unavailable,light_yellow,,,,,,No consented/licensed physical capture was supplied for this frozen observation.

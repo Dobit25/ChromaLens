@@ -1,7 +1,7 @@
 # Post-MVP Fixture Registry 2.1
 
-Protocol version: `2.1.0`  
-Registry: `post-mvp-cases-v2.1.csv`  
+Protocol version: `2.1.0`
+Registry: `post-mvp-cases-v2.1.csv`
 Status: `FROZEN`
 
 The registry contains 257 unique case IDs: 203 T12 cases (50 digital anchors,

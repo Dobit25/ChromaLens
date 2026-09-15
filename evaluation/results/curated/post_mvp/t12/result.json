@@ -1,0 +1,2318 @@
+{
+  "protocol_version": "2.1.0",
+  "schema_version": "2.1.0",
+  "metric_registry_version": "2.1.0",
+  "result_id": "post-mvp-t12-color-20260915t134932z",
+  "task_id": "T12",
+  "result_status": "PARTIAL",
+  "git_commit": "d4aaf7002e9fe67d096f02c60b17eb26ee0d6397",
+  "created_at_utc": "2026-09-15T13:49:32.105493Z",
+  "operator": {
+    "role": "color_evaluator",
+    "identifier": "repository-owner-and-codex"
+  },
+  "environment": {
+    "host_role": "development",
+    "declared_demo_hardware": false,
+    "manufacturer": "Windows",
+    "model": "LOQ",
+    "operating_system": "Windows-10-10.0.26200-SP0",
+    "cpu": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "physical_core_count": 16,
+    "logical_processor_count": 16,
+    "ram_gib": 15.78,
+    "gpu": null,
+    "npu": null,
+    "camera_or_source": "Project-generated CSS anchor patches; no camera or personal data",
+    "python_version": "3.10.20",
+    "package_versions": {
+      "chromalens-ai": "0.1.0",
+      "numpy": "1.26.4",
+      "opencv-contrib-python": "4.10.0.84",
+      "Pillow": "12.3.0"
+    },
+    "lock_sha256": "09aa20458803b9a996c272dbb6a6b5a7ba67943f3562ff1d18b898fd43a53840",
+    "backend_name": "deterministic-cielab-anchor-lookup",
+    "backend_device": "CPU",
+    "source_kind": "synthetic_patch",
+    "source_resolution": {
+      "width": 64,
+      "height": 64
+    },
+    "render_resolution": {
+      "width": 64,
+      "height": 64
+    },
+    "display_mode": "offscreen",
+    "warmup_seconds": 0,
+    "measurement_seconds": 0,
+    "external_measurement_apparatus": null
+  },
+  "cases": [
+    {
+      "case_id": "PM-COLOR-CONTRACT-BLACK",
+      "status": "COMPLETE",
+      "fixture_id": "extended-black",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-DIM-GRAY",
+      "status": "COMPLETE",
+      "fixture_id": "extended-dim_gray",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-BLUE",
+      "status": "COMPLETE",
+      "fixture_id": "extended-blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-NAVY",
+      "status": "COMPLETE",
+      "fixture_id": "extended-navy",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-CYAN",
+      "status": "COMPLETE",
+      "fixture_id": "extended-cyan",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-SKY-BLUE",
+      "status": "COMPLETE",
+      "fixture_id": "extended-sky_blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-ROYAL-BLUE",
+      "status": "COMPLETE",
+      "fixture_id": "extended-royal_blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-LIGHT-BLUE",
+      "status": "COMPLETE",
+      "fixture_id": "extended-light_blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-BROWN",
+      "status": "COMPLETE",
+      "fixture_id": "extended-brown",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-DARK-BROWN",
+      "status": "COMPLETE",
+      "fixture_id": "extended-dark_brown",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-PERU",
+      "status": "COMPLETE",
+      "fixture_id": "extended-peru",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-CHOCOLATE",
+      "status": "COMPLETE",
+      "fixture_id": "extended-chocolate",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-SANDY-BROWN",
+      "status": "COMPLETE",
+      "fixture_id": "extended-sandy_brown",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-DARK-KHAKI",
+      "status": "COMPLETE",
+      "fixture_id": "extended-dark_khaki",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-GREY",
+      "status": "COMPLETE",
+      "fixture_id": "extended-grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-LIGHT-GREY",
+      "status": "COMPLETE",
+      "fixture_id": "extended-light_grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-ASH-GREY",
+      "status": "COMPLETE",
+      "fixture_id": "extended-ash_grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-SILVER",
+      "status": "COMPLETE",
+      "fixture_id": "extended-silver",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-SLATE-GREY",
+      "status": "COMPLETE",
+      "fixture_id": "extended-slate_grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-GREEN",
+      "status": "COMPLETE",
+      "fixture_id": "extended-green",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-LIME",
+      "status": "COMPLETE",
+      "fixture_id": "extended-lime",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-OLIVE",
+      "status": "COMPLETE",
+      "fixture_id": "extended-olive",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-TEAL",
+      "status": "COMPLETE",
+      "fixture_id": "extended-teal",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-SEA-GREEN",
+      "status": "COMPLETE",
+      "fixture_id": "extended-sea_green",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-MOSS-GREEN",
+      "status": "COMPLETE",
+      "fixture_id": "extended-moss_green",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-ORANGE",
+      "status": "COMPLETE",
+      "fixture_id": "extended-orange",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-DARK-ORANGE",
+      "status": "COMPLETE",
+      "fixture_id": "extended-dark_orange",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-PEACH",
+      "status": "COMPLETE",
+      "fixture_id": "extended-peach",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-CORAL",
+      "status": "COMPLETE",
+      "fixture_id": "extended-coral",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-PINK",
+      "status": "COMPLETE",
+      "fixture_id": "extended-pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-DEEP-PINK",
+      "status": "COMPLETE",
+      "fixture_id": "extended-deep_pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-HOT-PINK",
+      "status": "COMPLETE",
+      "fixture_id": "extended-hot_pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-LIGHT-PINK",
+      "status": "COMPLETE",
+      "fixture_id": "extended-light_pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-PURPLE",
+      "status": "COMPLETE",
+      "fixture_id": "extended-purple",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-INDIGO",
+      "status": "COMPLETE",
+      "fixture_id": "extended-indigo",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-VIOLET",
+      "status": "COMPLETE",
+      "fixture_id": "extended-violet",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-MAGENTA",
+      "status": "COMPLETE",
+      "fixture_id": "extended-magenta",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-ORCHID",
+      "status": "COMPLETE",
+      "fixture_id": "extended-orchid",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-RED",
+      "status": "COMPLETE",
+      "fixture_id": "extended-red",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-MAROON",
+      "status": "COMPLETE",
+      "fixture_id": "extended-maroon",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-FIREBRICK",
+      "status": "COMPLETE",
+      "fixture_id": "extended-firebrick",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-CRIMSON",
+      "status": "COMPLETE",
+      "fixture_id": "extended-crimson",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-WHITE",
+      "status": "COMPLETE",
+      "fixture_id": "extended-white",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-IVORY",
+      "status": "COMPLETE",
+      "fixture_id": "extended-ivory",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-WHITE-SMOKE",
+      "status": "COMPLETE",
+      "fixture_id": "extended-white_smoke",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-BEIGE",
+      "status": "COMPLETE",
+      "fixture_id": "extended-beige",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-YELLOW",
+      "status": "COMPLETE",
+      "fixture_id": "extended-yellow",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-KHAKI",
+      "status": "COMPLETE",
+      "fixture_id": "extended-khaki",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-GOLD",
+      "status": "COMPLETE",
+      "fixture_id": "extended-gold",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-CONTRACT-LIGHT-YELLOW",
+      "status": "COMPLETE",
+      "fixture_id": "extended-light_yellow",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Exact generated anchor returned its frozen level-one and level-two identity with margin >= 0.10."
+    },
+    {
+      "case_id": "PM-COLOR-UNCERTAIN-01",
+      "status": "COMPLETE",
+      "fixture_id": "uncertain-boundary-1",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Boundary margin=0.099999 lighting=good produced uncertain=True."
+    },
+    {
+      "case_id": "PM-COLOR-UNCERTAIN-02",
+      "status": "COMPLETE",
+      "fixture_id": "uncertain-boundary-2",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Boundary margin=0.1 lighting=good produced uncertain=False."
+    },
+    {
+      "case_id": "PM-COLOR-UNCERTAIN-03",
+      "status": "COMPLETE",
+      "fixture_id": "uncertain-boundary-3",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Boundary margin=0.8 lighting=poor produced uncertain=True."
+    },
+    {
+      "case_id": "PM-COLOR-P01-BLACK-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-01-black",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P01-BLACK-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-01-black",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P01-BLACK-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-01-black",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P02-DIM-GRAY-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-02-dim_gray",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P02-DIM-GRAY-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-02-dim_gray",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P02-DIM-GRAY-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-02-dim_gray",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P03-BLUE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-03-blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P03-BLUE-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-03-blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P03-BLUE-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-03-blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P04-NAVY-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-04-navy",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P04-NAVY-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-04-navy",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P04-NAVY-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-04-navy",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P05-CYAN-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-05-cyan",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P05-CYAN-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-05-cyan",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P05-CYAN-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-05-cyan",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P06-SKY-BLUE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-06-sky_blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P06-SKY-BLUE-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-06-sky_blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P06-SKY-BLUE-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-06-sky_blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P07-ROYAL-BLUE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-07-royal_blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P07-ROYAL-BLUE-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-07-royal_blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P07-ROYAL-BLUE-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-07-royal_blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P08-LIGHT-BLUE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-08-light_blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P08-LIGHT-BLUE-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-08-light_blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P08-LIGHT-BLUE-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-08-light_blue",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P09-BROWN-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-09-brown",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P09-BROWN-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-09-brown",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P09-BROWN-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-09-brown",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P10-DARK-BROWN-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-10-dark_brown",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P10-DARK-BROWN-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-10-dark_brown",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P10-DARK-BROWN-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-10-dark_brown",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P11-PERU-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-11-peru",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P11-PERU-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-11-peru",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P11-PERU-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-11-peru",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P12-CHOCOLATE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-12-chocolate",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P12-CHOCOLATE-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-12-chocolate",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P12-CHOCOLATE-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-12-chocolate",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P13-SANDY-BROWN-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-13-sandy_brown",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P13-SANDY-BROWN-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-13-sandy_brown",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P13-SANDY-BROWN-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-13-sandy_brown",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P14-DARK-KHAKI-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-14-dark_khaki",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P14-DARK-KHAKI-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-14-dark_khaki",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P14-DARK-KHAKI-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-14-dark_khaki",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P15-GREY-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-15-grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P15-GREY-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-15-grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P15-GREY-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-15-grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P16-LIGHT-GREY-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-16-light_grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P16-LIGHT-GREY-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-16-light_grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P16-LIGHT-GREY-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-16-light_grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P17-ASH-GREY-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-17-ash_grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P17-ASH-GREY-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-17-ash_grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P17-ASH-GREY-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-17-ash_grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P18-SILVER-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-18-silver",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P18-SILVER-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-18-silver",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P18-SILVER-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-18-silver",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P19-SLATE-GREY-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-19-slate_grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P19-SLATE-GREY-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-19-slate_grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P19-SLATE-GREY-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-19-slate_grey",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P20-GREEN-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-20-green",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P20-GREEN-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-20-green",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P20-GREEN-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-20-green",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P21-LIME-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-21-lime",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P21-LIME-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-21-lime",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P21-LIME-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-21-lime",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P22-OLIVE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-22-olive",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P22-OLIVE-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-22-olive",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P22-OLIVE-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-22-olive",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P23-TEAL-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-23-teal",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P23-TEAL-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-23-teal",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P23-TEAL-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-23-teal",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P24-SEA-GREEN-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-24-sea_green",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P24-SEA-GREEN-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-24-sea_green",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P24-SEA-GREEN-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-24-sea_green",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P25-MOSS-GREEN-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-25-moss_green",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P25-MOSS-GREEN-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-25-moss_green",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P25-MOSS-GREEN-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-25-moss_green",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P26-ORANGE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-26-orange",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P26-ORANGE-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-26-orange",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P26-ORANGE-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-26-orange",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P27-DARK-ORANGE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-27-dark_orange",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P27-DARK-ORANGE-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-27-dark_orange",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P27-DARK-ORANGE-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-27-dark_orange",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P28-PEACH-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-28-peach",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P28-PEACH-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-28-peach",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P28-PEACH-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-28-peach",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P29-CORAL-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-29-coral",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P29-CORAL-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-29-coral",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P29-CORAL-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-29-coral",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P30-PINK-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-30-pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P30-PINK-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-30-pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P30-PINK-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-30-pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P31-DEEP-PINK-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-31-deep_pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P31-DEEP-PINK-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-31-deep_pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P31-DEEP-PINK-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-31-deep_pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P32-HOT-PINK-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-32-hot_pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P32-HOT-PINK-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-32-hot_pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P32-HOT-PINK-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-32-hot_pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P33-LIGHT-PINK-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-33-light_pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P33-LIGHT-PINK-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-33-light_pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P33-LIGHT-PINK-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-33-light_pink",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P34-PURPLE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-34-purple",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P34-PURPLE-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-34-purple",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P34-PURPLE-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-34-purple",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P35-INDIGO-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-35-indigo",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P35-INDIGO-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-35-indigo",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P35-INDIGO-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-35-indigo",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P36-VIOLET-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-36-violet",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P36-VIOLET-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-36-violet",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P36-VIOLET-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-36-violet",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P37-MAGENTA-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-37-magenta",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P37-MAGENTA-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-37-magenta",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P37-MAGENTA-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-37-magenta",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P38-ORCHID-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-38-orchid",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P38-ORCHID-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-38-orchid",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P38-ORCHID-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-38-orchid",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P39-RED-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-39-red",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P39-RED-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-39-red",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P39-RED-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-39-red",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P40-MAROON-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-40-maroon",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P40-MAROON-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-40-maroon",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P40-MAROON-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-40-maroon",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P41-FIREBRICK-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-41-firebrick",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P41-FIREBRICK-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-41-firebrick",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P41-FIREBRICK-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-41-firebrick",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P42-CRIMSON-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-42-crimson",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P42-CRIMSON-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-42-crimson",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P42-CRIMSON-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-42-crimson",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P43-WHITE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-43-white",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P43-WHITE-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-43-white",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P43-WHITE-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-43-white",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P44-IVORY-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-44-ivory",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P44-IVORY-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-44-ivory",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P44-IVORY-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-44-ivory",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P45-WHITE-SMOKE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-45-white_smoke",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P45-WHITE-SMOKE-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-45-white_smoke",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P45-WHITE-SMOKE-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-45-white_smoke",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P46-BEIGE-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-46-beige",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P46-BEIGE-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-46-beige",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P46-BEIGE-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-46-beige",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P47-YELLOW-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-47-yellow",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P47-YELLOW-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-47-yellow",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P47-YELLOW-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-47-yellow",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P48-KHAKI-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-48-khaki",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P48-KHAKI-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-48-khaki",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P48-KHAKI-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-48-khaki",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P49-GOLD-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-49-gold",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P49-GOLD-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-49-gold",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P49-GOLD-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-49-gold",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P50-LIGHT-YELLOW-NEUTRAL",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-50-light_yellow",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P50-LIGHT-YELLOW-WARM",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-50-light_yellow",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    },
+    {
+      "case_id": "PM-COLOR-P50-LIGHT-YELLOW-LOW",
+      "status": "NOT_RUN",
+      "fixture_id": "physical-50-light_yellow",
+      "artifact_ids": [
+        "t12-observations"
+      ],
+      "reason": "Physical input is TO_BE_ACQUIRED; no result or accuracy claim was inferred."
+    }
+  ],
+  "configuration": {
+    "level1_family_count": 11,
+    "level2_label_count": 50,
+    "family_score_temperature": 20.0,
+    "level2_score_temperature": 5.0,
+    "uncertain_margin_threshold": 0.1,
+    "poor_lighting_forces_uncertain": true,
+    "physical_observation_count": 150
+  },
+  "metrics": [
+    {
+      "name": "basic_color_accuracy",
+      "aggregation": "overall",
+      "unit": "ratio",
+      "status": "COMPUTED",
+      "value": 1.0,
+      "case_ids": [
+        "PM-COLOR-CONTRACT-BLACK",
+        "PM-COLOR-CONTRACT-DIM-GRAY",
+        "PM-COLOR-CONTRACT-BLUE",
+        "PM-COLOR-CONTRACT-NAVY",
+        "PM-COLOR-CONTRACT-CYAN",
+        "PM-COLOR-CONTRACT-SKY-BLUE",
+        "PM-COLOR-CONTRACT-ROYAL-BLUE",
+        "PM-COLOR-CONTRACT-LIGHT-BLUE",
+        "PM-COLOR-CONTRACT-BROWN",
+        "PM-COLOR-CONTRACT-DARK-BROWN",
+        "PM-COLOR-CONTRACT-PERU",
+        "PM-COLOR-CONTRACT-CHOCOLATE",
+        "PM-COLOR-CONTRACT-SANDY-BROWN",
+        "PM-COLOR-CONTRACT-DARK-KHAKI",
+        "PM-COLOR-CONTRACT-GREY",
+        "PM-COLOR-CONTRACT-LIGHT-GREY",
+        "PM-COLOR-CONTRACT-ASH-GREY",
+        "PM-COLOR-CONTRACT-SILVER",
+        "PM-COLOR-CONTRACT-SLATE-GREY",
+        "PM-COLOR-CONTRACT-GREEN",
+        "PM-COLOR-CONTRACT-LIME",
+        "PM-COLOR-CONTRACT-OLIVE",
+        "PM-COLOR-CONTRACT-TEAL",
+        "PM-COLOR-CONTRACT-SEA-GREEN",
+        "PM-COLOR-CONTRACT-MOSS-GREEN",
+        "PM-COLOR-CONTRACT-ORANGE",
+        "PM-COLOR-CONTRACT-DARK-ORANGE",
+        "PM-COLOR-CONTRACT-PEACH",
+        "PM-COLOR-CONTRACT-CORAL",
+        "PM-COLOR-CONTRACT-PINK",
+        "PM-COLOR-CONTRACT-DEEP-PINK",
+        "PM-COLOR-CONTRACT-HOT-PINK",
+        "PM-COLOR-CONTRACT-LIGHT-PINK",
+        "PM-COLOR-CONTRACT-PURPLE",
+        "PM-COLOR-CONTRACT-INDIGO",
+        "PM-COLOR-CONTRACT-VIOLET",
+        "PM-COLOR-CONTRACT-MAGENTA",
+        "PM-COLOR-CONTRACT-ORCHID",
+        "PM-COLOR-CONTRACT-RED",
+        "PM-COLOR-CONTRACT-MAROON",
+        "PM-COLOR-CONTRACT-FIREBRICK",
+        "PM-COLOR-CONTRACT-CRIMSON",
+        "PM-COLOR-CONTRACT-WHITE",
+        "PM-COLOR-CONTRACT-IVORY",
+        "PM-COLOR-CONTRACT-WHITE-SMOKE",
+        "PM-COLOR-CONTRACT-BEIGE",
+        "PM-COLOR-CONTRACT-YELLOW",
+        "PM-COLOR-CONTRACT-KHAKI",
+        "PM-COLOR-CONTRACT-GOLD",
+        "PM-COLOR-CONTRACT-LIGHT-YELLOW"
+      ],
+      "threshold_id": "digital_contract",
+      "threshold_result": "PASS",
+      "reason": "Exact RGB anchors compared with frozen level-one keys.",
+      "method": "Protocol-2.1 deterministic color naming contract evaluation."
+    },
+    {
+      "name": "extended_color_accuracy",
+      "aggregation": "overall",
+      "unit": "ratio",
+      "status": "COMPUTED",
+      "value": 1.0,
+      "case_ids": [
+        "PM-COLOR-CONTRACT-BLACK",
+        "PM-COLOR-CONTRACT-DIM-GRAY",
+        "PM-COLOR-CONTRACT-BLUE",
+        "PM-COLOR-CONTRACT-NAVY",
+        "PM-COLOR-CONTRACT-CYAN",
+        "PM-COLOR-CONTRACT-SKY-BLUE",
+        "PM-COLOR-CONTRACT-ROYAL-BLUE",
+        "PM-COLOR-CONTRACT-LIGHT-BLUE",
+        "PM-COLOR-CONTRACT-BROWN",
+        "PM-COLOR-CONTRACT-DARK-BROWN",
+        "PM-COLOR-CONTRACT-PERU",
+        "PM-COLOR-CONTRACT-CHOCOLATE",
+        "PM-COLOR-CONTRACT-SANDY-BROWN",
+        "PM-COLOR-CONTRACT-DARK-KHAKI",
+        "PM-COLOR-CONTRACT-GREY",
+        "PM-COLOR-CONTRACT-LIGHT-GREY",
+        "PM-COLOR-CONTRACT-ASH-GREY",
+        "PM-COLOR-CONTRACT-SILVER",
+        "PM-COLOR-CONTRACT-SLATE-GREY",
+        "PM-COLOR-CONTRACT-GREEN",
+        "PM-COLOR-CONTRACT-LIME",
+        "PM-COLOR-CONTRACT-OLIVE",
+        "PM-COLOR-CONTRACT-TEAL",
+        "PM-COLOR-CONTRACT-SEA-GREEN",
+        "PM-COLOR-CONTRACT-MOSS-GREEN",
+        "PM-COLOR-CONTRACT-ORANGE",
+        "PM-COLOR-CONTRACT-DARK-ORANGE",
+        "PM-COLOR-CONTRACT-PEACH",
+        "PM-COLOR-CONTRACT-CORAL",
+        "PM-COLOR-CONTRACT-PINK",
+        "PM-COLOR-CONTRACT-DEEP-PINK",
+        "PM-COLOR-CONTRACT-HOT-PINK",
+        "PM-COLOR-CONTRACT-LIGHT-PINK",
+        "PM-COLOR-CONTRACT-PURPLE",
+        "PM-COLOR-CONTRACT-INDIGO",
+        "PM-COLOR-CONTRACT-VIOLET",
+        "PM-COLOR-CONTRACT-MAGENTA",
+        "PM-COLOR-CONTRACT-ORCHID",
+        "PM-COLOR-CONTRACT-RED",
+        "PM-COLOR-CONTRACT-MAROON",
+        "PM-COLOR-CONTRACT-FIREBRICK",
+        "PM-COLOR-CONTRACT-CRIMSON",
+        "PM-COLOR-CONTRACT-WHITE",
+        "PM-COLOR-CONTRACT-IVORY",
+        "PM-COLOR-CONTRACT-WHITE-SMOKE",
+        "PM-COLOR-CONTRACT-BEIGE",
+        "PM-COLOR-CONTRACT-YELLOW",
+        "PM-COLOR-CONTRACT-KHAKI",
+        "PM-COLOR-CONTRACT-GOLD",
+        "PM-COLOR-CONTRACT-LIGHT-YELLOW"
+      ],
+      "threshold_id": "digital_contract",
+      "threshold_result": "PASS",
+      "reason": "Exact RGB anchors compared with frozen level-two keys.",
+      "method": "Protocol-2.1 deterministic color naming contract evaluation."
+    },
+    {
+      "name": "uncertain_output_rate",
+      "aggregation": "overall",
+      "unit": "ratio",
+      "status": "COMPUTED",
+      "value": 0.6666666666666666,
+      "case_ids": [
+        "PM-COLOR-UNCERTAIN-01",
+        "PM-COLOR-UNCERTAIN-02",
+        "PM-COLOR-UNCERTAIN-03"
+      ],
+      "threshold_id": "observation_only",
+      "threshold_result": "PASS",
+      "reason": "Two of three boundary cases are intentionally uncertain; exact 0.10 passes.",
+      "method": "Protocol-2.1 deterministic color naming contract evaluation."
+    },
+    {
+      "name": "forced_low_evidence_label_count",
+      "aggregation": "count",
+      "unit": "count",
+      "status": "COMPUTED",
+      "value": 0,
+      "case_ids": [
+        "PM-COLOR-UNCERTAIN-01",
+        "PM-COLOR-UNCERTAIN-02",
+        "PM-COLOR-UNCERTAIN-03"
+      ],
+      "threshold_id": "required",
+      "threshold_result": "PASS",
+      "reason": "No below-threshold or poor-light case exposes a confident Product label.",
+      "method": "Protocol-2.1 deterministic color naming contract evaluation."
+    },
+    {
+      "name": "color_name_margin",
+      "aggregation": "median",
+      "unit": "score_0_1",
+      "status": "COMPUTED",
+      "value": 0.9151257980013044,
+      "case_ids": [
+        "PM-COLOR-CONTRACT-BLACK",
+        "PM-COLOR-CONTRACT-DIM-GRAY",
+        "PM-COLOR-CONTRACT-BLUE",
+        "PM-COLOR-CONTRACT-NAVY",
+        "PM-COLOR-CONTRACT-CYAN",
+        "PM-COLOR-CONTRACT-SKY-BLUE",
+        "PM-COLOR-CONTRACT-ROYAL-BLUE",
+        "PM-COLOR-CONTRACT-LIGHT-BLUE",
+        "PM-COLOR-CONTRACT-BROWN",
+        "PM-COLOR-CONTRACT-DARK-BROWN",
+        "PM-COLOR-CONTRACT-PERU",
+        "PM-COLOR-CONTRACT-CHOCOLATE",
+        "PM-COLOR-CONTRACT-SANDY-BROWN",
+        "PM-COLOR-CONTRACT-DARK-KHAKI",
+        "PM-COLOR-CONTRACT-GREY",
+        "PM-COLOR-CONTRACT-LIGHT-GREY",
+        "PM-COLOR-CONTRACT-ASH-GREY",
+        "PM-COLOR-CONTRACT-SILVER",
+        "PM-COLOR-CONTRACT-SLATE-GREY",
+        "PM-COLOR-CONTRACT-GREEN",
+        "PM-COLOR-CONTRACT-LIME",
+        "PM-COLOR-CONTRACT-OLIVE",
+        "PM-COLOR-CONTRACT-TEAL",
+        "PM-COLOR-CONTRACT-SEA-GREEN",
+        "PM-COLOR-CONTRACT-MOSS-GREEN",
+        "PM-COLOR-CONTRACT-ORANGE",
+        "PM-COLOR-CONTRACT-DARK-ORANGE",
+        "PM-COLOR-CONTRACT-PEACH",
+        "PM-COLOR-CONTRACT-CORAL",
+        "PM-COLOR-CONTRACT-PINK",
+        "PM-COLOR-CONTRACT-DEEP-PINK",
+        "PM-COLOR-CONTRACT-HOT-PINK",
+        "PM-COLOR-CONTRACT-LIGHT-PINK",
+        "PM-COLOR-CONTRACT-PURPLE",
+        "PM-COLOR-CONTRACT-INDIGO",
+        "PM-COLOR-CONTRACT-VIOLET",
+        "PM-COLOR-CONTRACT-MAGENTA",
+        "PM-COLOR-CONTRACT-ORCHID",
+        "PM-COLOR-CONTRACT-RED",
+        "PM-COLOR-CONTRACT-MAROON",
+        "PM-COLOR-CONTRACT-FIREBRICK",
+        "PM-COLOR-CONTRACT-CRIMSON",
+        "PM-COLOR-CONTRACT-WHITE",
+        "PM-COLOR-CONTRACT-IVORY",
+        "PM-COLOR-CONTRACT-WHITE-SMOKE",
+        "PM-COLOR-CONTRACT-BEIGE",
+        "PM-COLOR-CONTRACT-YELLOW",
+        "PM-COLOR-CONTRACT-KHAKI",
+        "PM-COLOR-CONTRACT-GOLD",
+        "PM-COLOR-CONTRACT-LIGHT-YELLOW"
+      ],
+      "threshold_id": "confident_minimum",
+      "threshold_result": "PASS",
+      "reason": "Median deterministic level-two anchor margin; all individual anchor margins also meet 0.10.",
+      "method": "Protocol-2.1 deterministic color naming contract evaluation."
+    },
+    {
+      "name": "lighting_label_stability_rate",
+      "aggregation": "overall",
+      "unit": "ratio",
+      "status": "NOT_MEASURED",
+      "value": null,
+      "case_ids": [
+        "PM-COLOR-P01-BLACK-NEUTRAL",
+        "PM-COLOR-P01-BLACK-WARM",
+        "PM-COLOR-P01-BLACK-LOW",
+        "PM-COLOR-P02-DIM-GRAY-NEUTRAL",
+        "PM-COLOR-P02-DIM-GRAY-WARM",
+        "PM-COLOR-P02-DIM-GRAY-LOW",
+        "PM-COLOR-P03-BLUE-NEUTRAL",
+        "PM-COLOR-P03-BLUE-WARM",
+        "PM-COLOR-P03-BLUE-LOW",
+        "PM-COLOR-P04-NAVY-NEUTRAL",
+        "PM-COLOR-P04-NAVY-WARM",
+        "PM-COLOR-P04-NAVY-LOW",
+        "PM-COLOR-P05-CYAN-NEUTRAL",
+        "PM-COLOR-P05-CYAN-WARM",
+        "PM-COLOR-P05-CYAN-LOW",
+        "PM-COLOR-P06-SKY-BLUE-NEUTRAL",
+        "PM-COLOR-P06-SKY-BLUE-WARM",
+        "PM-COLOR-P06-SKY-BLUE-LOW",
+        "PM-COLOR-P07-ROYAL-BLUE-NEUTRAL",
+        "PM-COLOR-P07-ROYAL-BLUE-WARM",
+        "PM-COLOR-P07-ROYAL-BLUE-LOW",
+        "PM-COLOR-P08-LIGHT-BLUE-NEUTRAL",
+        "PM-COLOR-P08-LIGHT-BLUE-WARM",
+        "PM-COLOR-P08-LIGHT-BLUE-LOW",
+        "PM-COLOR-P09-BROWN-NEUTRAL",
+        "PM-COLOR-P09-BROWN-WARM",
+        "PM-COLOR-P09-BROWN-LOW",
+        "PM-COLOR-P10-DARK-BROWN-NEUTRAL",
+        "PM-COLOR-P10-DARK-BROWN-WARM",
+        "PM-COLOR-P10-DARK-BROWN-LOW",
+        "PM-COLOR-P11-PERU-NEUTRAL",
+        "PM-COLOR-P11-PERU-WARM",
+        "PM-COLOR-P11-PERU-LOW",
+        "PM-COLOR-P12-CHOCOLATE-NEUTRAL",
+        "PM-COLOR-P12-CHOCOLATE-WARM",
+        "PM-COLOR-P12-CHOCOLATE-LOW",
+        "PM-COLOR-P13-SANDY-BROWN-NEUTRAL",
+        "PM-COLOR-P13-SANDY-BROWN-WARM",
+        "PM-COLOR-P13-SANDY-BROWN-LOW",
+        "PM-COLOR-P14-DARK-KHAKI-NEUTRAL",
+        "PM-COLOR-P14-DARK-KHAKI-WARM",
+        "PM-COLOR-P14-DARK-KHAKI-LOW",
+        "PM-COLOR-P15-GREY-NEUTRAL",
+        "PM-COLOR-P15-GREY-WARM",
+        "PM-COLOR-P15-GREY-LOW",
+        "PM-COLOR-P16-LIGHT-GREY-NEUTRAL",
+        "PM-COLOR-P16-LIGHT-GREY-WARM",
+        "PM-COLOR-P16-LIGHT-GREY-LOW",
+        "PM-COLOR-P17-ASH-GREY-NEUTRAL",
+        "PM-COLOR-P17-ASH-GREY-WARM",
+        "PM-COLOR-P17-ASH-GREY-LOW",
+        "PM-COLOR-P18-SILVER-NEUTRAL",
+        "PM-COLOR-P18-SILVER-WARM",
+        "PM-COLOR-P18-SILVER-LOW",
+        "PM-COLOR-P19-SLATE-GREY-NEUTRAL",
+        "PM-COLOR-P19-SLATE-GREY-WARM",
+        "PM-COLOR-P19-SLATE-GREY-LOW",
+        "PM-COLOR-P20-GREEN-NEUTRAL",
+        "PM-COLOR-P20-GREEN-WARM",
+        "PM-COLOR-P20-GREEN-LOW",
+        "PM-COLOR-P21-LIME-NEUTRAL",
+        "PM-COLOR-P21-LIME-WARM",
+        "PM-COLOR-P21-LIME-LOW",
+        "PM-COLOR-P22-OLIVE-NEUTRAL",
+        "PM-COLOR-P22-OLIVE-WARM",
+        "PM-COLOR-P22-OLIVE-LOW",
+        "PM-COLOR-P23-TEAL-NEUTRAL",
+        "PM-COLOR-P23-TEAL-WARM",
+        "PM-COLOR-P23-TEAL-LOW",
+        "PM-COLOR-P24-SEA-GREEN-NEUTRAL",
+        "PM-COLOR-P24-SEA-GREEN-WARM",
+        "PM-COLOR-P24-SEA-GREEN-LOW",
+        "PM-COLOR-P25-MOSS-GREEN-NEUTRAL",
+        "PM-COLOR-P25-MOSS-GREEN-WARM",
+        "PM-COLOR-P25-MOSS-GREEN-LOW",
+        "PM-COLOR-P26-ORANGE-NEUTRAL",
+        "PM-COLOR-P26-ORANGE-WARM",
+        "PM-COLOR-P26-ORANGE-LOW",
+        "PM-COLOR-P27-DARK-ORANGE-NEUTRAL",
+        "PM-COLOR-P27-DARK-ORANGE-WARM",
+        "PM-COLOR-P27-DARK-ORANGE-LOW",
+        "PM-COLOR-P28-PEACH-NEUTRAL",
+        "PM-COLOR-P28-PEACH-WARM",
+        "PM-COLOR-P28-PEACH-LOW",
+        "PM-COLOR-P29-CORAL-NEUTRAL",
+        "PM-COLOR-P29-CORAL-WARM",
+        "PM-COLOR-P29-CORAL-LOW",
+        "PM-COLOR-P30-PINK-NEUTRAL",
+        "PM-COLOR-P30-PINK-WARM",
+        "PM-COLOR-P30-PINK-LOW",
+        "PM-COLOR-P31-DEEP-PINK-NEUTRAL",
+        "PM-COLOR-P31-DEEP-PINK-WARM",
+        "PM-COLOR-P31-DEEP-PINK-LOW",
+        "PM-COLOR-P32-HOT-PINK-NEUTRAL",
+        "PM-COLOR-P32-HOT-PINK-WARM",
+        "PM-COLOR-P32-HOT-PINK-LOW",
+        "PM-COLOR-P33-LIGHT-PINK-NEUTRAL",
+        "PM-COLOR-P33-LIGHT-PINK-WARM",
+        "PM-COLOR-P33-LIGHT-PINK-LOW",
+        "PM-COLOR-P34-PURPLE-NEUTRAL",
+        "PM-COLOR-P34-PURPLE-WARM",
+        "PM-COLOR-P34-PURPLE-LOW",
+        "PM-COLOR-P35-INDIGO-NEUTRAL",
+        "PM-COLOR-P35-INDIGO-WARM",
+        "PM-COLOR-P35-INDIGO-LOW",
+        "PM-COLOR-P36-VIOLET-NEUTRAL",
+        "PM-COLOR-P36-VIOLET-WARM",
+        "PM-COLOR-P36-VIOLET-LOW",
+        "PM-COLOR-P37-MAGENTA-NEUTRAL",
+        "PM-COLOR-P37-MAGENTA-WARM",
+        "PM-COLOR-P37-MAGENTA-LOW",
+        "PM-COLOR-P38-ORCHID-NEUTRAL",
+        "PM-COLOR-P38-ORCHID-WARM",
+        "PM-COLOR-P38-ORCHID-LOW",
+        "PM-COLOR-P39-RED-NEUTRAL",
+        "PM-COLOR-P39-RED-WARM",
+        "PM-COLOR-P39-RED-LOW",
+        "PM-COLOR-P40-MAROON-NEUTRAL",
+        "PM-COLOR-P40-MAROON-WARM",
+        "PM-COLOR-P40-MAROON-LOW",
+        "PM-COLOR-P41-FIREBRICK-NEUTRAL",
+        "PM-COLOR-P41-FIREBRICK-WARM",
+        "PM-COLOR-P41-FIREBRICK-LOW",
+        "PM-COLOR-P42-CRIMSON-NEUTRAL",
+        "PM-COLOR-P42-CRIMSON-WARM",
+        "PM-COLOR-P42-CRIMSON-LOW",
+        "PM-COLOR-P43-WHITE-NEUTRAL",
+        "PM-COLOR-P43-WHITE-WARM",
+        "PM-COLOR-P43-WHITE-LOW",
+        "PM-COLOR-P44-IVORY-NEUTRAL",
+        "PM-COLOR-P44-IVORY-WARM",
+        "PM-COLOR-P44-IVORY-LOW",
+        "PM-COLOR-P45-WHITE-SMOKE-NEUTRAL",
+        "PM-COLOR-P45-WHITE-SMOKE-WARM",
+        "PM-COLOR-P45-WHITE-SMOKE-LOW",
+        "PM-COLOR-P46-BEIGE-NEUTRAL",
+        "PM-COLOR-P46-BEIGE-WARM",
+        "PM-COLOR-P46-BEIGE-LOW",
+        "PM-COLOR-P47-YELLOW-NEUTRAL",
+        "PM-COLOR-P47-YELLOW-WARM",
+        "PM-COLOR-P47-YELLOW-LOW",
+        "PM-COLOR-P48-KHAKI-NEUTRAL",
+        "PM-COLOR-P48-KHAKI-WARM",
+        "PM-COLOR-P48-KHAKI-LOW",
+        "PM-COLOR-P49-GOLD-NEUTRAL",
+        "PM-COLOR-P49-GOLD-WARM",
+        "PM-COLOR-P49-GOLD-LOW",
+        "PM-COLOR-P50-LIGHT-YELLOW-NEUTRAL",
+        "PM-COLOR-P50-LIGHT-YELLOW-WARM",
+        "PM-COLOR-P50-LIGHT-YELLOW-LOW"
+      ],
+      "threshold_id": "diagnostic_target",
+      "threshold_result": "NOT_EVALUATED",
+      "reason": "All 150 physical inputs are TO_BE_ACQUIRED.",
+      "method": "No synthetic substitution; evaluate only from consented/licensed physical captures."
+    }
+  ],
+  "artifacts": [
+    {
+      "artifact_id": "t12-observations",
+      "path": "evaluation/results/curated/post_mvp/t12/observations.csv",
+      "tracking": "tracked_curated",
+      "media_kind": "csv",
+      "contains_personal_data": false,
+      "provenance": "Generated deterministic contracts and explicit NOT_RUN rows.",
+      "consent": "NOT_APPLICABLE",
+      "license": "Apache-2.0",
+      "bytes": 35776,
+      "sha256": "c3ccb98336222a0bf34de962b34d61a1d04ff08556f3ba5fcb590fe727dc0b3f",
+      "availability": "AVAILABLE",
+      "generation_command": "conda run --name lens python scripts/t12_color_evaluation.py"
+    },
+    {
+      "artifact_id": "t12-report",
+      "path": "evaluation/results/curated/post_mvp/t12/report.md",
+      "tracking": "tracked_curated",
+      "media_kind": "markdown",
+      "contains_personal_data": false,
+      "provenance": "Project-authored summary of T12 evidence and limitations.",
+      "consent": "NOT_APPLICABLE",
+      "license": "Apache-2.0",
+      "bytes": 481,
+      "sha256": "be9dcaeb501df6de08250f5708ab64dc5d01381d3e537046686980e41fdf5ccc",
+      "availability": "AVAILABLE",
+      "generation_command": "conda run --name lens python scripts/t12_color_evaluation.py"
+    }
+  ],
+  "commands": [
+    {
+      "command": "conda run --name lens python scripts/t12_color_evaluation.py",
+      "exit_code": 0,
+      "purpose": "Generate deterministic T12 contract evidence and declared physical NOT_RUN rows."
+    }
+  ],
+  "limitations": [
+    "All 150 physical lighting observations are NOT_RUN because no consented/licensed captures were supplied.",
+    "Digital anchor agreement is an implementation contract, not physical-camera accuracy or calibrated confidence.",
+    "The 50 labels are project-authored mappings around CSS anchors and do not cover every perceived color."
+  ],
+  "notes": "T12 can satisfy contract coverage while the curated result remains honestly PARTIAL for physical evidence."
+}

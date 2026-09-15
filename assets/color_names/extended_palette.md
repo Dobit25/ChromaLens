@@ -1,6 +1,6 @@
 # ChromaLens 50-anchor palette
 
-Protocol version: `2.1.0`  
+Protocol version: `2.1.0`
 Status: `FROZEN` for T12
 
 The CSV contains the owner-approved Vietnamese display vocabulary. RGB values
